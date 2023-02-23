@@ -43,6 +43,8 @@ class Renderer: NSObject, MTKViewDelegate {
     
     var mesh: MTKMesh
     
+    var tile: TriangleMesh?
+    
     init?(metalKitView: MTKView) {
         self.device = metalKitView.device!
         guard let queue = self.device.makeCommandQueue() else { return nil }
@@ -268,6 +270,10 @@ class Renderer: NSObject, MTKViewDelegate {
                                                         indexBuffer: submesh.indexBuffer.buffer,
                                                         indexBufferOffset: submesh.indexBuffer.offset)
                     
+                }
+                
+                if let tile = self.tile {
+                    tile.draw(renderEncoder: renderEncoder)
                 }
                 
                 renderEncoder.popDebugGroup()

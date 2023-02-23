@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Http
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -15,6 +16,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
+
+        Http.setServer(serverName: Configuration.baseURL)
+        Http.setUnauthorizedHandler(handler: nil)
+
         return true
     }
 

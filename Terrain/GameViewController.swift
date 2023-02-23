@@ -7,6 +7,7 @@
 
 import UIKit
 import MetalKit
+import Http
 
 // Our iOS specific view controller
 class GameViewController: UIViewController {
@@ -41,5 +42,18 @@ class GameViewController: UIViewController {
         renderer.mtkView(mtkView, drawableSizeWillChange: mtkView.drawableSize)
 
         mtkView.delegate = renderer
+        
+        Task {
+            let tileDimension = 128
+            let latLng = LatLng(46.514279, -121.456191)
+            let (x, y) = latLngToTerrainTile(latLng.lat, latLng.lng, tileDimension);
+
+            if let response: Http.Response<TerrainTileProps> = try? await Http.get(path: "/tile/terrain3d/\(tileDimension)/\(x)/\(y)") {
+                if let data = response.data {
+                    let object = data.objects[0]
+                    renderer.tile = TriangleMesh(device: renderer.device, points: object.points, normals: object.normals, indices: object.indices)
+                }
+            }
+        }
     }
 }
