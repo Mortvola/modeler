@@ -19,8 +19,7 @@ class TerrainTile {
     var translate = vec3(0.0, 0.0, 0.0)
     var modelMatrix = matrix4x4_identity()
     var elevation: [[Float]] = []
-    
-    var mesh: TriangleMesh?
+    var objects: [RenderObject] = []
     
     init(x: Int, y: Int, dimension: Int, renderer: Renderer) {
         self.renderer = renderer
@@ -29,15 +28,36 @@ class TerrainTile {
         self.dimension = dimension
     }
     
-    func load() async {
+    func load() async throws {
         if let response: Http.Response<TerrainTileProps> = try? await Http.get(path: "/tile/terrain3d/\(dimension)/\(x)/\(y)") {
             if let data = response.data {
                 self.xDimension = data.xDimension
                 self.yDimension = data.yDimension
                 self.elevation = data.ele
-                
-                let object = data.objects[0]
-                mesh = TriangleMesh(device: renderer.device, points: object.points, normals: object.normals, indices: object.indices)
+
+                try data.objects.forEach { object in
+                    switch (object.type) {
+                    case "triangles":
+                        let material = try MaterialManager.shared.addMaterial(device: renderer.device, view: renderer.view, name: .terrain)
+                        let object: RenderObject = TriangleMesh(device: renderer.device, points: object.points, normals: object.normals, indices: object.indices, model: self)
+                        
+                        material.objects.append(object)
+                        self.objects.append(object)
+                        break;
+                        
+                    case "line":
+                        let material = try MaterialManager.shared.addMaterial(device: renderer.device, view: renderer.view, name: .line)
+                        
+                        let object: RenderObject = Line(device: renderer.device, points: object.points, model: self)
+
+                        material.objects.append(object)
+                        self.objects.append(object)
+                        
+                        break;
+                    default:
+                        break;
+                    }
+                }
             }
         }
     }

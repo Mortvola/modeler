@@ -36,14 +36,14 @@ class World {
         initTileGrid()
     }
     
-    func loadTiles(x: Int, z: Int, dimension: Int, renderer: Renderer) async {
+    func loadTiles(x: Int, z: Int, dimension: Int, renderer: Renderer) async throws {
         let totalTiles = pow(Double(tilePadding) * 2.0 + 1.0, 2)
         var tilesLoaded = 0;
         // let promises: Promise<void | void[]>[] = [];
         
         for z2 in stride(from: -tilePadding, to: tilePadding + 1, by: 1) {
             for x2 in stride(from: -tilePadding, to: tilePadding + 1, by: 1) {
-                await loadTile(gridX: x2 + tilePadding, gridZ: z2 + tilePadding, x: x + x2, z: z + z2, dimension: dimension, renderer: renderer)
+                try await loadTile(gridX: x2 + tilePadding, gridZ: z2 + tilePadding, x: x + x2, z: z + z2, dimension: dimension, renderer: renderer)
                 tilesLoaded += 1;
                 print("tiles loaded: \(tilesLoaded)")
                 percentComplete = Double(tilesLoaded) / totalTiles
@@ -66,7 +66,7 @@ class World {
         z: Int,
         dimension: Int,
         renderer: Renderer
-    ) async {
+    ) async throws {
         let dictionaryKey = "\(x)-\(z)-\(dimension)"
         
         if let tile = tileDict[dictionaryKey] {
@@ -79,7 +79,7 @@ class World {
             
             tileGrid[gridZ][gridX].tile = tile;
             
-            await tile.load();
+            try await tile.load();
         }
     }
     
@@ -161,8 +161,10 @@ class World {
     func draw(renderEncoder: MTLRenderCommandEncoder) {
         self.tileGrid.forEach { row in
             row.forEach { tile in
-                if let terrainTile = tile.tile, let mesh = terrainTile.mesh {
-                    mesh.draw(renderEncoder: renderEncoder, modelMatrix: terrainTile.modelMatrix)
+                if let terrainTile = tile.tile {
+                    terrainTile.objects.forEach { object in
+                        object.draw(renderEncoder: renderEncoder, modelMatrix: terrainTile.modelMatrix)
+                    }
                 }
             }
         }

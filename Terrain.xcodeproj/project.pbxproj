@@ -12,6 +12,13 @@
 		7947B41429AA755500981301 /* World.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7947B41329AA755500981301 /* World.swift */; };
 		7947B41729ABAC3000981301 /* Vec3.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7947B41629ABAC3000981301 /* Vec3.swift */; };
 		7947B41929ABB9E800981301 /* Camera.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7947B41829ABB9E800981301 /* Camera.swift */; };
+		7947B42129AD222600981301 /* RenderObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7947B42029AD222600981301 /* RenderObject.swift */; };
+		7947B42529AD228E00981301 /* Line.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7947B42429AD228E00981301 /* Line.swift */; };
+		7947B42829AD325D00981301 /* MaterialManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7947B42729AD325D00981301 /* MaterialManager.swift */; };
+		7947B42B29AD329500981301 /* TerrainMaterial.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7947B42A29AD329500981301 /* TerrainMaterial.swift */; };
+		7947B42D29AD32A400981301 /* LineMaterial.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7947B42C29AD32A400981301 /* LineMaterial.swift */; };
+		7947B42F29AD349100981301 /* Material.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7947B42E29AD349100981301 /* Material.swift */; };
+		7947B43129AD375F00981301 /* Errors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7947B43029AD375F00981301 /* Errors.swift */; };
 		79A1645C29A7F87C001A27F0 /* Configuration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79A1645B29A7F87C001A27F0 /* Configuration.swift */; };
 		79A1645E29A7F92B001A27F0 /* Http.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 79A1645729A7F7CD001A27F0 /* Http.framework */; };
 		79A1645F29A7F92B001A27F0 /* Http.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 79A1645729A7F7CD001A27F0 /* Http.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -81,6 +88,13 @@
 		7947B41329AA755500981301 /* World.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = World.swift; sourceTree = "<group>"; };
 		7947B41629ABAC3000981301 /* Vec3.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Vec3.swift; sourceTree = "<group>"; };
 		7947B41829ABB9E800981301 /* Camera.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Camera.swift; sourceTree = "<group>"; };
+		7947B42029AD222600981301 /* RenderObject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RenderObject.swift; sourceTree = "<group>"; };
+		7947B42429AD228E00981301 /* Line.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Line.swift; sourceTree = "<group>"; };
+		7947B42729AD325D00981301 /* MaterialManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MaterialManager.swift; sourceTree = "<group>"; };
+		7947B42A29AD329500981301 /* TerrainMaterial.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TerrainMaterial.swift; sourceTree = "<group>"; };
+		7947B42C29AD32A400981301 /* LineMaterial.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LineMaterial.swift; sourceTree = "<group>"; };
+		7947B42E29AD349100981301 /* Material.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Material.swift; sourceTree = "<group>"; };
+		7947B43029AD375F00981301 /* Errors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Errors.swift; sourceTree = "<group>"; };
 		79A1645129A7F7CD001A27F0 /* Http.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Http.xcodeproj; path = ../Http/Http.xcodeproj; sourceTree = "<group>"; };
 		79A1645B29A7F87C001A27F0 /* Configuration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Configuration.swift; sourceTree = "<group>"; };
 		79A1646529A800FA001A27F0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
@@ -138,6 +152,27 @@
 			path = Math;
 			sourceTree = "<group>";
 		};
+		7947B42629AD229900981301 /* RenderObjects */ = {
+			isa = PBXGroup;
+			children = (
+				79A1646A29A80D91001A27F0 /* TriangleMesh.swift */,
+				7947B42029AD222600981301 /* RenderObject.swift */,
+				7947B42429AD228E00981301 /* Line.swift */,
+			);
+			path = RenderObjects;
+			sourceTree = "<group>";
+		};
+		7947B42929AD327C00981301 /* Materials */ = {
+			isa = PBXGroup;
+			children = (
+				7947B42729AD325D00981301 /* MaterialManager.swift */,
+				7947B42A29AD329500981301 /* TerrainMaterial.swift */,
+				7947B42E29AD349100981301 /* Material.swift */,
+				7947B42C29AD32A400981301 /* LineMaterial.swift */,
+			);
+			path = Materials;
+			sourceTree = "<group>";
+		};
 		79A1645229A7F7CD001A27F0 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -181,19 +216,21 @@
 			children = (
 				79A1646529A800FA001A27F0 /* Info.plist */,
 				79E2C14729A7EC6C006F6BD9 /* AppDelegate.swift */,
+				79E2C14C29A7EC6C006F6BD9 /* GameViewController.swift */,
+				7947B43029AD375F00981301 /* Errors.swift */,
 				79A1645B29A7F87C001A27F0 /* Configuration.swift */,
 				7947B41329AA755500981301 /* World.swift */,
 				79E2C14A29A7EC6C006F6BD9 /* Renderer.swift */,
 				7947B41829ABB9E800981301 /* Camera.swift */,
+				7947B42929AD327C00981301 /* Materials */,
 				7947B41529ABAC1D00981301 /* Math */,
-				79E2C14C29A7EC6C006F6BD9 /* GameViewController.swift */,
 				7947B40F29AA6E6D00981301 /* TerrainTile.swift */,
 				79A1646829A80319001A27F0 /* Utilities.swift */,
 				79A1646629A801D0001A27F0 /* Types.swift */,
-				79A1646A29A80D91001A27F0 /* TriangleMesh.swift */,
+				7947B42629AD229900981301 /* RenderObjects */,
+				79E2C15029A7EC6C006F6BD9 /* Main.storyboard */,
 				79E2C14929A7EC6C006F6BD9 /* ShaderTypes.h */,
 				79E2C14E29A7EC6C006F6BD9 /* Shaders.metal */,
-				79E2C15029A7EC6C006F6BD9 /* Main.storyboard */,
 				79E2C15329A7EC6D006F6BD9 /* Assets.xcassets */,
 				79E2C15529A7EC6D006F6BD9 /* LaunchScreen.storyboard */,
 			);
@@ -373,17 +410,24 @@
 			buildActionMask = 2147483647;
 			files = (
 				79A1646B29A80D91001A27F0 /* TriangleMesh.swift in Sources */,
+				7947B42F29AD349100981301 /* Material.swift in Sources */,
 				7947B41029AA6E6D00981301 /* TerrainTile.swift in Sources */,
 				79E2C14F29A7EC6C006F6BD9 /* Shaders.metal in Sources */,
 				794545D029A92A85003E7913 /* Math.swift in Sources */,
+				7947B42B29AD329500981301 /* TerrainMaterial.swift in Sources */,
 				79A1645C29A7F87C001A27F0 /* Configuration.swift in Sources */,
 				79A1646929A80319001A27F0 /* Utilities.swift in Sources */,
 				79E2C14B29A7EC6C006F6BD9 /* Renderer.swift in Sources */,
 				79A1646729A801D0001A27F0 /* Types.swift in Sources */,
 				7947B41429AA755500981301 /* World.swift in Sources */,
+				7947B42529AD228E00981301 /* Line.swift in Sources */,
+				7947B42829AD325D00981301 /* MaterialManager.swift in Sources */,
+				7947B42D29AD32A400981301 /* LineMaterial.swift in Sources */,
 				79E2C14D29A7EC6C006F6BD9 /* GameViewController.swift in Sources */,
 				7947B41929ABB9E800981301 /* Camera.swift in Sources */,
+				7947B43129AD375F00981301 /* Errors.swift in Sources */,
 				7947B41729ABAC3000981301 /* Vec3.swift in Sources */,
+				7947B42129AD222600981301 /* RenderObject.swift in Sources */,
 				79E2C14829A7EC6C006F6BD9 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

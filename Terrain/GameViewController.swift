@@ -45,7 +45,7 @@ class GameViewController: UIViewController {
         }
         
         Task {
-            await renderer.load(lat: 46.514279, lng: -121.456191, dimension: 128)
+            try await renderer.load(lat: 46.514279, lng: -121.456191, dimension: 128)
         }
 
         renderer = newRenderer

@@ -23,9 +23,10 @@ enum RendererError: Error {
 class Renderer: NSObject, MTKViewDelegate {
     
     public let device: MTLDevice
+    public let view: MTKView
+    
     let commandQueue: MTLCommandQueue
     var dynamicUniformBuffer: MTLBuffer
-    var pipelineState: MTLRenderPipelineState
     var depthState: MTLDepthStencilState
     // var colorMap: MTLTexture
     
@@ -45,6 +46,8 @@ class Renderer: NSObject, MTKViewDelegate {
         self.camera = Camera(world: world)
         
         self.device = metalKitView.device!
+        self.view = metalKitView
+
         guard let queue = self.device.makeCommandQueue() else { return nil }
         self.commandQueue = queue
         
@@ -60,41 +63,16 @@ class Renderer: NSObject, MTKViewDelegate {
         metalKitView.colorPixelFormat = .bgra8Unorm_srgb
         metalKitView.sampleCount = 1
         
-        let mtlVertexDescriptor = Renderer.buildMetalVertexDescriptor()
-        
-        do {
-            self.pipelineState = try Renderer.buildRenderPipelineWithDevice(device: device,
-                                                                            metalKitView: metalKitView,
-                                                                            mtlVertexDescriptor: mtlVertexDescriptor)
-        } catch {
-            print("Unable to compile render pipeline state.  Error info: \(error)")
-            return nil
-        }
-        
         let depthStateDescriptor = MTLDepthStencilDescriptor()
         depthStateDescriptor.depthCompareFunction = .less
         depthStateDescriptor.isDepthWriteEnabled = true
         guard let state = device.makeDepthStencilState(descriptor:depthStateDescriptor) else { return nil }
         self.depthState = state
         
-        //        do {
-        //            mesh = try Renderer.buildMesh(device: device, mtlVertexDescriptor: mtlVertexDescriptor)
-        //        } catch {
-        //            print("Unable to build MetalKit Mesh. Error info: \(error)")
-        //            return nil
-        //        }
-        
-        //        do {
-        //            colorMap = try Renderer.loadTexture(device: device, textureName: "ColorMap")
-        //        } catch {
-        //            print("Unable to load texture. Error info: \(error)")
-        //            return nil
-        //        }
-        
         super.init()
     }
 
-    func load(lat: Double, lng: Double, dimension: Int) async {
+    func load(lat: Double, lng: Double, dimension: Int) async throws {
         let latLng = LatLng(lat, lng)
         let (x, z) = latLngToTerrainTile(latLng.lat, latLng.lng, dimension);
         
@@ -107,7 +85,7 @@ class Renderer: NSObject, MTKViewDelegate {
         
         self.camera.scale = cos(degreesToRadians(Float(latLngCenter.lat)));
         
-        await self.world.loadTiles(x: x, z: z, dimension: dimension, renderer: self)
+        try await self.world.loadTiles(x: x, z: z, dimension: dimension, renderer: self)
 
         let cameraOffset = self.getCameraOffset(latLng: latLng, latLngCenter: latLngCenter)
         let zOffset = self.world.getElevation(x: cameraOffset.0, y: cameraOffset.1)
@@ -125,61 +103,6 @@ class Renderer: NSObject, MTKViewDelegate {
       )
     }
 
-    class func buildMetalVertexDescriptor() -> MTLVertexDescriptor {
-        // Create a Metal vertex descriptor specifying how vertices will by laid out for input into our render
-        //   pipeline and how we'll layout our Model IO vertices
-        
-        let mtlVertexDescriptor = MTLVertexDescriptor()
-        
-        mtlVertexDescriptor.attributes[VertexAttribute.position.rawValue].format = .float3
-        mtlVertexDescriptor.attributes[VertexAttribute.position.rawValue].bufferIndex = BufferIndex.meshPositions.rawValue
-        mtlVertexDescriptor.attributes[VertexAttribute.position.rawValue].offset = 0
-        
-        mtlVertexDescriptor.attributes[VertexAttribute.texcoord.rawValue].format = .float2
-        mtlVertexDescriptor.attributes[VertexAttribute.texcoord.rawValue].bufferIndex = BufferIndex.meshPositions.rawValue
-        mtlVertexDescriptor.attributes[VertexAttribute.texcoord.rawValue].offset = MemoryLayout<simd_float3>.stride
-        
-        mtlVertexDescriptor.attributes[VertexAttribute.normal.rawValue].format = .float3
-        mtlVertexDescriptor.attributes[VertexAttribute.normal.rawValue].bufferIndex = BufferIndex.meshPositions.rawValue
-        mtlVertexDescriptor.attributes[VertexAttribute.normal.rawValue].offset = MemoryLayout<simd_float3>.stride + MemoryLayout<simd_float2>.stride
-        
-        mtlVertexDescriptor.layouts[BufferIndex.meshPositions.rawValue].stride = (MemoryLayout<simd_float3>.stride + MemoryLayout<simd_float2>.stride + MemoryLayout<simd_float3>.stride)
-        //        mtlVertexDescriptor.layouts[BufferIndex.meshPositions.rawValue].stepRate = 1
-        //        mtlVertexDescriptor.layouts[BufferIndex.meshPositions.rawValue].stepFunction = MTLVertexStepFunction.perVertex
-        
-        //        mtlVertexDescriptor.layouts[BufferIndex.meshPositions.rawValue].stride = 8 * 4
-        //        mtlVertexDescriptor.layouts[BufferIndex.meshPositions.rawValue].stepRate = 1
-        //        mtlVertexDescriptor.layouts[BufferIndex.meshPositions.rawValue].stepFunction = MTLVertexStepFunction.perVertex
-        
-        return mtlVertexDescriptor
-    }
-    
-    class func buildRenderPipelineWithDevice(
-        device: MTLDevice,
-        metalKitView: MTKView,
-        mtlVertexDescriptor: MTLVertexDescriptor
-    ) throws -> MTLRenderPipelineState {
-        /// Build a render state pipeline object
-        
-        let library = device.makeDefaultLibrary()
-        
-        let vertexFunction = library?.makeFunction(name: "simpleVertexShader")
-        let fragmentFunction = library?.makeFunction(name: "simpleFragmentShader")
-        
-        let pipelineDescriptor = MTLRenderPipelineDescriptor()
-        pipelineDescriptor.label = "RenderPipeline"
-        pipelineDescriptor.rasterSampleCount = metalKitView.sampleCount
-        pipelineDescriptor.vertexFunction = vertexFunction
-        pipelineDescriptor.fragmentFunction = fragmentFunction
-        pipelineDescriptor.vertexDescriptor = mtlVertexDescriptor
-        
-        pipelineDescriptor.colorAttachments[0].pixelFormat = metalKitView.colorPixelFormat
-        pipelineDescriptor.depthAttachmentPixelFormat = metalKitView.depthStencilPixelFormat
-        //        pipelineDescriptor.stencilAttachmentPixelFormat = metalKitView.depthStencilPixelFormat
-        
-        return try device.makeRenderPipelineState(descriptor: pipelineDescriptor)
-    }
-    
     //    class func buildMesh(device: MTLDevice,
     //                         mtlVertexDescriptor: MTLVertexDescriptor) throws -> MTKMesh {
     //        /// Create and condition mesh data to feed into a pipeline using the given vertex descriptor
@@ -281,37 +204,12 @@ class Renderer: NSObject, MTKViewDelegate {
                     
                     renderEncoder.setFrontFacing(.counterClockwise)
                     
-                    renderEncoder.setRenderPipelineState(self.pipelineState)
-                    
                     renderEncoder.setDepthStencilState(self.depthState)
                     
                     renderEncoder.setVertexBuffer(self.dynamicUniformBuffer, offset: self.uniformBufferOffset, index: BufferIndex.uniforms.rawValue)
-                    //                renderEncoder.setFragmentBuffer(self.dynamicUniformBuffer, offset: self.uniformBufferOffset, index: BufferIndex.uniforms.rawValue)
-                    
-                    //                for (index, element) in mesh.vertexDescriptor.layouts.enumerated() {
-                    //                    guard let layout = element as? MDLVertexBufferLayout else {
-                    //                        return
-                    //                    }
-                    //
-                    //                    if layout.stride != 0 {
-                    //                        let buffer = mesh.vertexBuffers[index]
-                    //                        renderEncoder.setVertexBuffer(buffer.buffer, offset:buffer.offset, index: index)
-                    //                    }
-                    //                }
-                    //
-                    //                renderEncoder.setFragmentTexture(colorMap, index: TextureIndex.color.rawValue)
-                    //
-                    //                for submesh in mesh.submeshes {
-                    //                    renderEncoder.drawIndexedPrimitives(type: submesh.primitiveType,
-                    //                                                        indexCount: submesh.indexCount,
-                    //                                                        indexType: submesh.indexType,
-                    //                                                        indexBuffer: submesh.indexBuffer.buffer,
-                    //                                                        indexBufferOffset: submesh.indexBuffer.offset)
-                    //
-                    //                }
-                    
-                    if world.terrainLoaded {
-                        world.draw(renderEncoder: renderEncoder)
+
+                    if self.world.terrainLoaded {
+                        MaterialManager.shared.render(renderEncoder: renderEncoder)
                     }
                     
                     renderEncoder.popDebugGroup()

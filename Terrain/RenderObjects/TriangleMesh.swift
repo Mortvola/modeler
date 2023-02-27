@@ -9,19 +9,27 @@ import Foundation
 import simd
 import Metal
 
-class TriangleMesh {
+class TriangleMesh: RenderObject {
     var vertices: MTLBuffer?
     
     var numVertices: Int = 0
+    
+    let model: TerrainTile
     
     init(
       device: MTLDevice,
       points: [Float],
       normals: [Float],
-      indices: [Int]
+      indices: [Int],
+      model: TerrainTile
       // shader: TriangleMeshShader,
     ) {
+        self.model = model
         self.createBuffer(device: device, normals: normals, points: points, indices: indices);
+    }
+
+    func modelMatrix() -> matrix_float4x4 {
+        self.model.modelMatrix
     }
 
     func draw(renderEncoder: MTLRenderCommandEncoder, modelMatrix: matrix_float4x4) {
@@ -129,79 +137,8 @@ class TriangleMesh {
       // shader: TriangleMeshShader,
     ) {
         let data = self.formatData(normals: normals, points: points, indices: indices)
-//        let data: [simd_float1] = [
-//            -100.0, 100.0, 0.0, 0,
-//             1.0, 1.0,
-////             1, 1, 1,
-//
-//             -100.0, -100.0, 0.0, 0,
-//             0, 1.0,
-////              1, 1, 1,
-//
-//             100.0, 100.0, 0.0, 0,
-//             1.0, 0,
-////              1, 1, 1,
-//
-//             100.0, 100.0, 0.0, 0,
-//             1.0, 0,
-////              1, 1, 1,
-//
-//             -100.0, -100.0, 0.0, 0,
-//             0.0, 1.0,
-////              1, 1, 1,
-//
-//             100.0, -100.0, 0.0, 0,
-//             0.0, 0.0
-////              1, 1, 1,
-//        ]
-//        self.numVertices = 6;
         
         let dataSize = data.count * MemoryLayout.size(ofValue: data[0]) * 10
         self.vertices = device.makeBuffer(bytes: data, length: dataSize, options: [])!
-
-//        if (buf = ) {
-//            return
-//        }
-
-//      this.gl.bindBuffer(this.gl.ARRAY_BUFFER, buf);
-//      this.gl.bufferData(this.gl.ARRAY_BUFFER, new Float32Array(data), this.gl.STATIC_DRAW);
-//      this.gl.enableVertexAttribArray(shader.vertexPosition);
-//      this.gl.vertexAttribPointer(
-//        shader.vertexPosition,
-//        3, // Number of components
-//        this.gl.FLOAT,
-//        false, // normalize
-//        vertexStride * floatSize, // stride
-//        0, // offset
-//      );
-//
-//      this.gl.enableVertexAttribArray(shader.attribLocations.texCoord);
-//      this.gl.vertexAttribPointer(
-//        shader.attribLocations.texCoord,
-//        2, // Number of components
-//        this.gl.FLOAT,
-//        false, // normalize
-//        vertexStride * floatSize, // stride
-//        3 * floatSize, // offset
-//      );
-//
-//      this.gl.enableVertexAttribArray(shader.attribLocations.vertexNormal);
-//      this.gl.vertexAttribPointer(
-//        shader.attribLocations.vertexNormal,
-//        3, // Number of components
-//        this.gl.FLOAT,
-//        false, // normalize
-//        vertexStride * floatSize, // stride
-//        5 * floatSize, // offset
-//      );
-//
-//      this.gl.enableVertexAttribArray(shader.attribLocations.tangent);
-//      this.gl.vertexAttribPointer(
-//        shader.attribLocations.tangent,
-//        3, // Number of components
-//        this.gl.FLOAT,
-//        false, // normalize
-//        vertexStride * floatSize, // stride
-//        8 * floatSize, // offset
-//      );
-    }}
+    }
+}
