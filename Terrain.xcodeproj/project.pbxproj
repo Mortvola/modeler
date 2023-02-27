@@ -7,6 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		794545D029A92A85003E7913 /* Math.swift in Sources */ = {isa = PBXBuildFile; fileRef = 794545CF29A92A85003E7913 /* Math.swift */; };
+		7947B41029AA6E6D00981301 /* TerrainTile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7947B40F29AA6E6D00981301 /* TerrainTile.swift */; };
+		7947B41429AA755500981301 /* World.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7947B41329AA755500981301 /* World.swift */; };
+		7947B41729ABAC3000981301 /* Vec3.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7947B41629ABAC3000981301 /* Vec3.swift */; };
+		7947B41929ABB9E800981301 /* Camera.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7947B41829ABB9E800981301 /* Camera.swift */; };
 		79A1645C29A7F87C001A27F0 /* Configuration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79A1645B29A7F87C001A27F0 /* Configuration.swift */; };
 		79A1645E29A7F92B001A27F0 /* Http.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 79A1645729A7F7CD001A27F0 /* Http.framework */; };
 		79A1645F29A7F92B001A27F0 /* Http.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 79A1645729A7F7CD001A27F0 /* Http.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -71,6 +76,11 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		794545CF29A92A85003E7913 /* Math.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Math.swift; sourceTree = "<group>"; };
+		7947B40F29AA6E6D00981301 /* TerrainTile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TerrainTile.swift; sourceTree = "<group>"; };
+		7947B41329AA755500981301 /* World.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = World.swift; sourceTree = "<group>"; };
+		7947B41629ABAC3000981301 /* Vec3.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Vec3.swift; sourceTree = "<group>"; };
+		7947B41829ABB9E800981301 /* Camera.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Camera.swift; sourceTree = "<group>"; };
 		79A1645129A7F7CD001A27F0 /* Http.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Http.xcodeproj; path = ../Http/Http.xcodeproj; sourceTree = "<group>"; };
 		79A1645B29A7F87C001A27F0 /* Configuration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Configuration.swift; sourceTree = "<group>"; };
 		79A1646529A800FA001A27F0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
@@ -119,6 +129,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		7947B41529ABAC1D00981301 /* Math */ = {
+			isa = PBXGroup;
+			children = (
+				794545CF29A92A85003E7913 /* Math.swift */,
+				7947B41629ABAC3000981301 /* Vec3.swift */,
+			);
+			path = Math;
+			sourceTree = "<group>";
+		};
 		79A1645229A7F7CD001A27F0 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -163,12 +182,16 @@
 				79A1646529A800FA001A27F0 /* Info.plist */,
 				79E2C14729A7EC6C006F6BD9 /* AppDelegate.swift */,
 				79A1645B29A7F87C001A27F0 /* Configuration.swift */,
-				79E2C14929A7EC6C006F6BD9 /* ShaderTypes.h */,
+				7947B41329AA755500981301 /* World.swift */,
 				79E2C14A29A7EC6C006F6BD9 /* Renderer.swift */,
+				7947B41829ABB9E800981301 /* Camera.swift */,
+				7947B41529ABAC1D00981301 /* Math */,
 				79E2C14C29A7EC6C006F6BD9 /* GameViewController.swift */,
+				7947B40F29AA6E6D00981301 /* TerrainTile.swift */,
 				79A1646829A80319001A27F0 /* Utilities.swift */,
 				79A1646629A801D0001A27F0 /* Types.swift */,
 				79A1646A29A80D91001A27F0 /* TriangleMesh.swift */,
+				79E2C14929A7EC6C006F6BD9 /* ShaderTypes.h */,
 				79E2C14E29A7EC6C006F6BD9 /* Shaders.metal */,
 				79E2C15029A7EC6C006F6BD9 /* Main.storyboard */,
 				79E2C15329A7EC6D006F6BD9 /* Assets.xcassets */,
@@ -350,12 +373,17 @@
 			buildActionMask = 2147483647;
 			files = (
 				79A1646B29A80D91001A27F0 /* TriangleMesh.swift in Sources */,
+				7947B41029AA6E6D00981301 /* TerrainTile.swift in Sources */,
 				79E2C14F29A7EC6C006F6BD9 /* Shaders.metal in Sources */,
+				794545D029A92A85003E7913 /* Math.swift in Sources */,
 				79A1645C29A7F87C001A27F0 /* Configuration.swift in Sources */,
 				79A1646929A80319001A27F0 /* Utilities.swift in Sources */,
 				79E2C14B29A7EC6C006F6BD9 /* Renderer.swift in Sources */,
 				79A1646729A801D0001A27F0 /* Types.swift in Sources */,
+				7947B41429AA755500981301 /* World.swift in Sources */,
 				79E2C14D29A7EC6C006F6BD9 /* GameViewController.swift in Sources */,
+				7947B41929ABB9E800981301 /* Camera.swift in Sources */,
+				7947B41729ABAC3000981301 /* Vec3.swift in Sources */,
 				79E2C14829A7EC6C006F6BD9 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

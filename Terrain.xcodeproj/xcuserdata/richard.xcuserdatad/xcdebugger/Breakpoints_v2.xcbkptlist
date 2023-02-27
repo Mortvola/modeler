@@ -7,235 +7,129 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "00116AC2-85B7-494A-82E2-F3B8DEEE18E8"
+            uuid = "4FDE4C6F-B5AA-4E82-BCEE-DB15769CC057"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "Terrain/Configuration.swift"
+            filePath = "Terrain/Math/Math.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "28"
-            endingLineNumber = "28"
-            landmarkName = "baseURL"
-            landmarkType = "24">
+            startingLineNumber = "111"
+            endingLineNumber = "111"
+            landmarkName = "unknown"
+            landmarkType = "0">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "E8F0209F-4620-464E-866F-AB56AD5EE5F1"
+            uuid = "6DEAE533-950C-4C9B-A2C2-76F23B73A262"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "Terrain/Configuration.swift"
+            filePath = "Terrain/Math/Math.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "16"
-            endingLineNumber = "16"
-            landmarkName = "current"
-            landmarkType = "24">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "05B6FE1B-E529-452F-9193-7FA0DF2744DD"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Terrain/GameViewController.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "51"
-            endingLineNumber = "51"
-            landmarkName = "viewDidLoad()"
-            landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "05B6FE1B-E529-452F-9193-7FA0DF2744DD - a7cfe3abba44aaa9"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "(1) suspend resume partial function for closure #1 @Sendable () async -&gt; () in Terrain.GameViewController.viewDidLoad() -&gt; ()"
-                  moduleName = "Terrain"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/richard/Documents/development/Terrain/Terrain/GameViewController.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "51"
-                  endingLineNumber = "51"
-                  offsetFromSymbolStart = "196">
-               </Location>
-               <Location
-                  uuid = "05B6FE1B-E529-452F-9193-7FA0DF2744DD - 38b75d2225f7d5f3"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "(2) await resume partial function for closure #1 @Sendable () async -&gt; () in Terrain.GameViewController.viewDidLoad() -&gt; ()"
-                  moduleName = "Terrain"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/richard/Documents/development/Terrain/Terrain/GameViewController.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "51"
-                  endingLineNumber = "51"
-                  offsetFromSymbolStart = "40">
-               </Location>
-               <Location
-                  uuid = "05B6FE1B-E529-452F-9193-7FA0DF2744DD - b7d3677541e6e97"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "(3) suspend resume partial function for closure #1 @Sendable () async -&gt; () in Terrain.GameViewController.viewDidLoad() -&gt; ()"
-                  moduleName = "Terrain"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/richard/Documents/development/Terrain/Terrain/GameViewController.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "51"
-                  endingLineNumber = "51"
-                  offsetFromSymbolStart = "128">
-               </Location>
-               <Location
-                  uuid = "05B6FE1B-E529-452F-9193-7FA0DF2744DD - b7d3677541e6e97"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "(3) suspend resume partial function for closure #1 @Sendable () async -&gt; () in Terrain.GameViewController.viewDidLoad() -&gt; ()"
-                  moduleName = "Terrain"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/richard/Documents/development/Terrain/Terrain/GameViewController.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "51"
-                  endingLineNumber = "51"
-                  offsetFromSymbolStart = "212">
-               </Location>
-               <Location
-                  uuid = "05B6FE1B-E529-452F-9193-7FA0DF2744DD - c0b42021210a8c94"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "(4) suspend resume partial function for closure #1 @Sendable () async -&gt; () in Terrain.GameViewController.viewDidLoad() -&gt; ()"
-                  moduleName = "Terrain"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/richard/Documents/development/Terrain/Terrain/GameViewController.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "51"
-                  endingLineNumber = "51"
-                  offsetFromSymbolStart = "80">
-               </Location>
-               <Location
-                  uuid = "05B6FE1B-E529-452F-9193-7FA0DF2744DD - c0b42021210a8c94"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "(4) suspend resume partial function for closure #1 @Sendable () async -&gt; () in Terrain.GameViewController.viewDidLoad() -&gt; ()"
-                  moduleName = "Terrain"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/richard/Documents/development/Terrain/Terrain/GameViewController.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "51"
-                  endingLineNumber = "51"
-                  offsetFromSymbolStart = "192">
-               </Location>
-            </Locations>
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "81BADE4A-052B-4E1E-BDB5-5B73A1D91368"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Terrain/GameViewController.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "52"
-            endingLineNumber = "52"
-            landmarkName = "viewDidLoad()"
-            landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "81BADE4A-052B-4E1E-BDB5-5B73A1D91368 - b7d3677541e6ef6"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "(3) suspend resume partial function for closure #1 @Sendable () async -&gt; () in Terrain.GameViewController.viewDidLoad() -&gt; ()"
-                  moduleName = "Terrain"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/richard/Documents/development/Terrain/Terrain/GameViewController.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "52"
-                  endingLineNumber = "52"
-                  offsetFromSymbolStart = "336">
-               </Location>
-               <Location
-                  uuid = "81BADE4A-052B-4E1E-BDB5-5B73A1D91368 - b7d3677541e6ef6"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "(3) suspend resume partial function for closure #1 @Sendable () async -&gt; () in Terrain.GameViewController.viewDidLoad() -&gt; ()"
-                  moduleName = "Terrain"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/richard/Documents/development/Terrain/Terrain/GameViewController.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "52"
-                  endingLineNumber = "52"
-                  offsetFromSymbolStart = "624">
-               </Location>
-               <Location
-                  uuid = "81BADE4A-052B-4E1E-BDB5-5B73A1D91368 - c0b42021210a8cf5"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "(4) suspend resume partial function for closure #1 @Sendable () async -&gt; () in Terrain.GameViewController.viewDidLoad() -&gt; ()"
-                  moduleName = "Terrain"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/richard/Documents/development/Terrain/Terrain/GameViewController.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "52"
-                  endingLineNumber = "52"
-                  offsetFromSymbolStart = "312">
-               </Location>
-               <Location
-                  uuid = "81BADE4A-052B-4E1E-BDB5-5B73A1D91368 - c0b42021210a8cf5"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "(4) suspend resume partial function for closure #1 @Sendable () async -&gt; () in Terrain.GameViewController.viewDidLoad() -&gt; ()"
-                  moduleName = "Terrain"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/richard/Documents/development/Terrain/Terrain/GameViewController.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "52"
-                  endingLineNumber = "52"
-                  offsetFromSymbolStart = "600">
-               </Location>
-            </Locations>
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "9E48AB05-C9C0-4293-8493-030624FAE0D5"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "../Http/Http/Http.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "108"
-            endingLineNumber = "108"
-            landmarkName = "parseData(_:)"
+            startingLineNumber = "84"
+            endingLineNumber = "84"
+            landmarkName = "lookAt(offset:target:up:)"
             landmarkType = "9">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "EA44622B-D573-401D-898E-6475D101F70E"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Terrain/GameViewController.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "132"
+            endingLineNumber = "132"
+            landmarkName = "GameViewController"
+            landmarkType = "3">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "87CD9178-E27B-41C9-ADDC-814DF752267F"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Terrain/World.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "139"
+            endingLineNumber = "139"
+            landmarkName = "setTileGridOffsets()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "2E90120C-DA78-4A4D-91F0-2BE83F8A2AE7"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Terrain/World.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "113"
+            endingLineNumber = "113"
+            landmarkName = "setTileGridOffsets()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "748D4082-1A04-4A73-9D15-1DA7D837D93E"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Terrain/World.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "59"
+            endingLineNumber = "59"
+            landmarkName = "loadTiles(x:z:dimension:renderer:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "748D4082-1A04-4A73-9D15-1DA7D837D93E - 730527ec0dbe1d23"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(1) suspend resume partial function for Terrain.World.loadTiles(x: Swift.Int, z: Swift.Int, dimension: Swift.Int, renderer: Terrain.Renderer, scale: Swift.Float) async -&gt; ()"
+                  moduleName = "Terrain"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/richard/Documents/development/Terrain/Terrain/World.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "60"
+                  endingLineNumber = "60"
+                  offsetFromSymbolStart = "1232">
+               </Location>
+               <Location
+                  uuid = "748D4082-1A04-4A73-9D15-1DA7D837D93E - 3bd78e043bc71125"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(3) suspend resume partial function for Terrain.World.loadTiles(x: Swift.Int, z: Swift.Int, dimension: Swift.Int, renderer: Terrain.Renderer, scale: Swift.Float) async -&gt; ()"
+                  moduleName = "Terrain"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/richard/Documents/development/Terrain/Terrain/World.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "60"
+                  endingLineNumber = "60"
+                  offsetFromSymbolStart = "1640">
+               </Location>
+            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

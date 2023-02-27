@@ -10,61 +10,62 @@ import simd
 import Metal
 
 class TriangleMesh {
-    
     var vertices: MTLBuffer?
     
     var numVertices: Int = 0
     
     init(
       device: MTLDevice,
-      points: [Double],
-      normals: [Double],
+      points: [Float],
+      normals: [Float],
       indices: [Int]
       // shader: TriangleMeshShader,
     ) {
         self.createBuffer(device: device, normals: normals, points: points, indices: indices);
     }
 
-    func draw(renderEncoder: MTLRenderCommandEncoder) {
-        renderEncoder.setVertexBuffer(self.vertices, offset: 0, index: 0)
+    func draw(renderEncoder: MTLRenderCommandEncoder, modelMatrix: matrix_float4x4) {
+        renderEncoder.setVertexBuffer(self.vertices, offset: 0, index: BufferIndex.meshPositions.rawValue)
 
-        renderEncoder.drawPrimitives(type: .triangle, vertexStart: 0, vertexCount: numVertices,
-                                     instanceCount: self.numVertices)
+        var modelMatrixCopy = modelMatrix
+        renderEncoder.setVertexBytes(&modelMatrixCopy, length: MemoryLayout<matrix_float4x4>.size, index: BufferIndex.modelMatrix.rawValue)
+        renderEncoder.drawPrimitives(type: .triangle, vertexStart: 0, vertexCount: self.numVertices)
     }
 
     func formatData(
-      normals: [Double],
-      points: [Double],
-      indices: [Int]
-    ) -> [Double] {
-      // Buffer for the vertex data (position, texture, normal, tangent)
-      var buffer: [Double] = [];
+        normals: [Float],
+        points: [Float],
+        indices: [Int]
+    ) -> [simd_float1] {
+        // Buffer for the vertex data (position, texture, normal, tangent)
+        var buffer: [simd_float1] = [];
 
 //      const edge1 = vec3.create();
 //      const edge2 = vec3.create();
 //      const deltaUV1 = vec2.create();
 //      const deltaUV2 = vec2.create();
 
-        for i in stride(from: 0, to: indices.count, by: 3) {
-          var pointCoords: [simd_double3] = [];
-          var textureCoords: [simd_double2] = [];
-          var vertexNormals: [simd_double3] = [];
+        let max = indices.count
+        for i in stride(from: 0, to: max, by: 3) {
+          var pointCoords: [simd_float3] = [];
+          var textureCoords: [simd_float2] = [];
+          var vertexNormals: [simd_float3] = [];
 
           for j in stride(from: 0, to: 3, by: 1) {
               let index = indices[i + j];
 
-              pointCoords.append(simd_make_double3(
+              pointCoords.append(simd_make_float3(
                 points[index * 5 + 0],
                 points[index * 5 + 1],
                 points[index * 5 + 2]
               ))
     
-              textureCoords.append(simd_make_double2(
+              textureCoords.append(simd_make_float2(
                 points[index * 5 + 3],
                 points[index * 5 + 4]
               ))
     
-              vertexNormals.append(simd_make_double3(
+              vertexNormals.append(simd_make_float3(
                 normals[index * 3 + 0],
                 normals[index * 3 + 1],
                 normals[index * 3 + 2]
@@ -93,15 +94,17 @@ class TriangleMesh {
           // )
 
               buffer.append(pointCoords[j].x);
-              buffer.append(pointCoords[j].y);
               buffer.append(pointCoords[j].z);
+              buffer.append(pointCoords[j].y);
+              buffer.append(0);
 
               buffer.append(textureCoords[j].x);
               buffer.append(textureCoords[j].y);
 
               buffer.append(vertexNormals[j].x);
-              buffer.append(vertexNormals[j].y);
               buffer.append(vertexNormals[j].z);
+              buffer.append(vertexNormals[j].y);
+              buffer.append(0);
 
 //          buffer.append(tangent[0]);
 //          buffer.append(tangent[1]);
@@ -120,14 +123,40 @@ class TriangleMesh {
 
     func createBuffer(
       device: MTLDevice,
-      normals: [Double],
-      points: [Double],
+      normals: [Float],
+      points: [Float],
       indices: [Int]
       // shader: TriangleMeshShader,
     ) {
         let data = self.formatData(normals: normals, points: points, indices: indices)
-
-        let dataSize = data.count * MemoryLayout.size(ofValue: data[0])
+//        let data: [simd_float1] = [
+//            -100.0, 100.0, 0.0, 0,
+//             1.0, 1.0,
+////             1, 1, 1,
+//
+//             -100.0, -100.0, 0.0, 0,
+//             0, 1.0,
+////              1, 1, 1,
+//
+//             100.0, 100.0, 0.0, 0,
+//             1.0, 0,
+////              1, 1, 1,
+//
+//             100.0, 100.0, 0.0, 0,
+//             1.0, 0,
+////              1, 1, 1,
+//
+//             -100.0, -100.0, 0.0, 0,
+//             0.0, 1.0,
+////              1, 1, 1,
+//
+//             100.0, -100.0, 0.0, 0,
+//             0.0, 0.0
+////              1, 1, 1,
+//        ]
+//        self.numVertices = 6;
+        
+        let dataSize = data.count * MemoryLayout.size(ofValue: data[0]) * 10
         self.vertices = device.makeBuffer(bytes: data, length: dataSize, options: [])!
 
 //        if (buf = ) {

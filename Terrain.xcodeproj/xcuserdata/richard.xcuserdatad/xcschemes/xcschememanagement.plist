@@ -28,7 +28,25 @@
 		<key>Terrain.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>1</integer>
+			<integer>0</integer>
+		</dict>
+	</dict>
+	<key>SuppressBuildableAutocreation</key>
+	<dict>
+		<key>79E2C14329A7EC6C006F6BD9</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>79E2C15B29A7EC6E006F6BD9</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>79E2C16529A7EC6E006F6BD9</key>
+		<dict>
+			<key>primary</key>
+			<true/>
 		</dict>
 	</dict>
 </dict>

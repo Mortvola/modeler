@@ -27,9 +27,9 @@ enum Configuration: String {
     static var baseURL: String {
         switch(Configuration.current) {
         case .debug, .release:
-            return "http://192.168.1.7:3333"
+            return "http://127.0.0.1:3333"
         case .production:
-            return "http://192.168.1.7:3333"
+            return "http://127.0.0.1:3333"
         }
     }
 }

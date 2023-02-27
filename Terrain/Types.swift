@@ -19,14 +19,14 @@ struct LatLng {
 
 struct ObjectProps: Decodable {
   var type: String
-  var points: [Double]
-  var normals: [Double]
+  var points: [Float]
+  var normals: [Float]
   var indices: [Int]
 };
 
 struct TerrainTileProps: Decodable {
-  var xDimension: Double
-  var yDimension: Double
-  var ele: [[Double]]
+  var xDimension: Float
+  var yDimension: Float
+  var ele: [[Float]]
   var objects: [ObjectProps]
 };
