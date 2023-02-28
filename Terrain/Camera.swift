@@ -106,7 +106,7 @@ class Camera {
     func updateViewDimensions(width: Float, height: Float) {
         /// Respond to drawable size or orientation changes here
         
-        let aspect = Float(width) / Float(height)
-        self.projectionMatrix = matrix_perspective_left_hand(fovyRadians: degreesToRadians(45), aspect: aspect, nearZ: 1, farZ: 12000.0)
+        let aspect = Float(height) / Float(width)
+        self.projectionMatrix = matrix_perspective_left_hand(fovyRadians: degreesToRadians(45), aspect: aspect, nearZ: 1, farZ: 16000.0)
     }
 }

@@ -19,6 +19,8 @@
 		7947B42D29AD32A400981301 /* LineMaterial.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7947B42C29AD32A400981301 /* LineMaterial.swift */; };
 		7947B42F29AD349100981301 /* Material.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7947B42E29AD349100981301 /* Material.swift */; };
 		7947B43129AD375F00981301 /* Errors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7947B43029AD375F00981301 /* Errors.swift */; };
+		794B9A2F29AD7DA0000B2EAF /* Skybox.swift in Sources */ = {isa = PBXBuildFile; fileRef = 794B9A2E29AD7D9F000B2EAF /* Skybox.swift */; };
+		794B9A3329ADACD4000B2EAF /* SkyboxShaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = 794B9A3229ADACD4000B2EAF /* SkyboxShaders.metal */; };
 		79A1645C29A7F87C001A27F0 /* Configuration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79A1645B29A7F87C001A27F0 /* Configuration.swift */; };
 		79A1645E29A7F92B001A27F0 /* Http.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 79A1645729A7F7CD001A27F0 /* Http.framework */; };
 		79A1645F29A7F92B001A27F0 /* Http.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 79A1645729A7F7CD001A27F0 /* Http.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -95,6 +97,8 @@
 		7947B42C29AD32A400981301 /* LineMaterial.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LineMaterial.swift; sourceTree = "<group>"; };
 		7947B42E29AD349100981301 /* Material.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Material.swift; sourceTree = "<group>"; };
 		7947B43029AD375F00981301 /* Errors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Errors.swift; sourceTree = "<group>"; };
+		794B9A2E29AD7D9F000B2EAF /* Skybox.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Skybox.swift; sourceTree = "<group>"; };
+		794B9A3229ADACD4000B2EAF /* SkyboxShaders.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = SkyboxShaders.metal; sourceTree = "<group>"; };
 		79A1645129A7F7CD001A27F0 /* Http.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Http.xcodeproj; path = ../Http/Http.xcodeproj; sourceTree = "<group>"; };
 		79A1645B29A7F87C001A27F0 /* Configuration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Configuration.swift; sourceTree = "<group>"; };
 		79A1646529A800FA001A27F0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
@@ -225,12 +229,14 @@
 				7947B42929AD327C00981301 /* Materials */,
 				7947B41529ABAC1D00981301 /* Math */,
 				7947B40F29AA6E6D00981301 /* TerrainTile.swift */,
+				794B9A2E29AD7D9F000B2EAF /* Skybox.swift */,
 				79A1646829A80319001A27F0 /* Utilities.swift */,
 				79A1646629A801D0001A27F0 /* Types.swift */,
 				7947B42629AD229900981301 /* RenderObjects */,
 				79E2C15029A7EC6C006F6BD9 /* Main.storyboard */,
 				79E2C14929A7EC6C006F6BD9 /* ShaderTypes.h */,
 				79E2C14E29A7EC6C006F6BD9 /* Shaders.metal */,
+				794B9A3229ADACD4000B2EAF /* SkyboxShaders.metal */,
 				79E2C15329A7EC6D006F6BD9 /* Assets.xcassets */,
 				79E2C15529A7EC6D006F6BD9 /* LaunchScreen.storyboard */,
 			);
@@ -413,6 +419,7 @@
 				7947B42F29AD349100981301 /* Material.swift in Sources */,
 				7947B41029AA6E6D00981301 /* TerrainTile.swift in Sources */,
 				79E2C14F29A7EC6C006F6BD9 /* Shaders.metal in Sources */,
+				794B9A2F29AD7DA0000B2EAF /* Skybox.swift in Sources */,
 				794545D029A92A85003E7913 /* Math.swift in Sources */,
 				7947B42B29AD329500981301 /* TerrainMaterial.swift in Sources */,
 				79A1645C29A7F87C001A27F0 /* Configuration.swift in Sources */,
@@ -426,6 +433,7 @@
 				79E2C14D29A7EC6C006F6BD9 /* GameViewController.swift in Sources */,
 				7947B41929ABB9E800981301 /* Camera.swift in Sources */,
 				7947B43129AD375F00981301 /* Errors.swift in Sources */,
+				794B9A3329ADACD4000B2EAF /* SkyboxShaders.metal in Sources */,
 				7947B41729ABAC3000981301 /* Vec3.swift in Sources */,
 				7947B42129AD222600981301 /* RenderObject.swift in Sources */,
 				79E2C14829A7EC6C006F6BD9 /* AppDelegate.swift in Sources */,

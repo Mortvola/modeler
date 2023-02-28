@@ -108,4 +108,3 @@ vertex VertexOut lineVertexShader(
     
     return vertexOut;
 }
-

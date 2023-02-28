@@ -9,4 +9,6 @@ import Foundation
 
 enum Errors: Error {
     case invalidMaterial
+    case downloadFailed
+    case depthStateCreationFailed
 }

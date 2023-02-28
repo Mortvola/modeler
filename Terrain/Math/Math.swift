@@ -53,7 +53,7 @@ func matrix4x4_scale(_ scaleX: Float, _ scaleY: Float, _ scaleZ: Float) -> matri
 
 func matrix_perspective_left_hand(fovyRadians fovy: Float, aspect: Float, nearZ: Float, farZ: Float) -> matrix_float4x4 {
     let ys = 1 / tanf(fovy * 0.5);
-    let xs = ys / aspect;
+    let xs = ys * aspect;
     let zs = farZ / (farZ - nearZ);
     return matrix_float4x4(columns: (vector_float4(xs, 0, 0, 0),
                                      vector_float4(0, ys, 0, 0),

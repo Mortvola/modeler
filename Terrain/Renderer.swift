@@ -40,6 +40,8 @@ class Renderer: NSObject, MTKViewDelegate {
     
     let world = World()
     
+    var skybox: Skybox?
+    
     var camera: Camera
     
     init?(metalKitView: MTKView) {
@@ -66,13 +68,17 @@ class Renderer: NSObject, MTKViewDelegate {
         let depthStateDescriptor = MTLDepthStencilDescriptor()
         depthStateDescriptor.depthCompareFunction = .less
         depthStateDescriptor.isDepthWriteEnabled = true
+        
         guard let state = device.makeDepthStencilState(descriptor:depthStateDescriptor) else { return nil }
+        
         self.depthState = state
         
         super.init()
     }
 
     func load(lat: Double, lng: Double, dimension: Int) async throws {
+        try await self.skybox = Skybox(device: self.device, view: self.view)
+        
         let latLng = LatLng(lat, lng)
         let (x, z) = latLngToTerrainTile(latLng.lat, latLng.lng, dimension);
         
@@ -200,16 +206,16 @@ class Renderer: NSObject, MTKViewDelegate {
                     
                     renderEncoder.pushDebugGroup("Draw Box")
                     
-                    renderEncoder.setCullMode(.back)
-                    
                     renderEncoder.setFrontFacing(.counterClockwise)
-                    
+                    renderEncoder.setCullMode(.back)
                     renderEncoder.setDepthStencilState(self.depthState)
                     
                     renderEncoder.setVertexBuffer(self.dynamicUniformBuffer, offset: self.uniformBufferOffset, index: BufferIndex.uniforms.rawValue)
 
                     if self.world.terrainLoaded {
                         MaterialManager.shared.render(renderEncoder: renderEncoder)
+
+                        self.skybox?.draw(renderEncoder: renderEncoder)
                     }
                     
                     renderEncoder.popDebugGroup()
