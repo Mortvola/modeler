@@ -64,7 +64,7 @@ class GameViewController: UIViewController {
             let point = touch.preciseLocation(in: view)
             let prevPoint = touch.precisePreviousLocation(in: view)
 
-            let xDelta = -Float(point.x - prevPoint.x);
+            let xDelta = Float(point.x - prevPoint.x);
             let yDelta = Float(point.y - prevPoint.y);
             let sensitivity: Float = 0.1;
 
@@ -123,7 +123,7 @@ class GameViewController: UIViewController {
         }
 
         if keyPressed {
-            renderer.camera.setVelocity(
+            renderer.camera.setMoveDirection(
                 x: Float(self.right - self.left),
                 y: Float(self.up - self.down),
                 z: Float(self.forward - self.backward)
@@ -174,7 +174,7 @@ class GameViewController: UIViewController {
         }
 
         if keyReleased {
-            renderer.camera.setVelocity(
+            renderer.camera.setMoveDirection(
                 x: Float(self.right - self.left),
                 y: Float(self.up - self.down),
                 z: Float(self.forward - self.backward)

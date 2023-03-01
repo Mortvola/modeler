@@ -22,7 +22,7 @@ class Camera {
     
     var moveDirection = vec3(0.0, 0.0, 0.0)
     
-    var velocity: Float = 1.1176 * 10; // meters per second
+    let velocity: Float = 1.1176 * 10; // meters per second
 
     var projectionMatrix: matrix_float4x4 = matrix_float4x4()
     
@@ -80,7 +80,7 @@ class Camera {
 //        print("t / t.w: \(t.x / t.w), \(t.y / t.w), \(t.z / t.w)")
 //    }
     
-    func setVelocity(x: Float, y: Float, z: Float) {
+    func setMoveDirection(x: Float, y: Float, z: Float) {
         let direction = vec3(x, y, z)
     
         let lengthSquared = direction.lengthSquared()

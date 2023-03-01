@@ -117,9 +117,8 @@ class Renderer: NSObject, MTKViewDelegate {
         self.latitude = latitude
         self.day = calendar.ordinality(of: Calendar.Component.day, in: Calendar.Component.year, for: Date.now) ?? 0
         self.hour = 10.0
-        let sunAngles = getSunAngles(day: self.day, hour: Double(self.hour), latitude: self.latitude);
-        self.lightVector = getLightVector(elevationAngle: sunAngles.elevationAngle, azimuth: sunAngles.azimuth);
-//        print("light vector: \(self.lightVector)")
+        
+        updateTimeOfDay(elapsedTime: 0)
     }
     
     func getCameraOffset(latLng: LatLng, latLngCenter: LatLng) -> (Float, Float) {
@@ -189,9 +188,7 @@ class Renderer: NSObject, MTKViewDelegate {
         self.hour += Float((1 / 10.0) * elapsedTime)
         self.hour.formTruncatingRemainder(dividingBy: 24.0)
 
-        let sunAngles = getSunAngles(day: self.day, hour: Double(self.hour), latitude: self.latitude);
-        self.lightVector = getLightVector(elevationAngle: sunAngles.elevationAngle, azimuth: sunAngles.azimuth);
-//        print("light vector: \(self.lightVector)")
+        self.lightVector = getSunLightVector(day: self.day, hour: Double(self.hour), latitude: self.latitude)
     }
 
     private func updateGameState() {

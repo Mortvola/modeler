@@ -13,7 +13,7 @@ extension vec3 {
     func rotateX(_ radians: Float) -> vec3 {
         vec3 (
             self.x,
-            self.y * cos(radians) + self.z * sin(radians),
+            self.y * cos(radians) - self.z * sin(radians),
             self.y * sin(radians) + self.z * cos(radians)
         )
     }
@@ -22,13 +22,13 @@ extension vec3 {
         vec3 (
             self.z * sin(radians) + self.x * cos(radians),
             self.y,
-            self.z * cos(radians) + self.x * sin(radians)
+            self.z * cos(radians) - self.x * sin(radians)
         )
     }
     
     func rotateZ(_ radians: Float) -> vec3 {
         vec3 (
-            self.x * cos(radians) + self.y * sin(radians),
+            self.x * cos(radians) - self.y * sin(radians),
             self.x * sin(radians) + self.y * cos(radians),
             self.z
         )
