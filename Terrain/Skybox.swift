@@ -11,8 +11,8 @@ import MetalKit
 import Http
 
 class Skybox {
-    var texture: MTLTexture
-    var samplerState: MTLSamplerState
+    let texture: MTLTexture
+    let samplerState: MTLSamplerState
     let vertices: MTLBuffer
     var numVertices: Int = 0
     let pipeline: MTLRenderPipelineState
@@ -31,7 +31,6 @@ class Skybox {
         
         let loader = MTKTextureLoader(device: device)
         
-        
         guard let data = await Http.downloadFile(path: "/skybox.png", mimeType: "image/png") else {
             throw Errors.downloadFailed
         }
@@ -49,7 +48,7 @@ class Skybox {
         self.depthState = state
     }
     
-    static func buildSamplerState(device: MTLDevice) -> MTLSamplerState {
+    private static func buildSamplerState(device: MTLDevice) -> MTLSamplerState {
         let samplerDescriptor = MTLSamplerDescriptor()
         samplerDescriptor.normalizedCoordinates = true
         samplerDescriptor.minFilter = .linear

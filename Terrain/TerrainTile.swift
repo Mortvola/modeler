@@ -35,10 +35,10 @@ class TerrainTile {
                 self.yDimension = data.yDimension
                 self.elevation = data.ele
 
-                try data.objects.forEach { object in
+                for object in data.objects {
                     switch (object.type) {
                     case "triangles":
-                        let material = try MaterialManager.shared.addMaterial(device: renderer.device, view: renderer.view, name: .terrain)
+                        let material = try await MaterialManager.shared.addMaterial(device: renderer.device, view: renderer.view, name: .terrain)
                         let object: RenderObject = TriangleMesh(device: renderer.device, points: object.points, normals: object.normals, indices: object.indices, model: self)
                         
                         material.objects.append(object)
@@ -46,7 +46,7 @@ class TerrainTile {
                         break;
                         
                     case "line":
-                        let material = try MaterialManager.shared.addMaterial(device: renderer.device, view: renderer.view, name: .line)
+                        let material = try await MaterialManager.shared.addMaterial(device: renderer.device, view: renderer.view, name: .line)
                         
                         let object: RenderObject = Line(device: renderer.device, points: object.points, model: self)
 

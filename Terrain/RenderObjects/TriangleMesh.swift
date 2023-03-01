@@ -11,7 +11,8 @@ import Metal
 
 class TriangleMesh: RenderObject {
     var vertices: MTLBuffer?
-    
+    var normals: MTLBuffer?
+
     var numVertices: Int = 0
     
     let model: TerrainTile
@@ -33,10 +34,22 @@ class TriangleMesh: RenderObject {
     }
 
     func draw(renderEncoder: MTLRenderCommandEncoder, modelMatrix: matrix_float4x4) {
+        var normalMatrix = matrix_float3x3(columns: (
+            vector_float3(modelMatrix[0][0], modelMatrix[0][1], modelMatrix[0][2]),
+            vector_float3(modelMatrix[1][0], modelMatrix[1][1], modelMatrix[1][2]),
+           vector_float3(modelMatrix[2][0], modelMatrix[2][1], modelMatrix[2][2])
+        ));
+        
+        normalMatrix = normalMatrix.inverse.transpose;
+
         renderEncoder.setVertexBuffer(self.vertices, offset: 0, index: BufferIndex.meshPositions.rawValue)
+        renderEncoder.setVertexBuffer(self.normals, offset: 0, index: BufferIndex.normals.rawValue)
 
         var modelMatrixCopy = modelMatrix
         renderEncoder.setVertexBytes(&modelMatrixCopy, length: MemoryLayout<matrix_float4x4>.size, index: BufferIndex.modelMatrix.rawValue)
+
+        renderEncoder.setVertexBytes(&normalMatrix, length: MemoryLayout<matrix_float3x3>.size, index: BufferIndex.normalMatrix.rawValue)
+
         renderEncoder.drawPrimitives(type: .triangle, vertexStart: 0, vertexCount: self.numVertices)
     }
 
@@ -44,9 +57,10 @@ class TriangleMesh: RenderObject {
         normals: [Float],
         points: [Float],
         indices: [Int]
-    ) -> [simd_float1] {
+    ) -> ([simd_float1], [simd_float1]) {
         // Buffer for the vertex data (position, texture, normal, tangent)
         var buffer: [simd_float1] = [];
+        var lighting: [simd_float1] = [];
 
 //      const edge1 = vec3.create();
 //      const edge2 = vec3.create();
@@ -81,19 +95,19 @@ class TriangleMesh: RenderObject {
           }
 
           for j in stride(from: 0, to: 3, by: 1) {
-//          vec3.subtract(edge1, pointCoords[j + 0], pointCoords[(j + 1) % 3]);
-//          vec3.subtract(edge2, pointCoords[j + 0], pointCoords[(j + 2) % 3]);
-//          vec2.subtract(deltaUV1, textureCoords[j + 0], textureCoords[(j + 1) % 3]);
-//          vec2.subtract(deltaUV2, textureCoords[j + 0], textureCoords[(j + 2) % 3]);
-//
-//          // inverse of the matrix determinant
-//          const f = 1.0 / (deltaUV1[0] * deltaUV2[1] - deltaUV2[0] * deltaUV1[1]);
-//
-//          const tangent = vec3.fromValues(
-//            f * (deltaUV2[1] * edge1[0] - deltaUV1[1] * edge2[0]),
-//            f * (deltaUV2[1] * edge1[1] - deltaUV1[1] * edge2[1]),
-//            f * (deltaUV2[1] * edge1[2] - deltaUV1[1] * edge2[2]),
-//          )
+              let edge1 = pointCoords[j + 0].subtract(pointCoords[(j + 1) % 3])
+              let edge2 = pointCoords[j + 0].subtract(pointCoords[(j + 2) % 3])
+              let deltaUV1 = textureCoords[j + 0].subtract(textureCoords[(j + 1) % 3])
+              let deltaUV2 = textureCoords[j + 0].subtract(textureCoords[(j + 2) % 3])
+
+              // inverse of the matrix determinant
+              let f = 1.0 / (deltaUV1[0] * deltaUV2[1] - deltaUV2[0] * deltaUV1[1]);
+
+              let tangent = vec3(
+                f * (deltaUV2[1] * edge1[0] - deltaUV1[1] * edge2[0]),
+                f * (deltaUV2[1] * edge1[1] - deltaUV1[1] * edge2[1]),
+                f * (deltaUV2[1] * edge1[2] - deltaUV1[1] * edge2[2])
+              )
 
           // const bitangent = vec3.fromValues(
           //   f * (deltaUV1[0] * edge2[0] - deltaUV2[0] * edge1[0]),
@@ -109,14 +123,15 @@ class TriangleMesh: RenderObject {
               buffer.append(textureCoords[j].x);
               buffer.append(textureCoords[j].y);
 
-              buffer.append(vertexNormals[j].x);
-              buffer.append(vertexNormals[j].z);
-              buffer.append(vertexNormals[j].y);
-              buffer.append(0);
+              lighting.append(vertexNormals[j].x);
+              lighting.append(vertexNormals[j].z);
+              lighting.append(vertexNormals[j].y);
+              lighting.append(0);
 
-//          buffer.append(tangent[0]);
-//          buffer.append(tangent[1]);
-//          buffer.append(tangent[2]);
+              lighting.append(tangent[0]);
+              lighting.append(tangent[1]);
+              lighting.append(tangent[2]);
+              lighting.append(0);
 
           // buffer.push(bitangent[0]);
           // buffer.push(bitangent[1]);
@@ -126,7 +141,7 @@ class TriangleMesh: RenderObject {
         }
       }
 
-      return buffer;
+      return (buffer, lighting);
     }
 
     func createBuffer(
@@ -136,9 +151,12 @@ class TriangleMesh: RenderObject {
       indices: [Int]
       // shader: TriangleMeshShader,
     ) {
-        let data = self.formatData(normals: normals, points: points, indices: indices)
+        let (points, normals) = self.formatData(normals: normals, points: points, indices: indices)
         
-        let dataSize = data.count * MemoryLayout.size(ofValue: data[0]) * 10
-        self.vertices = device.makeBuffer(bytes: data, length: dataSize, options: [])!
+        var dataSize = points.count * MemoryLayout.size(ofValue: points[0]) * 6
+        self.vertices = device.makeBuffer(bytes: points, length: dataSize, options: [])!
+
+        dataSize = normals.count * MemoryLayout.size(ofValue: normals[0]) * 8
+        self.normals = device.makeBuffer(bytes: normals, length: dataSize, options: [])!
     }
 }

@@ -18,6 +18,10 @@ class LineMaterial: Material {
         self.pipeline = try LineMaterial.buildPipeline(device: device, metalKitView: view, vertexDescriptor: vertexDescriptor)
     }
 
+    func prepare(renderEncoder: MTLRenderCommandEncoder) {
+        renderEncoder.setRenderPipelineState(self.getPipeline())
+    }
+
     func getPipeline() -> MTLRenderPipelineState {
         self.pipeline
     }

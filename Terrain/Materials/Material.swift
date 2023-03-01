@@ -10,4 +10,6 @@ import Metal
 
 protocol Material {
     func getPipeline() -> MTLRenderPipelineState
+    
+    func prepare(renderEncoder: MTLRenderCommandEncoder)
 }

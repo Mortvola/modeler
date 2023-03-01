@@ -28,7 +28,7 @@ class MaterialManager {
 
     var materials: [MaterialName:MaterialEntry] = [:]
     
-    func addMaterial(device: MTLDevice, view: MTKView, name: MaterialName) throws -> MaterialEntry {
+    func addMaterial(device: MTLDevice, view: MTKView, name: MaterialName) async throws -> MaterialEntry {
         if let entry = self.materials[name] {
             return entry
         }
@@ -37,7 +37,7 @@ class MaterialManager {
         
         switch (name) {
         case .terrain:
-            material = try TerrainMaterial(device: device, view: view)
+            material = try await TerrainMaterial(device: device, view: view)
             break;
             
         case .line:
@@ -57,7 +57,7 @@ class MaterialManager {
     
     func render(renderEncoder: MTLRenderCommandEncoder) {
         self.materials.forEach { key, entry in
-            renderEncoder.setRenderPipelineState(entry.material.getPipeline())
+            entry.material.prepare(renderEncoder: renderEncoder)
             
             entry.objects.forEach { object in
                 object.draw(renderEncoder: renderEncoder, modelMatrix: object.modelMatrix())

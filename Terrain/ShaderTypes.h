@@ -24,8 +24,10 @@ typedef NSInteger EnumBackingType;
 typedef NS_ENUM(EnumBackingType, BufferIndex)
 {
     BufferIndexMeshPositions = 0,
-    BufferIndexUniforms = 1,
-    BufferIndexModelMatrix = 2
+    BufferIndexNormals = 1,
+    BufferIndexUniforms = 2,
+    BufferIndexModelMatrix = 3,
+    BufferIndexNormalMatrix = 4
 };
 
 typedef NS_ENUM(EnumBackingType, VertexAttribute)
@@ -33,11 +35,13 @@ typedef NS_ENUM(EnumBackingType, VertexAttribute)
     VertexAttributePosition = 0,
     VertexAttributeTexcoord = 1,
     VertexAttributeNormal = 2,
+    VertexAttributeTangent = 3,
 };
 
 typedef NS_ENUM(EnumBackingType, TextureIndex)
 {
     TextureIndexColor = 0,
+    TextureIndexNormals = 1,
 };
 
 typedef NS_ENUM(EnumBackingType, SamplerIndex)
