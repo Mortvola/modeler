@@ -41,9 +41,6 @@ class TerrainMaterial: Material {
     }
     
     class func buildVertexDescriptor() -> MTLVertexDescriptor {
-        // Create a Metal vertex descriptor specifying how vertices will by laid out for input into our render
-        //   pipeline and how we'll layout our Model IO vertices
-        
         let mtlVertexDescriptor = MTLVertexDescriptor()
         
         // Buffer 1

@@ -22,6 +22,8 @@ class TextureManager {
             return texture
         }
 
+        // Texture was not found in the dictionary.
+        // Download the texture and add it to the dictionary.
         let loader = MTKTextureLoader(device: device)
             
         guard let data = await Http.downloadFile(path: path, mimeType: "image/jpg") else {

@@ -15,14 +15,14 @@ class TriangleMesh: RenderObject {
 
     var numVertices: Int = 0
     
-    let model: TerrainTile
+    let model: Model
     
     init(
       device: MTLDevice,
       points: [Float],
       normals: [Float],
       indices: [Int],
-      model: TerrainTile
+      model: Model
       // shader: TriangleMeshShader,
     ) {
         self.model = model
@@ -78,8 +78,8 @@ class TriangleMesh: RenderObject {
 
               pointCoords.append(simd_make_float3(
                 points[index * 5 + 0],
-                points[index * 5 + 1],
-                points[index * 5 + 2]
+                points[index * 5 + 2],  // Swap Y and Z for now
+                points[index * 5 + 1]
               ))
     
               textureCoords.append(simd_make_float2(
@@ -89,8 +89,8 @@ class TriangleMesh: RenderObject {
     
               vertexNormals.append(simd_make_float3(
                 normals[index * 3 + 0],
-                normals[index * 3 + 1],
-                normals[index * 3 + 2]
+                normals[index * 3 + 2],  // Swap Y and Z for now
+                normals[index * 3 + 1]
               ))
           }
 
@@ -109,23 +109,23 @@ class TriangleMesh: RenderObject {
                 f * (deltaUV2[1] * edge1[2] - deltaUV1[1] * edge2[2])
               )
 
-          // const bitangent = vec3.fromValues(
-          //   f * (deltaUV1[0] * edge2[0] - deltaUV2[0] * edge1[0]),
-          //   f * (deltaUV1[0] * edge2[1] - deltaUV2[0] * edge1[1]),
-          //   f * (deltaUV1[0] * edge2[2] - deltaUV2[0] * edge1[2]),
-          // )
+//               let bitangent = vec3(
+//                 f * (deltaUV1[0] * edge2[0] - deltaUV2[0] * edge1[0]),
+//                 f * (deltaUV1[0] * edge2[1] - deltaUV2[0] * edge1[1]),
+//                 f * (deltaUV1[0] * edge2[2] - deltaUV2[0] * edge1[2])
+//               )
 
               buffer.append(pointCoords[j].x);
-              buffer.append(pointCoords[j].z);
               buffer.append(pointCoords[j].y);
+              buffer.append(pointCoords[j].z);
               buffer.append(0);
 
               buffer.append(textureCoords[j].x);
               buffer.append(textureCoords[j].y);
 
               lighting.append(vertexNormals[j].x);
-              lighting.append(vertexNormals[j].z);
               lighting.append(vertexNormals[j].y);
+              lighting.append(vertexNormals[j].z);
               lighting.append(0);
 
               lighting.append(tangent[0]);

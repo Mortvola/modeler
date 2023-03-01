@@ -58,7 +58,6 @@ class World {
         setTileGridOffsets();
     }
     
-    
     func loadTile(
         gridX: Int,
         gridZ: Int,
@@ -73,7 +72,7 @@ class World {
             tileGrid[gridZ][gridX].tile = tile;
         }
         else {
-            let tile = TerrainTile(x: x, y: z, dimension: dimension, renderer: renderer)
+            let tile = TerrainTile(x: x, y: z, dimension: dimension, device: renderer.device, view: renderer.view)
             // tile.setScale(scale: self.scale);
             tileDict[dictionaryKey] = tile;
             

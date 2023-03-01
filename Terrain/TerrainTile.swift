@@ -7,22 +7,24 @@
 
 import Foundation
 import Http
+import Metal
+import MetalKit
 
-class TerrainTile {
-    let renderer: Renderer
+class TerrainTile: Model {
+    let device: MTLDevice
+    let view: MTKView
     let x: Int
     let y: Int
     let dimension: Int
     var xDimension: Float = 1.0
     var yDimension: Float = 1.0
     var scale = vec3(1.0, 1.0, 1.0)
-    var translate = vec3(0.0, 0.0, 0.0)
-    var modelMatrix = matrix4x4_identity()
     var elevation: [[Float]] = []
     var objects: [RenderObject] = []
     
-    init(x: Int, y: Int, dimension: Int, renderer: Renderer) {
-        self.renderer = renderer
+    init(x: Int, y: Int, dimension: Int, device: MTLDevice, view: MTKView) {
+        self.device = device
+        self.view = view
         self.x = x;
         self.y = y;
         self.dimension = dimension
@@ -38,17 +40,17 @@ class TerrainTile {
                 for object in data.objects {
                     switch (object.type) {
                     case "triangles":
-                        let material = try await MaterialManager.shared.addMaterial(device: renderer.device, view: renderer.view, name: .terrain)
-                        let object: RenderObject = TriangleMesh(device: renderer.device, points: object.points, normals: object.normals, indices: object.indices, model: self)
+                        let material = try await MaterialManager.shared.addMaterial(device: self.device, view: self.view, name: .terrain)
+                        let object: RenderObject = TriangleMesh(device: self.device, points: object.points, normals: object.normals, indices: object.indices, model: self)
                         
                         material.objects.append(object)
                         self.objects.append(object)
                         break;
                         
                     case "line":
-                        let material = try await MaterialManager.shared.addMaterial(device: renderer.device, view: renderer.view, name: .line)
+                        let material = try await MaterialManager.shared.addMaterial(device: self.device, view: self.view, name: .line)
                         
-                        let object: RenderObject = Line(device: renderer.device, points: object.points, model: self)
+                        let object: RenderObject = Line(device: self.device, points: object.points, model: self)
 
                         material.objects.append(object)
                         self.objects.append(object)
@@ -68,15 +70,6 @@ class TerrainTile {
         //   this.photo.setScale(scale);
         // }
         self.makeModelMatrix();
-    }
-    
-    func setTranslation(x: Float, y: Float, z: Float) {
-        self.translate = vec3(x, y, z);
-        self.makeModelMatrix();
-    }
-    
-    func makeModelMatrix() {
-        self.modelMatrix = matrix4x4_translation(self.translate.x, self.translate.y, self.translate.z)
     }
     
     func getElevation(x: Float, y: Float) -> Float {

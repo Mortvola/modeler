@@ -14,7 +14,7 @@ class Camera {
     
     var pitch: Float = 0.0
     
-    var cameraOffset = vec3(0.0, 2500.0, 0.0)
+    var cameraOffset = vec3(0.0, 0.0, 0.0)
     
     var cameraFront = defaultCameraFront
     

@@ -57,7 +57,7 @@ class Skybox {
         return device.makeSamplerState(descriptor: samplerDescriptor)!
     }
     
-    class func buildVertexDescriptor() -> MTLVertexDescriptor {
+    private static func buildVertexDescriptor() -> MTLVertexDescriptor {
         let vertexDescriptor = MTLVertexDescriptor()
         
         vertexDescriptor.attributes[VertexAttribute.position.rawValue].format = .float3
@@ -69,7 +69,7 @@ class Skybox {
         return vertexDescriptor
     }
     
-    class func buildPipeline(
+    private static func buildPipeline(
         device: MTLDevice,
         metalKitView: MTKView,
         vertexDescriptor: MTLVertexDescriptor

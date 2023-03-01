@@ -87,22 +87,28 @@ class Renderer: NSObject, MTKViewDelegate {
     }
 
     func load(lat: Double, lng: Double, dimension: Int) async throws {
+//        let test = try await TestRect(device: self.device, view: self.view)
+//
+//        test.setTranslation(x: 0, y: 2, z: 10)
+//
+//        self.world.terrainLoaded = true
+        
         try await self.skybox = Skybox(device: self.device, view: self.view)
-        
+
         self.initializeLightVector(latitude: lat)
-        
+
         let latLng = LatLng(lat, lng)
         let (x, z) = latLngToTerrainTile(latLng.lat, latLng.lng, dimension);
-        
+
         let swLatLng = terrainTileToLatLng(Double(x), Double(z), dimension);
         let neLatLng = terrainTileToLatLng(Double(x + 1), Double(z + 1), dimension);
         let latLngCenter = LatLng(
             swLatLng.lat + (neLatLng.lat - swLatLng.lat) / 2,
             swLatLng.lng + (neLatLng.lng - swLatLng.lng) / 2
         )
-        
+
         self.camera.scale = cos(degreesToRadians(Float(latLngCenter.lat)));
-        
+
         try await self.world.loadTiles(x: x, z: z, dimension: dimension, renderer: self)
 
         let cameraOffset = self.getCameraOffset(latLng: latLng, latLngCenter: latLngCenter)
@@ -130,49 +136,6 @@ class Renderer: NSObject, MTKViewDelegate {
         Float(positionMerc.1 - centerMerc.1)
       )
     }
-
-    //    class func buildMesh(device: MTLDevice,
-    //                         mtlVertexDescriptor: MTLVertexDescriptor) throws -> MTKMesh {
-    //        /// Create and condition mesh data to feed into a pipeline using the given vertex descriptor
-    //
-    //        let metalAllocator = MTKMeshBufferAllocator(device: device)
-    //
-    //        let mdlMesh = MDLMesh.newBox(withDimensions: SIMD3<Float>(4, 4, 4),
-    //                                     segments: SIMD3<UInt32>(2, 2, 2),
-    //                                     geometryType: MDLGeometryType.triangles,
-    //                                     inwardNormals:false,
-    //                                     allocator: metalAllocator)
-    //
-    //        let mdlVertexDescriptor = MTKModelIOVertexDescriptorFromMetal(mtlVertexDescriptor)
-    //
-    //        guard let attributes = mdlVertexDescriptor.attributes as? [MDLVertexAttribute] else {
-    //            throw RendererError.badVertexDescriptor
-    //        }
-    //        attributes[VertexAttribute.position.rawValue].name = MDLVertexAttributePosition
-    //        attributes[VertexAttribute.texcoord.rawValue].name = MDLVertexAttributeTextureCoordinate
-    //
-    //        mdlMesh.vertexDescriptor = mdlVertexDescriptor
-    //
-    //        return try MTKMesh(mesh:mdlMesh, device:device)
-    //    }
-    
-//    class func loadTexture(device: MTLDevice,
-//                           textureName: String) throws -> MTLTexture {
-//        /// Load texture data with optimal parameters for sampling
-//
-//        let textureLoader = MTKTextureLoader(device: device)
-//
-//        let textureLoaderOptions = [
-//            MTKTextureLoader.Option.textureUsage: NSNumber(value: MTLTextureUsage.shaderRead.rawValue),
-//            MTKTextureLoader.Option.textureStorageMode: NSNumber(value: MTLStorageMode.`private`.rawValue)
-//        ]
-//
-//        return try textureLoader.newTexture(name: textureName,
-//                                            scaleFactor: 1.0,
-//                                            bundle: nil,
-//                                            options: textureLoaderOptions)
-//
-//    }
     
     private func updateDynamicBufferState() {
         /// Update the state of our uniform buffers before rendering
