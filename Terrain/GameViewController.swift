@@ -65,7 +65,7 @@ class GameViewController: UIViewController {
             let prevPoint = touch.precisePreviousLocation(in: view)
 
             let xDelta = Float(point.x - prevPoint.x);
-            let yDelta = Float(point.y - prevPoint.y);
+            let yDelta = -Float(point.y - prevPoint.y);
             let sensitivity: Float = 0.1;
 
             renderer.camera.updateLookAt(yawChange: xDelta * sensitivity, pitchChange: yDelta * sensitivity);
