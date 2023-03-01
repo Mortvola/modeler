@@ -44,6 +44,16 @@ class Renderer: NSObject, MTKViewDelegate {
     
     var camera: Camera
     
+    var lightVector = vec3(0, -1, 1)
+    
+    var latitude: Double = 42.0
+    
+    var day: Int = 0
+    
+    var hour: Float = 10.0
+    
+    var previousFrameTime: Double?
+    
     init?(metalKitView: MTKView) {
         self.camera = Camera(world: world)
         
@@ -79,6 +89,8 @@ class Renderer: NSObject, MTKViewDelegate {
     func load(lat: Double, lng: Double, dimension: Int) async throws {
         try await self.skybox = Skybox(device: self.device, view: self.view)
         
+        self.initializeLightVector(latitude: lat)
+        
         let latLng = LatLng(lat, lng)
         let (x, z) = latLngToTerrainTile(latLng.lat, latLng.lng, dimension);
         
@@ -98,7 +110,18 @@ class Renderer: NSObject, MTKViewDelegate {
 
         self.camera.cameraOffset = vec3(cameraOffset.0, zOffset, cameraOffset.1)
     }
-
+    
+    func initializeLightVector(latitude: Double) {
+        let calendar = Calendar(identifier: Calendar.Identifier.gregorian)
+        
+        self.latitude = latitude
+        self.day = calendar.ordinality(of: Calendar.Component.day, in: Calendar.Component.year, for: Date.now) ?? 0
+        self.hour = 10.0
+        let sunAngles = getSunAngles(day: self.day, hour: Double(self.hour), latitude: self.latitude);
+        self.lightVector = getLightVector(elevationAngle: sunAngles.elevationAngle, azimuth: sunAngles.azimuth);
+//        print("light vector: \(self.lightVector)")
+    }
+    
     func getCameraOffset(latLng: LatLng, latLngCenter: LatLng) -> (Float, Float) {
         let positionMerc = latLngToMercator(lat: latLng.lat, lng: latLng.lng)
         let centerMerc = latLngToMercator(lat: latLngCenter.lat, lng: latLngCenter.lng)
@@ -134,23 +157,23 @@ class Renderer: NSObject, MTKViewDelegate {
     //        return try MTKMesh(mesh:mdlMesh, device:device)
     //    }
     
-    class func loadTexture(device: MTLDevice,
-                           textureName: String) throws -> MTLTexture {
-        /// Load texture data with optimal parameters for sampling
-        
-        let textureLoader = MTKTextureLoader(device: device)
-        
-        let textureLoaderOptions = [
-            MTKTextureLoader.Option.textureUsage: NSNumber(value: MTLTextureUsage.shaderRead.rawValue),
-            MTKTextureLoader.Option.textureStorageMode: NSNumber(value: MTLStorageMode.`private`.rawValue)
-        ]
-        
-        return try textureLoader.newTexture(name: textureName,
-                                            scaleFactor: 1.0,
-                                            bundle: nil,
-                                            options: textureLoaderOptions)
-        
-    }
+//    class func loadTexture(device: MTLDevice,
+//                           textureName: String) throws -> MTLTexture {
+//        /// Load texture data with optimal parameters for sampling
+//
+//        let textureLoader = MTKTextureLoader(device: device)
+//
+//        let textureLoaderOptions = [
+//            MTKTextureLoader.Option.textureUsage: NSNumber(value: MTLTextureUsage.shaderRead.rawValue),
+//            MTKTextureLoader.Option.textureStorageMode: NSNumber(value: MTLStorageMode.`private`.rawValue)
+//        ]
+//
+//        return try textureLoader.newTexture(name: textureName,
+//                                            scaleFactor: 1.0,
+//                                            bundle: nil,
+//                                            options: textureLoaderOptions)
+//
+//    }
     
     private func updateDynamicBufferState() {
         /// Update the state of our uniform buffers before rendering
@@ -162,13 +185,29 @@ class Renderer: NSObject, MTKViewDelegate {
         self.uniforms = UnsafeMutableRawPointer(self.dynamicUniformBuffer.contents() + self.uniformBufferOffset).bindMemory(to:Uniforms.self, capacity:1)
     }
     
-    private func updateGameState(elapsedTime: Float) {
+    func updateTimeOfDay(elapsedTime: Double) {
+        self.hour += Float((1 / 10.0) * elapsedTime)
+        self.hour.formTruncatingRemainder(dividingBy: 24.0)
+
+        let sunAngles = getSunAngles(day: self.day, hour: Double(self.hour), latitude: self.latitude);
+        self.lightVector = getLightVector(elevationAngle: sunAngles.elevationAngle, azimuth: sunAngles.azimuth);
+//        print("light vector: \(self.lightVector)")
+    }
+
+    private func updateGameState() {
         /// Update any game state before rendering
+
+        let now = ProcessInfo.processInfo.systemUptime
         
-        self.camera.updatePostion(elapsedTime: elapsedTime)
+        if let previousFrameTime = self.previousFrameTime {
+            let elapsedTime = now - previousFrameTime
+            
+            self.camera.updatePostion(elapsedTime: elapsedTime)
+            
+            self.updateTimeOfDay(elapsedTime: elapsedTime)
+        }
         
-        self.uniforms[0].projectionMatrix = self.camera.projectionMatrix
-        self.uniforms[0].viewMatrix = self.camera.getViewMatrix()
+        self.previousFrameTime = now;
     }
     
     func draw(in view: MTKView) {
@@ -190,9 +229,13 @@ class Renderer: NSObject, MTKViewDelegate {
             }
             
             self.updateDynamicBufferState()
+                        
+            self.updateGameState()
             
-            self.updateGameState(elapsedTime: 1 / Float(view.preferredFramesPerSecond))
-            
+            self.uniforms[0].projectionMatrix = self.camera.projectionMatrix
+            self.uniforms[0].viewMatrix = self.camera.getViewMatrix()
+            self.uniforms[0].lightVector = self.lightVector
+
             /// Delay getting the currentRenderPassDescriptor until we absolutely need it to avoid
             ///   holding onto the drawable and blocking the display pipeline any longer than necessary
             if let renderPassDescriptor = view.currentRenderPassDescriptor {

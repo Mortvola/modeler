@@ -79,8 +79,7 @@ vertex VertexOut texturedVertexShader(
     float3 B = cross(N, T);
     
     float3x3 TBN = transpose(float3x3(T, B, N));
-    float3 lightVector = float3(0, -1, 1);
-    vertexOut.tangentLightVector = TBN * normalize(lightVector);
+    vertexOut.tangentLightVector = TBN * normalize(uniforms.lightVector);
 
     vertexOut.texCoords = in.texCoord;
     

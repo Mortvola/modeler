@@ -24,6 +24,7 @@
 		7955184429AED43800FC4F12 /* Vec2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7955184329AED43800FC4F12 /* Vec2.swift */; };
 		7955184829AEDAD600FC4F12 /* TextureManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7955184729AEDAD600FC4F12 /* TextureManager.swift */; };
 		7955184A29AEDAFC00FC4F12 /* LineShaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = 7955184929AEDAFC00FC4F12 /* LineShaders.metal */; };
+		7955184C29AF876800FC4F12 /* Sun.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7955184B29AF876800FC4F12 /* Sun.swift */; };
 		79A1645C29A7F87C001A27F0 /* Configuration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79A1645B29A7F87C001A27F0 /* Configuration.swift */; };
 		79A1645E29A7F92B001A27F0 /* Http.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 79A1645729A7F7CD001A27F0 /* Http.framework */; };
 		79A1645F29A7F92B001A27F0 /* Http.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 79A1645729A7F7CD001A27F0 /* Http.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -105,6 +106,7 @@
 		7955184329AED43800FC4F12 /* Vec2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Vec2.swift; sourceTree = "<group>"; };
 		7955184729AEDAD600FC4F12 /* TextureManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextureManager.swift; sourceTree = "<group>"; };
 		7955184929AEDAFC00FC4F12 /* LineShaders.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = LineShaders.metal; sourceTree = "<group>"; };
+		7955184B29AF876800FC4F12 /* Sun.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sun.swift; sourceTree = "<group>"; };
 		79A1645129A7F7CD001A27F0 /* Http.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Http.xcodeproj; path = ../Http/Http.xcodeproj; sourceTree = "<group>"; };
 		79A1645B29A7F87C001A27F0 /* Configuration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Configuration.swift; sourceTree = "<group>"; };
 		79A1646529A800FA001A27F0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
@@ -234,6 +236,7 @@
 				7947B41329AA755500981301 /* World.swift */,
 				79E2C14A29A7EC6C006F6BD9 /* Renderer.swift */,
 				7947B41829ABB9E800981301 /* Camera.swift */,
+				7955184B29AF876800FC4F12 /* Sun.swift */,
 				7947B42929AD327C00981301 /* Materials */,
 				7947B41529ABAC1D00981301 /* Math */,
 				7947B40F29AA6E6D00981301 /* TerrainTile.swift */,
@@ -424,6 +427,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7955184C29AF876800FC4F12 /* Sun.swift in Sources */,
 				79A1646B29A80D91001A27F0 /* TriangleMesh.swift in Sources */,
 				7947B42F29AD349100981301 /* Material.swift in Sources */,
 				7947B41029AA6E6D00981301 /* TerrainTile.swift in Sources */,

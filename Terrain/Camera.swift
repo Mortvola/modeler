@@ -93,10 +93,10 @@ class Camera {
         }
     }
     
-    func updatePostion(elapsedTime: Float) {
+    func updatePostion(elapsedTime: Double) {
         let v = self.moveDirection
             .rotateY(degreesToRadians(self.yaw))
-            .multiply(self.velocity * elapsedTime)
+            .multiply(self.velocity * Float(elapsedTime))
 
         self.cameraOffset = self.cameraOffset.add(v)
         
