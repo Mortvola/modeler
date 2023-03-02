@@ -38,6 +38,9 @@ class TerrainMaterial: Material {
         renderEncoder.setFragmentTexture(self.normals, index: TextureIndex.normals.rawValue)
         
         renderEncoder.setFragmentSamplerState(samplerState, index: SamplerIndex.sampler.rawValue)
+
+        var pbrValues = PbrValues(albedo: vec3(1.0, 0.0, 0.0), metallic: 0.25, roughness: 0.25, ao: 1.0)
+        renderEncoder.setFragmentBytes(&pbrValues, length: MemoryLayout<PbrValues>.size, index: BufferIndex.pbrValues.rawValue)
     }
     
     class func buildVertexDescriptor() -> MTLVertexDescriptor {
@@ -77,9 +80,13 @@ class TerrainMaterial: Material {
         
         let library = device.makeDefaultLibrary()
         
-        let vertexFunction = library?.makeFunction(name: "texturedVertexShader")
-        let fragmentFunction = library?.makeFunction(name: "texturedFragmentShader")
+        let vertexFunction = library?.makeFunction(name: "pbrVertexShader")
+        let fragmentFunction = library?.makeFunction(name: "pbrFragmentShader")
         
+        if vertexFunction == nil || fragmentFunction == nil {
+             throw Errors.makeFunctionError
+         }
+
         let pipelineDescriptor = MTLRenderPipelineDescriptor()
         pipelineDescriptor.label = "TerrainPipeline"
         pipelineDescriptor.rasterSampleCount = metalKitView.sampleCount

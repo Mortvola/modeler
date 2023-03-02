@@ -27,6 +27,7 @@
 		7955184C29AF876800FC4F12 /* Sun.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7955184B29AF876800FC4F12 /* Sun.swift */; };
 		7955184E29AFD15000FC4F12 /* TestRect.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7955184D29AFD14F00FC4F12 /* TestRect.swift */; };
 		7955185029AFD2B600FC4F12 /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7955184F29AFD2B600FC4F12 /* Model.swift */; };
+		7955186129B0EF7400FC4F12 /* PbrShaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = 7955186029B0EF7400FC4F12 /* PbrShaders.metal */; };
 		79A1645C29A7F87C001A27F0 /* Configuration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79A1645B29A7F87C001A27F0 /* Configuration.swift */; };
 		79A1645E29A7F92B001A27F0 /* Http.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 79A1645729A7F7CD001A27F0 /* Http.framework */; };
 		79A1645F29A7F92B001A27F0 /* Http.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 79A1645729A7F7CD001A27F0 /* Http.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -111,6 +112,7 @@
 		7955184B29AF876800FC4F12 /* Sun.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sun.swift; sourceTree = "<group>"; };
 		7955184D29AFD14F00FC4F12 /* TestRect.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestRect.swift; sourceTree = "<group>"; };
 		7955184F29AFD2B600FC4F12 /* Model.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Model.swift; sourceTree = "<group>"; };
+		7955186029B0EF7400FC4F12 /* PbrShaders.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = PbrShaders.metal; sourceTree = "<group>"; };
 		79A1645129A7F7CD001A27F0 /* Http.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Http.xcodeproj; path = ../Http/Http.xcodeproj; sourceTree = "<group>"; };
 		79A1645B29A7F87C001A27F0 /* Configuration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Configuration.swift; sourceTree = "<group>"; };
 		79A1646529A800FA001A27F0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
@@ -255,6 +257,7 @@
 				79E2C14E29A7EC6C006F6BD9 /* Shaders.metal */,
 				7955184929AEDAFC00FC4F12 /* LineShaders.metal */,
 				794B9A3229ADACD4000B2EAF /* SkyboxShaders.metal */,
+				7955186029B0EF7400FC4F12 /* PbrShaders.metal */,
 				79E2C15329A7EC6D006F6BD9 /* Assets.xcassets */,
 				79E2C15529A7EC6D006F6BD9 /* LaunchScreen.storyboard */,
 			);
@@ -456,6 +459,7 @@
 				7947B41929ABB9E800981301 /* Camera.swift in Sources */,
 				7955184A29AEDAFC00FC4F12 /* LineShaders.metal in Sources */,
 				7947B43129AD375F00981301 /* Errors.swift in Sources */,
+				7955186129B0EF7400FC4F12 /* PbrShaders.metal in Sources */,
 				7955184829AEDAD600FC4F12 /* TextureManager.swift in Sources */,
 				794B9A3329ADACD4000B2EAF /* SkyboxShaders.metal in Sources */,
 				7947B41729ABAC3000981301 /* Vec3.swift in Sources */,

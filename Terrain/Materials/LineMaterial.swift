@@ -50,6 +50,10 @@ class LineMaterial: Material {
         let vertexFunction = library?.makeFunction(name: "lineVertexShader")
         let fragmentFunction = library?.makeFunction(name: "simpleFragmentShader")
         
+        if vertexFunction == nil || fragmentFunction == nil {
+             throw Errors.makeFunctionError
+         }
+
         let pipelineDescriptor = MTLRenderPipelineDescriptor()
         pipelineDescriptor.label = "LinePipeline"
         pipelineDescriptor.rasterSampleCount = metalKitView.sampleCount

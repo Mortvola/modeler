@@ -9,7 +9,7 @@ import Foundation
 import Metal
 
 class World {
-    let tilePadding = 3;
+    let tilePadding = 1;
     
     class Tile {
         var offsetX: Float

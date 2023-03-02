@@ -195,6 +195,7 @@ class Renderer: NSObject, MTKViewDelegate {
             self.uniforms[0].projectionMatrix = self.camera.projectionMatrix
             self.uniforms[0].viewMatrix = self.camera.getViewMatrix()
             self.uniforms[0].lightVector = self.lightVector
+            self.uniforms[0].cameraPos = self.camera.cameraOffset;
 
             /// Delay getting the currentRenderPassDescriptor until we absolutely need it to avoid
             ///   holding onto the drawable and blocking the display pipeline any longer than necessary

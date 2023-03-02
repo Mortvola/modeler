@@ -21,40 +21,47 @@ typedef NSInteger EnumBackingType;
 
 #include <simd/simd.h>
 
-typedef NS_ENUM(EnumBackingType, BufferIndex)
-{
+typedef NS_ENUM(EnumBackingType, BufferIndex) {
     BufferIndexMeshPositions = 0,
     BufferIndexNormals = 1,
     BufferIndexUniforms = 2,
     BufferIndexModelMatrix = 3,
-    BufferIndexNormalMatrix = 4
+    BufferIndexNormalMatrix = 4,
+    BufferIndexPbrValues = 5
 };
 
-typedef NS_ENUM(EnumBackingType, VertexAttribute)
-{
+typedef NS_ENUM(EnumBackingType, VertexAttribute) {
     VertexAttributePosition = 0,
     VertexAttributeTexcoord = 1,
     VertexAttributeNormal = 2,
     VertexAttributeTangent = 3,
 };
 
-typedef NS_ENUM(EnumBackingType, TextureIndex)
-{
+typedef NS_ENUM(EnumBackingType, TextureIndex) {
     TextureIndexColor = 0,
     TextureIndexNormals = 1,
+    TextureIndexMetallic = 2,
+    TextureIndexRoughness = 3,
+    TextureIndexAo = 4
 };
 
-typedef NS_ENUM(EnumBackingType, SamplerIndex)
-{
+typedef NS_ENUM(EnumBackingType, SamplerIndex) {
     SamplerIndexSampler = 0,
 };
 
-typedef struct
-{
+typedef struct {
     matrix_float4x4 projectionMatrix;
     matrix_float4x4 viewMatrix;
     vector_float3 lightVector;
+    vector_float3 cameraPos;
 } Uniforms;
+
+typedef struct {
+    vector_float3 albedo;
+    float metallic;
+    float roughness;
+    float ao;
+} PbrValues;
 
 #endif /* ShaderTypes_h */
 

@@ -64,7 +64,7 @@ class GameViewController: UIViewController {
             let point = touch.preciseLocation(in: view)
             let prevPoint = touch.precisePreviousLocation(in: view)
 
-            let xDelta = Float(point.x - prevPoint.x);
+            let xDelta = -Float(point.x - prevPoint.x);
             let yDelta = -Float(point.y - prevPoint.y);
             let sensitivity: Float = 0.1;
 
