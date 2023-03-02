@@ -12,4 +12,5 @@ enum Errors: Error {
     case invalidTexture
     case downloadFailed
     case depthStateCreationFailed
+    case makeFunctionError
 }

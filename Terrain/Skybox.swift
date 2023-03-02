@@ -107,7 +107,7 @@ class Skybox {
     }
 }
 
-let skyboxVertices: [simd_float1] = [
+private let skyboxVertices: [simd_float1] = [
     // South
   -1.0,  1.0, -1.0,
    1.0, -1.0, -1.0,

@@ -13,9 +13,9 @@ class Line: RenderObject {
     
     let numVertices: Int
     
-    let model: TerrainTile
+    let model: Model
 
-    init(device: MTLDevice, points: [Float], model: TerrainTile) {
+    init(device: MTLDevice, points: [Float], model: Model) {
         // Reformat data
         var newPoints: [simd_float1] = []
         
@@ -28,7 +28,7 @@ class Line: RenderObject {
                                     
         let dataSize = newPoints.count * MemoryLayout.size(ofValue: newPoints[0])
         self.vertices = device.makeBuffer(bytes: newPoints, length: dataSize, options: [])!
-        self.numVertices = newPoints.count / MemoryLayout<simd_float3>.stride
+        self.numVertices = newPoints.count * MemoryLayout.size(ofValue: newPoints[0]) / MemoryLayout<simd_float3>.stride
         self.model = model
     }
 
