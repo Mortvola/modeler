@@ -170,6 +170,6 @@ class World {
     }
     
     func getElevation(x: Float, y: Float) -> Float {
-        (self.tileGrid[self.tilePadding][self.tilePadding].tile?.getElevation(x: x, y: y) ?? 0) + 2
+        (self.tileGrid[self.tilePadding][self.tilePadding].tile?.getElevation(x: x, y: y) ?? 0) // + 2
     }
 }

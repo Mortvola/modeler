@@ -25,10 +25,10 @@ class GameViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        guard let mtkView = view as? MTKView else {
-            print("View of Gameview controller is not an MTKView")
-            return
-        }
+//        guard let mtkView = view as? MTKView else {
+//            print("View of Gameview controller is not an MTKView")
+//            return
+//        }
         
         // Select the device to render with.  We choose the default device
         guard let defaultDevice = MTLCreateSystemDefaultDevice() else {
@@ -36,10 +36,13 @@ class GameViewController: UIViewController {
             return
         }
         
-        mtkView.device = defaultDevice
-        mtkView.backgroundColor = UIColor.black
+        self.mtkView = MTKView(frame: view.frame, device: defaultDevice)
+        self.view.addSubview(self.mtkView)
         
-        guard let newRenderer = Renderer(metalKitView: mtkView) else {
+//        mtkView.device = defaultDevice
+        self.mtkView.backgroundColor = UIColor.black
+        
+        guard let newRenderer = Renderer(metalKitView: self.mtkView) else {
             print("Renderer cannot be initialized")
             return
         }
@@ -50,14 +53,25 @@ class GameViewController: UIViewController {
 
         renderer = newRenderer
         
-        renderer.mtkView(mtkView, drawableSizeWillChange: mtkView.drawableSize)
+        renderer.mtkView(self.mtkView, drawableSizeWillChange: mtkView.drawableSize)
         
-        mtkView.delegate = renderer        
+        self.mtkView.delegate = renderer
+        
+//        let directions: [UISwipeGestureRecognizer.Direction] = [.up, .down, .left, .right]
+//        directions.forEach { direction in
+//            let swipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(didSwipe(_:)))
+//            swipeGestureRecognizer.direction = direction
+//            self.mtkView.addGestureRecognizer(swipeGestureRecognizer)
+//        }
     }
     
-//    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-//        print("touches began")
+//    @objc func didSwipe(_ sender: UISwipeGestureRecognizer) {
+//        print(sender.direction)
 //    }
+    
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        print("touches began")
+    }
     
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
         touches.forEach { touch in

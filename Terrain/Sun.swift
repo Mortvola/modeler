@@ -38,8 +38,10 @@ func getSunLightVector (day: Int, hour: Double, latitude: Double) -> vec3 {
         azimuth = 2 * .pi - azimuth
     }
 
-    return -(vec3(0, 0, 1)
-        .rotateX(Float(-elevationAngle))
-        .rotateY(Float(azimuth)))
+//    return -(vec3(0, 0, 1)
+//        .rotateX(Float(-elevationAngle))
+//        .rotateY(Float(azimuth)))
+    
+    return normalize(vec3(0, -1, 1));
 }
 

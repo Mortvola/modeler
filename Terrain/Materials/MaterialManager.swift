@@ -15,6 +15,7 @@ class MaterialManager {
     enum MaterialName {
         case terrain
         case line
+        case pbrLine
     }
 
     class MaterialEntry {
@@ -42,6 +43,10 @@ class MaterialManager {
             
         case .line:
             material = try LineMaterial(device: device, view: view)
+            break;
+
+        case .pbrLine:
+            material = try await PbrLineMaterial(device: device, view: view)
             break;
         }
         

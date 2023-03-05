@@ -54,14 +54,16 @@ typedef struct {
     matrix_float4x4 viewMatrix;
     vector_float3 lightVector;
     vector_float3 cameraPos;
+    vector_float3 lightPos;
+    vector_float3 lightColor;
 } Uniforms;
 
-typedef struct {
-    vector_float3 albedo;
-    float metallic;
-    float roughness;
-    float ao;
-} PbrValues;
+//typedef struct {
+//    vector_float3 albedo;
+//    float metallic;
+//    float roughness;
+//    float ao;
+//} PbrValues;
 
 #endif /* ShaderTypes_h */
 

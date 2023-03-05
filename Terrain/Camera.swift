@@ -14,8 +14,9 @@ class Camera {
     
     var pitch: Float = 0.0
     
-    var cameraOffset = vec3(0.0, 0.0, 0.0)
-    
+//    var cameraOffset = vec3(0.0, simd_float1(1 / 2.0.squareRoot()), -simd_float1(1 / 2.0.squareRoot()))
+    var cameraOffset = vec3(0.0, 2.0, 0.0)
+
     var cameraFront = defaultCameraFront
     
     var scale: Float = 1.0
@@ -100,7 +101,7 @@ class Camera {
 
         self.cameraOffset = self.cameraOffset.add(v)
         
-        self.cameraOffset.y = self.world.getElevation(x: self.cameraOffset.x, y: self.cameraOffset.z)
+//        self.cameraOffset.y = self.world.getElevation(x: self.cameraOffset.x, y: self.cameraOffset.z)
     }
     
     func updateViewDimensions(width: Float, height: Float) {

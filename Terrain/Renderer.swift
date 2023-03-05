@@ -21,6 +21,7 @@ enum RendererError: Error {
 }
 
 class Renderer: NSObject, MTKViewDelegate {
+    let test = true
     
     public let device: MTLDevice
     public let view: MTKView
@@ -87,34 +88,36 @@ class Renderer: NSObject, MTKViewDelegate {
     }
 
     func load(lat: Double, lng: Double, dimension: Int) async throws {
-//        let test = try await TestRect(device: self.device, view: self.view)
-//
-//        test.setTranslation(x: 0, y: 2, z: 10)
-//
-//        self.world.terrainLoaded = true
-        
-        try await self.skybox = Skybox(device: self.device, view: self.view)
+        if self.test {
+            try await TestRect(device: self.device, view: self.view)
+            try await TestMesh(device: self.device, view: self.view)
 
-        self.initializeLightVector(latitude: lat)
+            self.world.terrainLoaded = true
+        }
+        else {
+            try await self.skybox = Skybox(device: self.device, view: self.view)
 
-        let latLng = LatLng(lat, lng)
-        let (x, z) = latLngToTerrainTile(latLng.lat, latLng.lng, dimension);
+            self.initializeLightVector(latitude: lat)
 
-        let swLatLng = terrainTileToLatLng(Double(x), Double(z), dimension);
-        let neLatLng = terrainTileToLatLng(Double(x + 1), Double(z + 1), dimension);
-        let latLngCenter = LatLng(
-            swLatLng.lat + (neLatLng.lat - swLatLng.lat) / 2,
-            swLatLng.lng + (neLatLng.lng - swLatLng.lng) / 2
-        )
+            let latLng = LatLng(lat, lng)
+            let (x, z) = latLngToTerrainTile(latLng.lat, latLng.lng, dimension);
 
-        self.camera.scale = cos(degreesToRadians(Float(latLngCenter.lat)));
+            let swLatLng = terrainTileToLatLng(Double(x), Double(z), dimension);
+            let neLatLng = terrainTileToLatLng(Double(x + 1), Double(z + 1), dimension);
+            let latLngCenter = LatLng(
+                swLatLng.lat + (neLatLng.lat - swLatLng.lat) / 2,
+                swLatLng.lng + (neLatLng.lng - swLatLng.lng) / 2
+            )
 
-        try await self.world.loadTiles(x: x, z: z, dimension: dimension, renderer: self)
+            self.camera.scale = cos(degreesToRadians(Float(latLngCenter.lat)));
 
-        let cameraOffset = self.getCameraOffset(latLng: latLng, latLngCenter: latLngCenter)
-        let zOffset = self.world.getElevation(x: cameraOffset.0, y: cameraOffset.1)
+            try await self.world.loadTiles(x: x, z: z, dimension: dimension, renderer: self)
 
-        self.camera.cameraOffset = vec3(cameraOffset.0, zOffset, cameraOffset.1)
+            let cameraOffset = self.getCameraOffset(latLng: latLng, latLngCenter: latLngCenter)
+            let zOffset = self.world.getElevation(x: cameraOffset.0, y: cameraOffset.1)
+
+            self.camera.cameraOffset = vec3(cameraOffset.0, zOffset, cameraOffset.1)
+        }
     }
     
     func initializeLightVector(latitude: Double) {
@@ -196,6 +199,8 @@ class Renderer: NSObject, MTKViewDelegate {
             self.uniforms[0].viewMatrix = self.camera.getViewMatrix()
             self.uniforms[0].lightVector = self.lightVector
             self.uniforms[0].cameraPos = self.camera.cameraOffset;
+            self.uniforms[0].lightPos = vec3(0.0, 4.0, 5.0);
+            self.uniforms[0].lightColor = vec3(250.0, 250.0, 250.0);
 
             /// Delay getting the currentRenderPassDescriptor until we absolutely need it to avoid
             ///   holding onto the drawable and blocking the display pipeline any longer than necessary
@@ -215,6 +220,8 @@ class Renderer: NSObject, MTKViewDelegate {
                     renderEncoder.setDepthStencilState(self.depthState)
                     
                     renderEncoder.setVertexBuffer(self.dynamicUniformBuffer, offset: self.uniformBufferOffset, index: BufferIndex.uniforms.rawValue)
+
+                    renderEncoder.setFragmentBuffer(self.dynamicUniformBuffer, offset: self.uniformBufferOffset, index: BufferIndex.uniforms.rawValue)
 
                     if self.world.terrainLoaded {
                         MaterialManager.shared.render(renderEncoder: renderEncoder)

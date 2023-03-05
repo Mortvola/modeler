@@ -36,34 +36,53 @@ float GeometrySchlickGGX(float NdotV, float roughness)
 }
 
 // ----------------------------------------------------------------------------
-float GeometrySmith(float3 N, float3 V, float3 L, float roughness)
+float GeometrySmith(float NdotV, float NdotL, float roughness)
 {
-    float NdotV = max(dot(N, V), 0.0);
-    float NdotL = max(dot(N, L), 0.0);
+//    float NdotV = max(dot(N, V), 0.0);
+//    float NdotL = max(dot(N, L), 0.0);
     float ggx2 = GeometrySchlickGGX(NdotV, roughness);
     float ggx1 = GeometrySchlickGGX(NdotL, roughness);
 
     return ggx1 * ggx2;
 }
+
 // ----------------------------------------------------------------------------
 float3 fresnelSchlick(float cosTheta, float3 F0)
 {
     return F0 + (1.0 - F0) * pow(clamp(1.0 - cosTheta, 0.0, 1.0), 5.0);
 }
 
+float3 getNormalFromMap(float3 tNormal, float3 normal, float3 worldPosition, float2 texCoords) {
+    // Transform tanget space normal into world space...
+    float3 tangentNormal = tNormal * 2.0 - 1.0;
+
+    float3 Q1  = dfdx(worldPosition);
+    float3 Q2  = dfdy(worldPosition);
+    float2 st1 = dfdx(texCoords);
+    float2 st2 = dfdy(texCoords);
+
+    float3 N   = normalize(normal);
+    float3 T  = normalize(Q1 * st2.y - Q2 * st1.y);
+    float3 B  = -normalize(cross(N, T));
+    matrix_float3x3 TBN = matrix_float3x3(T, B, N);
+
+    return normalize(TBN * tangentNormal);
+}
+
 struct VertexIn {
     float3 position [[attribute(VertexAttributePosition)]];
     float2 texCoord [[attribute(VertexAttributeTexcoord)]];
     float3 normal [[attribute(VertexAttributeNormal)]];
+    float3 tangent [[attribute(VertexAttributeTangent)]];
 };
 
 struct VertexOut {
     float4 position [[position]];
-    float3 worldPosition;
     float2 texCoords;
-    float3 normal;
-    float3 cameraPos;
-    float3 lightVector;
+    float3 tangentLightVector;
+    float3 tangentViewPos;
+    float3 tangentWorldPos;
+    float3 tangentNormal;
 };
 
 matrix_float3x3 subMatrix3x3(matrix_float4x4 m4x4) {
@@ -75,92 +94,86 @@ matrix_float3x3 subMatrix3x3(matrix_float4x4 m4x4) {
 }
 
 vertex VertexOut pbrVertexShader(
-     VertexIn vertexIn [[stage_in]],
-     const device Uniforms& uniforms [[ buffer(BufferIndexUniforms) ]],
-     const device matrix_float4x4& modelMatrix [[ buffer(BufferIndexModelMatrix) ]]
+    VertexIn vertexIn [[stage_in]],
+    const device Uniforms& uniforms [[ buffer(BufferIndexUniforms) ]],
+    const device matrix_float4x4& modelMatrix [[ buffer(BufferIndexModelMatrix) ]],
+    const device matrix_float3x3& normalMatrix [[ buffer(BufferIndexNormalMatrix) ]]
 ) {
     VertexOut vertexOut;
     
-    vertexOut.texCoords = vertexIn.texCoord;
-    vertexOut.worldPosition = float3(modelMatrix * float4(vertexIn.position, 1.0));
-    vertexOut.normal = subMatrix3x3(modelMatrix) * vertexIn.normal;
-    vertexOut.cameraPos = uniforms.cameraPos;
-    vertexOut.lightVector = uniforms.lightVector;
+    float3 worldPosition = float3(modelMatrix * float4(vertexIn.position, 1.0));
+    float3 normal = subMatrix3x3(modelMatrix) * vertexIn.normal;
     
-    vertexOut.position =  uniforms.projectionMatrix * uniforms.viewMatrix * float4(vertexOut.worldPosition, 1.0);
+    vertexOut.position =  uniforms.projectionMatrix * uniforms.viewMatrix * float4(worldPosition, 1.0);
+
+//    float3 T = normalize(normalMatrix * vertexIn.tangent);
+//    float3 N = normalize(normalMatrix * vertexIn.normal);
+//    T = normalize(T - dot(T, N) * N);
+//    float3 B = cross(N, T);
+//
+//    float3x3 TBN = transpose(float3x3(T, B, N));
+//    vertexOut.tangentLightVector = TBN * normalize(uniforms.lightVector);
+//    vertexOut.tangentViewPos  = TBN * uniforms.cameraPos;
+//    vertexOut.tangentWorldPos  = TBN * worldPosition;
+//    vertexOut.tangentNormal = TBN * normal;
+
+    vertexOut.tangentLightVector = normalize(uniforms.lightVector);
+    vertexOut.tangentViewPos  = uniforms.cameraPos;
+    vertexOut.tangentWorldPos  = worldPosition;
+    vertexOut.tangentNormal = normal;
+
+    vertexOut.texCoords = vertexIn.texCoord;
 
     return vertexOut;
 }
 
+float3 computeLo(
+    float3 albedo,
+    float metallic,
+    float roughness,
+    float3 viewPos,
+    float3 worldPos,
+    float3 lightVector,
+    float3 radiance
+);
+
 fragment float4 pbrFragmentShader(
     VertexOut fragmentIn [[stage_in]],
-    const device PbrValues& pbrValues [[ buffer(BufferIndexPbrValues) ]]
+    const device Uniforms& uniforms [[ buffer(BufferIndexUniforms) ]],
+    texture2d<float> albedoMap [[texture(TextureIndexColor)]],
+    texture2d<float> normalMap [[texture(TextureIndexNormals)]],
+    texture2d<float> metallicMap [[texture(TextureIndexMetallic)]],
+    texture2d<float> roughnessMap [[texture(TextureIndexRoughness)]],
+    texture2d<float> aoMap [[texture(TextureIndexAo)]],
+    sampler sampler [[sampler(SamplerIndexSampler)]]
 ) {
-    float3 N = normalize(fragmentIn.normal);
-    float3 V = normalize(fragmentIn.cameraPos - fragmentIn.worldPosition);
-
-    // calculate reflectance at normal incidence; if dia-electric (like plastic) use F0
-    // of 0.04 and if it's a metal, use the albedo color as F0 (metallic workflow)
-    float3 F0 = float3(0.04);
-    F0 = mix(F0, pbrValues.albedo, pbrValues.metallic);
-
-    float3 lightColor = float3(1.0, 1.0, 1.0);
+    float3 albedo = float3(1.0, 0.0, 0.0); // pow(albedoMap.sample(sampler, fragmentIn.texCoords).rgb, float3(2.2));
+    float3 tNormal = float3(0.5, 1, 0.5); // normalMap.sample(sampler, fragmentIn.texCoords).rgb;
+    float metallic = 1.0; // metallicMap.sample(sampler, fragmentIn.texCoords).r;
+    float roughness = 1.0; // roughnessMap.sample(sampler, fragmentIn.texCoords).r;
+    float ao = 1.0; // aoMap.sample(sampler, fragmentIn.texCoords).r;
     
-    // reflectance equation
-    float3 Lo = float3(0.0);
-    
-//    for(int i = 0; i < 4; ++i)
-//    {
-    // calculate per-light radiance
-    
-    // The vector from the fragment to the light source (L), the sun in our case,
-    // is a fixed vector
-//    float3 L = normalize(lightPosition - fragmentIn.worldPosition);
-    float3 L = -fragmentIn.lightVector;
-    float3 H = normalize(V + L);
-    
-    // For sunlight, don't attenuate
-//    float distance = length(lightPosition - fragmentIn.worldPosition);
+    float3 N = normalize(tNormal * 2 - 1);
+    float3 V = normalize(fragmentIn.tangentViewPos - fragmentIn.tangentWorldPos);
+   
+//    float distance = length(uniforms.lightPos - fragmentIn.tangentWorldPos);
 //    float attenuation = 1.0 / (distance * distance);
-//    float3 radiance = lightColor * attenuation;
-    float3 radiance = lightColor;
+//    float3 radiance = uniforms.lightColor * attenuation;
+//     float3 L = normalize(uniforms.lightPos - fragmentIn.tangentWorldPos);
+    float3 radiance = float3(15, 15, 15);
+    float3 L = float3(0.0, 1.0, 0.0);
 
-    // Cook-Torrance BRDF
-    float NDF = DistributionGGX(N, H, pbrValues.roughness);
-    float G = GeometrySmith(N, V, L, pbrValues.roughness);
-    float3 F = fresnelSchlick(clamp(dot(H, V), 0.0, 1.0), F0);
-       
-    float3 numerator = NDF * G * F;
-    float denominator = 4.0 * max(dot(N, V), 0.0) * max(dot(N, L), 0.0) + 0.0001; // + 0.0001 to prevent divide by zero
-    float3 specular = numerator / denominator;
-    
-    // kS is equal to Fresnel
-    float3 kS = F;
-    // for energy conservation, the diffuse and specular light can't
-    // be above 1.0 (unless the surface emits light); to preserve this
-    // relationship the diffuse component (kD) should equal 1.0 - kS.
-    float3 kD = float3(1.0) - kS;
-    // multiply kD by the inverse metalness such that only non-metals
-    // have diffuse lighting, or a linear blend if partly metal (pure metals
-    // have no diffuse light).
-    kD *= 1.0 - pbrValues.metallic;
+    float3 Lo = computeLo(albedo, metallic, roughness, N, V, L, radiance);
 
-    // scale light by NdotL
-    float NdotL = max(dot(N, L), 0.0);
-
-    // add to outgoing radiance Lo
-    Lo += (kD * pbrValues.albedo / 3.14159265359 + specular) * radiance * NdotL;  // note that we already multiplied the BRDF by the Fresnel (kS) so we won't multiply by kS again
-//    }
-    
     // ambient lighting (note that the next IBL tutorial will replace
     // this ambient lighting with environment lighting).
-    float3 ambient = float3(0.03) * pbrValues.albedo * pbrValues.ao;
+    float3 ambient = float3(0.03) * albedo * ao;
 
     float3 color = ambient + Lo;
 
     // HDR tonemapping
     color = color / (color + float3(1.0));
-    
+
     // gamma correct
     color = pow(color, float3(1.0 / 2.2));
 
