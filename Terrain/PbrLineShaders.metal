@@ -9,10 +9,6 @@
 #import "ShaderTypes.h"
 using namespace metal;
 
-float DistributionGGX(float3 N, float3 H, float roughness);
-float GeometrySmith(float NdotV, float NdotL, float roughness);
-float3 fresnelSchlick(float cosTheta, float3 F0);
-
 struct LineVertexIn {
     float3 position [[attribute(VertexAttributePosition)]];
 };
@@ -93,58 +89,3 @@ vertex VertexOut pbrLineVertexShader(
     
     return vertexOut;
 }
-
-float3 computeLo(
-    float3 albedo,
-    float metallic,
-    float roughness,
-    float3 N,
-    float3 V,
-    float3 L,
-    float3 radiance
-) {
-    // calculate reflectance at normal incidence; if dia-electric (like plastic) use F0
-    // of 0.04 and if it's a metal, use the albedo color as F0 (metallic workflow)
-    float3 F0 = float3(0.04);
-    F0 = mix(F0, albedo, metallic);
-
-    // For sunlight, don't attenuate
-//    float3 lightColor = float3(1.0, 1.0, 1.0);
-//    float attenuation = 1.0;
-//    float3 radiance = lightColor * attenuation;
-
-    // The vector from the fragment to the light source (L), the sun in our case,
-    // is a fixed vector
-//    float3 L = normalize(-lightVector);
-    float3 H = normalize(V + L);
-    
-    float NdotV = max(dot(N, V), 0.0);
-    float NdotL = max(dot(N, L), 0.0);
-    float HdotV = clamp(dot(H, V), 0.0, 1.0);
-    
-    // Cook-Torrance BRDF
-    float NDF = DistributionGGX(N, H, roughness);
-    float G = GeometrySmith(NdotV, NdotL, roughness);
-    float3 F = fresnelSchlick(HdotV, F0);
-       
-    float3 numerator = NDF * G * F;
-    float denominator = 4.0 * NdotV * NdotL + 0.0001; // + 0.0001 to prevent divide by zero
-    float3 specular = numerator / denominator;
-    // specular = float3(0, 0, 0);
-    
-    // kS is equal to Fresnel
-    float3 kS = F;
-    // for energy conservation, the diffuse and specular light can't
-    // be above 1.0 (unless the surface emits light); to preserve this
-    // relationship the diffuse component (kD) should equal 1.0 - kS.
-    float3 kD = float3(1.0) - kS;
-    // multiply kD by the inverse metalness such that only non-metals
-    // have diffuse lighting, or a linear blend if partly metal (pure metals
-    // have no diffuse light).
-    kD *= 1.0 - metallic;
-
-    float3 Lo = (kD * albedo / 3.14159265359 + specular) * radiance * NdotL;
-    
-    return Lo;
-}
-

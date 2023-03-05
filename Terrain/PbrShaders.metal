@@ -9,66 +9,6 @@
 #import "ShaderTypes.h"
 using namespace metal;
 
-float DistributionGGX(float3 N, float3 H, float roughness)
-{
-    float a = roughness*roughness;
-    float a2 = a*a;
-    float NdotH = max(dot(N, H), 0.0);
-    float NdotH2 = NdotH*NdotH;
-
-    float nom   = a2;
-    float denom = (NdotH2 * (a2 - 1.0) + 1.0);
-    denom = 3.14159265359 * denom * denom;
-
-    return nom / denom;
-}
-
-// ----------------------------------------------------------------------------
-float GeometrySchlickGGX(float NdotV, float roughness)
-{
-    float r = (roughness + 1.0);
-    float k = (r*r) / 8.0;
-
-    float nom   = NdotV;
-    float denom = NdotV * (1.0 - k) + k;
-
-    return nom / denom;
-}
-
-// ----------------------------------------------------------------------------
-float GeometrySmith(float NdotV, float NdotL, float roughness)
-{
-//    float NdotV = max(dot(N, V), 0.0);
-//    float NdotL = max(dot(N, L), 0.0);
-    float ggx2 = GeometrySchlickGGX(NdotV, roughness);
-    float ggx1 = GeometrySchlickGGX(NdotL, roughness);
-
-    return ggx1 * ggx2;
-}
-
-// ----------------------------------------------------------------------------
-float3 fresnelSchlick(float cosTheta, float3 F0)
-{
-    return F0 + (1.0 - F0) * pow(clamp(1.0 - cosTheta, 0.0, 1.0), 5.0);
-}
-
-float3 getNormalFromMap(float3 tNormal, float3 normal, float3 worldPosition, float2 texCoords) {
-    // Transform tanget space normal into world space...
-    float3 tangentNormal = tNormal * 2.0 - 1.0;
-
-    float3 Q1  = dfdx(worldPosition);
-    float3 Q2  = dfdy(worldPosition);
-    float2 st1 = dfdx(texCoords);
-    float2 st2 = dfdy(texCoords);
-
-    float3 N   = normalize(normal);
-    float3 T  = normalize(Q1 * st2.y - Q2 * st1.y);
-    float3 B  = -normalize(cross(N, T));
-    matrix_float3x3 TBN = matrix_float3x3(T, B, N);
-
-    return normalize(TBN * tangentNormal);
-}
-
 struct VertexIn {
     float3 position [[attribute(VertexAttributePosition)]];
     float2 texCoord [[attribute(VertexAttributeTexcoord)]];
@@ -79,10 +19,10 @@ struct VertexIn {
 struct VertexOut {
     float4 position [[position]];
     float2 texCoords;
-    float3 tangentLightVector;
-    float3 tangentViewPos;
-    float3 tangentWorldPos;
-    float3 tangentNormal;
+    float3 viewPos;
+    float3 fragPos;
+    float3 lightPos;
+    float3 lightVector;
 };
 
 matrix_float3x3 subMatrix3x3(matrix_float4x4 m4x4) {
@@ -101,27 +41,28 @@ vertex VertexOut pbrVertexShader(
 ) {
     VertexOut vertexOut;
     
-    float3 worldPosition = float3(modelMatrix * float4(vertexIn.position, 1.0));
-    float3 normal = subMatrix3x3(modelMatrix) * vertexIn.normal;
+    float3 worldVertexPosition = float3(modelMatrix * float4(vertexIn.position, 1.0));
     
-    vertexOut.position =  uniforms.projectionMatrix * uniforms.viewMatrix * float4(worldPosition, 1.0);
+    vertexOut.position =  uniforms.projectionMatrix * uniforms.viewMatrix * float4(worldVertexPosition, 1.0);
 
-//    float3 T = normalize(normalMatrix * vertexIn.tangent);
-//    float3 N = normalize(normalMatrix * vertexIn.normal);
-//    T = normalize(T - dot(T, N) * N);
-//    float3 B = cross(N, T);
-//
-//    float3x3 TBN = transpose(float3x3(T, B, N));
-//    vertexOut.tangentLightVector = TBN * normalize(uniforms.lightVector);
-//    vertexOut.tangentViewPos  = TBN * uniforms.cameraPos;
-//    vertexOut.tangentWorldPos  = TBN * worldPosition;
-//    vertexOut.tangentNormal = TBN * normal;
+#if 1
+    float3 T = normalize(normalMatrix * vertexIn.tangent);
+    float3 N = normalize(normalMatrix * vertexIn.normal);
+    T = normalize(T - dot(T, N) * N);
+    float3 B = cross(N, T);
 
-    vertexOut.tangentLightVector = normalize(uniforms.lightVector);
-    vertexOut.tangentViewPos  = uniforms.cameraPos;
-    vertexOut.tangentWorldPos  = worldPosition;
-    vertexOut.tangentNormal = normal;
-
+    float3x3 TBN = transpose(float3x3(T, B, N));
+    
+    vertexOut.lightPos = TBN * uniforms.lightPos;
+    vertexOut.viewPos = TBN * uniforms.cameraPos;
+    vertexOut.fragPos = TBN * worldVertexPosition;
+    vertexOut.lightVector = TBN * uniforms.lightVector;
+#else
+    vertexOut.lightPos = uniforms.lightPos;
+    vertexOut.viewPos = uniforms.cameraPos;
+    vertexOut.fragPos = worldVertexPosition;
+#endif
+    
     vertexOut.texCoords = vertexIn.texCoord;
 
     return vertexOut;
@@ -147,23 +88,41 @@ fragment float4 pbrFragmentShader(
     texture2d<float> aoMap [[texture(TextureIndexAo)]],
     sampler sampler [[sampler(SamplerIndexSampler)]]
 ) {
-    float3 albedo = float3(0.0, 0.0, 1.0); // pow(albedoMap.sample(sampler, fragmentIn.texCoords).rgb, float3(2.2));
-    float3 tNormal = float3(0.5, 1, 0); // normalMap.sample(sampler, fragmentIn.texCoords).rgb;
+#if 1
+#if 1
+    float3 albedo = pow(albedoMap.sample(sampler, fragmentIn.texCoords).rgb, float3(2.2));
+#else
+    float3 albedo = normalMap.sample(sampler, fragmentIn.texCoords).rgb;
+#endif
+#else
+    float3 albedo = float3(0.0, 0.0, 1.0);
+#endif
+    
+#if 1
+#if 1
+    float3 tNormal = normalMap.sample(sampler, fragmentIn.texCoords).rgb;
+#else
+    float3 tNormal = float3(0.5, 0.5, 1.0); // normalMap.sample(sampler, fragmentIn.texCoords).rgb;
+#endif
+#else
+    float3 tNormal = float3(0.5, 1, 0); // float3(0.5, 0.5, 1.0); // normalMap.sample(sampler, fragmentIn.texCoords).rgb;
+#endif
+    
     float metallic = 0.5; // metallicMap.sample(sampler, fragmentIn.texCoords).r;
     float roughness = 0.0; // roughnessMap.sample(sampler, fragmentIn.texCoords).r;
     float ao = 1.0; // aoMap.sample(sampler, fragmentIn.texCoords).r;
     
     float3 N = normalize(tNormal * 2 - 1);
-    float3 V = normalize(fragmentIn.tangentViewPos - fragmentIn.tangentWorldPos);
+    float3 V = normalize(fragmentIn.viewPos - fragmentIn.fragPos);
 
 #if 0
-    float distance = length(uniforms.lightPos - fragmentIn.tangentWorldPos);
+    float distance = length(fragmentIn.lightPos - fragmentIn.fragPos);
     float attenuation = 1.0 / (distance * distance);
     float3 radiance = uniforms.lightColor * attenuation;
-    float3 L = normalize(uniforms.lightPos - fragmentIn.tangentWorldPos);
+    float3 L = normalize(fragmentIn.lightPos - fragmentIn.fragPos);
 #else
-    float3 radiance = float3(15, 15, 15);
-    float3 L = float3(0.0, 1.0, 0.0);
+    float3 radiance = float3(10, 10, 10);
+    float3 L = normalize(-fragmentIn.lightVector); // float3(0.0, 0.0, 1.0);
 #endif
     
     float3 Lo = computeLo(albedo, metallic, roughness, N, V, L, radiance);

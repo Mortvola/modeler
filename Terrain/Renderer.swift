@@ -21,7 +21,7 @@ enum RendererError: Error {
 }
 
 class Renderer: NSObject, MTKViewDelegate {
-    let test = true
+    let test = false
     
     public let device: MTLDevice
     public let view: MTKView
@@ -199,8 +199,8 @@ class Renderer: NSObject, MTKViewDelegate {
             self.uniforms[0].viewMatrix = self.camera.getViewMatrix()
             self.uniforms[0].lightVector = self.lightVector
             self.uniforms[0].cameraPos = self.camera.cameraOffset;
-            self.uniforms[0].lightPos = vec3(0.0, 4.0, 0.0);
-            self.uniforms[0].lightColor = vec3(250.0, 250.0, 250.0);
+            self.uniforms[0].lightPos = vec3(0.0, 12.0, 0.0);
+            self.uniforms[0].lightColor = vec3(500.0, 500.0, 500.0);
 
             /// Delay getting the currentRenderPassDescriptor until we absolutely need it to avoid
             ///   holding onto the drawable and blocking the display pipeline any longer than necessary
