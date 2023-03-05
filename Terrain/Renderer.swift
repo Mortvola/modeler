@@ -199,7 +199,7 @@ class Renderer: NSObject, MTKViewDelegate {
             self.uniforms[0].viewMatrix = self.camera.getViewMatrix()
             self.uniforms[0].lightVector = self.lightVector
             self.uniforms[0].cameraPos = self.camera.cameraOffset;
-            self.uniforms[0].lightPos = vec3(0.0, 4.0, 5.0);
+            self.uniforms[0].lightPos = vec3(0.0, 4.0, 0.0);
             self.uniforms[0].lightColor = vec3(250.0, 250.0, 250.0);
 
             /// Delay getting the currentRenderPassDescriptor until we absolutely need it to avoid

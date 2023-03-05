@@ -147,22 +147,25 @@ fragment float4 pbrFragmentShader(
     texture2d<float> aoMap [[texture(TextureIndexAo)]],
     sampler sampler [[sampler(SamplerIndexSampler)]]
 ) {
-    float3 albedo = float3(1.0, 0.0, 0.0); // pow(albedoMap.sample(sampler, fragmentIn.texCoords).rgb, float3(2.2));
-    float3 tNormal = float3(0.5, 1, 0.5); // normalMap.sample(sampler, fragmentIn.texCoords).rgb;
-    float metallic = 1.0; // metallicMap.sample(sampler, fragmentIn.texCoords).r;
-    float roughness = 1.0; // roughnessMap.sample(sampler, fragmentIn.texCoords).r;
+    float3 albedo = float3(0.0, 0.0, 1.0); // pow(albedoMap.sample(sampler, fragmentIn.texCoords).rgb, float3(2.2));
+    float3 tNormal = float3(0.5, 1, 0); // normalMap.sample(sampler, fragmentIn.texCoords).rgb;
+    float metallic = 0.5; // metallicMap.sample(sampler, fragmentIn.texCoords).r;
+    float roughness = 0.0; // roughnessMap.sample(sampler, fragmentIn.texCoords).r;
     float ao = 1.0; // aoMap.sample(sampler, fragmentIn.texCoords).r;
     
     float3 N = normalize(tNormal * 2 - 1);
     float3 V = normalize(fragmentIn.tangentViewPos - fragmentIn.tangentWorldPos);
-   
-//    float distance = length(uniforms.lightPos - fragmentIn.tangentWorldPos);
-//    float attenuation = 1.0 / (distance * distance);
-//    float3 radiance = uniforms.lightColor * attenuation;
-//     float3 L = normalize(uniforms.lightPos - fragmentIn.tangentWorldPos);
+
+#if 0
+    float distance = length(uniforms.lightPos - fragmentIn.tangentWorldPos);
+    float attenuation = 1.0 / (distance * distance);
+    float3 radiance = uniforms.lightColor * attenuation;
+    float3 L = normalize(uniforms.lightPos - fragmentIn.tangentWorldPos);
+#else
     float3 radiance = float3(15, 15, 15);
     float3 L = float3(0.0, 1.0, 0.0);
-
+#endif
+    
     float3 Lo = computeLo(albedo, metallic, roughness, N, V, L, radiance);
 
     // ambient lighting (note that the next IBL tutorial will replace
