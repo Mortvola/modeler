@@ -101,7 +101,7 @@ class Camera {
 
         self.cameraOffset = self.cameraOffset.add(v)
         
-//        self.cameraOffset.y = self.world.getElevation(x: self.cameraOffset.x, y: self.cameraOffset.z)
+        self.cameraOffset.y = self.world.getElevation(x: self.cameraOffset.x, y: self.cameraOffset.z);
     }
     
     func updateViewDimensions(width: Float, height: Float) {

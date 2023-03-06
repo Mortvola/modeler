@@ -15,6 +15,8 @@ class GameViewController: UIViewController {
     var renderer: Renderer!
     var mtkView: MTKView!
     
+    var prevPoint: CGPoint?
+    
     var forward = 0
     var backward = 0
     var left = 0
@@ -57,20 +59,30 @@ class GameViewController: UIViewController {
         
         self.mtkView.delegate = renderer
         
-//        let directions: [UISwipeGestureRecognizer.Direction] = [.up, .down, .left, .right]
-//        directions.forEach { direction in
-//            let swipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(didSwipe(_:)))
-//            swipeGestureRecognizer.direction = direction
-//            self.mtkView.addGestureRecognizer(swipeGestureRecognizer)
-//        }
+        let swipeGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(didPan(_:)))
+        swipeGestureRecognizer.allowedScrollTypesMask = .continuous
+
+        self.mtkView.addGestureRecognizer(swipeGestureRecognizer);
     }
     
-//    @objc func didSwipe(_ sender: UISwipeGestureRecognizer) {
-//        print(sender.direction)
-//    }
+    @objc func didPan(_ sender: UIPanGestureRecognizer) {
+        let point = sender.translation(in: self.mtkView)
+        
+        if sender.state != .began {
+            if let prevPoint = self.prevPoint {
+                let xDelta = -Float(point.x - prevPoint.x);
+                let yDelta = -Float(point.y - prevPoint.y);
+                let sensitivity: Float = 0.1;
+
+                renderer.camera.updateLookAt(yawChange: xDelta * sensitivity, pitchChange: yDelta * sensitivity);
+            }
+        }
+        
+        self.prevPoint = point
+    }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        print("touches began")
+        print("Touches begain")
     }
     
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
