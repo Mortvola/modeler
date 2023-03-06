@@ -55,18 +55,23 @@ class Renderer: NSObject, MTKViewDelegate {
     
     var previousFrameTime: Double?
     
-    init?(metalKitView: MTKView) {
+    init(metalKitView: MTKView) throws {
         self.camera = Camera(world: world)
         
         self.device = metalKitView.device!
         self.view = metalKitView
 
-        guard let queue = self.device.makeCommandQueue() else { return nil }
+        guard let queue = self.device.makeCommandQueue() else {
+            throw Errors.makeCommandQueueFailed
+        }
+        
         self.commandQueue = queue
         
         let uniformBufferSize = alignedUniformsSize * maxBuffersInFlight
         
-        guard let buffer = self.device.makeBuffer(length:uniformBufferSize, options:[MTLResourceOptions.storageModeShared]) else { return nil }
+        guard let buffer = self.device.makeBuffer(length:uniformBufferSize, options:[MTLResourceOptions.storageModeShared]) else {
+            throw Errors.makeBufferFailed
+        }
         self.dynamicUniformBuffer = buffer
         self.dynamicUniformBuffer.label = "UniformBuffer"
         
@@ -80,7 +85,9 @@ class Renderer: NSObject, MTKViewDelegate {
         depthStateDescriptor.depthCompareFunction = .less
         depthStateDescriptor.isDepthWriteEnabled = true
         
-        guard let state = device.makeDepthStencilState(descriptor:depthStateDescriptor) else { return nil }
+        guard let state = device.makeDepthStencilState(descriptor:depthStateDescriptor) else {
+            throw Errors.makeDepthStencilStateFailed
+        }
         
         self.depthState = state
         

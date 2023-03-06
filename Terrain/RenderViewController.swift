@@ -10,7 +10,7 @@ import MetalKit
 import Http
 
 // Our iOS specific view controller
-class GameViewController: UIViewController {
+class RenderViewController: UIViewController {
     
     var renderer: Renderer!
     var mtkView: MTKView!
@@ -41,10 +41,7 @@ class GameViewController: UIViewController {
         self.mtkView = MTKView(frame: view.frame, device: defaultDevice)
         self.view.addSubview(self.mtkView)
         
-//        mtkView.device = defaultDevice
-        self.mtkView.backgroundColor = UIColor.black
-        
-        guard let newRenderer = Renderer(metalKitView: self.mtkView) else {
+        guard let renderer = try? Renderer(metalKitView: self.mtkView) else {
             print("Renderer cannot be initialized")
             return
         }
@@ -53,16 +50,23 @@ class GameViewController: UIViewController {
             try await renderer.load(lat: 46.514279, lng: -121.456191, dimension: 128)
         }
 
-        renderer = newRenderer
+        self.renderer = renderer
         
         renderer.mtkView(self.mtkView, drawableSizeWillChange: mtkView.drawableSize)
-        
-        self.mtkView.delegate = renderer
-        
+                
         let swipeGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(didPan(_:)))
         swipeGestureRecognizer.allowedScrollTypesMask = .continuous
 
         self.mtkView.addGestureRecognizer(swipeGestureRecognizer);
+        
+        self.mtkView.backgroundColor = UIColor.black
+        self.mtkView.framebufferOnly = false
+        self.mtkView.preferredFramesPerSecond = 60
+        self.mtkView.isPaused = false
+        self.mtkView.isOpaque = true
+        self.mtkView.drawableSize = mtkView.frame.size
+
+        self.mtkView.delegate = renderer
     }
     
     @objc func didPan(_ sender: UIPanGestureRecognizer) {
@@ -81,10 +85,6 @@ class GameViewController: UIViewController {
         self.prevPoint = point
     }
     
-    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        print("Touches begain")
-    }
-    
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
         touches.forEach { touch in
             let point = touch.preciseLocation(in: view)
@@ -97,14 +97,6 @@ class GameViewController: UIViewController {
             renderer.camera.updateLookAt(yawChange: xDelta * sensitivity, pitchChange: yDelta * sensitivity);
         }
     }
-    
-//    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-//        print("touches ended")
-//    }
-//
-//    override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
-//        print("touches cancelled")
-//    }
     
     override func pressesBegan(_ presses: Set<UIPress>, with event: UIPressesEvent?) {
         var keyPressed = false;

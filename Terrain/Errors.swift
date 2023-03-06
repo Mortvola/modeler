@@ -13,4 +13,8 @@ enum Errors: Error {
     case downloadFailed
     case depthStateCreationFailed
     case makeFunctionError
+    case createDeviceFailed
+    case makeCommandQueueFailed
+    case makeBufferFailed
+    case makeDepthStencilStateFailed
 }
