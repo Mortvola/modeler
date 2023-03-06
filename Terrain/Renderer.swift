@@ -243,7 +243,7 @@ class Renderer: NSObject, MTKViewDelegate {
             self.uniforms[0].lightVector = self.lightVector
             self.uniforms[0].pointLight = Lights.shared.pointLight
             self.uniforms[0].lightPos = self.lights.position
-            self.uniforms[0].lightColor = self.lights.color
+            self.uniforms[0].lightColor = vec3(self.lights.red, self.lights.green, self.lights.blue)
 
             /// Delay getting the currentRenderPassDescriptor until we absolutely need it to avoid
             ///   holding onto the drawable and blocking the display pipeline any longer than necessary
@@ -258,7 +258,7 @@ class Renderer: NSObject, MTKViewDelegate {
                     
                     renderEncoder.pushDebugGroup("Draw Box")
                     
-                    renderEncoder.setFrontFacing(.counterClockwise)
+                    renderEncoder.setFrontFacing(.clockwise)
                     renderEncoder.setCullMode(.back)
                     renderEncoder.setDepthStencilState(self.depthState)
                     

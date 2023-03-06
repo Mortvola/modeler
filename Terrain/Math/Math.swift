@@ -105,7 +105,12 @@ func lookAt(offset: vec3, target: vec3, up: vec3) -> matrix_float4x4 {
         vector_float4(x.x, y.x, z.x, 0),
         vector_float4(x.y, y.y, z.y, 0),
         vector_float4(x.z, y.z, z.z, 0),
-        vector_float4(-(x.x * offset.x + x.y * offset.y + x.z * offset.z), -(y.x * offset.x + y.y * offset.y + y.z * offset.z), -(z.x * offset.x + z.y * offset.y + z.z * offset.z), 1)
+        vector_float4(
+            -(x.x * offset.x + x.y * offset.y + x.z * offset.z),
+            -(y.x * offset.x + y.y * offset.y + y.z * offset.z),
+            -(z.x * offset.x + z.y * offset.y + z.z * offset.z),
+            1
+        )
     ))
 
     return matrix;
