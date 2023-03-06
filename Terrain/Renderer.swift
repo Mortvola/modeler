@@ -89,9 +89,11 @@ class Renderer: NSObject, MTKViewDelegate {
 
     func load(lat: Double, lng: Double, dimension: Int) async throws {
         if self.test {
-            try await TestRect(device: self.device, view: self.view)
-            try await TestMesh(device: self.device, view: self.view)
+//            try await TestRect(device: self.device, view: self.view)
+//            try await TestMesh(device: self.device, view: self.view)
 
+            try await Sphere(device: self.device, view: self.view);
+            
             self.world.terrainLoaded = true
         }
         else {
@@ -114,9 +116,7 @@ class Renderer: NSObject, MTKViewDelegate {
             try await self.world.loadTiles(x: x, z: z, dimension: dimension, renderer: self)
 
             let cameraOffset = self.getCameraOffset(latLng: latLng, latLngCenter: latLngCenter)
-            let zOffset = self.world.getElevation(x: cameraOffset.0, y: cameraOffset.1)
-
-            self.camera.cameraOffset = vec3(cameraOffset.0, zOffset, cameraOffset.1)
+            self.camera.cameraOffset = vec3(cameraOffset.0, self.camera.cameraOffset.y, cameraOffset.1)
         }
     }
     

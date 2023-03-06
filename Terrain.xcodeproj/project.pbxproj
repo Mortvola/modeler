@@ -13,6 +13,8 @@
 		791D974829B39B4E002EBF19 /* PbrLineShaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = 791D974729B39B4E002EBF19 /* PbrLineShaders.metal */; };
 		791D974A29B39B87002EBF19 /* PbrLineMaterial.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791D974929B39B87002EBF19 /* PbrLineMaterial.swift */; };
 		791D974C29B54F70002EBF19 /* Pbr.metal in Sources */ = {isa = PBXBuildFile; fileRef = 791D974B29B54F70002EBF19 /* Pbr.metal */; };
+		791D978429B597CD002EBF19 /* Sphere.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791D978329B597CD002EBF19 /* Sphere.swift */; };
+		791D978629B61CAE002EBF19 /* Mesh.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791D978529B61CAE002EBF19 /* Mesh.swift */; };
 		794545D029A92A85003E7913 /* Math.swift in Sources */ = {isa = PBXBuildFile; fileRef = 794545CF29A92A85003E7913 /* Math.swift */; };
 		7947B41029AA6E6D00981301 /* TerrainTile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7947B40F29AA6E6D00981301 /* TerrainTile.swift */; };
 		7947B41429AA755500981301 /* World.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7947B41329AA755500981301 /* World.swift */; };
@@ -104,6 +106,8 @@
 		791D974729B39B4E002EBF19 /* PbrLineShaders.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = PbrLineShaders.metal; sourceTree = "<group>"; };
 		791D974929B39B87002EBF19 /* PbrLineMaterial.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PbrLineMaterial.swift; sourceTree = "<group>"; };
 		791D974B29B54F70002EBF19 /* Pbr.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = Pbr.metal; sourceTree = "<group>"; };
+		791D978329B597CD002EBF19 /* Sphere.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sphere.swift; sourceTree = "<group>"; };
+		791D978529B61CAE002EBF19 /* Mesh.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Mesh.swift; sourceTree = "<group>"; };
 		794545CF29A92A85003E7913 /* Math.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Math.swift; sourceTree = "<group>"; };
 		7947B40F29AA6E6D00981301 /* TerrainTile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TerrainTile.swift; sourceTree = "<group>"; };
 		7947B41329AA755500981301 /* World.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = World.swift; sourceTree = "<group>"; };
@@ -187,6 +191,7 @@
 			isa = PBXGroup;
 			children = (
 				79A1646A29A80D91001A27F0 /* TriangleMesh.swift */,
+				791D978529B61CAE002EBF19 /* Mesh.swift */,
 				7947B42029AD222600981301 /* RenderObject.swift */,
 				7947B42429AD228E00981301 /* Line.swift */,
 			);
@@ -263,6 +268,7 @@
 				7947B40F29AA6E6D00981301 /* TerrainTile.swift */,
 				794B9A2E29AD7D9F000B2EAF /* Skybox.swift */,
 				7955184D29AFD14F00FC4F12 /* TestRect.swift */,
+				791D978329B597CD002EBF19 /* Sphere.swift */,
 				791D973F29B384F2002EBF19 /* TestMesh.swift */,
 				7955184F29AFD2B600FC4F12 /* Model.swift */,
 				79A1646829A80319001A27F0 /* Utilities.swift */,
@@ -456,6 +462,7 @@
 			files = (
 				7955184C29AF876800FC4F12 /* Sun.swift in Sources */,
 				791D974A29B39B87002EBF19 /* PbrLineMaterial.swift in Sources */,
+				791D978429B597CD002EBF19 /* Sphere.swift in Sources */,
 				79A1646B29A80D91001A27F0 /* TriangleMesh.swift in Sources */,
 				7947B42F29AD349100981301 /* Material.swift in Sources */,
 				7947B41029AA6E6D00981301 /* TerrainTile.swift in Sources */,
@@ -486,6 +493,7 @@
 				794B9A3329ADACD4000B2EAF /* SkyboxShaders.metal in Sources */,
 				7947B41729ABAC3000981301 /* Vec3.swift in Sources */,
 				7947B42129AD222600981301 /* RenderObject.swift in Sources */,
+				791D978629B61CAE002EBF19 /* Mesh.swift in Sources */,
 				791D974029B384F2002EBF19 /* TestMesh.swift in Sources */,
 				791D974C29B54F70002EBF19 /* Pbr.metal in Sources */,
 				79E2C14829A7EC6C006F6BD9 /* AppDelegate.swift in Sources */,
