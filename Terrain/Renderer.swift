@@ -21,7 +21,7 @@ enum RendererError: Error {
 }
 
 class Renderer: NSObject, MTKViewDelegate {
-    let test = false
+    let test = true
     
     public let device: MTLDevice
     public let view: MTKView
@@ -55,8 +55,13 @@ class Renderer: NSObject, MTKViewDelegate {
     
     var previousFrameTime: Double?
     
-    init(metalKitView: MTKView) throws {
+    let lights: Lights
+    
+    var sphere: Sphere?
+    
+    init(metalKitView: MTKView, lights: Lights) throws {
         self.camera = Camera(world: world)
+        self.lights = lights
         
         self.device = metalKitView.device!
         self.view = metalKitView
@@ -99,7 +104,7 @@ class Renderer: NSObject, MTKViewDelegate {
 //            try await TestRect(device: self.device, view: self.view)
 //            try await TestMesh(device: self.device, view: self.view)
 
-            try await Sphere(device: self.device, view: self.view);
+            self.sphere = try await Sphere(device: self.device, view: self.view);
             
             self.world.terrainLoaded = true
         }
@@ -175,6 +180,36 @@ class Renderer: NSObject, MTKViewDelegate {
             self.camera.updatePostion(elapsedTime: elapsedTime)
             
             self.updateTimeOfDay(elapsedTime: elapsedTime)
+            
+            if Lights.shared.rotateObject {
+                if let sphere = self.sphere {
+                    let r = Float((2 * .pi) / 4 * elapsedTime)
+                    sphere.rotation += r
+                    
+                    if sphere.rotation > 2 * .pi {
+                        sphere.rotation = (2 * .pi).remainder(dividingBy: 2 * .pi)
+                    }
+                    
+                    sphere.setRotationY(radians: sphere.rotation, axis: vec3(0, 1, 0))
+                }
+            }
+            
+            if Lights.shared.rotateLight {
+                let r = Float((2 * .pi) / 4 * elapsedTime)
+                Lights.shared.rotation += r
+                
+                if Lights.shared.rotation > 2 * .pi {
+                    Lights.shared.rotation = (2 * .pi).remainder(dividingBy: 2 * .pi)
+                }
+                
+                let translation = matrix4x4_translation(0, 0, 2)
+                let rotation = matrix4x4_rotation(radians: Lights.shared.rotation, axis: vec3(0, 1, 0))
+                
+                var position = matrix_multiply(translation, vec4(0, 0, 0, 1))
+                position = matrix_multiply(rotation, position)
+                
+                Lights.shared.position = vec3(position.x, position.y, position.z)
+            }
         }
         
         self.previousFrameTime = now;
@@ -204,10 +239,11 @@ class Renderer: NSObject, MTKViewDelegate {
             
             self.uniforms[0].projectionMatrix = self.camera.projectionMatrix
             self.uniforms[0].viewMatrix = self.camera.getViewMatrix()
+            self.uniforms[0].cameraPos = self.camera.cameraOffset
             self.uniforms[0].lightVector = self.lightVector
-            self.uniforms[0].cameraPos = self.camera.cameraOffset;
-            self.uniforms[0].lightPos = vec3(0.0, 12.0, 0.0);
-            self.uniforms[0].lightColor = vec3(500.0, 500.0, 500.0);
+            self.uniforms[0].pointLight = Lights.shared.pointLight
+            self.uniforms[0].lightPos = self.lights.position
+            self.uniforms[0].lightColor = self.lights.color
 
             /// Delay getting the currentRenderPassDescriptor until we absolutely need it to avoid
             ///   holding onto the drawable and blocking the display pipeline any longer than necessary

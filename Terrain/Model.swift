@@ -16,6 +16,10 @@ class Model {
         self.makeModelMatrix();
     }
     
+    func setRotationY(radians: Float, axis: vec3) {
+        self.modelMatrix = matrix4x4_rotation(radians: radians, axis: axis)
+    }
+    
     func makeModelMatrix() {
         self.modelMatrix = matrix4x4_translation(self.translate.x, self.translate.y, self.translate.z)
     }

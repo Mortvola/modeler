@@ -45,7 +45,6 @@ vertex VertexOut pbrVertexShader(
     
     vertexOut.position =  uniforms.projectionMatrix * uniforms.viewMatrix * float4(worldVertexPosition, 1.0);
 
-#if 1
     float3 T = normalize(normalMatrix * vertexIn.tangent);
     float3 N = normalize(normalMatrix * vertexIn.normal);
     T = normalize(T - dot(T, N) * N);
@@ -53,15 +52,11 @@ vertex VertexOut pbrVertexShader(
 
     float3x3 TBN = transpose(float3x3(T, B, N));
     
-    vertexOut.lightPos = TBN * uniforms.lightPos;
     vertexOut.viewPos = TBN * uniforms.cameraPos;
     vertexOut.fragPos = TBN * worldVertexPosition;
+    
+    vertexOut.lightPos = TBN * uniforms.lightPos;
     vertexOut.lightVector = TBN * uniforms.lightVector;
-#else
-    vertexOut.lightPos = uniforms.lightPos;
-    vertexOut.viewPos = uniforms.cameraPos;
-    vertexOut.fragPos = worldVertexPosition;
-#endif
     
     vertexOut.texCoords = vertexIn.texCoord;
 
@@ -109,22 +104,26 @@ fragment float4 pbrFragmentShader(
 #endif
     
     float metallic = 0.5; // metallicMap.sample(sampler, fragmentIn.texCoords).r;
-    float roughness = 0.0; // roughnessMap.sample(sampler, fragmentIn.texCoords).r;
+    float roughness = roughnessMap.sample(sampler, fragmentIn.texCoords).r;
     float ao = 1.0; // aoMap.sample(sampler, fragmentIn.texCoords).r;
     
     float3 N = normalize(tNormal * 2 - 1);
     float3 V = normalize(fragmentIn.viewPos - fragmentIn.fragPos);
 
-#if 0
-    float distance = length(fragmentIn.lightPos - fragmentIn.fragPos);
-    float attenuation = 1.0 / (distance * distance);
-    float3 radiance = uniforms.lightColor * attenuation;
-    float3 L = normalize(fragmentIn.lightPos - fragmentIn.fragPos);
-#else
-    float3 radiance = float3(10, 10, 10);
-    float3 L = normalize(-fragmentIn.lightVector); // float3(0.0, 0.0, 1.0);
-#endif
-    
+    float3 L;
+    float3 radiance;
+
+    if (uniforms.pointLight) {
+        float distance = length(fragmentIn.lightPos - fragmentIn.fragPos);
+        float attenuation = 1.0 / (distance * distance + 0.001);
+        radiance = uniforms.lightColor * attenuation;
+        L = normalize(fragmentIn.lightPos - fragmentIn.fragPos);
+    }
+    else {
+        radiance = uniforms.lightColor;
+        L = normalize(fragmentIn.lightPos); // float3(0.0, 0.0, 1.0);
+    }
+
     float3 Lo = computeLo(albedo, metallic, roughness, N, V, L, radiance);
 
     // ambient lighting (note that the next IBL tutorial will replace

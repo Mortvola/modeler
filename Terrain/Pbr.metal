@@ -98,7 +98,7 @@ float3 computeLo(
     float HdotV = clamp(dot(H, V), 0.0, 1.0);
     
     // Cook-Torrance BRDF
-    float NDF = DistributionGGX(N, H, roughness);
+    float NDF = DistributionGGX(N, H, roughness * roughness);
     float G = GeometrySmith(NdotV, NdotL, roughness);
     float3 F = fresnelSchlick(HdotV, F0);
        

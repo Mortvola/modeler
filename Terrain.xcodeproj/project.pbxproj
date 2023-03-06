@@ -8,8 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		791D974029B384F2002EBF19 /* TestMesh.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791D973F29B384F2002EBF19 /* TestMesh.swift */; };
-		791D974429B38C17002EBF19 /* DoubleTouchGestureRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791D974329B38C17002EBF19 /* DoubleTouchGestureRecognizer.swift */; };
-		791D974629B38CDE002EBF19 /* double-touch-bridging-header.h in Sources */ = {isa = PBXBuildFile; fileRef = 791D974529B38CDE002EBF19 /* double-touch-bridging-header.h */; };
+		791D974629B38CDE002EBF19 /* Bridging-header.h in Sources */ = {isa = PBXBuildFile; fileRef = 791D974529B38CDE002EBF19 /* Bridging-header.h */; };
 		791D974829B39B4E002EBF19 /* PbrLineShaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = 791D974729B39B4E002EBF19 /* PbrLineShaders.metal */; };
 		791D974A29B39B87002EBF19 /* PbrLineMaterial.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791D974929B39B87002EBF19 /* PbrLineMaterial.swift */; };
 		791D974C29B54F70002EBF19 /* Pbr.metal in Sources */ = {isa = PBXBuildFile; fileRef = 791D974B29B54F70002EBF19 /* Pbr.metal */; };
@@ -18,6 +17,9 @@
 		791D978829B62953002EBF19 /* RenderControllerRepresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791D978729B62953002EBF19 /* RenderControllerRepresentable.swift */; };
 		791D97C029B62B81002EBF19 /* App.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791D97BF29B62B81002EBF19 /* App.swift */; };
 		791D97C229B62BBC002EBF19 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791D97C129B62BBC002EBF19 /* ContentView.swift */; };
+		791D97CA29B6552F002EBF19 /* LIghts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791D97C929B6552F002EBF19 /* LIghts.swift */; };
+		791D97CC29B65CB8002EBF19 /* CheckBox.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791D97CB29B65CB8002EBF19 /* CheckBox.swift */; };
+		791D97D029B68523002EBF19 /* vec4.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791D97CF29B68523002EBF19 /* vec4.swift */; };
 		794545D029A92A85003E7913 /* Math.swift in Sources */ = {isa = PBXBuildFile; fileRef = 794545CF29A92A85003E7913 /* Math.swift */; };
 		7947B41029AA6E6D00981301 /* TerrainTile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7947B40F29AA6E6D00981301 /* TerrainTile.swift */; };
 		7947B41429AA755500981301 /* World.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7947B41329AA755500981301 /* World.swift */; };
@@ -104,8 +106,7 @@
 
 /* Begin PBXFileReference section */
 		791D973F29B384F2002EBF19 /* TestMesh.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestMesh.swift; sourceTree = "<group>"; };
-		791D974329B38C17002EBF19 /* DoubleTouchGestureRecognizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DoubleTouchGestureRecognizer.swift; sourceTree = "<group>"; };
-		791D974529B38CDE002EBF19 /* double-touch-bridging-header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "double-touch-bridging-header.h"; sourceTree = "<group>"; };
+		791D974529B38CDE002EBF19 /* Bridging-header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Bridging-header.h"; sourceTree = "<group>"; };
 		791D974729B39B4E002EBF19 /* PbrLineShaders.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = PbrLineShaders.metal; sourceTree = "<group>"; };
 		791D974929B39B87002EBF19 /* PbrLineMaterial.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PbrLineMaterial.swift; sourceTree = "<group>"; };
 		791D974B29B54F70002EBF19 /* Pbr.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = Pbr.metal; sourceTree = "<group>"; };
@@ -114,6 +115,9 @@
 		791D978729B62953002EBF19 /* RenderControllerRepresentable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RenderControllerRepresentable.swift; sourceTree = "<group>"; };
 		791D97BF29B62B81002EBF19 /* App.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = App.swift; sourceTree = "<group>"; };
 		791D97C129B62BBC002EBF19 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		791D97C929B6552F002EBF19 /* LIghts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LIghts.swift; sourceTree = "<group>"; };
+		791D97CB29B65CB8002EBF19 /* CheckBox.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckBox.swift; sourceTree = "<group>"; };
+		791D97CF29B68523002EBF19 /* vec4.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = vec4.swift; sourceTree = "<group>"; };
 		794545CF29A92A85003E7913 /* Math.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Math.swift; sourceTree = "<group>"; };
 		7947B40F29AA6E6D00981301 /* TerrainTile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TerrainTile.swift; sourceTree = "<group>"; };
 		7947B41329AA755500981301 /* World.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = World.swift; sourceTree = "<group>"; };
@@ -189,6 +193,7 @@
 				794545CF29A92A85003E7913 /* Math.swift */,
 				7947B41629ABAC3000981301 /* Vec3.swift */,
 				7955184329AED43800FC4F12 /* Vec2.swift */,
+				791D97CF29B68523002EBF19 /* vec4.swift */,
 			);
 			path = Math;
 			sourceTree = "<group>";
@@ -261,17 +266,17 @@
 				79A1646529A800FA001A27F0 /* Info.plist */,
 				791D97BF29B62B81002EBF19 /* App.swift */,
 				791D97C129B62BBC002EBF19 /* ContentView.swift */,
+				791D97CB29B65CB8002EBF19 /* CheckBox.swift */,
 				79E2C14729A7EC6C006F6BD9 /* AppDelegate.swift */,
 				79E2C14C29A7EC6C006F6BD9 /* RenderViewController.swift */,
 				791D978729B62953002EBF19 /* RenderControllerRepresentable.swift */,
-				791D974529B38CDE002EBF19 /* double-touch-bridging-header.h */,
-				791D974329B38C17002EBF19 /* DoubleTouchGestureRecognizer.swift */,
 				7947B43029AD375F00981301 /* Errors.swift */,
 				79A1645B29A7F87C001A27F0 /* Configuration.swift */,
 				7947B41329AA755500981301 /* World.swift */,
 				79E2C14A29A7EC6C006F6BD9 /* Renderer.swift */,
 				7947B41829ABB9E800981301 /* Camera.swift */,
 				7955184B29AF876800FC4F12 /* Sun.swift */,
+				791D974529B38CDE002EBF19 /* Bridging-header.h */,
 				7947B42929AD327C00981301 /* Materials */,
 				7947B41529ABAC1D00981301 /* Math */,
 				7947B40F29AA6E6D00981301 /* TerrainTile.swift */,
@@ -282,6 +287,7 @@
 				7955184F29AFD2B600FC4F12 /* Model.swift */,
 				79A1646829A80319001A27F0 /* Utilities.swift */,
 				79A1646629A801D0001A27F0 /* Types.swift */,
+				791D97C929B6552F002EBF19 /* LIghts.swift */,
 				7947B42629AD229900981301 /* RenderObjects */,
 				79E2C15029A7EC6C006F6BD9 /* Main.storyboard */,
 				79E2C14929A7EC6C006F6BD9 /* ShaderTypes.h */,
@@ -482,12 +488,14 @@
 				794545D029A92A85003E7913 /* Math.swift in Sources */,
 				7955185029AFD2B600FC4F12 /* Model.swift in Sources */,
 				7947B42B29AD329500981301 /* TerrainMaterial.swift in Sources */,
+				791D97D029B68523002EBF19 /* vec4.swift in Sources */,
 				791D974829B39B4E002EBF19 /* PbrLineShaders.metal in Sources */,
 				79A1645C29A7F87C001A27F0 /* Configuration.swift in Sources */,
 				7955184E29AFD15000FC4F12 /* TestRect.swift in Sources */,
 				79A1646929A80319001A27F0 /* Utilities.swift in Sources */,
 				79E2C14B29A7EC6C006F6BD9 /* Renderer.swift in Sources */,
-				791D974629B38CDE002EBF19 /* double-touch-bridging-header.h in Sources */,
+				791D97CA29B6552F002EBF19 /* LIghts.swift in Sources */,
+				791D974629B38CDE002EBF19 /* Bridging-header.h in Sources */,
 				79A1646729A801D0001A27F0 /* Types.swift in Sources */,
 				7947B41429AA755500981301 /* World.swift in Sources */,
 				7955184429AED43800FC4F12 /* Vec2.swift in Sources */,
@@ -501,11 +509,11 @@
 				7947B43129AD375F00981301 /* Errors.swift in Sources */,
 				7955186129B0EF7400FC4F12 /* PbrShaders.metal in Sources */,
 				7955184829AEDAD600FC4F12 /* TextureManager.swift in Sources */,
-				791D974429B38C17002EBF19 /* DoubleTouchGestureRecognizer.swift in Sources */,
 				794B9A3329ADACD4000B2EAF /* SkyboxShaders.metal in Sources */,
 				7947B41729ABAC3000981301 /* Vec3.swift in Sources */,
 				7947B42129AD222600981301 /* RenderObject.swift in Sources */,
 				791D978629B61CAE002EBF19 /* Mesh.swift in Sources */,
+				791D97CC29B65CB8002EBF19 /* CheckBox.swift in Sources */,
 				791D974029B384F2002EBF19 /* TestMesh.swift in Sources */,
 				791D974C29B54F70002EBF19 /* Pbr.metal in Sources */,
 				79E2C14829A7EC6C006F6BD9 /* AppDelegate.swift in Sources */,

@@ -41,7 +41,7 @@ class RenderViewController: UIViewController {
         self.mtkView = MTKView(frame: view.frame, device: defaultDevice)
         self.view.addSubview(self.mtkView)
         
-        guard let renderer = try? Renderer(metalKitView: self.mtkView) else {
+        guard let renderer = try? Renderer(metalKitView: self.mtkView, lights: Lights.shared) else {
             print("Renderer cannot be initialized")
             return
         }

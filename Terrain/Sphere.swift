@@ -12,6 +12,8 @@ import MetalKit
 class Sphere: Model {
     var objects: [RenderObject] = []
     
+    var rotation: Float = 0.0
+    
     init(device: MTLDevice, view: MTKView) async throws {
         super.init()
         
@@ -49,7 +51,7 @@ class Sphere: Model {
         vertexAttributes.format = .float3
         vertexAttributes.offset = MemoryLayout<simd_float3>.stride
         vertexAttributes.bufferIndex = BufferIndex.normals.rawValue
-        vertexDescriptor.attributes[VertexAttribute.normal.rawValue] = vertexAttributes
+        vertexDescriptor.attributes[VertexAttribute.tangent.rawValue] = vertexAttributes
 
         var vertexBufferLayout = MDLVertexBufferLayout()
         vertexBufferLayout.stride = MemoryLayout<simd_float3>.stride + MemoryLayout<simd_float2>.stride
@@ -59,10 +61,12 @@ class Sphere: Model {
         vertexBufferLayout.stride = MemoryLayout<simd_float3>.stride * 2
         vertexDescriptor.layouts[BufferIndex.normals.rawValue] = vertexBufferLayout
 
+        mesh.addOrthTanBasis(forTextureCoordinateAttributeNamed: MDLVertexAttributeTextureCoordinate, normalAttributeNamed: MDLVertexAttributeNormal, tangentAttributeNamed: MDLVertexAttributeTangent)
+
         mesh.vertexDescriptor = vertexDescriptor
         
         let sphere = try MTKMesh(mesh: mesh, device: device)
-        
+
         let object = Mesh(mesh: sphere, model: self)
         
         material.objects.append(object)

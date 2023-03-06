@@ -56,6 +56,7 @@ typedef struct {
     vector_float3 cameraPos;
     vector_float3 lightPos;
     vector_float3 lightColor;
+    bool pointLight;
 } Uniforms;
 
 //typedef struct {
