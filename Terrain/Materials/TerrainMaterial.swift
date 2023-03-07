@@ -24,11 +24,11 @@ class TerrainMaterial: Material {
         
         self.pipeline = try TerrainMaterial.buildPipeline(device: device, metalKitView: view, vertexDescriptor: vertexDescriptor)
         
-        self.texture = try await TextureManager.shared.addTexture(device: device, path: "/A23DTEX_Albedo_1024.jpg")
-        self.normals = try await TextureManager.shared.addTexture(device: device, path: "/A23DTEX_Normal_1024.jpg")
-        self.metallic = try await TextureManager.shared.addTexture(device: device, path: "/A23DTEX_Specular_1024.jpg")
-        self.roughness = try await TextureManager.shared.addTexture(device: device, path: "/A23DTEX_Roughness_1024.jpg")
-        self.ao = try await TextureManager.shared.addTexture(device: device, path: "/A23DTEX_AO_1024.jpg")
+//        self.texture = try await TextureManager.shared.addTexture(device: device, path: "/A23DTEX_Albedo_1024.jpg")
+//        self.normals = try await TextureManager.shared.addTexture(device: device, path: "/A23DTEX_Normal_1024.jpg")
+//        self.metallic = try await TextureManager.shared.addTexture(device: device, path: "/A23DTEX_Specular_1024.jpg")
+//        self.roughness = try await TextureManager.shared.addTexture(device: device, path: "/A23DTEX_Roughness_1024.jpg")
+//        self.ao = try await TextureManager.shared.addTexture(device: device, path: "/A23DTEX_AO_1024.jpg")
 
 //        self.texture = try await TextureManager.shared.addTexture(device: device, path: "/bumpy_worn_ground_1024_albedo.png")
 //        self.normals = try await TextureManager.shared.addTexture(device: device, path: "/bumpy_worn_ground_1024_normal-dx.png")
@@ -36,11 +36,18 @@ class TerrainMaterial: Material {
 //        self.roughness = try await TextureManager.shared.addTexture(device: device, path: "/bumpy_worn_ground_1024_roughness.png")
 //        self.ao = try await TextureManager.shared.addTexture(device: device, path: "/bumpy_worn_ground_1024_ao.png")
 
-//        self.texture = try await TextureManager.shared.addTexture(device: device, path: "/rustediron2_basecolor_1024.png")
-//        self.normals = try await TextureManager.shared.addTexture(device: device, path: "/rustediron2_normal_1024.png")
-//        self.metallic = try await TextureManager.shared.addTexture(device: device, path: "/rustediron2_metallic_1024.png")
-//        self.roughness = try await TextureManager.shared.addTexture(device: device, path: "/rustediron2_roughness_1024.png")
-//        self.ao = nil
+        do {
+            self.texture = try await TextureManager.shared.addTexture(device: device, path: "/rustediron2_basecolor_1024.png")
+            self.normals = try await TextureManager.shared.addTexture(device: device, path: "/rustediron2_normal_1024.png")
+            self.metallic = try await TextureManager.shared.addTexture(device: device, path: "/rustediron2_metallic_1024.png")
+            self.roughness = try await TextureManager.shared.addTexture(device: device, path: "/rustediron2_roughness_1024.png")
+            self.ao = nil
+        }
+        catch {
+            print(error);
+            
+            throw error;
+        }
         
         self.samplerState = TerrainMaterial.buildSamplerState(device: device)
     }

@@ -13,7 +13,7 @@ class Lights: ObservableObject {
     @Published var pointLight = true
     
     var rotation = Float(0.0)
-    var position = vec3(0.0, 2.0, 0.0)
+    var position = vec3(0.0, 0.0, -11.0)
     
     @Published var red: Float = 500.0
     @Published var green: Float = 500.0

@@ -12,16 +12,14 @@ import MetalKit
 class Sphere: Model {
     var objects: [RenderObject] = []
     
-    var rotation: Float = 0.0
-    
-    init(device: MTLDevice, view: MTKView) async throws {
+    init(device: MTLDevice, view: MTKView, diameter: Float) async throws {
         super.init()
         
         let material = try await MaterialManager.shared.addMaterial(device: device, view: view, name: .terrain)
 
         let meshBufferAllocator = MTKMeshBufferAllocator(device: device)
 
-        let mesh = MDLMesh.newEllipsoid(withRadii: vec3(1.0, 1.0, 1.0), radialSegments: 16, verticalSegments: 16, geometryType: .triangles, inwardNormals: false, hemisphere: false, allocator: meshBufferAllocator)
+        let mesh = MDLMesh.newEllipsoid(withRadii: vec3(diameter, diameter, diameter), radialSegments: 32, verticalSegments: 32, geometryType: .triangles, inwardNormals: false, hemisphere: false, allocator: meshBufferAllocator)
 
         let vertexDescriptor = MDLVertexDescriptor()
         

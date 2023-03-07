@@ -23,20 +23,20 @@ class TestRect: Model {
 
 private let points: [simd_float1] = [
     // South
-    -10.0, 10.0,  10.0,  0.0, 0.0,
-     10.0, 10.0,  10.0,  1.0, 0.0,
-     10.0, -10.0, -10.0,  1.0, 1.0,
-    -10.0, -10.0, -10.0,  0.0, 1.0
+    -10.0, 0.0,  10.0,  0.0, 1.0,
+     10.0, 0.0,  10.0,  1.0, 1.0,
+     10.0, 0.0, -10.0,  1.0, 0.0,
+    -10.0, 0.0, -10.0,  0.0, 0.0
 ];
 
 private let normals: [simd_float1] = [
-    0.0, simd_float1(-1 / 2.0.squareRoot()), simd_float1(1 / 2.0.squareRoot()),
-    0.0, simd_float1(-1 / 2.0.squareRoot()), simd_float1(1 / 2.0.squareRoot()),
-    0.0, simd_float1(-1 / 2.0.squareRoot()), simd_float1(1 / 2.0.squareRoot()),
-    0.0, simd_float1(-1 / 2.0.squareRoot()), simd_float1(1 / 2.0.squareRoot())
+    0.0, -1, 0,
+    0.0, -1, 0,
+    0.0, -1, 0,
+    0.0, -1, 0,
 ]
 
 private let indices: [Int] = [
-    0, 3, 2,
-    2, 1, 0
+    0, 2, 3,
+    0, 1, 2
 ]

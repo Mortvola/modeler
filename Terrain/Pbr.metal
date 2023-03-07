@@ -38,8 +38,6 @@ float GeometrySchlickGGX(float NdotV, float roughness)
 // ----------------------------------------------------------------------------
 float GeometrySmith(float NdotV, float NdotL, float roughness)
 {
-//    float NdotV = max(dot(N, V), 0.0);
-//    float NdotL = max(dot(N, L), 0.0);
     float ggx2 = GeometrySchlickGGX(NdotV, roughness);
     float ggx1 = GeometrySchlickGGX(NdotL, roughness);
 
@@ -50,6 +48,7 @@ float GeometrySmith(float NdotV, float NdotL, float roughness)
 float3 fresnelSchlick(float cosTheta, float3 F0)
 {
     return F0 + (1.0 - F0) * pow(clamp(1.0 - cosTheta, 0.0, 1.0), 5.0);
+//    return F0 + (1.0 - F0) * pow(2, -5.55473 * cosTheta - 6.98316 * cosTheta);
 }
 
 float3 getNormalFromMap(float3 tNormal, float3 normal, float3 worldPosition, float2 texCoords) {
@@ -83,14 +82,6 @@ float3 computeLo(
     float3 F0 = float3(0.04);
     F0 = mix(F0, albedo, metallic);
 
-    // For sunlight, don't attenuate
-//    float3 lightColor = float3(1.0, 1.0, 1.0);
-//    float attenuation = 1.0;
-//    float3 radiance = lightColor * attenuation;
-
-    // The vector from the fragment to the light source (L), the sun in our case,
-    // is a fixed vector
-//    float3 L = normalize(-lightVector);
     float3 H = normalize(V + L);
     
     float NdotV = max(dot(N, V), 0.0);

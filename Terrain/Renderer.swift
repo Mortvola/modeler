@@ -57,7 +57,7 @@ class Renderer: NSObject, MTKViewDelegate {
     
     let lights: Lights
     
-    var sphere: Sphere?
+    var testModel: Model?
     
     init(metalKitView: MTKView, lights: Lights) throws {
         self.camera = Camera(world: world)
@@ -101,10 +101,10 @@ class Renderer: NSObject, MTKViewDelegate {
 
     func load(lat: Double, lng: Double, dimension: Int) async throws {
         if self.test {
-//            try await TestRect(device: self.device, view: self.view)
+//            self.testModel = try await TestRect(device: self.device, view: self.view)
 //            try await TestMesh(device: self.device, view: self.view)
 
-            self.sphere = try await Sphere(device: self.device, view: self.view);
+            self.testModel = try await Sphere(device: self.device, view: self.view, diameter: 5);
             
             self.world.terrainLoaded = true
         }
@@ -182,15 +182,15 @@ class Renderer: NSObject, MTKViewDelegate {
             self.updateTimeOfDay(elapsedTime: elapsedTime)
             
             if Lights.shared.rotateObject {
-                if let sphere = self.sphere {
+                if let testModel = self.testModel {
                     let r = Float((2 * .pi) / 4 * elapsedTime)
-                    sphere.rotation += r
+                    testModel.rotation += r
                     
-                    if sphere.rotation > 2 * .pi {
-                        sphere.rotation = (2 * .pi).remainder(dividingBy: 2 * .pi)
+                    if testModel.rotation > 2 * .pi {
+                        testModel.rotation = (2 * .pi).remainder(dividingBy: 2 * .pi)
                     }
                     
-                    sphere.setRotationY(radians: sphere.rotation, axis: vec3(0, 1, 0))
+                    testModel.setRotationY(radians: testModel.rotation, axis: vec3(0, 1, 0))
                 }
             }
             
@@ -202,7 +202,7 @@ class Renderer: NSObject, MTKViewDelegate {
                     Lights.shared.rotation = (2 * .pi).remainder(dividingBy: 2 * .pi)
                 }
                 
-                let translation = matrix4x4_translation(0, 0, 2)
+                let translation = matrix4x4_translation(0, 0, -11)
                 let rotation = matrix4x4_rotation(radians: Lights.shared.rotation, axis: vec3(0, 1, 0))
                 
                 var position = matrix_multiply(translation, vec4(0, 0, 0, 1))

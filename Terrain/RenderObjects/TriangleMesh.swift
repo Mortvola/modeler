@@ -107,7 +107,7 @@ class TriangleMesh: RenderObject {
                 f * (deltaUV2[1] * edge1[0] - deltaUV1[1] * edge2[0]),
                 f * (deltaUV2[1] * edge1[1] - deltaUV1[1] * edge2[1]),
                 f * (deltaUV2[1] * edge1[2] - deltaUV1[1] * edge2[2])
-              )
+              ).normalize()
 
 //               let bitangent = vec3(
 //                 f * (deltaUV1[0] * edge2[0] - deltaUV2[0] * edge1[0]),

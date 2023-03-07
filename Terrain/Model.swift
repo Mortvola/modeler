@@ -10,7 +10,8 @@ import Foundation
 class Model {
     var modelMatrix = matrix4x4_identity()
     var translate = vec3(0.0, 0.0, 0.0)
-
+    var rotation: Float = 0.0
+    
     func setTranslation(x: Float, y: Float, z: Float) {
         self.translate = vec3(x, y, z);
         self.makeModelMatrix();
