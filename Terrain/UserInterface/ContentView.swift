@@ -10,13 +10,15 @@ import SwiftUI
 struct ContentView: View {
     @StateObject var lights = Lights.shared
     @State var red: Double = 0
+    @State var openFile = false
+    @State var addObject = false
     
     let formatter: NumberFormatter = {
         let formatter = NumberFormatter()
         formatter.numberStyle = .decimal
         return formatter
     }()
-
+    
     var body: some View {
         NavigationSplitView {
             VStack {
@@ -56,9 +58,28 @@ struct ContentView: View {
                     .padding(.leading, 4)
                 }
                 .padding(.top, 8)
+                Button {
+                    addObject = true
+                } label: {
+                    Text("Add Object")
+                }
+                .buttonStyle(.bordered)
+                Button {
+                    openFile = true
+                } label: {
+                    Text("Import Texture")
+                }
+                .buttonStyle(.bordered)
+                ObjectsView()
                 Spacer();
             }
             .padding()
+            .fileImporter(isPresented: $openFile, allowedContentTypes: [.image]) { result in
+                try? TextureStore.shared.addTexture(url: result.get())
+            }
+            .sheet(isPresented: $addObject) {
+                AddObject(isOpen: $addObject)
+            }
         } detail: {
             ZStack {
                 RenderView()

@@ -72,7 +72,7 @@ class World {
             tileGrid[gridZ][gridX].tile = tile;
         }
         else {
-            let tile = TerrainTile(x: x, y: z, dimension: dimension, device: renderer.device, view: renderer.view)
+            let tile = TerrainTile(x: x, y: z, dimension: dimension, device: renderer.device!, view: renderer.view!)
             // tile.setScale(scale: self.scale);
             tileDict[dictionaryKey] = tile;
             
@@ -91,7 +91,7 @@ class World {
                 currentTile.offsetX = prevTile.offsetX
                 + (prevTile.tile!.xDimension + currentTile.tile!.xDimension) / 2;
                 currentTile.offsetZ = zOffset;
-                currentTile.tile?.setTranslation(x: currentTile.offsetX, y: 0.0, z: currentTile.offsetZ)
+//                currentTile.tile?.setTranslation(x: currentTile.offsetX, y: 0.0, z: currentTile.offsetZ)
             }
             
             prevTile = tileGrid[z][tilePadding - x + 1];
@@ -101,7 +101,7 @@ class World {
                 currentTile.offsetX = prevTile.offsetX
                 - (prevTile.tile!.xDimension + currentTile.tile!.xDimension) / 2;
                 currentTile.offsetZ = zOffset;
-                currentTile.tile!.setTranslation(x: currentTile.offsetX, y: 0.0, z: currentTile.offsetZ)
+//                currentTile.tile!.setTranslation(x: currentTile.offsetX, y: 0.0, z: currentTile.offsetZ)
             }
         }
     }
@@ -117,7 +117,7 @@ class World {
                 currentTile1.offsetX = 0;
                 currentTile1.offsetZ = prevTile.offsetZ
                 + (prevTile.tile!.yDimension + currentTile1.tile!.yDimension) / 2;
-                currentTile1.tile?.setTranslation(x: currentTile1.offsetX, y: 0.0, z: currentTile1.offsetZ)
+//                currentTile1.tile?.setTranslation(x: currentTile1.offsetX, y: 0.0, z: currentTile1.offsetZ)
             }
             
             prevTile = tileGrid[tilePadding - z + 1][tilePadding];
@@ -127,7 +127,7 @@ class World {
                 currentTile2.offsetX = 0;
                 currentTile2.offsetZ = prevTile.offsetZ
                 - (prevTile.tile!.yDimension + currentTile2.tile!.yDimension) / 2;
-                currentTile2.tile!.setTranslation(x: currentTile2.offsetX, y: 0.0, z: currentTile2.offsetZ)
+//                currentTile2.tile!.setTranslation(x: currentTile2.offsetX, y: 0.0, z: currentTile2.offsetZ)
             }
             
             for _ in stride(from: 1, to: tilePadding + 1, by: 1) {

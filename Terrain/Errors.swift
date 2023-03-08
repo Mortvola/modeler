@@ -8,6 +8,9 @@
 import Foundation
 
 enum Errors: Error {
+    case deviceNotSet
+    case viewNotSet
+    case uniformsNotSet
     case invalidMaterial
     case invalidTexture
     case downloadFailed

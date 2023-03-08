@@ -20,15 +20,16 @@ enum RendererError: Error {
     case badVertexDescriptor
 }
 
-class Renderer: NSObject, MTKViewDelegate {
+class Renderer {
+    static var shared = Renderer()
     let test = true
     
-    public let device: MTLDevice
-    public let view: MTKView
+    public var device: MTLDevice?
+    public var view: MTKView?
     
-    let commandQueue: MTLCommandQueue
-    var dynamicUniformBuffer: MTLBuffer
-    var depthState: MTLDepthStencilState
+    var commandQueue: MTLCommandQueue?
+    var dynamicUniformBuffer: MTLBuffer?
+    var depthState: MTLDepthStencilState?
     // var colorMap: MTLTexture
     
     let inFlightSemaphore = DispatchSemaphore(value: maxBuffersInFlight)
@@ -37,7 +38,7 @@ class Renderer: NSObject, MTKViewDelegate {
     
     var uniformBufferIndex = 0
     
-    var uniforms: UnsafeMutablePointer<Uniforms>
+    var uniforms: UnsafeMutablePointer<Uniforms>?
     
     let world = World()
     
@@ -55,18 +56,20 @@ class Renderer: NSObject, MTKViewDelegate {
     
     var previousFrameTime: Double?
     
-    let lights: Lights
+    var lights: Lights?
     
-    var testModel: Model?
-    
-    init(metalKitView: MTKView, lights: Lights) throws {
+    init() {
+        self.camera = Camera(world: world)
+    }
+
+    func initialize(metalKitView: MTKView, lights: Lights) throws {
         self.camera = Camera(world: world)
         self.lights = lights
         
         self.device = metalKitView.device!
         self.view = metalKitView
 
-        guard let queue = self.device.makeCommandQueue() else {
+        guard let queue = metalKitView.device!.makeCommandQueue() else {
             throw Errors.makeCommandQueueFailed
         }
         
@@ -74,13 +77,14 @@ class Renderer: NSObject, MTKViewDelegate {
         
         let uniformBufferSize = alignedUniformsSize * maxBuffersInFlight
         
-        guard let buffer = self.device.makeBuffer(length:uniformBufferSize, options:[MTLResourceOptions.storageModeShared]) else {
+        guard let buffer = metalKitView.device!.makeBuffer(length:uniformBufferSize, options:[MTLResourceOptions.storageModeShared]) else {
             throw Errors.makeBufferFailed
         }
+
+        buffer.label = "UniformBuffer"
         self.dynamicUniformBuffer = buffer
-        self.dynamicUniformBuffer.label = "UniformBuffer"
-        
-        self.uniforms = UnsafeMutableRawPointer(self.dynamicUniformBuffer.contents()).bindMemory(to:Uniforms.self, capacity:1)
+
+        self.uniforms = UnsafeMutableRawPointer(buffer.contents()).bindMemory(to:Uniforms.self, capacity:1)
         
         metalKitView.depthStencilPixelFormat = MTLPixelFormat.depth32Float
         metalKitView.colorPixelFormat = .bgra8Unorm_srgb
@@ -90,27 +94,30 @@ class Renderer: NSObject, MTKViewDelegate {
         depthStateDescriptor.depthCompareFunction = .less
         depthStateDescriptor.isDepthWriteEnabled = true
         
-        guard let state = device.makeDepthStencilState(descriptor:depthStateDescriptor) else {
+        guard let state = metalKitView.device!.makeDepthStencilState(descriptor:depthStateDescriptor) else {
             throw Errors.makeDepthStencilStateFailed
         }
         
         self.depthState = state
-        
-        super.init()
     }
 
     func load(lat: Double, lng: Double, dimension: Int) async throws {
-        if self.test {
-//            self.testModel = try await TestRect(device: self.device, view: self.view)
-//            try await TestMesh(device: self.device, view: self.view)
+        guard let device = self.device else {
+            throw Errors.deviceNotSet
+        }
+        
+        guard let view = self.view else {
+            throw Errors.viewNotSet
+        }
 
-            self.testModel = try await Sphere(device: self.device, view: self.view, diameter: 5);
+        try await self.skybox = Skybox(device: device, view: view)
+
+        if self.test {
+//            try await TestMesh(device: self.device, view: self.view)
             
             self.world.terrainLoaded = true
         }
         else {
-            try await self.skybox = Skybox(device: self.device, view: self.view)
-
             self.initializeLightVector(latitude: lat)
 
             let latLng = LatLng(lat, lng)
@@ -155,11 +162,15 @@ class Renderer: NSObject, MTKViewDelegate {
     private func updateDynamicBufferState() {
         /// Update the state of our uniform buffers before rendering
         
+        guard let dynamicUniformBuffer = self.dynamicUniformBuffer else {
+            return
+        }
+        
         uniformBufferIndex = (uniformBufferIndex + 1) % maxBuffersInFlight
         
         self.uniformBufferOffset = alignedUniformsSize * uniformBufferIndex
         
-        self.uniforms = UnsafeMutableRawPointer(self.dynamicUniformBuffer.contents() + self.uniformBufferOffset).bindMemory(to:Uniforms.self, capacity:1)
+        self.uniforms = UnsafeMutableRawPointer(dynamicUniformBuffer.contents() + self.uniformBufferOffset).bindMemory(to:Uniforms.self, capacity:1)
     }
     
     func updateTimeOfDay(elapsedTime: Double) {
@@ -169,7 +180,7 @@ class Renderer: NSObject, MTKViewDelegate {
         self.lightVector = getSunLightVector(day: self.day, hour: Double(self.hour), latitude: self.latitude)
     }
 
-    private func updateGameState() {
+    private func updateState() {
         /// Update any game state before rendering
 
         let now = ProcessInfo.processInfo.systemUptime
@@ -181,18 +192,51 @@ class Renderer: NSObject, MTKViewDelegate {
             
             self.updateTimeOfDay(elapsedTime: elapsedTime)
             
-            if Lights.shared.rotateObject {
-                if let testModel = self.testModel {
-                    let r = Float((2 * .pi) / 4 * elapsedTime)
-                    testModel.rotation += r
-                    
-                    if testModel.rotation > 2 * .pi {
-                        testModel.rotation = (2 * .pi).remainder(dividingBy: 2 * .pi)
+            ObjectStore.shared.objects.forEach { model in
+                let transform = model.transforms.reversed().reduce(matrix4x4_identity()) { accum, transform in
+                    switch(transform.transform) {
+                    case .translate:
+                        return matrix_multiply(accum, matrix4x4_translation(transform.values.x, transform.values.y, transform.values.z))
+                    case .rotate:
+                        transform.accum.x += transform.delta.x * Float(elapsedTime)
+                        transform.accum.y += transform.delta.y * Float(elapsedTime)
+                        transform.accum.z += transform.delta.z * Float(elapsedTime)
+
+                        let x = transform.values.x + transform.accum.x
+                        let y = transform.values.y + transform.accum.y
+                        let z = transform.values.z + transform.accum.z
+
+                        return 
+                            matrix_multiply(
+                                matrix_multiply(
+                                    matrix_multiply(
+                                        accum,
+                                        matrix4x4_rotation(radians: degreesToRadians(x), axis: vec3(1, 0, 0))
+                                    ),
+                                    matrix4x4_rotation(radians: degreesToRadians(y), axis: vec3(0, 1, 0))
+                                ),
+                                matrix4x4_rotation(radians: degreesToRadians(z), axis: vec3(0, 0, 1))
+                            )
+                    case .scale:
+                        return matrix_multiply(accum, matrix4x4_identity())
                     }
-                    
-                    testModel.setRotationY(radians: testModel.rotation, axis: vec3(0, 1, 0))
                 }
+                
+                model.modelMatrix = transform
             }
+            
+//            if Lights.shared.rotateObject {
+//                if let testModel = self.testModel {
+//                    let r = Float((2 * .pi) / 4 * elapsedTime)
+//                    testModel.rotation += r
+//
+//                    if testModel.rotation > 2 * .pi {
+//                        testModel.rotation = (2 * .pi).remainder(dividingBy: 2 * .pi)
+//                    }
+//
+//                    testModel.setRotationY(radians: testModel.rotation, axis: vec3(0, 1, 0))
+//                }
+//            }
             
             if Lights.shared.rotateLight {
                 let r = Float((2 * .pi) / 4 * elapsedTime)
@@ -215,14 +259,17 @@ class Renderer: NSObject, MTKViewDelegate {
         self.previousFrameTime = now;
     }
     
-    func draw(in view: MTKView) {
-        //        autoreleasepool {
-        self.render(in: view)
-        //        }
-    }
-    
     func render(in view: MTKView) {
         /// Per frame updates hare
+        ///
+        
+        guard let uniforms = self.uniforms else {
+            return
+        }
+        
+        guard let commandQueue = self.commandQueue else {
+            return
+        }
         
         _ = inFlightSemaphore.wait(timeout: DispatchTime.distantFuture)
         
@@ -235,15 +282,15 @@ class Renderer: NSObject, MTKViewDelegate {
             
             self.updateDynamicBufferState()
                         
-            self.updateGameState()
+            self.updateState()
             
-            self.uniforms[0].projectionMatrix = self.camera.projectionMatrix
-            self.uniforms[0].viewMatrix = self.camera.getViewMatrix()
-            self.uniforms[0].cameraPos = self.camera.cameraOffset
-            self.uniforms[0].lightVector = self.lightVector
-            self.uniforms[0].pointLight = Lights.shared.pointLight
-            self.uniforms[0].lightPos = self.lights.position
-            self.uniforms[0].lightColor = vec3(self.lights.red, self.lights.green, self.lights.blue)
+            uniforms[0].projectionMatrix = self.camera.projectionMatrix
+            uniforms[0].viewMatrix = self.camera.getViewMatrix()
+            uniforms[0].cameraPos = self.camera.cameraOffset
+            uniforms[0].lightVector = self.lightVector
+            uniforms[0].pointLight = Lights.shared.pointLight
+            uniforms[0].lightPos = self.lights!.position
+            uniforms[0].lightColor = vec3(self.lights!.red, self.lights!.green, self.lights!.blue)
 
             /// Delay getting the currentRenderPassDescriptor until we absolutely need it to avoid
             ///   holding onto the drawable and blocking the display pipeline any longer than necessary
@@ -269,7 +316,9 @@ class Renderer: NSObject, MTKViewDelegate {
                     if self.world.terrainLoaded {
                         MaterialManager.shared.render(renderEncoder: renderEncoder)
 
-                        self.skybox?.draw(renderEncoder: renderEncoder)
+                        if Lights.shared.enableSkybox {
+                            self.skybox?.draw(renderEncoder: renderEncoder)
+                        }
                     }
                     
                     renderEncoder.popDebugGroup()

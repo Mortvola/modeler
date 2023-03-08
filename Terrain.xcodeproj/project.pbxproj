@@ -20,6 +20,15 @@
 		791D97CA29B6552F002EBF19 /* LIghts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791D97C929B6552F002EBF19 /* LIghts.swift */; };
 		791D97CC29B65CB8002EBF19 /* CheckBox.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791D97CB29B65CB8002EBF19 /* CheckBox.swift */; };
 		791D97D029B68523002EBF19 /* vec4.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791D97CF29B68523002EBF19 /* vec4.swift */; };
+		791D97D829B78FC8002EBF19 /* TextureStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791D97D729B78FC8002EBF19 /* TextureStore.swift */; };
+		791D97DD29B79677002EBF19 /* AddObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791D97DC29B79677002EBF19 /* AddObject.swift */; };
+		791D97DF29B79AE3002EBF19 /* ObjectStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791D97DE29B79AE3002EBF19 /* ObjectStore.swift */; };
+		791D97E329B7A487002EBF19 /* RenderDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791D97E229B7A487002EBF19 /* RenderDelegate.swift */; };
+		791D97E529B7AFCA002EBF19 /* ObjectsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791D97E429B7AFCA002EBF19 /* ObjectsView.swift */; };
+		791D97E729B7BBA0002EBF19 /* EditObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791D97E629B7BBA0002EBF19 /* EditObject.swift */; };
+		791D97E929B7C01A002EBF19 /* TransformsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791D97E829B7C01A002EBF19 /* TransformsView.swift */; };
+		791D97EB29B7C041002EBF19 /* Transform.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791D97EA29B7C041002EBF19 /* Transform.swift */; };
+		791D97ED29B7C9A4002EBF19 /* TransformView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791D97EC29B7C9A4002EBF19 /* TransformView.swift */; };
 		794545D029A92A85003E7913 /* Math.swift in Sources */ = {isa = PBXBuildFile; fileRef = 794545CF29A92A85003E7913 /* Math.swift */; };
 		7947B41029AA6E6D00981301 /* TerrainTile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7947B40F29AA6E6D00981301 /* TerrainTile.swift */; };
 		7947B41429AA755500981301 /* World.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7947B41329AA755500981301 /* World.swift */; };
@@ -118,6 +127,15 @@
 		791D97C929B6552F002EBF19 /* LIghts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LIghts.swift; sourceTree = "<group>"; };
 		791D97CB29B65CB8002EBF19 /* CheckBox.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckBox.swift; sourceTree = "<group>"; };
 		791D97CF29B68523002EBF19 /* vec4.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = vec4.swift; sourceTree = "<group>"; };
+		791D97D729B78FC8002EBF19 /* TextureStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextureStore.swift; sourceTree = "<group>"; };
+		791D97DC29B79677002EBF19 /* AddObject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddObject.swift; sourceTree = "<group>"; };
+		791D97DE29B79AE3002EBF19 /* ObjectStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObjectStore.swift; sourceTree = "<group>"; };
+		791D97E229B7A487002EBF19 /* RenderDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RenderDelegate.swift; sourceTree = "<group>"; };
+		791D97E429B7AFCA002EBF19 /* ObjectsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObjectsView.swift; sourceTree = "<group>"; };
+		791D97E629B7BBA0002EBF19 /* EditObject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditObject.swift; sourceTree = "<group>"; };
+		791D97E829B7C01A002EBF19 /* TransformsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransformsView.swift; sourceTree = "<group>"; };
+		791D97EA29B7C041002EBF19 /* Transform.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Transform.swift; sourceTree = "<group>"; };
+		791D97EC29B7C9A4002EBF19 /* TransformView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransformView.swift; sourceTree = "<group>"; };
 		794545CF29A92A85003E7913 /* Math.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Math.swift; sourceTree = "<group>"; };
 		7947B40F29AA6E6D00981301 /* TerrainTile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TerrainTile.swift; sourceTree = "<group>"; };
 		7947B41329AA755500981301 /* World.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = World.swift; sourceTree = "<group>"; };
@@ -187,6 +205,31 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		791D97D629B78F8B002EBF19 /* UIModels */ = {
+			isa = PBXGroup;
+			children = (
+				791D97C929B6552F002EBF19 /* LIghts.swift */,
+				791D97D729B78FC8002EBF19 /* TextureStore.swift */,
+				791D97EA29B7C041002EBF19 /* Transform.swift */,
+				791D97DE29B79AE3002EBF19 /* ObjectStore.swift */,
+			);
+			path = UIModels;
+			sourceTree = "<group>";
+		};
+		791D97D929B79626002EBF19 /* UserInterface */ = {
+			isa = PBXGroup;
+			children = (
+				791D97C129B62BBC002EBF19 /* ContentView.swift */,
+				791D97E429B7AFCA002EBF19 /* ObjectsView.swift */,
+				791D97E829B7C01A002EBF19 /* TransformsView.swift */,
+				791D97EC29B7C9A4002EBF19 /* TransformView.swift */,
+				791D97DC29B79677002EBF19 /* AddObject.swift */,
+				791D97E629B7BBA0002EBF19 /* EditObject.swift */,
+				791D97CB29B65CB8002EBF19 /* CheckBox.swift */,
+			);
+			path = UserInterface;
+			sourceTree = "<group>";
+		};
 		7947B41529ABAC1D00981301 /* Math */ = {
 			isa = PBXGroup;
 			children = (
@@ -264,15 +307,16 @@
 			isa = PBXGroup;
 			children = (
 				79A1646529A800FA001A27F0 /* Info.plist */,
+				791D97D929B79626002EBF19 /* UserInterface */,
+				791D97D629B78F8B002EBF19 /* UIModels */,
 				791D97BF29B62B81002EBF19 /* App.swift */,
-				791D97C129B62BBC002EBF19 /* ContentView.swift */,
-				791D97CB29B65CB8002EBF19 /* CheckBox.swift */,
 				79E2C14729A7EC6C006F6BD9 /* AppDelegate.swift */,
 				79E2C14C29A7EC6C006F6BD9 /* RenderViewController.swift */,
 				791D978729B62953002EBF19 /* RenderControllerRepresentable.swift */,
 				7947B43029AD375F00981301 /* Errors.swift */,
 				79A1645B29A7F87C001A27F0 /* Configuration.swift */,
 				7947B41329AA755500981301 /* World.swift */,
+				791D97E229B7A487002EBF19 /* RenderDelegate.swift */,
 				79E2C14A29A7EC6C006F6BD9 /* Renderer.swift */,
 				7947B41829ABB9E800981301 /* Camera.swift */,
 				7955184B29AF876800FC4F12 /* Sun.swift */,
@@ -287,7 +331,6 @@
 				7955184F29AFD2B600FC4F12 /* Model.swift */,
 				79A1646829A80319001A27F0 /* Utilities.swift */,
 				79A1646629A801D0001A27F0 /* Types.swift */,
-				791D97C929B6552F002EBF19 /* LIghts.swift */,
 				7947B42629AD229900981301 /* RenderObjects */,
 				79E2C15029A7EC6C006F6BD9 /* Main.storyboard */,
 				79E2C14929A7EC6C006F6BD9 /* ShaderTypes.h */,
@@ -475,19 +518,24 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				791D97E329B7A487002EBF19 /* RenderDelegate.swift in Sources */,
 				791D97C029B62B81002EBF19 /* App.swift in Sources */,
 				7955184C29AF876800FC4F12 /* Sun.swift in Sources */,
 				791D974A29B39B87002EBF19 /* PbrLineMaterial.swift in Sources */,
 				791D978429B597CD002EBF19 /* Sphere.swift in Sources */,
 				791D978829B62953002EBF19 /* RenderControllerRepresentable.swift in Sources */,
+				791D97E929B7C01A002EBF19 /* TransformsView.swift in Sources */,
 				79A1646B29A80D91001A27F0 /* TriangleMesh.swift in Sources */,
 				7947B42F29AD349100981301 /* Material.swift in Sources */,
+				791D97E729B7BBA0002EBF19 /* EditObject.swift in Sources */,
 				7947B41029AA6E6D00981301 /* TerrainTile.swift in Sources */,
 				79E2C14F29A7EC6C006F6BD9 /* Shaders.metal in Sources */,
 				794B9A2F29AD7DA0000B2EAF /* Skybox.swift in Sources */,
 				794545D029A92A85003E7913 /* Math.swift in Sources */,
 				7955185029AFD2B600FC4F12 /* Model.swift in Sources */,
 				7947B42B29AD329500981301 /* TerrainMaterial.swift in Sources */,
+				791D97DF29B79AE3002EBF19 /* ObjectStore.swift in Sources */,
+				791D97ED29B7C9A4002EBF19 /* TransformView.swift in Sources */,
 				791D97D029B68523002EBF19 /* vec4.swift in Sources */,
 				791D974829B39B4E002EBF19 /* PbrLineShaders.metal in Sources */,
 				79A1645C29A7F87C001A27F0 /* Configuration.swift in Sources */,
@@ -501,7 +549,9 @@
 				7955184429AED43800FC4F12 /* Vec2.swift in Sources */,
 				7947B42529AD228E00981301 /* Line.swift in Sources */,
 				7947B42829AD325D00981301 /* MaterialManager.swift in Sources */,
+				791D97DD29B79677002EBF19 /* AddObject.swift in Sources */,
 				7947B42D29AD32A400981301 /* LineMaterial.swift in Sources */,
+				791D97EB29B7C041002EBF19 /* Transform.swift in Sources */,
 				79E2C14D29A7EC6C006F6BD9 /* RenderViewController.swift in Sources */,
 				791D97C229B62BBC002EBF19 /* ContentView.swift in Sources */,
 				7947B41929ABB9E800981301 /* Camera.swift in Sources */,
@@ -517,6 +567,8 @@
 				791D974029B384F2002EBF19 /* TestMesh.swift in Sources */,
 				791D974C29B54F70002EBF19 /* Pbr.metal in Sources */,
 				79E2C14829A7EC6C006F6BD9 /* AppDelegate.swift in Sources */,
+				791D97E529B7AFCA002EBF19 /* ObjectsView.swift in Sources */,
+				791D97D829B78FC8002EBF19 /* TextureStore.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

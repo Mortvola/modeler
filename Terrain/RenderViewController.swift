@@ -12,7 +12,7 @@ import Http
 // Our iOS specific view controller
 class RenderViewController: UIViewController {
     
-    var renderer: Renderer!
+    var renderer: RenderDelegate!
     var mtkView: MTKView!
     
     var prevPoint: CGPoint?
@@ -41,15 +41,11 @@ class RenderViewController: UIViewController {
         self.mtkView = MTKView(frame: view.frame, device: defaultDevice)
         self.view.addSubview(self.mtkView)
         
-        guard let renderer = try? Renderer(metalKitView: self.mtkView, lights: Lights.shared) else {
+        guard let renderer = try? RenderDelegate(metalKitView: self.mtkView, lights: Lights.shared) else {
             print("Renderer cannot be initialized")
             return
         }
         
-        Task {
-            try await renderer.load(lat: 46.514279, lng: -121.456191, dimension: 128)
-        }
-
         self.renderer = renderer
         
         renderer.mtkView(self.mtkView, drawableSizeWillChange: mtkView.drawableSize)
@@ -78,7 +74,7 @@ class RenderViewController: UIViewController {
                 let yDelta = -Float(point.y - prevPoint.y);
                 let sensitivity: Float = 0.1;
 
-                renderer.camera.updateLookAt(yawChange: xDelta * sensitivity, pitchChange: yDelta * sensitivity);
+                Renderer.shared.camera.updateLookAt(yawChange: xDelta * sensitivity, pitchChange: yDelta * sensitivity);
             }
         }
         
@@ -94,7 +90,7 @@ class RenderViewController: UIViewController {
             let yDelta = -Float(point.y - prevPoint.y);
             let sensitivity: Float = 0.1;
 
-            renderer.camera.updateLookAt(yawChange: xDelta * sensitivity, pitchChange: yDelta * sensitivity);
+            Renderer.shared.camera.updateLookAt(yawChange: xDelta * sensitivity, pitchChange: yDelta * sensitivity);
         }
     }
     
@@ -141,7 +137,7 @@ class RenderViewController: UIViewController {
         }
 
         if keyPressed {
-            renderer.camera.setMoveDirection(
+            Renderer.shared.camera.setMoveDirection(
                 x: Float(self.right - self.left),
                 y: Float(self.up - self.down),
                 z: Float(self.forward - self.backward)
@@ -192,7 +188,7 @@ class RenderViewController: UIViewController {
         }
 
         if keyReleased {
-            renderer.camera.setMoveDirection(
+            Renderer.shared.camera.setMoveDirection(
                 x: Float(self.right - self.left),
                 y: Float(self.up - self.down),
                 z: Float(self.forward - self.backward)

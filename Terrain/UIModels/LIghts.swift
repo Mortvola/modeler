@@ -21,4 +21,6 @@ class Lights: ObservableObject {
     
     @Published var rotateObject = false
     @Published var rotateLight = false
+    
+    @Published var enableSkybox = false
 }

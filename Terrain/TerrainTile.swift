@@ -65,11 +65,11 @@ class TerrainTile: Model {
     }
     
     func setScale(scale: Float) {
-        self.scale = vec3(scale, 1.0, scale);
-        // if (this.photo) {
-        //   this.photo.setScale(scale);
-        // }
-        self.makeModelMatrix();
+//        self.scale = vec3(scale, 1.0, scale);
+//        // if (this.photo) {
+//        //   this.photo.setScale(scale);
+//        // }
+//        self.makeModelMatrix();
     }
     
     func getElevation(x: Float, y: Float) -> Float {

@@ -56,10 +56,12 @@ class Camera {
         
         let viewMatrix = lookAt(offset: cameraOffset, target: cameraTarget, up: cameraUp)
         
-        return simd_mul(
-            matrix4x4_scale(self.scale, 1.0, self.scale),
-            viewMatrix
-        )
+        return viewMatrix;
+        
+//        return simd_mul(
+//            matrix4x4_scale(self.scale, 1.0, self.scale),
+//            viewMatrix
+//        )
     }
     
 //    func test(_ matrix: matrix_float4x4) {
