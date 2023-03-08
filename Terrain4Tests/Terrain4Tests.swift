@@ -1,14 +1,14 @@
 //
-//  TerrainTests.swift
-//  TerrainTests
+//  Terrain4Tests.swift
+//  Terrain4Tests
 //
-//  Created by Richard Shields on 2/23/23.
+//  Created by Richard Shields on 3/8/23.
 //
 
 import XCTest
-@testable import Terrain
+@testable import Terrain4
 
-final class TerrainTests: XCTestCase {
+final class Terrain4Tests: XCTestCase {
 
     override func setUpWithError() throws {
         // Put setup code here. This method is called before the invocation of each test method in the class.

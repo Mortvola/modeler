@@ -4,12 +4,5 @@
 <dict>
 	<key>Configuration</key>
 	<string>$(CONFIGURATION)</string>
-	<key>UIApplicationSceneManifest</key>
-	<dict>
-		<key>UIApplicationSupportsMultipleScenes</key>
-		<false/>
-		<key>UISceneConfigurations</key>
-		<dict/>
-	</dict>
 </dict>
 </plist>

@@ -1,13 +1,13 @@
 //
-//  TerrainUITestsLaunchTests.swift
-//  TerrainUITests
+//  Terrain4UITestsLaunchTests.swift
+//  Terrain4UITests
 //
-//  Created by Richard Shields on 2/23/23.
+//  Created by Richard Shields on 3/8/23.
 //
 
 import XCTest
 
-final class TerrainUITestsLaunchTests: XCTestCase {
+final class Terrain4UITestsLaunchTests: XCTestCase {
 
     override class var runsForEachTargetApplicationUIConfiguration: Bool {
         true

@@ -1,13 +1,13 @@
 //
-//  TerrainUITests.swift
-//  TerrainUITests
+//  Terrain4UITests.swift
+//  Terrain4UITests
 //
-//  Created by Richard Shields on 2/23/23.
+//  Created by Richard Shields on 3/8/23.
 //
 
 import XCTest
 
-final class TerrainUITests: XCTestCase {
+final class Terrain4UITests: XCTestCase {
 
     override func setUpWithError() throws {
         // Put setup code here. This method is called before the invocation of each test method in the class.
