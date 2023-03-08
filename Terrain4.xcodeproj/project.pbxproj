@@ -111,6 +111,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		791C495429B9488300C00150 /* Terrain4.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Terrain4.entitlements; sourceTree = "<group>"; };
 		791E788229B937A900FB45F3 /* Terrain4.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Terrain4.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		791E788929B937AB00FB45F3 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		791E788C29B937AB00FB45F3 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
@@ -224,6 +225,7 @@
 		791E788429B937A900FB45F3 /* Terrain4 */ = {
 			isa = PBXGroup;
 			children = (
+				791C495429B9488300C00150 /* Terrain4.entitlements */,
 				791E795429B9457700FB45F3 /* Info.plist */,
 				791E794A29B944D000FB45F3 /* LineShaders.metal */,
 				791E794829B944D000FB45F3 /* Pbr.metal */,
@@ -722,6 +724,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = Terrain4/Terrain4.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Terrain4/Preview Content\"";
@@ -742,6 +745,9 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = app.richardshields.Terrain4;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = Terrain4/ShaderTypes.h;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -756,6 +762,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = Terrain4/Terrain4.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Terrain4/Preview Content\"";
@@ -776,6 +783,9 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = app.richardshields.Terrain4;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = Terrain4/ShaderTypes.h;
 				SWIFT_VERSION = 5.0;
