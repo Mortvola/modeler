@@ -13,7 +13,6 @@ import Http
 class RenderViewController: UIViewController {
     
     var renderer: RenderDelegate!
-    var mtkView: MTKView!
     
     var prevPoint: CGPoint?
     
@@ -24,49 +23,41 @@ class RenderViewController: UIViewController {
     var up = 0
     var down = 0
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        
-//        guard let mtkView = view as? MTKView else {
-//            print("View of Gameview controller is not an MTKView")
-//            return
-//        }
-        
+    override func loadView() {
+        let mtkView = MTKView()
+        self.view = mtkView
+
         // Select the device to render with.  We choose the default device
         guard let defaultDevice = MTLCreateSystemDefaultDevice() else {
             print("Metal is not supported")
             return
         }
         
-        self.mtkView = MTKView(frame: view.frame, device: defaultDevice)
-        self.view.addSubview(self.mtkView)
+        mtkView.device = defaultDevice
         
-        guard let renderer = try? RenderDelegate(metalKitView: self.mtkView, lights: Lights.shared) else {
+        guard let renderer = try? RenderDelegate(metalKitView: mtkView, lights: Lights.shared) else {
             print("Renderer cannot be initialized")
             return
         }
         
         self.renderer = renderer
         
-        renderer.mtkView(self.mtkView, drawableSizeWillChange: mtkView.drawableSize)
+        renderer.mtkView(mtkView, drawableSizeWillChange: mtkView.drawableSize)
                 
         let swipeGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(didPan(_:)))
         swipeGestureRecognizer.allowedScrollTypesMask = .continuous
 
-        self.mtkView.addGestureRecognizer(swipeGestureRecognizer);
+        mtkView.addGestureRecognizer(swipeGestureRecognizer);
         
-        self.mtkView.backgroundColor = UIColor.black
-        self.mtkView.framebufferOnly = false
-        self.mtkView.preferredFramesPerSecond = 60
-        self.mtkView.isPaused = false
-        self.mtkView.isOpaque = true
-        self.mtkView.drawableSize = mtkView.frame.size
+        mtkView.backgroundColor = UIColor.black
+        mtkView.preferredFramesPerSecond = 60
+        mtkView.isPaused = false
 
-        self.mtkView.delegate = renderer
+        mtkView.delegate = renderer
     }
-    
+
     @objc func didPan(_ sender: UIPanGestureRecognizer) {
-        let point = sender.translation(in: self.mtkView)
+        let point = sender.translation(in: self.view)
         
         if sender.state != .began {
             if let prevPoint = self.prevPoint {
