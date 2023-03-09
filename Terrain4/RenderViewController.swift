@@ -9,6 +9,16 @@ import UIKit
 import MetalKit
 import Http
 
+extension MTKView {
+    open override var canBecomeFocused: Bool {
+        return true
+    }
+    
+    open override var canBecomeFirstResponder: Bool {
+        return true
+    }
+}
+
 // Our iOS specific view controller
 class RenderViewController: UIViewController {
     
@@ -26,7 +36,7 @@ class RenderViewController: UIViewController {
     override func loadView() {
         let mtkView = MTKView()
         self.view = mtkView
-
+        
         // Select the device to render with.  We choose the default device
         guard let defaultDevice = MTLCreateSystemDefaultDevice() else {
             print("Metal is not supported")
@@ -43,19 +53,29 @@ class RenderViewController: UIViewController {
         self.renderer = renderer
         
         renderer.mtkView(mtkView, drawableSizeWillChange: mtkView.drawableSize)
-                
-        let swipeGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(didPan(_:)))
-        swipeGestureRecognizer.allowedScrollTypesMask = .continuous
-
-        mtkView.addGestureRecognizer(swipeGestureRecognizer);
         
         mtkView.backgroundColor = UIColor.black
         mtkView.preferredFramesPerSecond = 60
         mtkView.isPaused = false
-
+        
         mtkView.delegate = renderer
     }
-
+    
+    override func viewDidLoad() {
+        let swipeGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(didPan(_:)))
+        swipeGestureRecognizer.allowedScrollTypesMask = .continuous
+        self.view.addGestureRecognizer(swipeGestureRecognizer);
+        
+        // Add a gesture recognizer that triggers when the user touches.
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(select(_:)))
+        self.view.addGestureRecognizer(tapGesture)
+    }
+    
+    @objc
+    override func select(_ sender: Any?) {
+        self.view.becomeFirstResponder()
+    }
+    
     @objc func didPan(_ sender: UIPanGestureRecognizer) {
         let point = sender.translation(in: self.view)
         
@@ -64,7 +84,7 @@ class RenderViewController: UIViewController {
                 let xDelta = -Float(point.x - prevPoint.x);
                 let yDelta = -Float(point.y - prevPoint.y);
                 let sensitivity: Float = 0.1;
-
+                
                 Renderer.shared.camera.updateLookAt(yawChange: xDelta * sensitivity, pitchChange: yDelta * sensitivity);
             }
         }
@@ -76,11 +96,11 @@ class RenderViewController: UIViewController {
         touches.forEach { touch in
             let point = touch.preciseLocation(in: view)
             let prevPoint = touch.precisePreviousLocation(in: view)
-
+            
             let xDelta = -Float(point.x - prevPoint.x);
             let yDelta = -Float(point.y - prevPoint.y);
             let sensitivity: Float = 0.1;
-
+            
             Renderer.shared.camera.updateLookAt(yawChange: xDelta * sensitivity, pitchChange: yDelta * sensitivity);
         }
     }
@@ -90,43 +110,43 @@ class RenderViewController: UIViewController {
         
         presses.forEach{ press in
             if let key = press.key?.charactersIgnoringModifiers {
-              switch (key) {
+                switch (key) {
                 case "e":
-                  self.forward = 1
-                  keyPressed = true
-                  break;
-
+                    self.forward = 1
+                    keyPressed = true
+                    break;
+                    
                 case "d":
-                  self.backward = 1
-                  keyPressed = true
-                  break;
-
+                    self.backward = 1
+                    keyPressed = true
+                    break;
+                    
                 case "s":
-                  self.left = 1
-                  keyPressed = true
-                  break;
-
+                    self.left = 1
+                    keyPressed = true
+                    break;
+                    
                 case "f":
-                  self.right = 1
-                  keyPressed = true
-                  break;
-
+                    self.right = 1
+                    keyPressed = true
+                    break;
+                    
                 case "t":
-                  self.up = 1
-                  keyPressed = true
-                  break;
-
+                    self.up = 1
+                    keyPressed = true
+                    break;
+                    
                 case "g":
-                  self.down = 1
-                  keyPressed = true
-                  break;
-
+                    self.down = 1
+                    keyPressed = true
+                    break;
+                    
                 default:
-                  break;
-              }
+                    break;
+                }
             }
         }
-
+        
         if keyPressed {
             Renderer.shared.camera.setMoveDirection(
                 x: Float(self.right - self.left),
@@ -141,43 +161,43 @@ class RenderViewController: UIViewController {
         
         presses.forEach{ press in
             if let key = press.key?.charactersIgnoringModifiers {
-              switch (key) {
+                switch (key) {
                 case "e":
-                  self.forward = 0
-                  keyReleased = true
-                  break;
-
+                    self.forward = 0
+                    keyReleased = true
+                    break;
+                    
                 case "d":
-                  self.backward = 0
-                  keyReleased = true
-                  break;
-
+                    self.backward = 0
+                    keyReleased = true
+                    break;
+                    
                 case "s":
-                  self.left = 0
-                  keyReleased = true
-                  break;
-
+                    self.left = 0
+                    keyReleased = true
+                    break;
+                    
                 case "f":
-                  self.right = 0
-                  keyReleased = true
-                  break;
-
-              case "t":
-                  self.up = 0
-                  keyReleased = true
-                  break;
-
-              case "g":
-                  self.down = 0
-                  keyReleased = true
-                  break;
-
+                    self.right = 0
+                    keyReleased = true
+                    break;
+                    
+                case "t":
+                    self.up = 0
+                    keyReleased = true
+                    break;
+                    
+                case "g":
+                    self.down = 0
+                    keyReleased = true
+                    break;
+                    
                 default:
-                  break;
-              }
+                    break;
+                }
             }
         }
-
+        
         if keyReleased {
             Renderer.shared.camera.setMoveDirection(
                 x: Float(self.right - self.left),
