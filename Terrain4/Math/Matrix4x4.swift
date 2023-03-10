@@ -29,18 +29,30 @@ extension Matrix4x4 {
                                        Vec4(                  0,                   0,                   0, 1)))
     }
     
-    static func translation(_ translationX: Float, _ translationY: Float, _ translationZ: Float) -> Matrix4x4 {
+    func rotate(radians: Float, axis: Vec3) -> Matrix4x4 {
+        self.multiply(Matrix4x4.rotation(radians: radians, axis: axis))
+    }
+    
+    static func translation(_ x: Float, _ y: Float, _ z: Float) -> Matrix4x4 {
         return Matrix4x4.init(columns:(Vec4(1, 0, 0, 0),
                                        Vec4(0, 1, 0, 0),
                                        Vec4(0, 0, 1, 0),
-                                       Vec4(translationX, translationY, translationZ, 1)))
+                                       Vec4(x, y, z, 1)))
     }
     
-    static func scale(_ scaleX: Float, _ scaleY: Float, _ scaleZ: Float) -> Matrix4x4 {
-        return Matrix4x4.init(columns:(Vec4(scaleX, 0, 0, 0),
-                                       Vec4(0, scaleY, 0, 0),
-                                       Vec4(0, 0, scaleZ, 0),
+    func translate(_ x: Float, _ y: Float, _ z: Float) -> Matrix4x4 {
+        self.multiply(Matrix4x4.translation(x, y, z))
+    }
+    
+    static func scale(_ x: Float, _ y: Float, _ z: Float) -> Matrix4x4 {
+        return Matrix4x4.init(columns:(Vec4(x, 0, 0, 0),
+                                       Vec4(0, y, 0, 0),
+                                       Vec4(0, 0, z, 0),
                                        Vec4(0, 0, 0, 1)))
+    }
+    
+    func scale (_ x: Float, _ y: Float, _ z: Float) -> Matrix4x4 {
+        self.multiply(Matrix4x4.scale(x, y, z))
     }
     
     static func lookAt(offset: Vec3, target: Vec3, up: Vec3) -> Matrix4x4 {

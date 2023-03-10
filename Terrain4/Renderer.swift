@@ -202,7 +202,7 @@ class Renderer {
                 let transform = model.transforms.reversed().reduce(Matrix4x4.identity()) { accum, transform in
                     switch(transform.transform) {
                     case .translate:
-                        return accum.multiply(Matrix4x4.translation(transform.values.x, transform.values.y, transform.values.z))
+                        return accum.translate(transform.values.x, transform.values.y, transform.values.z)
                     case .rotate:
                         var t = transform.values
 
@@ -210,11 +210,10 @@ class Renderer {
                             t = t.add(animator.accum)
                         }
 
-                        return accum.multiply(
-                                Matrix4x4.rotation(radians: degreesToRadians(t.x), axis: Vec3(1, 0, 0)))
-                            .multiply(
-                                Matrix4x4.rotation(radians: degreesToRadians(t.y), axis: Vec3(0, 1, 0)))
-                            .multiply(Matrix4x4.rotation(radians: degreesToRadians(t.z), axis: Vec3(0, 0, 1)))
+                        return accum
+                            .rotate(radians: degreesToRadians(t.x), axis: Vec3(1, 0, 0))
+                            .rotate(radians: degreesToRadians(t.y), axis: Vec3(0, 1, 0))
+                            .rotate(radians: degreesToRadians(t.z), axis: Vec3(0, 0, 1))
                     case .scale:
                         return accum.multiply(Matrix4x4.identity())
                     }
@@ -245,7 +244,7 @@ class Renderer {
 //                }
 //
 //                let translation = matrix4x4_translation(0, 0, -11)
-//                let rotation = matrix4x4_rotation(radians: Lights.shared.rotation, axis: Vec3(0, 1, 0))
+//                let rotation = Matrix4x4.rotation(radians: Lights.shared.rotation, axis: Vec3(0, 1, 0))
 //
 //                var position = translation.multiply(Vec4(0, 0, 0, 1))
 //                position = rotation.multiply(position)

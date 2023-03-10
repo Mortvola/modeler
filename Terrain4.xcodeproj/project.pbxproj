@@ -29,7 +29,7 @@
 		791E790629B93BB600FB45F3 /* TextureStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791E790229B93BB600FB45F3 /* TextureStore.swift */; };
 		791E790729B93BB600FB45F3 /* LIghts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791E790329B93BB600FB45F3 /* LIghts.swift */; };
 		791E790829B93BB600FB45F3 /* Transform.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791E790429B93BB600FB45F3 /* Transform.swift */; };
-		791E790E29B93BDC00FB45F3 /* Math.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791E790A29B93BDC00FB45F3 /* Math.swift */; };
+		791E790E29B93BDC00FB45F3 /* Matrix4x4.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791E790A29B93BDC00FB45F3 /* Matrix4x4.swift */; };
 		791E790F29B93BDC00FB45F3 /* Vec3.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791E790B29B93BDC00FB45F3 /* Vec3.swift */; };
 		791E791029B93BDC00FB45F3 /* Vec4.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791E790C29B93BDC00FB45F3 /* Vec4.swift */; };
 		791E791129B93BDC00FB45F3 /* Vec2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791E790D29B93BDC00FB45F3 /* Vec2.swift */; };
@@ -150,7 +150,7 @@
 		791E790229B93BB600FB45F3 /* TextureStore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TextureStore.swift; sourceTree = "<group>"; };
 		791E790329B93BB600FB45F3 /* LIghts.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LIghts.swift; sourceTree = "<group>"; };
 		791E790429B93BB600FB45F3 /* Transform.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Transform.swift; sourceTree = "<group>"; };
-		791E790A29B93BDC00FB45F3 /* Math.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Math.swift; sourceTree = "<group>"; };
+		791E790A29B93BDC00FB45F3 /* Matrix4x4.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Matrix4x4.swift; sourceTree = "<group>"; };
 		791E790B29B93BDC00FB45F3 /* Vec3.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Vec3.swift; sourceTree = "<group>"; };
 		791E790C29B93BDC00FB45F3 /* Vec4.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Vec4.swift; sourceTree = "<group>"; };
 		791E790D29B93BDC00FB45F3 /* Vec2.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Vec2.swift; sourceTree = "<group>"; };
@@ -372,7 +372,7 @@
 		791E790929B93BDC00FB45F3 /* Math */ = {
 			isa = PBXGroup;
 			children = (
-				791E790A29B93BDC00FB45F3 /* Math.swift */,
+				791E790A29B93BDC00FB45F3 /* Matrix4x4.swift */,
 				791E790B29B93BDC00FB45F3 /* Vec3.swift */,
 				791E790C29B93BDC00FB45F3 /* Vec4.swift */,
 				791E790D29B93BDC00FB45F3 /* Vec2.swift */,
@@ -631,7 +631,7 @@
 				791E794729B9446A00FB45F3 /* Types.swift in Sources */,
 				791E78D329B93A2B00FB45F3 /* TransformsView.swift in Sources */,
 				791E794129B943E800FB45F3 /* RenderView.swift in Sources */,
-				791E790E29B93BDC00FB45F3 /* Math.swift in Sources */,
+				791E790E29B93BDC00FB45F3 /* Matrix4x4.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

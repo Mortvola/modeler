@@ -39,7 +39,7 @@ class Model: Identifiable, ObservableObject, Hashable {
 //    }
 //
 //    func setRotationY(radians: Float, axis: Vec3) {
-//        self.modelMatrix = matrix4x4_rotation(radians: radians, axis: axis)
+//        self.modelMatrix = Matrix4x4.rotation(radians: radians, axis: axis)
 //    }
 //
 //    func makeModelMatrix() {

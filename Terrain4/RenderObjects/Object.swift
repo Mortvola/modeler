@@ -34,6 +34,10 @@ class Object: Identifiable, ObservableObject, Hashable {
     }
     
     func modelMatrix() -> Matrix4x4 {
-        self.model.modelMatrix.multiply(Matrix4x4.translation(translation.x, translation.y, translation.z)).multiply(Matrix4x4.rotation(radians: degreesToRadians(rotation.x), axis: Vec3(1, 0, 0))).multiply(Matrix4x4.rotation(radians: degreesToRadians(rotation.y), axis: Vec3(0, 1, 0))).multiply(Matrix4x4.rotation(radians: degreesToRadians(rotation.z), axis: Vec3(0, 0, 1)))
+        self.model.modelMatrix
+            .translate(translation.x, translation.y, translation.z)
+            .rotate(radians: degreesToRadians(rotation.x), axis: Vec3(1, 0, 0))
+            .rotate(radians: degreesToRadians(rotation.y), axis: Vec3(0, 1, 0))
+            .rotate(radians: degreesToRadians(rotation.z), axis: Vec3(0, 0, 1))
     }
 }
