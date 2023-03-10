@@ -192,30 +192,34 @@ class Renderer {
             
             self.updateTimeOfDay(elapsedTime: elapsedTime)
             
-            ObjectStore.shared.objects.forEach { model in
+            // Update the animators
+            AnimatorStore.shared.animators.forEach { animator in
+                animator.accum = animator.accum.add(animator.delta.multiply(Float(elapsedTime)))
+            }
+            
+            // Update the model matrix for each model
+            ObjectStore.shared.models.forEach { model in
                 let transform = model.transforms.reversed().reduce(matrix4x4_identity()) { accum, transform in
                     switch(transform.transform) {
                     case .translate:
                         return matrix_multiply(accum, matrix4x4_translation(transform.values.x, transform.values.y, transform.values.z))
                     case .rotate:
-                        transform.accum.x += transform.delta.x * Float(elapsedTime)
-                        transform.accum.y += transform.delta.y * Float(elapsedTime)
-                        transform.accum.z += transform.delta.z * Float(elapsedTime)
+                        var t = transform.values
 
-                        let x = transform.values.x + transform.accum.x
-                        let y = transform.values.y + transform.accum.y
-                        let z = transform.values.z + transform.accum.z
+                        if let animator = transform.animator {
+                            t = t.add(animator.accum)
+                        }
 
-                        return 
+                        return
                             matrix_multiply(
                                 matrix_multiply(
                                     matrix_multiply(
                                         accum,
-                                        matrix4x4_rotation(radians: degreesToRadians(x), axis: vec3(1, 0, 0))
+                                        matrix4x4_rotation(radians: degreesToRadians(t.x), axis: vec3(1, 0, 0))
                                     ),
-                                    matrix4x4_rotation(radians: degreesToRadians(y), axis: vec3(0, 1, 0))
+                                    matrix4x4_rotation(radians: degreesToRadians(t.y), axis: vec3(0, 1, 0))
                                 ),
-                                matrix4x4_rotation(radians: degreesToRadians(z), axis: vec3(0, 0, 1))
+                                matrix4x4_rotation(radians: degreesToRadians(t.z), axis: vec3(0, 0, 1))
                             )
                     case .scale:
                         return matrix_multiply(accum, matrix4x4_identity())
@@ -238,28 +242,28 @@ class Renderer {
 //                }
 //            }
             
-            if Lights.shared.rotateLight {
-                let r = Float((2 * .pi) / 4 * elapsedTime)
-                Lights.shared.rotation += r
-                
-                if Lights.shared.rotation > 2 * .pi {
-                    Lights.shared.rotation = (2 * .pi).remainder(dividingBy: 2 * .pi)
-                }
-                
-                let translation = matrix4x4_translation(0, 0, -11)
-                let rotation = matrix4x4_rotation(radians: Lights.shared.rotation, axis: vec3(0, 1, 0))
-                
-                var position = matrix_multiply(translation, vec4(0, 0, 0, 1))
-                position = matrix_multiply(rotation, position)
-                
-                Lights.shared.position = vec3(position.x, position.y, position.z)
-            }
+//            if Lights.shared.rotateLight {
+//                let r = Float((2 * .pi) / 4 * elapsedTime)
+//                Lights.shared.rotation += r
+//
+//                if Lights.shared.rotation > 2 * .pi {
+//                    Lights.shared.rotation = (2 * .pi).remainder(dividingBy: 2 * .pi)
+//                }
+//
+//                let translation = matrix4x4_translation(0, 0, -11)
+//                let rotation = matrix4x4_rotation(radians: Lights.shared.rotation, axis: vec3(0, 1, 0))
+//
+//                var position = matrix_multiply(translation, vec4(0, 0, 0, 1))
+//                position = matrix_multiply(rotation, position)
+//
+//                Lights.shared.position = vec3(position.x, position.y, position.z)
+//            }
         }
         
         self.previousFrameTime = now;
     }
     
-    func render(in view: MTKView) {
+    func render(in view: MTKView) throws {
         /// Per frame updates hare
         ///
         
@@ -314,11 +318,11 @@ class Renderer {
                     renderEncoder.setFragmentBuffer(self.dynamicUniformBuffer, offset: self.uniformBufferOffset, index: BufferIndex.uniforms.rawValue)
 
                     if self.world.terrainLoaded {
-                        MaterialManager.shared.render(renderEncoder: renderEncoder)
+                        try MaterialManager.shared.render(renderEncoder: renderEncoder)
 
-                        if Lights.shared.enableSkybox {
-                            self.skybox?.draw(renderEncoder: renderEncoder)
-                        }
+//                        if Lights.shared.enableSkybox {
+//                            self.skybox?.draw(renderEncoder: renderEncoder)
+//                        }
                     }
                     
                     renderEncoder.popDebugGroup()

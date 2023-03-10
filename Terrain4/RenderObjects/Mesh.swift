@@ -11,18 +11,14 @@ import MetalKit
 
 class Mesh: RenderObject {
     let mesh: MTKMesh
-    let model: Model
     
     init(mesh: MTKMesh, model: Model) {
         self.mesh = mesh
-        self.model = model
-    }
 
-    func modelMatrix() -> matrix_float4x4 {
-        self.model.modelMatrix
+        super.init(model: model)
     }
     
-    func draw(renderEncoder: MTLRenderCommandEncoder, modelMatrix: matrix_float4x4) {
+    override func draw(renderEncoder: MTLRenderCommandEncoder, modelMatrix: matrix_float4x4) throws {
         // Pass the normal matrix (derived from the model matrix) to the vertex shader
         var normalMatrix = matrix_float3x3(columns: (
             vector_float3(modelMatrix[0][0], modelMatrix[0][1], modelMatrix[0][2]),

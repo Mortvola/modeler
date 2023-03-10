@@ -9,7 +9,7 @@ import SwiftUI
 import UniformTypeIdentifiers
 
 struct TransformsView: View {
-    @ObservedObject var object: Model
+    @ObservedObject var model: Model
     @Environment(\.editMode) private var editMode
 
     var isEditing: Bool {
@@ -24,22 +24,19 @@ struct TransformsView: View {
                 EditButton()
             }
             List {
-                ForEach($object.transforms) { $transform in
-                    TransformView(transform: $transform)
-                        .labelsHidden()
+                ForEach(model.transforms) { transform in
+                    TransformView(transform: transform)
                 }
                 .onMove(perform: isEditing ? { indexSet, destination in
-                    object.transforms.move(fromOffsets: indexSet, toOffset: destination)
+                    model.transforms.move(fromOffsets: indexSet, toOffset: destination)
                 }: nil)
                 .onDelete(perform: isEditing ? { indexSet in
-                    print("Before: \(object.transforms.count)")
-                    object.transforms.remove(atOffsets: indexSet)
-                    print("After: \(object.transforms.count)")
+                    model.transforms.remove(atOffsets: indexSet)
                 } : nil)
                 
                 if isEditing {
                     Button {
-                        object.transforms.append(Transform())
+                        model.transforms.append(Transform())
                     } label: {
                         Text("Add Transform")
                     }
@@ -52,6 +49,6 @@ struct TransformsView: View {
 
 struct TransformsView_Previews: PreviewProvider {
     static var previews: some View {
-        TransformsView(object: Model())
+        TransformsView(model: Model())
     }
 }

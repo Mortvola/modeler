@@ -8,8 +8,8 @@
 import Foundation
 import Metal
 
-protocol RenderObject {
-    func draw(renderEncoder: MTLRenderCommandEncoder, modelMatrix: matrix_float4x4)
-    
-    func modelMatrix() -> matrix_float4x4
+class RenderObject: Object {
+    func draw(renderEncoder: MTLRenderCommandEncoder, modelMatrix: matrix_float4x4) throws {
+        throw Errors.notImplemented
+    }
 }

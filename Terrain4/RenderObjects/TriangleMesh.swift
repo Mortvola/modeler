@@ -15,8 +15,6 @@ class TriangleMesh: RenderObject {
 
     var numVertices: Int = 0
     
-    let model: Model
-    
     init(
       device: MTLDevice,
       points: [Float],
@@ -25,15 +23,12 @@ class TriangleMesh: RenderObject {
       model: Model
       // shader: TriangleMeshShader,
     ) {
-        self.model = model
+        super.init(model: model)
+
         self.createBuffer(device: device, normals: normals, points: points, indices: indices);
     }
 
-    func modelMatrix() -> matrix_float4x4 {
-        self.model.modelMatrix
-    }
-
-    func draw(renderEncoder: MTLRenderCommandEncoder, modelMatrix: matrix_float4x4) {
+    override func draw(renderEncoder: MTLRenderCommandEncoder, modelMatrix: matrix_float4x4) {
         var normalMatrix = matrix_float3x3(columns: (
             vector_float3(modelMatrix[0][0], modelMatrix[0][1], modelMatrix[0][2]),
             vector_float3(modelMatrix[1][0], modelMatrix[1][1], modelMatrix[1][2]),

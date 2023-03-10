@@ -13,8 +13,6 @@ class Line: RenderObject {
     
     let numVertices: Int
     
-    let model: Model
-
     init(device: MTLDevice, points: [Float], model: Model) {
         // Reformat data
         var newPoints: [simd_float1] = []
@@ -29,14 +27,11 @@ class Line: RenderObject {
         let dataSize = newPoints.count * MemoryLayout.size(ofValue: newPoints[0])
         self.vertices = device.makeBuffer(bytes: newPoints, length: dataSize, options: [])!
         self.numVertices = newPoints.count * MemoryLayout.size(ofValue: newPoints[0]) / MemoryLayout<simd_float3>.stride
-        self.model = model
+        
+        super.init(model: model)
     }
 
-    func modelMatrix() -> matrix_float4x4 {
-        self.model.modelMatrix
-    }
-    
-    func draw(renderEncoder: MTLRenderCommandEncoder, modelMatrix: matrix_float4x4) {
+    override func draw(renderEncoder: MTLRenderCommandEncoder, modelMatrix: matrix_float4x4) {
         renderEncoder.setVertexBuffer(self.vertices, offset: 0, index: BufferIndex.meshPositions.rawValue)
 
         var modelMatrixCopy = modelMatrix

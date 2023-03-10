@@ -60,12 +60,12 @@ class MaterialManager {
         return entry
     }
     
-    func render(renderEncoder: MTLRenderCommandEncoder) {
-        self.materials.forEach { key, entry in
+    func render(renderEncoder: MTLRenderCommandEncoder) throws {
+        try self.materials.forEach { key, entry in
             entry.material.prepare(renderEncoder: renderEncoder)
             
-            entry.objects.forEach { object in
-                object.draw(renderEncoder: renderEncoder, modelMatrix: object.modelMatrix())
+            try entry.objects.forEach { object in
+                try object.draw(renderEncoder: renderEncoder, modelMatrix: object.modelMatrix())
             }
         }
     }

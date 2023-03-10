@@ -7,7 +7,7 @@
 
 import Foundation
 
-class Transform: Identifiable, Codable {
+class Transform: ObservableObject, Identifiable {
     let id: UUID
     
     enum TransformType: String, CaseIterable, Codable {
@@ -16,11 +16,10 @@ class Transform: Identifiable, Codable {
         case scale
     }
     
-    var transform: TransformType = .translate
-    var values: vec3 = vec3(0, 0, 0)
-    var delta: vec3 = vec3(0, 0, 0)
-    var accum: vec3 = vec3(0, 0, 0)
-
+    @Published var transform: TransformType = .translate
+    @Published var values: vec3 = vec3(0, 0, 0)
+    @Published var animator: Animator? = nil
+    
     init() {
         self.id = UUID()
     }

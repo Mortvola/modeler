@@ -1,22 +1,16 @@
 //
-//  Sphere.swift
-//  Terrain
+//  SphereAllocator.swift
+//  Terrain4
 //
-//  Created by Richard Shields on 3/5/23.
+//  Created by Richard Shields on 3/9/23.
 //
 
 import Foundation
 import Metal
 import MetalKit
 
-class Sphere: Model {
-    var objects: [RenderObject] = []
-    
-    init(device: MTLDevice, view: MTKView, diameter: Float) async throws {
-        super.init()
-        
-        let material = try await MaterialManager.shared.addMaterial(device: device, view: view, name: .terrain)
-
+class SphereAllocator {
+    static func allocate(device: MTLDevice, diameter: Float) throws -> MTKMesh {
         let meshBufferAllocator = MTKMeshBufferAllocator(device: device)
 
         let mesh = MDLMesh.newEllipsoid(withRadii: vec3(diameter, diameter, diameter), radialSegments: 32, verticalSegments: 32, geometryType: .triangles, inwardNormals: false, hemisphere: false, allocator: meshBufferAllocator)
@@ -63,11 +57,6 @@ class Sphere: Model {
 
         mesh.vertexDescriptor = vertexDescriptor
         
-        let sphere = try MTKMesh(mesh: mesh, device: device)
-
-        let object = Mesh(mesh: sphere, model: self)
-        
-        material.objects.append(object)
-        self.objects.append(object)
+        return try MTKMesh(mesh: mesh, device: device)
     }
 }

@@ -8,7 +8,8 @@
 import SwiftUI
 
 struct TransformView: View {
-    @Binding var transform: Transform
+    @ObservedObject var transform: Transform
+    @ObservedObject var animatorStore = AnimatorStore.shared
     
     let formatter: NumberFormatter = {
         let formatter = NumberFormatter()
@@ -24,6 +25,7 @@ struct TransformView: View {
                         Text(value.rawValue).tag(value)
                     }
                 }
+                .labelsHidden()
                 Spacer()
             }
             HStack {
@@ -35,19 +37,29 @@ struct TransformView: View {
                     .multilineTextAlignment(.trailing)
             }
             HStack {
-                TextField("X", value: $transform.delta.x, formatter: formatter)
-                    .multilineTextAlignment(.trailing)
-                TextField("Y", value: $transform.delta.y, formatter: formatter)
-                    .multilineTextAlignment(.trailing)
-                TextField("Z", value: $transform.delta.z, formatter: formatter)
-                    .multilineTextAlignment(.trailing)
+                Picker("Animator", selection: $transform.animator) {
+                    Text("None").tag(nil as Animator?)
+                    ForEach(animatorStore.animators, id: \.self) { animator in
+                        Text(animator.name).tag(animator as Animator?)
+                    }
+                }
+                .labelsHidden()
+                Spacer()
             }
+//            HStack {
+//                TextField("X", value: $transform.delta.x, formatter: formatter)
+//                    .multilineTextAlignment(.trailing)
+//                TextField("Y", value: $transform.delta.y, formatter: formatter)
+//                    .multilineTextAlignment(.trailing)
+//                TextField("Z", value: $transform.delta.z, formatter: formatter)
+//                    .multilineTextAlignment(.trailing)
+//            }
         }
     }
 }
 
 struct TransformView_Previews: PreviewProvider {
     static var previews: some View {
-        TransformView(transform: .constant(Transform()))
+        TransformView(transform: Transform())
     }
 }

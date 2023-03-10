@@ -19,7 +19,9 @@ class Model: Identifiable, ObservableObject, Hashable {
     var id = UUID()
     
     var name: String = "The Name"
-    
+
+    @Published var objects: [RenderObject] = []
+
     @Published var transforms: [Transform] = []
     
     var modelMatrix = matrix4x4_identity()

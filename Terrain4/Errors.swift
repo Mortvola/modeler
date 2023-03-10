@@ -20,4 +20,6 @@ enum Errors: Error {
     case makeCommandQueueFailed
     case makeBufferFailed
     case makeDepthStencilStateFailed
+    case notImplemented
+    case modelNotSelected
 }

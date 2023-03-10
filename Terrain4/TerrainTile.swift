@@ -20,7 +20,6 @@ class TerrainTile: Model {
     var yDimension: Float = 1.0
     var scale = vec3(1.0, 1.0, 1.0)
     var elevation: [[Float]] = []
-    var objects: [RenderObject] = []
     
     init(x: Int, y: Int, dimension: Int, device: MTLDevice, view: MTKView) {
         self.device = device

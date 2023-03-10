@@ -19,8 +19,8 @@ class Lights: ObservableObject {
     @Published var green: Float = 500.0
     @Published var blue: Float = 500.0
     
-    @Published var rotateObject = false
-    @Published var rotateLight = false
+//    @Published var rotateObject = false
+//    @Published var rotateLight = false
     
-    @Published var enableSkybox = false
+//    @Published var enableSkybox = false
 }

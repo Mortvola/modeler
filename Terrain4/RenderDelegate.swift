@@ -21,6 +21,6 @@ class RenderDelegate: NSObject, MTKViewDelegate {
     }
     
     func draw(in view: MTKView) {
-        Renderer.shared.render(in: view)
+        try? Renderer.shared.render(in: view)
     }
 }
