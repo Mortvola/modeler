@@ -20,16 +20,7 @@ struct AnimatorsView: View {
             .buttonStyle(.bordered)
             List {
                 ForEach(animatorStore.animators) { animator in
-                    Button {
-                        if animatorStore.selectedAnimator == animator {
-                            animatorStore.selectedAnimator = nil
-                        }
-                        else {
-                            animatorStore.selectedAnimator = animator
-                        }
-                    } label: {
-                        Text(animator.name)
-                    }
+                    AnimatorListItem(animator: animator)
                 }
             }
             if let animator = animatorStore.selectedAnimator {

@@ -40,7 +40,7 @@ struct TransformView: View {
                 Picker("Animator", selection: $transform.animator) {
                     Text("None").tag(nil as Animator?)
                     ForEach(animatorStore.animators, id: \.self) { animator in
-                        Text(animator.name).tag(animator as Animator?)
+                        AnimatorPickerItem(animator: animator)
                     }
                 }
                 .labelsHidden()

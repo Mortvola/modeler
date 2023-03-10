@@ -74,6 +74,8 @@
 		79F6D2D729BB6642007CA69A /* AnimatorStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F6D2D629BB6642007CA69A /* AnimatorStore.swift */; };
 		79F6D2D929BB691E007CA69A /* ModelDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F6D2D829BB691E007CA69A /* ModelDetailsView.swift */; };
 		79F6D2DB29BB6A08007CA69A /* AnimatorDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F6D2DA29BB6A07007CA69A /* AnimatorDetailsView.swift */; };
+		79F6D2DD29BB92C7007CA69A /* AnimatorListItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F6D2DC29BB92C7007CA69A /* AnimatorListItem.swift */; };
+		79F6D2DF29BB941F007CA69A /* AnimatorPickerItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F6D2DE29BB941E007CA69A /* AnimatorPickerItem.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -194,6 +196,8 @@
 		79F6D2D629BB6642007CA69A /* AnimatorStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimatorStore.swift; sourceTree = "<group>"; };
 		79F6D2D829BB691E007CA69A /* ModelDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelDetailsView.swift; sourceTree = "<group>"; };
 		79F6D2DA29BB6A07007CA69A /* AnimatorDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimatorDetailsView.swift; sourceTree = "<group>"; };
+		79F6D2DC29BB92C7007CA69A /* AnimatorListItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimatorListItem.swift; sourceTree = "<group>"; };
+		79F6D2DE29BB941E007CA69A /* AnimatorPickerItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimatorPickerItem.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -317,6 +321,7 @@
 				791E78CF29B93A2B00FB45F3 /* ContentView.swift */,
 				79F6D2C729BA5F10007CA69A /* TexturesView.swift */,
 				79F6D2C529BA5C80007CA69A /* AnimatorsView.swift */,
+				79F6D2DC29BB92C7007CA69A /* AnimatorListItem.swift */,
 				79F6D2DA29BB6A07007CA69A /* AnimatorDetailsView.swift */,
 				791C495529B94AEF00C00150 /* ObjectManager.swift */,
 				79F6D2C929BA6C34007CA69A /* Border.swift */,
@@ -326,6 +331,7 @@
 				79F6D2D429BB6236007CA69A /* ObjectsView.swift */,
 				791E78CC29B93A2B00FB45F3 /* TransformsView.swift */,
 				791E78CB29B93A2B00FB45F3 /* TransformView.swift */,
+				79F6D2DE29BB941E007CA69A /* AnimatorPickerItem.swift */,
 			);
 			path = UserInterface;
 			sourceTree = "<group>";
@@ -575,7 +581,9 @@
 				79F6D2CC29BA7EFA007CA69A /* LIght.swift in Sources */,
 				791E793B29B9433F00FB45F3 /* Camera.swift in Sources */,
 				791E78D529B93A2B00FB45F3 /* CheckBox.swift in Sources */,
+				79F6D2DF29BB941F007CA69A /* AnimatorPickerItem.swift in Sources */,
 				791E790629B93BB600FB45F3 /* TextureStore.swift in Sources */,
+				79F6D2DD29BB92C7007CA69A /* AnimatorListItem.swift in Sources */,
 				79F6D2C829BA5F10007CA69A /* TexturesView.swift in Sources */,
 				791E78D429B93A2B00FB45F3 /* AddObject.swift in Sources */,
 				791E78B529B9388400FB45F3 /* AppDelegate.swift in Sources */,
