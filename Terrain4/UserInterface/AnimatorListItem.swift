@@ -22,6 +22,7 @@ struct AnimatorListItem: View {
         } label: {
             Text(animator.name)
         }
+        .buttonStyle(.plain)
     }
 }
 

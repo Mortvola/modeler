@@ -21,6 +21,7 @@ class Object: Identifiable, ObservableObject, Hashable {
     let model: Model
     
     var name: String
+    private static var objectCounter = 0
 
     var translation = vec3(0, 0, 0)
     
@@ -28,10 +29,21 @@ class Object: Identifiable, ObservableObject, Hashable {
     
     init (model: Model) {
         self.model = model
-        self.name = "Object"
+        self.name = "Object_\(Object.objectCounter)"
+        Object.objectCounter += 1
     }
     
     func modelMatrix() -> matrix_float4x4 {
-        self.model.modelMatrix
+        matrix_multiply(self.model.modelMatrix,
+                            matrix_multiply(matrix4x4_translation(translation.x, translation.y, translation.z),
+                            matrix_multiply(
+                                matrix_multiply(
+                                    matrix4x4_rotation(radians: degreesToRadians(rotation.x), axis: vec3(1, 0, 0)),
+                                    matrix4x4_rotation(radians: degreesToRadians(rotation.y), axis: vec3(0, 1, 0))
+                                ),
+                                matrix4x4_rotation(radians: degreesToRadians(rotation.z), axis: vec3(0, 0, 1))
+                            )
+                        )
+                    )
     }
 }

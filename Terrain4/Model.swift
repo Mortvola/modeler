@@ -18,16 +18,21 @@ class Model: Identifiable, ObservableObject, Hashable {
     
     var id = UUID()
     
-    var name: String = "The Name"
+    var name: String
+    private static var modelCounter = 0
 
     @Published var objects: [RenderObject] = []
-
+    
     @Published var transforms: [Transform] = []
     
     var modelMatrix = matrix4x4_identity()
     var translate = vec3(0.0, 0.0, 0.0)
     var rotation: Float = 0.0
     
+    init() {
+        self.name = "Model_\(Model.modelCounter)"
+        Model.modelCounter += 1
+    }
 //    func setTranslation(x: Float, y: Float, z: Float) {
 //        self.translate = vec3(x, y, z);
 //        self.makeModelMatrix();

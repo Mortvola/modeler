@@ -8,11 +8,27 @@
 import SwiftUI
 
 struct ObjectsView: View {
+    @ObservedObject var objectStore = ObjectStore.shared
     @ObservedObject var model: Model
     
     var body: some View {
         ForEach(model.objects, id: \.id) { object in
-            Text(object.name)
+            Button {
+                if objectStore.selectedObject == object {
+                    objectStore.selectObject(nil);
+                }
+                else {
+                    objectStore.selectObject(object);
+                }
+            } label: {
+                HStack {
+                    Text(object.name)
+                        .foregroundColor(.black)
+                    Spacer()
+                }
+            }
+            .buttonStyle(.plain)
+            .background(objectStore.selectedObject == object ? Color(.lightGray) : Color(.white))
         }
     }
 }

@@ -17,10 +17,10 @@ struct ModelsView: View {
                 ForEach(objectStore.models, id: \.id) { model in
                     Button {
                         if objectStore.selectedModel == model {
-                            objectStore.selectedModel = nil
+                            objectStore.selectModel(nil);
                         }
                         else {
-                            objectStore.selectedModel = model
+                            objectStore.selectModel(model);
                         }
                     } label: {
                         HStack {
@@ -36,8 +36,11 @@ struct ModelsView: View {
                 }
             }
             
-            if let selection = objectStore.selectedModel {
-                ModelDetailsView(model: selection)
+            if let model = objectStore.selectedModel {
+                ModelDetailsView(model: model)
+            }
+            else if let object = objectStore.selectedObject {
+                ObjectDetailsView(object: object)
             }
         }
     }

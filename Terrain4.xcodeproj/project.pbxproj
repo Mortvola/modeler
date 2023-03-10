@@ -76,6 +76,7 @@
 		79F6D2DB29BB6A08007CA69A /* AnimatorDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F6D2DA29BB6A07007CA69A /* AnimatorDetailsView.swift */; };
 		79F6D2DD29BB92C7007CA69A /* AnimatorListItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F6D2DC29BB92C7007CA69A /* AnimatorListItem.swift */; };
 		79F6D2DF29BB941F007CA69A /* AnimatorPickerItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F6D2DE29BB941E007CA69A /* AnimatorPickerItem.swift */; };
+		79F6D2E129BBA375007CA69A /* ObjectDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F6D2E029BBA375007CA69A /* ObjectDetailsView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -198,6 +199,7 @@
 		79F6D2DA29BB6A07007CA69A /* AnimatorDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimatorDetailsView.swift; sourceTree = "<group>"; };
 		79F6D2DC29BB92C7007CA69A /* AnimatorListItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimatorListItem.swift; sourceTree = "<group>"; };
 		79F6D2DE29BB941E007CA69A /* AnimatorPickerItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimatorPickerItem.swift; sourceTree = "<group>"; };
+		79F6D2E029BBA375007CA69A /* ObjectDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObjectDetailsView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -327,6 +329,7 @@
 				79F6D2C929BA6C34007CA69A /* Border.swift */,
 				791E78C929B93A2B00FB45F3 /* EditObject.swift */,
 				791E78CA29B93A2B00FB45F3 /* ModelsView.swift */,
+				79F6D2E029BBA375007CA69A /* ObjectDetailsView.swift */,
 				79F6D2D829BB691E007CA69A /* ModelDetailsView.swift */,
 				79F6D2D429BB6236007CA69A /* ObjectsView.swift */,
 				791E78CC29B93A2B00FB45F3 /* TransformsView.swift */,
@@ -575,6 +578,7 @@
 				791E793729B9430E00FB45F3 /* RenderDelegate.swift in Sources */,
 				791E793529B9430E00FB45F3 /* Renderer.swift in Sources */,
 				791E792229B93D6000FB45F3 /* Line.swift in Sources */,
+				79F6D2E129BBA375007CA69A /* ObjectDetailsView.swift in Sources */,
 				791E78D029B93A2B00FB45F3 /* EditObject.swift in Sources */,
 				791E794329B9441800FB45F3 /* Utilities.swift in Sources */,
 				791E793F29B9436800FB45F3 /* TerrainTile.swift in Sources */,

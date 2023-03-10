@@ -63,7 +63,7 @@ struct ObjectManager: View {
                     Text("Add Object")
                 }
                 .buttonStyle(.bordered)
-                .disabled(objectStore.selectedModel == nil)
+                .disabled(objectStore.selectedModel == nil && objectStore.selectedObject == nil)
                 Spacer()
             }
             ModelsView()
