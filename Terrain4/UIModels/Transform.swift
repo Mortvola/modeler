@@ -17,7 +17,7 @@ class Transform: ObservableObject, Identifiable {
     }
     
     @Published var transform: TransformType = .translate
-    @Published var values: vec3 = vec3(0, 0, 0)
+    @Published var values: Vec3 = Vec3(0, 0, 0)
     @Published var animator: Animator? = nil
     
     init() {

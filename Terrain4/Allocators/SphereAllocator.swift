@@ -13,7 +13,7 @@ class SphereAllocator {
     static func allocate(device: MTLDevice, diameter: Float) throws -> MTKMesh {
         let meshBufferAllocator = MTKMeshBufferAllocator(device: device)
 
-        let mesh = MDLMesh.newEllipsoid(withRadii: vec3(diameter, diameter, diameter), radialSegments: 32, verticalSegments: 32, geometryType: .triangles, inwardNormals: false, hemisphere: false, allocator: meshBufferAllocator)
+        let mesh = MDLMesh.newEllipsoid(withRadii: Vec3(diameter, diameter, diameter), radialSegments: 32, verticalSegments: 32, geometryType: .triangles, inwardNormals: false, hemisphere: false, allocator: meshBufferAllocator)
 
         let vertexDescriptor = MDLVertexDescriptor()
         

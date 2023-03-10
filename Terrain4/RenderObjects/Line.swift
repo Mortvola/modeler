@@ -31,11 +31,11 @@ class Line: RenderObject {
         super.init(model: model)
     }
 
-    override func draw(renderEncoder: MTLRenderCommandEncoder, modelMatrix: matrix_float4x4) {
+    override func draw(renderEncoder: MTLRenderCommandEncoder, modelMatrix: Matrix4x4) {
         renderEncoder.setVertexBuffer(self.vertices, offset: 0, index: BufferIndex.meshPositions.rawValue)
 
         var modelMatrixCopy = modelMatrix
-        renderEncoder.setVertexBytes(&modelMatrixCopy, length: MemoryLayout<matrix_float4x4>.size, index: BufferIndex.modelMatrix.rawValue)
+        renderEncoder.setVertexBytes(&modelMatrixCopy, length: MemoryLayout<Matrix4x4>.size, index: BufferIndex.modelMatrix.rawValue)
         renderEncoder.drawPrimitives(type: .lineStrip, vertexStart: 0, vertexCount: self.numVertices)
     }
 }

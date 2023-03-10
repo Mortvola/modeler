@@ -14,18 +14,18 @@ class Camera {
     
     var pitch: Float = 0.0
     
-//    var cameraOffset = vec3(0.0, simd_float1(1 / 2.0.squareRoot()), -simd_float1(1 / 2.0.squareRoot()))
-    var cameraOffset = vec3(0.0, 0.0, -3.0)
+//    var cameraOffset = Vec3(0.0, simd_float1(1 / 2.0.squareRoot()), -simd_float1(1 / 2.0.squareRoot()))
+    var cameraOffset = Vec3(0.0, 0.0, -3.0)
 
     var cameraFront = defaultCameraFront
     
     var scale: Float = 1.0
     
-    var moveDirection = vec3(0.0, 0.0, 0.0)
+    var moveDirection = Vec3(0.0, 0.0, 0.0)
     
     let velocity: Float = 1.1176 * 10; // meters per second
 
-    var projectionMatrix: matrix_float4x4 = matrix_float4x4()
+    var projectionMatrix: Matrix4x4 = Matrix4x4()
     
     var world: World
     
@@ -47,14 +47,14 @@ class Camera {
         self.cameraFront = cameraFront
     }
     
-    func getViewMatrix() -> matrix_float4x4 {
+    func getViewMatrix() -> Matrix4x4 {
         let cameraTarget = self.cameraOffset
-//            .multiply(vec3(self.scale, 1, self.scale))
+//            .multiply(Vec3(self.scale, 1, self.scale))
             .add(self.cameraFront)
         
-        let cameraUp = vec3(0.0, 1.0, 0.0)
+        let cameraUp = Vec3(0.0, 1.0, 0.0)
         
-        let viewMatrix = lookAt(offset: cameraOffset, target: cameraTarget, up: cameraUp)
+        let viewMatrix = Matrix4x4.lookAt(offset: cameraOffset, target: cameraTarget, up: cameraUp)
         
         return viewMatrix;
         
@@ -64,7 +64,7 @@ class Camera {
 //        )
     }
     
-//    func test(_ matrix: matrix_float4x4) {
+//    func test(_ matrix: Matrix4x4) {
 //        let p = simd_float4(10.0, 2510.0, 10, 1.0)
 //
 //        let s = simd_mul(matrix, p)
@@ -84,12 +84,12 @@ class Camera {
 //    }
     
     func setMoveDirection(x: Float, y: Float, z: Float) {
-        let direction = vec3(x, y, z)
+        let direction = Vec3(x, y, z)
     
         let lengthSquared = direction.lengthSquared()
         
         if lengthSquared == 0 {
-            self.moveDirection = vec3(0, 0, 0)
+            self.moveDirection = Vec3(0, 0, 0)
         }
         else {
             self.moveDirection = direction.multiply(1 / lengthSquared.squareRoot())

@@ -18,7 +18,7 @@ class Mesh: RenderObject {
         super.init(model: model)
     }
     
-    override func draw(renderEncoder: MTLRenderCommandEncoder, modelMatrix: matrix_float4x4) throws {
+    override func draw(renderEncoder: MTLRenderCommandEncoder, modelMatrix: Matrix4x4) throws {
         // Pass the normal matrix (derived from the model matrix) to the vertex shader
         var normalMatrix = matrix_float3x3(columns: (
             vector_float3(modelMatrix[0][0], modelMatrix[0][1], modelMatrix[0][2]),
@@ -32,7 +32,7 @@ class Mesh: RenderObject {
 
         // Pass the model matrix to the vertex shader.
         var modelMatrixCopy = modelMatrix
-        renderEncoder.setVertexBytes(&modelMatrixCopy, length: MemoryLayout<matrix_float4x4>.size, index: BufferIndex.modelMatrix.rawValue)
+        renderEncoder.setVertexBytes(&modelMatrixCopy, length: MemoryLayout<Matrix4x4>.size, index: BufferIndex.modelMatrix.rawValue)
 
         // Pass the vertex and index information ot the vertex shader
         for (i, buffer) in self.mesh.vertexBuffers.enumerated() {

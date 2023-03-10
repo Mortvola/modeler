@@ -12,7 +12,7 @@ struct SunAngles {
     var azimuth: Double
 }
 
-func getSunLightVector (day: Int, hour: Double, latitude: Double) -> vec3 {
+func getSunLightVector (day: Int, hour: Double, latitude: Double) -> Vec3 {
     let latitudeRadians = degreesToRadians(latitude)
 
     // Add 10 to slide the year window so that the year ends on Dec 21 (winter solstice)
@@ -38,10 +38,10 @@ func getSunLightVector (day: Int, hour: Double, latitude: Double) -> vec3 {
         azimuth = 2 * .pi - azimuth
     }
 
-    return -(vec3(0, 0, 1)
+    return -(Vec3(0, 0, 1)
         .rotateX(Float(-elevationAngle))
         .rotateY(Float(azimuth)))
     
-//    return normalize(vec3(0, -1, 1));
+//    return normalize(Vec3(0, -1, 1));
 }
 

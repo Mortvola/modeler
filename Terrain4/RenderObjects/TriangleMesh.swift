@@ -28,7 +28,7 @@ class TriangleMesh: RenderObject {
         self.createBuffer(device: device, normals: normals, points: points, indices: indices);
     }
 
-    override func draw(renderEncoder: MTLRenderCommandEncoder, modelMatrix: matrix_float4x4) {
+    override func draw(renderEncoder: MTLRenderCommandEncoder, modelMatrix: Matrix4x4) {
         var normalMatrix = matrix_float3x3(columns: (
             vector_float3(modelMatrix[0][0], modelMatrix[0][1], modelMatrix[0][2]),
             vector_float3(modelMatrix[1][0], modelMatrix[1][1], modelMatrix[1][2]),
@@ -41,7 +41,7 @@ class TriangleMesh: RenderObject {
         renderEncoder.setVertexBuffer(self.normals, offset: 0, index: BufferIndex.normals.rawValue)
 
         var modelMatrixCopy = modelMatrix
-        renderEncoder.setVertexBytes(&modelMatrixCopy, length: MemoryLayout<matrix_float4x4>.size, index: BufferIndex.modelMatrix.rawValue)
+        renderEncoder.setVertexBytes(&modelMatrixCopy, length: MemoryLayout<Matrix4x4>.size, index: BufferIndex.modelMatrix.rawValue)
 
         renderEncoder.setVertexBytes(&normalMatrix, length: MemoryLayout<matrix_float3x3>.size, index: BufferIndex.normalMatrix.rawValue)
 
@@ -57,10 +57,10 @@ class TriangleMesh: RenderObject {
         var buffer: [simd_float1] = [];
         var lighting: [simd_float1] = [];
 
-//      const edge1 = vec3.create();
-//      const edge2 = vec3.create();
-//      const deltaUV1 = vec2.create();
-//      const deltaUV2 = vec2.create();
+//      const edge1 = Vec3.create();
+//      const edge2 = Vec3.create();
+//      const deltaUV1 = Vec2.create();
+//      const deltaUV2 = Vec2.create();
 
         let max = indices.count
         for i in stride(from: 0, to: max, by: 3) {
@@ -98,13 +98,13 @@ class TriangleMesh: RenderObject {
               // inverse of the matrix determinant
               let f = 1.0 / (deltaUV1[0] * deltaUV2[1] - deltaUV2[0] * deltaUV1[1]);
 
-              let tangent = vec3(
+              let tangent = Vec3(
                 f * (deltaUV2[1] * edge1[0] - deltaUV1[1] * edge2[0]),
                 f * (deltaUV2[1] * edge1[1] - deltaUV1[1] * edge2[1]),
                 f * (deltaUV2[1] * edge1[2] - deltaUV1[1] * edge2[2])
               ).normalize()
 
-//               let bitangent = vec3(
+//               let bitangent = Vec3(
 //                 f * (deltaUV1[0] * edge2[0] - deltaUV2[0] * edge1[0]),
 //                 f * (deltaUV1[0] * edge2[1] - deltaUV2[0] * edge1[1]),
 //                 f * (deltaUV1[0] * edge2[2] - deltaUV2[0] * edge1[2])

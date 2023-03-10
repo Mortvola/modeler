@@ -19,8 +19,8 @@ class Animator: ObservableObject, Identifiable, Equatable, Hashable {
     let id: UUID
     
     @Published var name: String = ""
-    @Published var delta: vec3 = vec3(0, 0, 0)
-    var accum: vec3 = vec3(0, 0, 0)
+    @Published var delta: Vec3 = Vec3(0, 0, 0)
+    var accum: Vec3 = Vec3(0, 0, 0)
     
     init() {
         self.id = UUID()

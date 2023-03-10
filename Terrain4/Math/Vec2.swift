@@ -7,10 +7,10 @@
 
 import Foundation
 
-typealias vec2 = simd_float2
+typealias Vec2 = simd_float2
 
-extension vec2 {
-    func subtract(_ v: vec2) -> vec2 {
-        vec2(self.x - v.x, self.y - v.y)
+extension Vec2 {
+    func subtract(_ v: Vec2) -> Vec2 {
+        Vec2(self.x - v.x, self.y - v.y)
     }
 }

@@ -25,8 +25,8 @@ class Model: Identifiable, ObservableObject, Hashable {
     
     @Published var transforms: [Transform] = []
     
-    var modelMatrix = matrix4x4_identity()
-    var translate = vec3(0.0, 0.0, 0.0)
+    var modelMatrix = Matrix4x4.identity()
+    var translate = Vec3(0.0, 0.0, 0.0)
     var rotation: Float = 0.0
     
     init() {
@@ -34,11 +34,11 @@ class Model: Identifiable, ObservableObject, Hashable {
         Model.modelCounter += 1
     }
 //    func setTranslation(x: Float, y: Float, z: Float) {
-//        self.translate = vec3(x, y, z);
+//        self.translate = Vec3(x, y, z);
 //        self.makeModelMatrix();
 //    }
 //
-//    func setRotationY(radians: Float, axis: vec3) {
+//    func setRotationY(radians: Float, axis: Vec3) {
 //        self.modelMatrix = matrix4x4_rotation(radians: radians, axis: axis)
 //    }
 //

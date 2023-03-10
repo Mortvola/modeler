@@ -46,7 +46,7 @@ class Renderer {
     
     var camera: Camera
     
-    var lightVector = vec3(0, -1, 1)
+    var lightVector = Vec3(0, -1, 1)
     
     var latitude: Double = 42.0
     
@@ -135,7 +135,7 @@ class Renderer {
             try await self.world.loadTiles(x: x, z: z, dimension: dimension, renderer: self)
 
             let cameraOffset = self.getCameraOffset(latLng: latLng, latLngCenter: latLngCenter)
-            self.camera.cameraOffset = vec3(cameraOffset.0, self.camera.cameraOffset.y, cameraOffset.1)
+            self.camera.cameraOffset = Vec3(cameraOffset.0, self.camera.cameraOffset.y, cameraOffset.1)
         }
     }
     
@@ -199,10 +199,10 @@ class Renderer {
             
             // Update the model matrix for each model
             ObjectStore.shared.models.forEach { model in
-                let transform = model.transforms.reversed().reduce(matrix4x4_identity()) { accum, transform in
+                let transform = model.transforms.reversed().reduce(Matrix4x4.identity()) { accum, transform in
                     switch(transform.transform) {
                     case .translate:
-                        return matrix_multiply(accum, matrix4x4_translation(transform.values.x, transform.values.y, transform.values.z))
+                        return accum.multiply(Matrix4x4.translation(transform.values.x, transform.values.y, transform.values.z))
                     case .rotate:
                         var t = transform.values
 
@@ -210,19 +210,13 @@ class Renderer {
                             t = t.add(animator.accum)
                         }
 
-                        return
-                            matrix_multiply(
-                                matrix_multiply(
-                                    matrix_multiply(
-                                        accum,
-                                        matrix4x4_rotation(radians: degreesToRadians(t.x), axis: vec3(1, 0, 0))
-                                    ),
-                                    matrix4x4_rotation(radians: degreesToRadians(t.y), axis: vec3(0, 1, 0))
-                                ),
-                                matrix4x4_rotation(radians: degreesToRadians(t.z), axis: vec3(0, 0, 1))
-                            )
+                        return accum.multiply(
+                                Matrix4x4.rotation(radians: degreesToRadians(t.x), axis: Vec3(1, 0, 0)))
+                            .multiply(
+                                Matrix4x4.rotation(radians: degreesToRadians(t.y), axis: Vec3(0, 1, 0)))
+                            .multiply(Matrix4x4.rotation(radians: degreesToRadians(t.z), axis: Vec3(0, 0, 1)))
                     case .scale:
-                        return matrix_multiply(accum, matrix4x4_identity())
+                        return accum.multiply(Matrix4x4.identity())
                     }
                 }
                 
@@ -238,7 +232,7 @@ class Renderer {
 //                        testModel.rotation = (2 * .pi).remainder(dividingBy: 2 * .pi)
 //                    }
 //
-//                    testModel.setRotationY(radians: testModel.rotation, axis: vec3(0, 1, 0))
+//                    testModel.setRotationY(radians: testModel.rotation, axis: Vec3(0, 1, 0))
 //                }
 //            }
             
@@ -251,12 +245,12 @@ class Renderer {
 //                }
 //
 //                let translation = matrix4x4_translation(0, 0, -11)
-//                let rotation = matrix4x4_rotation(radians: Lights.shared.rotation, axis: vec3(0, 1, 0))
+//                let rotation = matrix4x4_rotation(radians: Lights.shared.rotation, axis: Vec3(0, 1, 0))
 //
-//                var position = matrix_multiply(translation, vec4(0, 0, 0, 1))
-//                position = matrix_multiply(rotation, position)
+//                var position = translation.multiply(Vec4(0, 0, 0, 1))
+//                position = rotation.multiply(position)
 //
-//                Lights.shared.position = vec3(position.x, position.y, position.z)
+//                Lights.shared.position = Vec3(position.x, position.y, position.z)
 //            }
         }
         
@@ -294,7 +288,7 @@ class Renderer {
             uniforms[0].lightVector = self.lightVector
             uniforms[0].pointLight = Lights.shared.pointLight
             uniforms[0].lightPos = self.lights!.position
-            uniforms[0].lightColor = vec3(self.lights!.red, self.lights!.green, self.lights!.blue)
+            uniforms[0].lightColor = Vec3(self.lights!.red, self.lights!.green, self.lights!.blue)
 
             /// Delay getting the currentRenderPassDescriptor until we absolutely need it to avoid
             ///   holding onto the drawable and blocking the display pipeline any longer than necessary

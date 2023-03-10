@@ -18,7 +18,7 @@ class TerrainTile: Model {
     let dimension: Int
     var xDimension: Float = 1.0
     var yDimension: Float = 1.0
-    var scale = vec3(1.0, 1.0, 1.0)
+    var scale = Vec3(1.0, 1.0, 1.0)
     var elevation: [[Float]] = []
     
     init(x: Int, y: Int, dimension: Int, device: MTLDevice, view: MTKView) {
@@ -64,7 +64,7 @@ class TerrainTile: Model {
     }
     
     func setScale(scale: Float) {
-//        self.scale = vec3(scale, 1.0, scale);
+//        self.scale = Vec3(scale, 1.0, scale);
 //        // if (this.photo) {
 //        //   this.photo.setScale(scale);
 //        // }

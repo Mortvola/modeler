@@ -31,7 +31,7 @@
 		791E790829B93BB600FB45F3 /* Transform.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791E790429B93BB600FB45F3 /* Transform.swift */; };
 		791E790E29B93BDC00FB45F3 /* Math.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791E790A29B93BDC00FB45F3 /* Math.swift */; };
 		791E790F29B93BDC00FB45F3 /* Vec3.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791E790B29B93BDC00FB45F3 /* Vec3.swift */; };
-		791E791029B93BDC00FB45F3 /* vec4.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791E790C29B93BDC00FB45F3 /* vec4.swift */; };
+		791E791029B93BDC00FB45F3 /* Vec4.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791E790C29B93BDC00FB45F3 /* Vec4.swift */; };
 		791E791129B93BDC00FB45F3 /* Vec2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791E790D29B93BDC00FB45F3 /* Vec2.swift */; };
 		791E791729B93C2B00FB45F3 /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791E791429B93C2B00FB45F3 /* Model.swift */; };
 		791E791929B93C7D00FB45F3 /* Errors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791E791829B93C7D00FB45F3 /* Errors.swift */; };
@@ -152,7 +152,7 @@
 		791E790429B93BB600FB45F3 /* Transform.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Transform.swift; sourceTree = "<group>"; };
 		791E790A29B93BDC00FB45F3 /* Math.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Math.swift; sourceTree = "<group>"; };
 		791E790B29B93BDC00FB45F3 /* Vec3.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Vec3.swift; sourceTree = "<group>"; };
-		791E790C29B93BDC00FB45F3 /* vec4.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = vec4.swift; sourceTree = "<group>"; };
+		791E790C29B93BDC00FB45F3 /* Vec4.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Vec4.swift; sourceTree = "<group>"; };
 		791E790D29B93BDC00FB45F3 /* Vec2.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Vec2.swift; sourceTree = "<group>"; };
 		791E791429B93C2B00FB45F3 /* Model.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Model.swift; sourceTree = "<group>"; };
 		791E791829B93C7D00FB45F3 /* Errors.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Errors.swift; sourceTree = "<group>"; };
@@ -374,7 +374,7 @@
 			children = (
 				791E790A29B93BDC00FB45F3 /* Math.swift */,
 				791E790B29B93BDC00FB45F3 /* Vec3.swift */,
-				791E790C29B93BDC00FB45F3 /* vec4.swift */,
+				791E790C29B93BDC00FB45F3 /* Vec4.swift */,
 				791E790D29B93BDC00FB45F3 /* Vec2.swift */,
 			);
 			path = Math;
@@ -607,7 +607,7 @@
 				791E790729B93BB600FB45F3 /* LIghts.swift in Sources */,
 				79F6D2C629BA5C80007CA69A /* AnimatorsView.swift in Sources */,
 				791E792E29B93D7000FB45F3 /* LineMaterial.swift in Sources */,
-				791E791029B93BDC00FB45F3 /* vec4.swift in Sources */,
+				791E791029B93BDC00FB45F3 /* Vec4.swift in Sources */,
 				791E790829B93BB600FB45F3 /* Transform.swift in Sources */,
 				791E78B329B9385400FB45F3 /* App.swift in Sources */,
 				791E792B29B93D7000FB45F3 /* PbrLineMaterial.swift in Sources */,

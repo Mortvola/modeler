@@ -9,7 +9,7 @@ import Foundation
 import Metal
 
 class RenderObject: Object {
-    func draw(renderEncoder: MTLRenderCommandEncoder, modelMatrix: matrix_float4x4) throws {
+    func draw(renderEncoder: MTLRenderCommandEncoder, modelMatrix: Matrix4x4) throws {
         throw Errors.notImplemented
     }
 }
