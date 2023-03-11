@@ -28,6 +28,14 @@ struct ObjectDetailsView: View {
                 VectorFieldView(vector: $object.rotation)
                     .padding(.leading, 16)
             }
+            VStack {
+                HStack {
+                    Text("Scale")
+                    Spacer()
+                }
+                VectorFieldView(vector: $object.scale)
+                    .padding(.leading, 16)
+            }
         }
     }
 }

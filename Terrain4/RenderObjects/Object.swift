@@ -27,6 +27,8 @@ class Object: Identifiable, ObservableObject, Hashable {
     
     var rotation = Vec3(0, 0, 0)
     
+    var scale = Vec3(1, 1, 1)
+    
     init (model: Model) {
         self.model = model
         self.name = "Object_\(Object.objectCounter)"
@@ -39,5 +41,6 @@ class Object: Identifiable, ObservableObject, Hashable {
             .rotate(radians: degreesToRadians(rotation.x), axis: Vec3(1, 0, 0))
             .rotate(radians: degreesToRadians(rotation.y), axis: Vec3(0, 1, 0))
             .rotate(radians: degreesToRadians(rotation.z), axis: Vec3(0, 0, 1))
+            .scale(scale.x, scale.y, scale.z)
     }
 }
