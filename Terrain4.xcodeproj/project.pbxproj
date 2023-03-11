@@ -27,7 +27,6 @@
 		791E78FE29B93B6F00FB45F3 /* Http.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 791E78F929B93B2A00FB45F3 /* Http.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		791E790529B93BB600FB45F3 /* ObjectStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791E790129B93BB600FB45F3 /* ObjectStore.swift */; };
 		791E790629B93BB600FB45F3 /* TextureStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791E790229B93BB600FB45F3 /* TextureStore.swift */; };
-		791E790729B93BB600FB45F3 /* LIghts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791E790329B93BB600FB45F3 /* LIghts.swift */; };
 		791E790829B93BB600FB45F3 /* Transform.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791E790429B93BB600FB45F3 /* Transform.swift */; };
 		791E790E29B93BDC00FB45F3 /* Matrix4x4.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791E790A29B93BDC00FB45F3 /* Matrix4x4.swift */; };
 		791E790F29B93BDC00FB45F3 /* Vec3.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791E790B29B93BDC00FB45F3 /* Vec3.swift */; };
@@ -77,6 +76,7 @@
 		79F6D2DD29BB92C7007CA69A /* AnimatorListItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F6D2DC29BB92C7007CA69A /* AnimatorListItem.swift */; };
 		79F6D2DF29BB941F007CA69A /* AnimatorPickerItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F6D2DE29BB941E007CA69A /* AnimatorPickerItem.swift */; };
 		79F6D2E129BBA375007CA69A /* ObjectDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F6D2E029BBA375007CA69A /* ObjectDetailsView.swift */; };
+		79F6D2E529BC2C6A007CA69A /* LightDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F6D2E429BC2C6A007CA69A /* LightDetailsView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -148,7 +148,6 @@
 		791E78F329B93B2A00FB45F3 /* Http.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Http.xcodeproj; path = ../Http/Http.xcodeproj; sourceTree = "<group>"; };
 		791E790129B93BB600FB45F3 /* ObjectStore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ObjectStore.swift; sourceTree = "<group>"; };
 		791E790229B93BB600FB45F3 /* TextureStore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TextureStore.swift; sourceTree = "<group>"; };
-		791E790329B93BB600FB45F3 /* LIghts.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LIghts.swift; sourceTree = "<group>"; };
 		791E790429B93BB600FB45F3 /* Transform.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Transform.swift; sourceTree = "<group>"; };
 		791E790A29B93BDC00FB45F3 /* Matrix4x4.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Matrix4x4.swift; sourceTree = "<group>"; };
 		791E790B29B93BDC00FB45F3 /* Vec3.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Vec3.swift; sourceTree = "<group>"; };
@@ -200,6 +199,7 @@
 		79F6D2DC29BB92C7007CA69A /* AnimatorListItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimatorListItem.swift; sourceTree = "<group>"; };
 		79F6D2DE29BB941E007CA69A /* AnimatorPickerItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimatorPickerItem.swift; sourceTree = "<group>"; };
 		79F6D2E029BBA375007CA69A /* ObjectDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObjectDetailsView.swift; sourceTree = "<group>"; };
+		79F6D2E429BC2C6A007CA69A /* LightDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightDetailsView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -333,6 +333,7 @@
 				79F6D2D829BB691E007CA69A /* ModelDetailsView.swift */,
 				79F6D2D429BB6236007CA69A /* ObjectsView.swift */,
 				791E78CC29B93A2B00FB45F3 /* TransformsView.swift */,
+				79F6D2E429BC2C6A007CA69A /* LightDetailsView.swift */,
 				791E78CB29B93A2B00FB45F3 /* TransformView.swift */,
 				79F6D2DE29BB941E007CA69A /* AnimatorPickerItem.swift */,
 			);
@@ -361,7 +362,6 @@
 				791E790129B93BB600FB45F3 /* ObjectStore.swift */,
 				79F6D2CB29BA7EFA007CA69A /* LIght.swift */,
 				791E790229B93BB600FB45F3 /* TextureStore.swift */,
-				791E790329B93BB600FB45F3 /* LIghts.swift */,
 				791E790429B93BB600FB45F3 /* Transform.swift */,
 				79F6D2C029BA58F5007CA69A /* Animator.swift */,
 				79F6D2D629BB6642007CA69A /* AnimatorStore.swift */,
@@ -604,7 +604,6 @@
 				79F6D2D129BAA8DB007CA69A /* SphereAllocator.swift in Sources */,
 				791E790529B93BB600FB45F3 /* ObjectStore.swift in Sources */,
 				79F6D2D929BB691E007CA69A /* ModelDetailsView.swift in Sources */,
-				791E790729B93BB600FB45F3 /* LIghts.swift in Sources */,
 				79F6D2C629BA5C80007CA69A /* AnimatorsView.swift in Sources */,
 				791E792E29B93D7000FB45F3 /* LineMaterial.swift in Sources */,
 				791E791029B93BDC00FB45F3 /* Vec4.swift in Sources */,
@@ -618,6 +617,7 @@
 				79F6D2CA29BA6C34007CA69A /* Border.swift in Sources */,
 				791E792D29B93D7000FB45F3 /* TextureManager.swift in Sources */,
 				791E795029B944D000FB45F3 /* LineShaders.metal in Sources */,
+				79F6D2E529BC2C6A007CA69A /* LightDetailsView.swift in Sources */,
 				791E794E29B944D000FB45F3 /* Pbr.metal in Sources */,
 				791E78D229B93A2B00FB45F3 /* TransformView.swift in Sources */,
 				791E793029B93D7000FB45F3 /* MaterialManager.swift in Sources */,

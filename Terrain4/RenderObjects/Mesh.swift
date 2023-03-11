@@ -34,6 +34,29 @@ class Mesh: RenderObject {
         var modelMatrixCopy = modelMatrix
         renderEncoder.setVertexBytes(&modelMatrixCopy, length: MemoryLayout<Matrix4x4>.size, index: BufferIndex.modelMatrix.rawValue)
 
+        // Pass the light information
+        var lightData = Lights()
+        lightData.numberOfLights = Int32(self.lights.count)
+        
+        withUnsafeMutableBytes(of: &lightData.position) { rawPtr in
+            let ptr = rawPtr.baseAddress!.assumingMemoryBound(to: vector_float3.self)
+
+            for i in stride(from: 0, to: self.lights.count, by: 1) {
+                ptr[i] = self.lights[i].position
+            }
+        }
+
+        withUnsafeMutableBytes(of: &lightData.intensity) { rawPtr in
+            let ptr = rawPtr.baseAddress!.assumingMemoryBound(to: vector_float3.self)
+
+            for i in stride(from: 0, to: self.lights.count, by: 1) {
+                ptr[i] = self.lights[i].intensity
+            }
+        }
+
+        renderEncoder.setVertexBytes(&lightData, length: MemoryLayout<Lights>.size, index: BufferIndex.lightPos.rawValue)
+        renderEncoder.setFragmentBytes(&lightData, length: MemoryLayout<Lights>.size, index: BufferIndex.lightPos.rawValue)
+
         // Pass the vertex and index information ot the vertex shader
         for (i, buffer) in self.mesh.vertexBuffers.enumerated() {
             renderEncoder.setVertexBuffer(buffer.buffer, offset: buffer.offset, index: i)

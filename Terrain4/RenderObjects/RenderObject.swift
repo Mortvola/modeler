@@ -9,6 +9,9 @@ import Foundation
 import Metal
 
 class RenderObject: Object {
+    // lights that may affect this object.
+    var lights: [Light] = []
+    
     func draw(renderEncoder: MTLRenderCommandEncoder, modelMatrix: Matrix4x4) throws {
         throw Errors.notImplemented
     }

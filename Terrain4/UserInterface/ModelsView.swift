@@ -42,6 +42,9 @@ struct ModelsView: View {
             else if let object = objectStore.selectedObject {
                 ObjectDetailsView(object: object)
             }
+            else if let light = objectStore.selectedLight {
+                LightDetailsView(light: light)
+            }
         }
     }
 }

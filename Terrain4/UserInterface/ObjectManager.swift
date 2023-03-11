@@ -8,7 +8,6 @@
 import SwiftUI
 
 struct ObjectManager: View {
-    @StateObject var lights = Lights.shared
     @ObservedObject var objectStore = ObjectStore.shared
     @State var addObject = false
     
@@ -18,52 +17,42 @@ struct ObjectManager: View {
         return formatter
     }()
     
+    var somethingSelected: Bool {
+        objectStore.selectedModel != nil || objectStore.selectedObject != nil || objectStore.selectedLight != nil
+    }
+    
     var body: some View {
         VStack {
             HStack {
-                CheckBox(checked: $lights.pointLight, label: "Point Light")
                 Spacer()
-            }
-            VStack(spacing: 4) {
-                HStack {
-                    Text("Light Intensity:")
-                    Spacer();
-                }
-                VStack(spacing: 4) {
-                    HStack {
-                        Text("Red:")
-                        TextField("Red", value: $lights.red, formatter: formatter)
-                    }
-                    HStack {
-                        Text("Green:")
-                        TextField("Green", value: $lights.green, formatter: formatter)
-                        Spacer()
-                    }
-                    HStack {
-                        Text("Blue:")
-                        TextField("Blue", value: $lights.blue, formatter: formatter)
-                        Spacer()
-                    }
-                }
-                .padding(.leading, 4)
-            }
-            .padding(.top, 8)
-            HStack {
-                Spacer()
+                
                 Button {
                     objectStore.addModel()
                 } label: {
                     Text("Add Model")
                 }
                 .buttonStyle(.bordered)
+                
                 Spacer()
+                
                 Button {
                     addObject = true
                 } label: {
                     Text("Add Object")
                 }
                 .buttonStyle(.bordered)
-                .disabled(objectStore.selectedModel == nil && objectStore.selectedObject == nil)
+                .disabled(!somethingSelected)
+                
+                Spacer()
+                
+                Button {
+                    try? objectStore.addLight()
+                } label: {
+                    Text("Add Light")
+                }
+                .buttonStyle(.bordered)
+                .disabled(!somethingSelected)
+                
                 Spacer()
             }
             ModelsView()

@@ -30,6 +30,25 @@ struct ObjectsView: View {
             .buttonStyle(.plain)
             .background(objectStore.selectedObject == object ? Color(.lightGray) : Color(.white))
         }
+
+        ForEach(model.lights, id: \.id) { light in
+            Button {
+                if objectStore.selectedLight == light {
+                    objectStore.selectObject(nil);
+                }
+                else {
+                    objectStore.selectLight(light);
+                }
+            } label: {
+                HStack {
+                    Text(light.name)
+                        .foregroundColor(.black)
+                    Spacer()
+                }
+            }
+            .buttonStyle(.plain)
+            .background(objectStore.selectedLight == light ? Color(.lightGray) : Color(.white))
+        }
     }
 }
 

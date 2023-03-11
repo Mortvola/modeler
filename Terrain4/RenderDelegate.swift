@@ -13,8 +13,8 @@ class RenderDelegate: NSObject, MTKViewDelegate {
         Renderer.shared.mtkView(view, drawableSizeWillChange: size)
     }
     
-    init(metalKitView: MTKView, lights: Lights) throws {
-        try Renderer.shared.initialize(metalKitView: metalKitView, lights: lights)
+    init(metalKitView: MTKView) throws {
+        try Renderer.shared.initialize(metalKitView: metalKitView)
         Task {
             try await Renderer.shared.load(lat: 46.514279, lng: -121.456191, dimension: 128)
         }

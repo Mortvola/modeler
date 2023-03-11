@@ -13,6 +13,7 @@ class ObjectStore: ObservableObject {
     @Published var models: [Model] = []
     @Published var selectedModel: Model?
     @Published var selectedObject: RenderObject? = nil
+    @Published var selectedLight: Light? = nil
 
     enum ObjectType: String, CaseIterable {
         case sphere
@@ -26,13 +27,21 @@ class ObjectStore: ObservableObject {
     func selectModel(_ model: Model?) {
         self.selectedObject = nil
         self.selectedModel = model
+        self.selectedLight = nil
     }
 
     func selectObject(_ object: RenderObject?) {
         self.selectedObject = object
         self.selectedModel = nil
+        self.selectedLight = nil
     }
-    
+
+    func selectLight(_ light: Light?) {
+        self.selectedLight = light
+        self.selectedModel = nil
+        self.selectedObject = nil
+    }
+
     @MainActor
     func addModel() {
         let model = Model()
@@ -99,5 +108,14 @@ class ObjectStore: ObservableObject {
         
         selectedModel = nil
         selectedObject = object
+    }
+    
+    @MainActor
+    func addLight() throws {
+        guard let model = getModel() else {
+            throw Errors.modelNotSelected
+        }
+        
+        model.addLight()
     }
 }

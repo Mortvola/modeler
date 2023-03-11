@@ -56,15 +56,12 @@ class Renderer {
     
     var previousFrameTime: Double?
     
-    var lights: Lights?
-    
     init() {
         self.camera = Camera(world: world)
     }
 
-    func initialize(metalKitView: MTKView, lights: Lights) throws {
+    func initialize(metalKitView: MTKView) throws {
         self.camera = Camera(world: world)
-        self.lights = lights
         
         self.device = metalKitView.device!
         self.view = metalKitView
@@ -200,26 +197,32 @@ class Renderer {
             // Update the model matrix for each model
             ObjectStore.shared.models.forEach { model in
                 let transform = model.transforms.reversed().reduce(Matrix4x4.identity()) { accum, transform in
+                    var t = transform.values
+
+                    if let animator = transform.animator {
+                        t = t.add(animator.accum)
+                    }
+
                     switch(transform.transform) {
                     case .translate:
-                        return accum.translate(transform.values.x, transform.values.y, transform.values.z)
+                        return accum.translate(t.x, t.y, t.z)
+                        
                     case .rotate:
-                        var t = transform.values
-
-                        if let animator = transform.animator {
-                            t = t.add(animator.accum)
-                        }
-
                         return accum
                             .rotate(radians: degreesToRadians(t.x), axis: Vec3(1, 0, 0))
                             .rotate(radians: degreesToRadians(t.y), axis: Vec3(0, 1, 0))
                             .rotate(radians: degreesToRadians(t.z), axis: Vec3(0, 0, 1))
+                        
                     case .scale:
-                        return accum.multiply(Matrix4x4.identity())
+                        return accum.scale(t.x, t.y, t.z)
                     }
                 }
                 
                 model.modelMatrix = transform
+
+                model.objects.forEach { objects in
+                    objects.lights = model.lights
+                }
             }
             
 //            if Lights.shared.rotateObject {
@@ -285,9 +288,9 @@ class Renderer {
             uniforms[0].viewMatrix = self.camera.getViewMatrix()
             uniforms[0].cameraPos = self.camera.cameraOffset
             uniforms[0].lightVector = self.lightVector
-            uniforms[0].pointLight = Lights.shared.pointLight
-            uniforms[0].lightPos = self.lights!.position
-            uniforms[0].lightColor = Vec3(self.lights!.red, self.lights!.green, self.lights!.blue)
+//            uniforms[0].pointLight = Lights.shared.pointLight
+//            uniforms[0].lightPos = self.lights!.position
+//            uniforms[0].lightColor = Vec3(self.lights!.red, self.lights!.green, self.lights!.blue)
 
             /// Delay getting the currentRenderPassDescriptor until we absolutely need it to avoid
             ///   holding onto the drawable and blocking the display pipeline any longer than necessary

@@ -21,9 +21,11 @@ struct VertexOut {
     float2 texCoords;
     float3 viewPos;
     float3 fragPos;
-    float3 lightPos;
+    float3 lightPos0;
+    float3 lightPos1;
+    float3 lightPos2;
+    float3 lightPos3;
     float3 normal;
-//    float3 lightVector;
 };
 
 matrix_float3x3 subMatrix3x3(matrix_float4x4 m4x4) {
@@ -38,7 +40,8 @@ vertex VertexOut pbrVertexShader(
     VertexIn in [[stage_in]],
     const device Uniforms& uniforms [[ buffer(BufferIndexUniforms) ]],
     const device matrix_float4x4& modelMatrix [[ buffer(BufferIndexModelMatrix) ]],
-    const device matrix_float3x3& normalMatrix [[ buffer(BufferIndexNormalMatrix) ]]
+    const device matrix_float3x3& normalMatrix [[ buffer(BufferIndexNormalMatrix) ]],
+    const device Lights& lights [[ buffer(BufferIndexLightPos) ]]
 ) {
     VertexOut vertexOut;
     
@@ -57,8 +60,10 @@ vertex VertexOut pbrVertexShader(
     vertexOut.fragPos = TBN * worldVertexPosition;
     vertexOut.normal = TBN * (modelMatrix * float4(in.normal, 0.0)).xyz;
     
-    vertexOut.lightPos = TBN * uniforms.lightPos;
-//    vertexOut.lightVector = TBN * uniforms.lightVector;
+    thread float3 *lightPos = &vertexOut.lightPos0;
+    for (int i = 0; i < lights.numberOfLights; i += 1) {
+        lightPos[i] = TBN * lights.position[i];
+    }
     
     vertexOut.texCoords = in.texCoord;
 
@@ -77,7 +82,7 @@ float3 computeLo(
 
 fragment float4 pbrFragmentShader(
     VertexOut in [[stage_in]],
-    const device Uniforms& uniforms [[ buffer(BufferIndexUniforms) ]],
+    const device Lights& lights [[ buffer(BufferIndexLightPos) ]],
     texture2d<float> albedoMap [[texture(TextureIndexColor)]],
     texture2d<float> normalMap [[texture(TextureIndexNormals)]],
     texture2d<float> metallicMap [[texture(TextureIndexMetallic)]],
@@ -97,21 +102,23 @@ fragment float4 pbrFragmentShader(
     float3 N = tNormal;
     float3 V = normalize(in.viewPos - in.fragPos);
 
-    float3 L;
-    float3 radiance;
-
-    if (uniforms.pointLight) {
-        float distance = length(in.lightPos - in.fragPos);
+    float3 Lo = 0;
+    
+    thread float3 *lightPos = &in.lightPos0;
+    for (int i = 0; i < lights.numberOfLights; i++) {
+        //    if (uniforms.pointLight) {
+        float distance = length(lightPos[i] - in.fragPos);
         float attenuation = 1.0 / (distance * distance);
-        radiance = uniforms.lightColor * attenuation;
-        L = normalize(in.lightPos - in.fragPos);
+        float3 radiance = lights.intensity[i] * attenuation;
+        float3 L = normalize(lightPos[i] - in.fragPos);
+        //    }
+        //    else {
+        //        radiance = uniforms.lightColor;
+        //        L = normalize(in.lightPos);
+        //    }
+        
+        Lo += computeLo(albedo, metallic, roughness, N, V, L, radiance);
     }
-    else {
-        radiance = uniforms.lightColor;
-        L = normalize(in.lightPos);
-    }
-
-    float3 Lo = computeLo(albedo, metallic, roughness, N, V, L, radiance);
 
     // ambient lighting (note that the next IBL tutorial will replace
     // this ambient lighting with environment lighting).
