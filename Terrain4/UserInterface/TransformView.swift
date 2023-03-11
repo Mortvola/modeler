@@ -22,11 +22,7 @@ struct TransformView: View {
                 .labelsHidden()
                 Spacer()
             }
-            VStack {
-                LabeledNumericField(label: "X:", value: $transform.values.x)
-                LabeledNumericField(label: "Y:", value: $transform.values.y)
-                LabeledNumericField(label: "Z:", value: $transform.values.z)
-            }
+            VectorFieldView(vector: $transform.values)
             HStack {
                 Picker("Animator", selection: $transform.animator) {
                     Text("None").tag(nil as Animator?)

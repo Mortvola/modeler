@@ -34,12 +34,8 @@ struct LightDetailsView: View {
                     Text("Position:")
                     Spacer();
                 }
-                VStack(spacing: 4) {
-                    LabeledNumericField(label: "X:", value: $light.position[0])
-                    LabeledNumericField(label: "Y:", value: $light.position[1])
-                    LabeledNumericField(label: "Z:", value: $light.position[2])
-                }
-                .padding(.leading, 16)
+                VectorFieldView(vector: $light.position)
+                    .padding(.leading, 16)
             }
             .padding(.top, 8)
         }

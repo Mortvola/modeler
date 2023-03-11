@@ -21,9 +21,7 @@ struct AnimatorDetailsView: View {
                     Text("Name:")
                     TextField("Name", text: $animator.name)
                 }
-                LabeledNumericField(label: "X:", value: $animator.delta[0])
-                LabeledNumericField(label: "Y:", value: $animator.delta[1])
-                LabeledNumericField(label: "Z:", value: $animator.delta[2])
+                VectorFieldView(vector: $animator.delta)
             }
             .padding(.leading, 16)
         }

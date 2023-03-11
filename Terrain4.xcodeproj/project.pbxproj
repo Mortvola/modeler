@@ -79,6 +79,7 @@
 		79F6D2E529BC2C6A007CA69A /* LightDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F6D2E429BC2C6A007CA69A /* LightDetailsView.swift */; };
 		79F6D2EB29BCBD83007CA69A /* NumericField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F6D2E829BCBD83007CA69A /* NumericField.swift */; };
 		79F6D2ED29BCC53E007CA69A /* LabeledNumericField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F6D2EC29BCC53E007CA69A /* LabeledNumericField.swift */; };
+		79F6D2EF29BCC983007CA69A /* VectorFieldView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F6D2EE29BCC983007CA69A /* VectorFieldView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -204,6 +205,7 @@
 		79F6D2E429BC2C6A007CA69A /* LightDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightDetailsView.swift; sourceTree = "<group>"; };
 		79F6D2E829BCBD83007CA69A /* NumericField.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NumericField.swift; sourceTree = "<group>"; };
 		79F6D2EC29BCC53E007CA69A /* LabeledNumericField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LabeledNumericField.swift; sourceTree = "<group>"; };
+		79F6D2EE29BCC983007CA69A /* VectorFieldView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VectorFieldView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -341,6 +343,7 @@
 				79F6D2EC29BCC53E007CA69A /* LabeledNumericField.swift */,
 				79F6D2E829BCBD83007CA69A /* NumericField.swift */,
 				791E78CB29B93A2B00FB45F3 /* TransformView.swift */,
+				79F6D2EE29BCC983007CA69A /* VectorFieldView.swift */,
 				79F6D2DE29BB941E007CA69A /* AnimatorPickerItem.swift */,
 			);
 			path = UserInterface;
@@ -617,6 +620,7 @@
 				79F6D2ED29BCC53E007CA69A /* LabeledNumericField.swift in Sources */,
 				791E790829B93BB600FB45F3 /* Transform.swift in Sources */,
 				791E78B329B9385400FB45F3 /* App.swift in Sources */,
+				79F6D2EF29BCC983007CA69A /* VectorFieldView.swift in Sources */,
 				791E792B29B93D7000FB45F3 /* PbrLineMaterial.swift in Sources */,
 				791E795229B944D000FB45F3 /* PbrShaders.metal in Sources */,
 				791E793D29B9433F00FB45F3 /* World.swift in Sources */,

@@ -17,24 +17,16 @@ struct ObjectDetailsView: View {
                     Text("Translation")
                     Spacer()
                 }
-                VStack {
-                    LabeledNumericField(label: "X:", value: $object.translation.x)
-                    LabeledNumericField(label: "Y:", value: $object.translation.y)
-                    LabeledNumericField(label: "Z:", value: $object.translation.z)
-                }
-                .padding(.leading, 16)
+                VectorFieldView(vector: $object.translation)
+                    .padding(.leading, 16)
             }
             VStack {
                 HStack {
                     Text("Rotation")
                     Spacer()
                 }
-                VStack {
-                    LabeledNumericField(label: "X:", value: $object.rotation.x)
-                    LabeledNumericField(label: "Y:", value: $object.rotation.y)
-                    LabeledNumericField(label: "Z:", value: $object.rotation.z)
-                }
-                .padding(.leading, 16)
+                VectorFieldView(vector: $object.rotation)
+                    .padding(.leading, 16)
             }
         }
     }
