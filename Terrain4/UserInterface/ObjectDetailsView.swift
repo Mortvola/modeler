@@ -9,13 +9,6 @@ import SwiftUI
 
 struct ObjectDetailsView: View {
     @ObservedObject var object: Object
-    let maxEditWidth: CGFloat = 100
-    
-    let formatter: NumberFormatter = {
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .decimal
-        return formatter
-    }()
 
     var body: some View {
         VStack {
@@ -25,27 +18,9 @@ struct ObjectDetailsView: View {
                     Spacer()
                 }
                 VStack {
-                    HStack {
-                        Text("X:")
-                        TextField("X", value: $object.translation.x, formatter: formatter)
-                            .multilineTextAlignment(.trailing)
-                            .frame(maxWidth: maxEditWidth)
-                        Spacer()
-                    }
-                    HStack {
-                        Text("Y:")
-                        TextField("Y", value: $object.translation.y, formatter: formatter)
-                            .multilineTextAlignment(.trailing)
-                            .frame(maxWidth: maxEditWidth)
-                        Spacer()
-                    }
-                    HStack {
-                        Text("Z:")
-                        TextField("Z", value: $object.translation.z, formatter: formatter)
-                            .multilineTextAlignment(.trailing)
-                            .frame(maxWidth: maxEditWidth)
-                        Spacer()
-                    }
+                    LabeledNumericField(label: "X:", value: $object.translation.x)
+                    LabeledNumericField(label: "Y:", value: $object.translation.y)
+                    LabeledNumericField(label: "Z:", value: $object.translation.z)
                 }
                 .padding(.leading, 16)
             }
@@ -55,27 +30,9 @@ struct ObjectDetailsView: View {
                     Spacer()
                 }
                 VStack {
-                    HStack {
-                        Text("X:")
-                        TextField("X", value: $object.rotation.x, formatter: formatter)
-                            .multilineTextAlignment(.trailing)
-                            .frame(maxWidth: maxEditWidth)
-                        Spacer()
-                    }
-                    HStack {
-                        Text("Y:")
-                        TextField("Y", value: $object.rotation.y, formatter: formatter)
-                            .multilineTextAlignment(.trailing)
-                            .frame(maxWidth: maxEditWidth)
-                        Spacer()
-                    }
-                    HStack {
-                        Text("Z:")
-                        TextField("Z", value: $object.rotation.z, formatter: formatter)
-                            .multilineTextAlignment(.trailing)
-                            .frame(maxWidth: maxEditWidth)
-                        Spacer()
-                    }
+                    LabeledNumericField(label: "X:", value: $object.rotation.x)
+                    LabeledNumericField(label: "Y:", value: $object.rotation.y)
+                    LabeledNumericField(label: "Z:", value: $object.rotation.z)
                 }
                 .padding(.leading, 16)
             }

@@ -11,12 +11,6 @@ struct TransformView: View {
     @ObservedObject var transform: Transform
     @ObservedObject var animatorStore = AnimatorStore.shared
     
-    let formatter: NumberFormatter = {
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .decimal
-        return formatter
-    }()
-    
     var body: some View {
         VStack {
             HStack {
@@ -28,13 +22,10 @@ struct TransformView: View {
                 .labelsHidden()
                 Spacer()
             }
-            HStack {
-                TextField("X", value: $transform.values.x, formatter: formatter)
-                    .multilineTextAlignment(.trailing)
-                TextField("Y", value: $transform.values.y, formatter: formatter)
-                    .multilineTextAlignment(.trailing)
-                TextField("Z", value: $transform.values.z, formatter: formatter)
-                    .multilineTextAlignment(.trailing)
+            VStack {
+                LabeledNumericField(label: "X:", value: $transform.values.x)
+                LabeledNumericField(label: "Y:", value: $transform.values.y)
+                LabeledNumericField(label: "Z:", value: $transform.values.z)
             }
             HStack {
                 Picker("Animator", selection: $transform.animator) {
@@ -46,14 +37,6 @@ struct TransformView: View {
                 .labelsHidden()
                 Spacer()
             }
-//            HStack {
-//                TextField("X", value: $transform.delta.x, formatter: formatter)
-//                    .multilineTextAlignment(.trailing)
-//                TextField("Y", value: $transform.delta.y, formatter: formatter)
-//                    .multilineTextAlignment(.trailing)
-//                TextField("Z", value: $transform.delta.z, formatter: formatter)
-//                    .multilineTextAlignment(.trailing)
-//            }
         }
     }
 }

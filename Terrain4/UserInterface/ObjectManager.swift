@@ -11,12 +11,6 @@ struct ObjectManager: View {
     @ObservedObject var objectStore = ObjectStore.shared
     @State var addObject = false
     
-    let formatter: NumberFormatter = {
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .decimal
-        return formatter
-    }()
-    
     var somethingSelected: Bool {
         objectStore.selectedModel != nil || objectStore.selectedObject != nil || objectStore.selectedLight != nil
     }

@@ -10,12 +10,6 @@ import SwiftUI
 struct LightDetailsView: View {
     @ObservedObject var light: Light
     
-    let formatter: NumberFormatter = {
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .decimal
-        return formatter
-    }()
-
     var body: some View {
         VStack {
             HStack {
@@ -28,22 +22,11 @@ struct LightDetailsView: View {
                     Spacer();
                 }
                 VStack(spacing: 4) {
-                    HStack {
-                        Text("Red:")
-                        TextField("Red", value: $light.intensity[0], formatter: formatter)
-                    }
-                    HStack {
-                        Text("Green:")
-                        TextField("Green", value: $light.intensity[1], formatter: formatter)
-                        Spacer()
-                    }
-                    HStack {
-                        Text("Blue:")
-                        TextField("Blue", value: $light.intensity[2], formatter: formatter)
-                        Spacer()
-                    }
+                    LabeledNumericField(label: "Red:", value: $light.intensity[0])
+                    LabeledNumericField(label: "Green:", value: $light.intensity[1])
+                    LabeledNumericField(label: "Blue:", value: $light.intensity[2])
                 }
-                .padding(.leading, 4)
+                .padding(.leading, 16)
             }
             .padding(.top, 8)
             VStack(spacing: 4) {
@@ -52,22 +35,11 @@ struct LightDetailsView: View {
                     Spacer();
                 }
                 VStack(spacing: 4) {
-                    HStack {
-                        Text("X:")
-                        TextField("X", value: $light.position[0], formatter: formatter)
-                    }
-                    HStack {
-                        Text("Y:")
-                        TextField("Y", value: $light.position[1], formatter: formatter)
-                        Spacer()
-                    }
-                    HStack {
-                        Text("Z:")
-                        TextField("Z", value: $light.position[2], formatter: formatter)
-                        Spacer()
-                    }
+                    LabeledNumericField(label: "X:", value: $light.position[0])
+                    LabeledNumericField(label: "Y:", value: $light.position[1])
+                    LabeledNumericField(label: "Z:", value: $light.position[2])
                 }
-                .padding(.leading, 4)
+                .padding(.leading, 16)
             }
             .padding(.top, 8)
         }
