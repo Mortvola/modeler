@@ -25,32 +25,37 @@ class ObjectStore: ObservableObject {
     }
     
     func selectModel(_ model: Model?) {
-        self.selectedObject = nil
         self.selectedModel = model
+        self.selectedObject = nil
         self.selectedLight = nil
     }
 
     func selectObject(_ object: RenderObject?) {
-        self.selectedObject = object
         self.selectedModel = nil
+        self.selectedObject = object
         self.selectedLight = nil
     }
 
     func selectLight(_ light: Light?) {
-        self.selectedLight = light
         self.selectedModel = nil
         self.selectedObject = nil
+        self.selectedLight = light
     }
 
     @MainActor
     func addModel() {
         let model = Model()
         models.append(model)
-        selectedModel = model        
+        
+        selectModel(model)
     }
 
     private func getModel() -> Model? {
         if let model = selectedObject?.model {
+            return model
+        }
+    
+        if let model = selectedLight?.model {
             return model
         }
         
@@ -106,8 +111,7 @@ class ObjectStore: ObservableObject {
             break;
         }
         
-        selectedModel = nil
-        selectedObject = object
+        selectObject(object)
     }
     
     @MainActor
@@ -116,6 +120,8 @@ class ObjectStore: ObservableObject {
             throw Errors.modelNotSelected
         }
         
-        model.addLight()
+        let light = model.addLight()
+        
+        selectLight(light)
     }
 }

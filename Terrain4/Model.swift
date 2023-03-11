@@ -36,10 +36,12 @@ class Model: Identifiable, ObservableObject, Hashable {
         Model.modelCounter += 1
     }
     
-    func addLight() {
+    func addLight() -> Light {
         let light = Light(model: self)
         light.intensity  = Vec3(50, 50, 50)
         
         self.lights.append(light)
+        
+        return light
     }
 }
