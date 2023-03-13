@@ -23,11 +23,11 @@ class Object: Identifiable, ObservableObject, Hashable {
     var name: String
     private static var objectCounter = 0
 
-    var translation = Vec3(0, 0, 0)
+    @Published var translation = Vec3(0, 0, 0)
     
-    var rotation = Vec3(0, 0, 0)
+    @Published var rotation = Vec3(0, 0, 0)
     
-    var scale = Vec3(1, 1, 1)
+    @Published var scale = Vec3(1, 1, 1)
     
     init (model: Model) {
         self.model = model

@@ -10,6 +10,7 @@ import SwiftUI
 struct ModelsView: View {
     @ObservedObject var objectStore = ObjectStore.shared
     @State var editedObject: Model? = nil
+    @State var hidden = false
     
     var body: some View {
         VStack {
@@ -35,15 +36,35 @@ struct ModelsView: View {
                         .padding(.leading, 16)
                 }
             }
-            
-            if let model = objectStore.selectedModel {
-                ModelDetailsView(model: model)
-            }
-            else if let object = objectStore.selectedObject {
-                ObjectDetailsView(object: object)
-            }
-            else if let light = objectStore.selectedLight {
-                LightDetailsView(light: light)
+
+            if (!hidden) {
+                if let model = objectStore.selectedModel {
+                    ModelDetailsView(model: model)
+                        .onChange(of: objectStore.selectedModel) { _ in
+                            hidden = true
+                            Task {
+                                hidden = false
+                            }
+                        }
+                }
+                else if let object = objectStore.selectedObject {
+                    ObjectDetailsView(object: object)
+                        .onChange(of: objectStore.selectedObject) { _ in
+                            hidden = true
+                            Task {
+                                hidden = false
+                            }
+                        }
+                }
+                else if let light = objectStore.selectedLight {
+                    LightDetailsView(light: light)
+                        .onChange(of: objectStore.selectedLight) { _ in
+                            hidden = true
+                            Task {
+                                hidden = false
+                            }
+                        }
+                }
             }
         }
     }

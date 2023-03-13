@@ -11,7 +11,7 @@ class ObjectStore: ObservableObject {
     static let shared = ObjectStore()
     
     @Published var models: [Model] = []
-    @Published var selectedModel: Model?
+    @Published var selectedModel: Model? = nil
     @Published var selectedObject: RenderObject? = nil
     @Published var selectedLight: Light? = nil
 
