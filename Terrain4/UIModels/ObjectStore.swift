@@ -15,6 +15,8 @@ class ObjectStore: ObservableObject {
     @Published var selectedObject: RenderObject? = nil
     @Published var selectedLight: Light? = nil
 
+    var lights: [Light] = []
+    
     enum ObjectType: String, CaseIterable {
         case sphere
         case rectangle
@@ -121,6 +123,7 @@ class ObjectStore: ObservableObject {
         }
         
         let light = model.addLight()
+        self.lights.append(light)
         
         selectLight(light)
     }

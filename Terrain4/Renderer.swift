@@ -220,8 +220,13 @@ class Renderer {
                 
                 model.modelMatrix = transform
 
-                model.objects.forEach { objects in
-                    objects.lights = model.lights
+                model.objects.forEach { object in
+                    
+                    object.lights = []
+                    
+                    ObjectStore.shared.lights.forEach { light in
+                        object.lights.append(light)
+                    }
                 }
             }
             
