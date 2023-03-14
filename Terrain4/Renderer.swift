@@ -27,34 +27,34 @@ class Renderer {
     public var device: MTLDevice?
     public var view: MTKView?
     
-    var commandQueue: MTLCommandQueue?
-    var dynamicUniformBuffer: MTLBuffer?
-    var depthState: MTLDepthStencilState?
+    private var commandQueue: MTLCommandQueue?
+    private var dynamicUniformBuffer: MTLBuffer?
+    private var depthState: MTLDepthStencilState?
     // var colorMap: MTLTexture
     
-    let inFlightSemaphore = DispatchSemaphore(value: maxBuffersInFlight)
+    private let inFlightSemaphore = DispatchSemaphore(value: maxBuffersInFlight)
     
-    var uniformBufferOffset = 0
+    private var uniformBufferOffset = 0
     
-    var uniformBufferIndex = 0
+    private var uniformBufferIndex = 0
     
-    var uniforms: UnsafeMutablePointer<Uniforms>?
+    private var uniforms: UnsafeMutablePointer<Uniforms>?
     
-    let world = World()
+    private let world = World()
     
-    var skybox: Skybox?
+    private var skybox: Skybox?
     
-    var camera: Camera
+    public var camera: Camera
     
-    var lightVector = Vec3(0, -1, 1)
+    private var lightVector = Vec3(0, -1, 1)
     
-    var latitude: Double = 42.0
+    private var latitude: Double = 42.0
     
-    var day: Int = 0
+    private var day: Int = 0
     
-    var hour: Float = 10.0
+    private var hour: Float = 10.0
     
-    var previousFrameTime: Double?
+    private var previousFrameTime: Double?
     
     init() {
         self.camera = Camera(world: world)
