@@ -41,6 +41,7 @@ class Model: Identifiable, ObservableObject, Hashable, Codable {
         case name
         case objects
         case lights
+        case transforms
     }
     
     public required init(from decoder: Decoder) throws {
@@ -50,6 +51,7 @@ class Model: Identifiable, ObservableObject, Hashable, Codable {
         name = try container.decode(String.self, forKey: .name)
         objects = try container.decode([Mesh].self, forKey: .objects)
         lights = try container.decode([Light].self, forKey: .lights)
+        transforms = try container.decode([Transform].self, forKey: .transforms)
     }
     
     func encode(to encoder: Encoder) throws {
@@ -59,6 +61,7 @@ class Model: Identifiable, ObservableObject, Hashable, Codable {
         try container.encode(name, forKey: .name)
         try container.encode(objects, forKey: .objects)
         try container.encode(lights, forKey: .lights)
+        try container.encode(transforms, forKey: .transforms)
     }
 
     func addLight() -> Light {
