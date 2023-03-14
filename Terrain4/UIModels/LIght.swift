@@ -21,4 +21,27 @@ class Light: Object {
         self.name = "Light_\(Light.lightCounter)"
         Light.lightCounter += 1
     }
+    
+    enum CodingKeys: CodingKey {
+        case position
+        case intensity
+    }
+    
+    public required init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        
+        position = try container.decode(Vec3.self, forKey: .position)
+        intensity = try container.decode(Vec3.self, forKey: .intensity)
+    
+        try super.init(from: decoder)
+    }
+    
+    public override func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        
+        try container.encode(position, forKey: .position)
+        try container.encode(intensity, forKey: .intensity)
+
+        try super.encode(to: encoder)
+    }
 }

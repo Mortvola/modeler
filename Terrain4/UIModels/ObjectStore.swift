@@ -14,7 +14,7 @@ class ObjectStore: ObservableObject {
     @Published var selectedModel: Model? = nil
     @Published var selectedObject: RenderObject? = nil
     @Published var selectedLight: Light? = nil
-
+    
     var lights: [Light] = []
     
     enum ObjectType: String, CaseIterable {
@@ -31,19 +31,19 @@ class ObjectStore: ObservableObject {
         self.selectedObject = nil
         self.selectedLight = nil
     }
-
+    
     func selectObject(_ object: RenderObject?) {
         self.selectedModel = nil
         self.selectedObject = object
         self.selectedLight = nil
     }
-
+    
     func selectLight(_ light: Light?) {
         self.selectedModel = nil
         self.selectedObject = nil
         self.selectedLight = light
     }
-
+    
     @MainActor
     func addModel() {
         let model = Model()
@@ -51,12 +51,12 @@ class ObjectStore: ObservableObject {
         
         selectModel(model)
     }
-
+    
     private func getModel() -> Model? {
         if let model = selectedObject?.model {
             return model
         }
-    
+        
         if let model = selectedLight?.model {
             return model
         }
@@ -79,11 +79,11 @@ class ObjectStore: ObservableObject {
         }
         
         var object: RenderObject? = nil
-
+        
         switch(type) {
         case .sphere:
             let material = try await MaterialManager.shared.addMaterial(device: device, view: view, name: .terrain)
-
+            
             let sphere = try SphereAllocator.allocate(device: device, diameter: 5)
             
             object = Mesh(mesh: sphere, model: model)
@@ -92,12 +92,12 @@ class ObjectStore: ObservableObject {
                 material.objects.append(object)
                 model.objects.append(object)
             }
-
+            
             break
             
         case .rectangle:
             let material = try await MaterialManager.shared.addMaterial(device: device, view: view, name: .terrain)
-
+            
             object = try TestRectAllocator.allocate(device: device, model: model)
             
             if let object = object {
@@ -126,5 +126,61 @@ class ObjectStore: ObservableObject {
         self.lights.append(light)
         
         selectLight(light)
+    }
+
+    func getDocumentsDirectory() -> URL {
+        // find all possible documents directories for this user
+        let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
+
+        // just send back the first one, which ought to be the only one
+        return paths[0]
+    }
+
+    func save() {
+        if let data = try? JSONEncoder().encode(self.models) {
+            do {
+                let url = getDocumentsDirectory().appendingPathComponent("Test.json")
+
+//                print(url)
+                try data.write(to: url)
+            } catch {
+                print("Error: Can't write categories")
+            }
+        }
+    }
+    
+    @MainActor
+    func open() async throws {
+        let url = getDocumentsDirectory().appendingPathComponent("Test.json")
+
+        print(url)
+        
+        if let data = try? Data(contentsOf: url) {
+            do {
+                let newModels = try JSONDecoder().decode([Model].self, from: data)
+                
+                let material = try await MaterialManager.shared.addMaterial(device: Renderer.shared.device!, view: Renderer.shared.view!, name: .terrain)
+
+                var newLights: [Light] = []
+                
+                newModels.forEach { model in
+                    model.objects.forEach { object in
+                        object.model = model
+
+                        material.objects.append(object)
+                    }
+                    
+                    model.lights.forEach { light in
+                        newLights.append(light)
+                    }
+                }
+                
+                self.models = newModels
+                self.lights = newLights
+                
+            } catch {
+                print("Error: Can't decode contents of \(url): \(error)")
+            }
+        }
     }
 }

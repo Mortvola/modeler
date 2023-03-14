@@ -11,6 +11,7 @@ enum TabSelection {
     case objects
     case animators
 }
+
 struct ContentView: View {
     @State var tabSelection: TabSelection = .objects
     
@@ -36,6 +37,20 @@ struct ContentView: View {
                     .tag(TabSelection.animators)
             }
             .padding()
+            .toolbar {
+                ToolbarItem(placement: .automatic) {
+                    Button("Open") {
+                        Task {
+                            try await ObjectStore.shared.open()
+                        }
+                    }
+                }
+                ToolbarItem(placement: .automatic) {
+                    Button("Save") {
+                        ObjectStore.shared.save()
+                    }
+                }
+            }
         } detail: {
             ZStack {
                 RenderView()

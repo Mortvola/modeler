@@ -15,6 +15,14 @@ class SphereAllocator {
 
         let mesh = MDLMesh.newEllipsoid(withRadii: Vec3(diameter, diameter, diameter), radialSegments: 32, verticalSegments: 32, geometryType: .triangles, inwardNormals: false, hemisphere: false, allocator: meshBufferAllocator)
 
+        mesh.addTangentBasis(forTextureCoordinateAttributeNamed: MDLVertexAttributeTextureCoordinate, normalAttributeNamed: MDLVertexAttributeNormal, tangentAttributeNamed: MDLVertexAttributeTangent)
+
+        mesh.vertexDescriptor = SphereAllocator.vertexDescriptor()
+        
+        return try MTKMesh(mesh: mesh, device: device)
+    }
+    
+    static func vertexDescriptor() -> MDLVertexDescriptor {
         let vertexDescriptor = MDLVertexDescriptor()
         
         var vertexAttributes = MDLVertexAttribute()
@@ -52,11 +60,7 @@ class SphereAllocator {
         vertexBufferLayout = MDLVertexBufferLayout()
         vertexBufferLayout.stride = MemoryLayout<simd_float3>.stride * 2
         vertexDescriptor.layouts[BufferIndex.normals.rawValue] = vertexBufferLayout
-
-        mesh.addOrthTanBasis(forTextureCoordinateAttributeNamed: MDLVertexAttributeTextureCoordinate, normalAttributeNamed: MDLVertexAttributeNormal, tangentAttributeNamed: MDLVertexAttributeTangent)
-
-        mesh.vertexDescriptor = vertexDescriptor
         
-        return try MTKMesh(mesh: mesh, device: device)
+        return vertexDescriptor
     }
 }

@@ -22,4 +22,5 @@ enum Errors: Error {
     case makeDepthStencilStateFailed
     case notImplemented
     case modelNotSelected
+    case unknownGeometryType
 }

@@ -27,8 +27,20 @@ class TerrainTile: Model {
         self.x = x;
         self.y = y;
         self.dimension = dimension
+        
+        super.init()
     }
     
+    public required init(from decoder: Decoder) throws {
+        self.device = Renderer.shared.device!
+        self.view = Renderer.shared.view!
+        self.x = 0
+        self.y = 0
+        self.dimension = 0
+        
+        try super.init(from: decoder)
+    }
+
     func load() async throws {
         if let response: Http.Response<TerrainTileProps> = try? await Http.get(path: "/tile/terrain3d/\(dimension)/\(x)/\(y)") {
             if let data = response.data {

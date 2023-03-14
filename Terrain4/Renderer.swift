@@ -98,7 +98,7 @@ class Renderer {
         self.depthState = state
     }
 
-    func load(lat: Double, lng: Double, dimension: Int) async throws {
+    public func load(lat: Double, lng: Double, dimension: Int) async throws {
         guard let device = self.device else {
             throw Errors.deviceNotSet
         }
@@ -136,7 +136,7 @@ class Renderer {
         }
     }
     
-    func initializeLightVector(latitude: Double) {
+    private func initializeLightVector(latitude: Double) {
         let calendar = Calendar(identifier: Calendar.Identifier.gregorian)
         
         self.latitude = latitude
@@ -146,7 +146,7 @@ class Renderer {
         updateTimeOfDay(elapsedTime: 0)
     }
     
-    func getCameraOffset(latLng: LatLng, latLngCenter: LatLng) -> (Float, Float) {
+    private func getCameraOffset(latLng: LatLng, latLngCenter: LatLng) -> (Float, Float) {
         let positionMerc = latLngToMercator(lat: latLng.lat, lng: latLng.lng)
         let centerMerc = latLngToMercator(lat: latLngCenter.lat, lng: latLngCenter.lng)
 
@@ -170,7 +170,7 @@ class Renderer {
         self.uniforms = UnsafeMutableRawPointer(dynamicUniformBuffer.contents() + self.uniformBufferOffset).bindMemory(to:Uniforms.self, capacity:1)
     }
     
-    func updateTimeOfDay(elapsedTime: Double) {
+    private func updateTimeOfDay(elapsedTime: Double) {
         self.hour += Float((1 / 10.0) * elapsedTime)
         self.hour.formTruncatingRemainder(dividingBy: 24.0)
 
@@ -265,9 +265,6 @@ class Renderer {
     }
     
     func render(in view: MTKView) throws {
-        /// Per frame updates hare
-        ///
-        
         guard let uniforms = self.uniforms else {
             return
         }
@@ -279,7 +276,6 @@ class Renderer {
         _ = inFlightSemaphore.wait(timeout: DispatchTime.distantFuture)
         
         if let commandBuffer = commandQueue.makeCommandBuffer() {
-            
             let semaphore = inFlightSemaphore
             commandBuffer.addCompletedHandler { (_ commandBuffer)-> Swift.Void in
                 semaphore.signal()
@@ -340,7 +336,7 @@ class Renderer {
         }
     }
     
-    func mtkView(_ view: MTKView, drawableSizeWillChange size: CGSize) {
+    public func mtkView(_ view: MTKView, drawableSizeWillChange size: CGSize) {
         self.camera.updateViewDimensions(width: Float(size.width), height: Float(size.height))
     }
 }

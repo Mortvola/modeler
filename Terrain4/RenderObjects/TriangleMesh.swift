@@ -28,6 +28,10 @@ class TriangleMesh: RenderObject {
         self.createBuffer(device: device, normals: normals, points: points, indices: indices);
     }
 
+    public required init(from decoder: Decoder) throws {
+        try super.init(from: decoder)
+    }
+
     override func draw(renderEncoder: MTLRenderCommandEncoder, modelMatrix: Matrix4x4) {
         var normalMatrix = matrix_float3x3(columns: (
             vector_float3(modelMatrix[0][0], modelMatrix[0][1], modelMatrix[0][2]),

@@ -31,6 +31,26 @@ class Line: RenderObject {
         super.init(model: model)
     }
 
+    public required init(from decoder: Decoder) throws {
+        let points: [Float] = []
+        
+        // Reformat data
+        var newPoints: [simd_float1] = []
+        
+        for i in stride(from: 0, to: points.count, by: 3) {
+            newPoints.append(points[i + 0])
+            newPoints.append(points[i + 2])
+            newPoints.append(points[i + 1])
+            newPoints.append(0)
+        }
+                                    
+        let dataSize = newPoints.count * MemoryLayout.size(ofValue: newPoints[0])
+        self.vertices = Renderer.shared.device!.makeBuffer(bytes: newPoints, length: dataSize, options: [])!
+        self.numVertices = newPoints.count * MemoryLayout.size(ofValue: newPoints[0]) / MemoryLayout<simd_float3>.stride
+
+        try super.init(from: decoder)
+    }
+
     override func draw(renderEncoder: MTLRenderCommandEncoder, modelMatrix: Matrix4x4) {
         renderEncoder.setVertexBuffer(self.vertices, offset: 0, index: BufferIndex.meshPositions.rawValue)
 
