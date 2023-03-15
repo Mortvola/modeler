@@ -21,6 +21,7 @@ struct AnimatorsView: View {
             List {
                 ForEach(animatorStore.animators) { animator in
                     AnimatorListItem(animator: animator)
+                        .selected(selected: animator == animatorStore.selectedAnimator)
                 }
             }
             if let animator = animatorStore.selectedAnimator {

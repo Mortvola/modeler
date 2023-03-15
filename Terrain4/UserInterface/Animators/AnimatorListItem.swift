@@ -12,17 +12,14 @@ struct AnimatorListItem: View {
     @ObservedObject var animatorStore = AnimatorStore.shared
 
     var body: some View {
-        Button {
+        ListItem(label: animator.name) {
             if animatorStore.selectedAnimator == animator {
                 animatorStore.selectedAnimator = nil
             }
             else {
                 animatorStore.selectedAnimator = animator
             }
-        } label: {
-            Text(animator.name)
         }
-        .buttonStyle(.plain)
     }
 }
 

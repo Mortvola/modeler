@@ -51,7 +51,7 @@ class TerrainTile: Model {
                 for object in data.objects {
                     switch (object.type) {
                     case "triangles":
-                        let material = try await MaterialManager.shared.addMaterial(device: self.device, view: self.view, name: .terrain)
+                        let material = try await MaterialManager.shared.addMaterial(device: self.device, view: self.view, albedo: nil, normals: nil, metalness: nil, roughness: nil)
                         let object: RenderObject = TriangleMesh(device: self.device, points: object.points, normals: object.normals, indices: object.indices, model: self)
                         
                         material.objects.append(object)
@@ -59,7 +59,7 @@ class TerrainTile: Model {
                         break;
                         
                     case "line":
-                        let material = try await MaterialManager.shared.addMaterial(device: self.device, view: self.view, name: .line)
+                        let material = try await MaterialManager.shared.addMaterial(device: self.device, view: self.view, albedo: nil, normals: nil, metalness: nil, roughness: nil)
                         
                         let object: RenderObject = Line(device: self.device, points: object.points, model: self)
 

@@ -16,22 +16,15 @@ struct ModelsView: View {
         VStack {
             List {
                 ForEach(objectStore.models, id: \.id) { model in
-                    Button {
+                    ListItem(label: model.name) {
                         if objectStore.selectedModel == model {
                             objectStore.selectModel(nil);
                         }
                         else {
                             objectStore.selectModel(model);
                         }
-                    } label: {
-                        HStack {
-                            Text(model.name)
-                                .foregroundColor(.black)
-                            Spacer()
-                        }
                     }
-                    .buttonStyle(.plain)
-                    .background(objectStore.selectedModel == model ? Color(.lightGray) : Color(.white))
+                    .selected(selected: objectStore.selectedModel == model)
                     ObjectsView(model: model)
                         .padding(.leading, 16)
                 }

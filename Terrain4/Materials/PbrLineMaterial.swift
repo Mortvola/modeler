@@ -9,7 +9,7 @@ import Foundation
 import MetalKit
 import Metal
 
-class PbrLineMaterial: Material {
+class PbrLineMaterial: BaseMaterial {
     let pipeline: MTLRenderPipelineState
     let samplerState: MTLSamplerState
     

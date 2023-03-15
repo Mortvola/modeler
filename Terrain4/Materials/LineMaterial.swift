@@ -9,7 +9,7 @@ import Foundation
 import MetalKit
 import Metal
 
-class LineMaterial: Material {
+class LineMaterial: BaseMaterial {
     let pipeline: MTLRenderPipelineState
     
     init(device: MTLDevice, view: MTKView) throws {

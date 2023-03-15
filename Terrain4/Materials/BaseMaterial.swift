@@ -8,7 +8,7 @@
 import Foundation
 import Metal
 
-protocol Material {
+protocol BaseMaterial {
     func getPipeline() -> MTLRenderPipelineState
     
     func prepare(renderEncoder: MTLRenderCommandEncoder)

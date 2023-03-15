@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct ObjectManager: View {
+struct ModelManager: View {
     @ObservedObject var objectStore = ObjectStore.shared
     @State var addObject = false
     
@@ -58,8 +58,8 @@ struct ObjectManager: View {
     }
 }
 
-struct ObjectManager_Previews: PreviewProvider {
+struct ModelManager_Previews: PreviewProvider {
     static var previews: some View {
-        ObjectManager()
+        ModelManager()
     }
 }

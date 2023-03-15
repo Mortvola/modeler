@@ -13,12 +13,12 @@ enum TabSelection {
 }
 
 struct ContentView: View {
-    @State var tabSelection: TabSelection = .objects
+    @State private var tabSelection: TabSelection = .objects
     
     var body: some View {
         NavigationSplitView {
             TabView(selection: $tabSelection) {
-                ObjectManager()
+                ModelManager()
                     .tabItem {
                         Label("Objects", systemImage: "circle.grid.2x2")
                     }
@@ -30,9 +30,9 @@ struct ContentView: View {
                     }
                     .tag(TabSelection.animators)
 
-                TexturesView()
+                MaterialsView()
                     .tabItem {
-                        Label("Textures", systemImage: "line.3.crossed.swirl.circle.fill")
+                        Label("Matrials", systemImage: "line.3.crossed.swirl.circle.fill")
                     }
                     .tag(TabSelection.animators)
             }

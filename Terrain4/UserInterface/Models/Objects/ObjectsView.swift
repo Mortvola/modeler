@@ -13,41 +13,27 @@ struct ObjectsView: View {
     
     var body: some View {
         ForEach(model.objects, id: \.id) { object in
-            Button {
+            ListItem(label: object.name) {
                 if objectStore.selectedObject == object {
                     objectStore.selectObject(nil);
                 }
                 else {
                     objectStore.selectObject(object);
                 }
-            } label: {
-                HStack {
-                    Text(object.name)
-                        .foregroundColor(.black)
-                    Spacer()
-                }
             }
-            .buttonStyle(.plain)
-            .background(objectStore.selectedObject == object ? Color(.lightGray) : Color(.white))
+            .selected(selected: object == objectStore.selectedObject)
         }
 
         ForEach(model.lights, id: \.id) { light in
-            Button {
+            ListItem(label: light.name) {
                 if objectStore.selectedLight == light {
                     objectStore.selectObject(nil);
                 }
                 else {
                     objectStore.selectLight(light);
                 }
-            } label: {
-                HStack {
-                    Text(light.name)
-                        .foregroundColor(.black)
-                    Spacer()
-                }
             }
-            .buttonStyle(.plain)
-            .background(objectStore.selectedLight == light ? Color(.lightGray) : Color(.white))
+            .selected(selected: light == objectStore.selectedLight)
         }
     }
 }

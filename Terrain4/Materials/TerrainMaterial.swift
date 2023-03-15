@@ -9,7 +9,7 @@ import Foundation
 import MetalKit
 import Metal
 
-class TerrainMaterial: Material {
+class TerrainMaterial: BaseMaterial {
     let pipeline: MTLRenderPipelineState
     let samplerState: MTLSamplerState
 
@@ -19,28 +19,74 @@ class TerrainMaterial: Material {
     let roughness: MTLTexture
     let ao: MTLTexture?
 
-    init(device: MTLDevice, view: MTKView) async throws {
+    init(device: MTLDevice, view: MTKView, albedo: String?, normals: String?, metalness: String?, roughness: String?) async throws {
         let vertexDescriptor = TerrainMaterial.buildVertexDescriptor()
         
         self.pipeline = try TerrainMaterial.buildPipeline(device: device, metalKitView: view, vertexDescriptor: vertexDescriptor)
         
-//        self.texture = try await TextureManager.shared.addTexture(device: device, path: "/A23DTEX_Albedo_1024.jpg")
-//        self.normals = try await TextureManager.shared.addTexture(device: device, path: "/A23DTEX_Normal_1024.jpg")
-//        self.metallic = try await TextureManager.shared.addTexture(device: device, path: "/A23DTEX_Specular_1024.jpg")
-//        self.roughness = try await TextureManager.shared.addTexture(device: device, path: "/A23DTEX_Roughness_1024.jpg")
-//        self.ao = try await TextureManager.shared.addTexture(device: device, path: "/A23DTEX_AO_1024.jpg")
-
-//        self.texture = try await TextureManager.shared.addTexture(device: device, path: "/bumpy_worn_ground_1024_albedo.png")
-//        self.normals = try await TextureManager.shared.addTexture(device: device, path: "/bumpy_worn_ground_1024_normal-dx.png")
-//        self.metallic = try await TextureManager.shared.addTexture(device: device, path: "/bumpy_worn_ground_1024_metallic.png")
-//        self.roughness = try await TextureManager.shared.addTexture(device: device, path: "/bumpy_worn_ground_1024_roughness.png")
-//        self.ao = try await TextureManager.shared.addTexture(device: device, path: "/bumpy_worn_ground_1024_ao.png")
-
         do {
-            self.texture = try await TextureManager.shared.addTexture(device: device, path: "/rustediron2_basecolor_1024.png")
-            self.normals = try await TextureManager.shared.addTexture(device: device, path: "/rustediron2_normal_1024.png")
-            self.metallic = try await TextureManager.shared.addTexture(device: device, path: "/rustediron2_metallic_1024.png")
-            self.roughness = try await TextureManager.shared.addTexture(device: device, path: "/rustediron2_roughness_1024.png")
+            // Albedo
+            if let albedo = albedo {
+                do {
+                    self.texture = try await TextureManager.shared.addTexture(device: device, path: albedo)
+                }
+                catch {
+                    self.texture = try await TextureManager.shared.addTexture(device: device, color: Vec4(1.0, 1.0, 1.0, 1.0), pixelFormat: .bgra8Unorm_srgb)
+                }
+            }
+            else {
+                self.texture = try await TextureManager.shared.addTexture(device: device, color: Vec4(1.0, 1.0, 1.0, 1.0), pixelFormat: .bgra8Unorm_srgb)
+            }
+            
+            // Normals
+            if let normals = normals {
+                do {
+                    self.normals = try await TextureManager.shared.addTexture(device: device, path: normals)
+                }
+                catch {
+                    let normal = Vec3(0.0, 0.0, 1.0)
+                        .add(Vec3(1.0, 1.0, 1.0))
+                        .multiply(Vec3(0.5, 0.5, 0.5))
+
+                    print(normal)
+                    
+                    self.normals = try await TextureManager.shared.addTexture(device: device, color: Vec4(normal[0], normal[1], normal[2], 1.0), pixelFormat: .bgra8Unorm)
+                }
+            }
+            else {
+                let normal = Vec3(0.0, 0.0, 1.0)
+                    .add(Vec3(1.0, 1.0, 1.0))
+                    .multiply(Vec3(0.5, 0.5, 0.5))
+
+                self.normals = try await TextureManager.shared.addTexture(device: device, color: Vec4(normal[0], normal[1], normal[2], 1.0), pixelFormat: .bgra8Unorm)
+            }
+            
+            // Metalness
+            if let metalness = metalness {
+                do {
+                    self.metallic = try await TextureManager.shared.addTexture(device: device, path: metalness)
+                }
+                catch {
+                    self.metallic = try await TextureManager.shared.addTexture(device: device, color: 0.0)
+                }
+            }
+            else {
+                self.metallic = try await TextureManager.shared.addTexture(device: device, color: 0.0)
+            }
+            
+            // Roughness
+            if let roughness = roughness {
+                do {
+                    self.roughness = try await TextureManager.shared.addTexture(device: device, path: roughness)
+                }
+                catch {
+                    self.roughness = try await TextureManager.shared.addTexture(device: device, color: 1.0)
+                }
+            }
+            else {
+                self.roughness = try await TextureManager.shared.addTexture(device: device, color: 1.0)
+            }
+            
             self.ao = nil
         }
         catch {

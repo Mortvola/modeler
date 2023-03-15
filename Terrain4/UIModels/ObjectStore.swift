@@ -82,7 +82,7 @@ class ObjectStore: ObservableObject {
         
         switch(type) {
         case .sphere:
-            let material = try await MaterialManager.shared.addMaterial(device: device, view: view, name: .terrain)
+            let material = try await MaterialManager.shared.addMaterial(device: device, view: view, albedo: nil, normals: nil, metalness: nil, roughness: nil)
             
             let sphere = try SphereAllocator.allocate(device: device, diameter: 5)
             
@@ -96,7 +96,7 @@ class ObjectStore: ObservableObject {
             break
             
         case .rectangle:
-            let material = try await MaterialManager.shared.addMaterial(device: device, view: view, name: .terrain)
+            let material = try await MaterialManager.shared.addMaterial(device: device, view: view, albedo: nil, normals: nil, metalness: nil, roughness: nil)
             
             object = try TestRectAllocator.allocate(device: device, model: model)
             
@@ -159,15 +159,18 @@ class ObjectStore: ObservableObject {
         
         if let data = try? Data(contentsOf: url) {
             do {
-                let material = try await MaterialManager.shared.addMaterial(device: Renderer.shared.device!, view: Renderer.shared.view!, name: .terrain)
+//                let material = try await MaterialManager.shared.addMaterial(device: Renderer.shared.device!, view: Renderer.shared.view!, name: .terrain)
 
                 let file = try JSONDecoder().decode(File.self, from: data)
                 
                 var newLights: [Light] = []
                 
-                file.models.forEach { model in
-                    model.objects.forEach { object in
+                for model in file.models {
+                    for object in model.objects {
                         object.model = model
+
+                        let material = try await MaterialManager.shared.addMaterial(device: Renderer.shared.device!, view: Renderer.shared.view!, albedo: object.material?.albedo, normals: object.material?.normals, metalness: object.material?.metalness, roughness: object.material?.roughness)
+//                        let material = try await MaterialManager.shared.addMaterial(device: Renderer.shared.device!, view: Renderer.shared.view!, albedo: nil, normals: nil, metalness: nil, roughness: nil)
 
                         material.objects.append(object)
                     }
@@ -226,17 +229,20 @@ struct File: Codable {
     var models: [Model]
     var animators: [Animator]
     var camera: Camera
+    var materials: [Material]
     
     enum CodkingKeys: CodingKey {
         case models
         case animators
         case camera
+        case materials
     }
     
     init() {
         self.models = ObjectStore.shared.models
         self.animators = AnimatorStore.shared.animators
         self.camera = Camera(position: Renderer.shared.camera.cameraOffset, yaw: Renderer.shared.camera.yaw, pitch: Renderer.shared.camera.pitch)
+        self.materials = MaterialStore.shared.materials
     }
 
     init(from decoder: Decoder) throws {
@@ -254,6 +260,18 @@ struct File: Codable {
         
         AnimatorStore.shared.animators = animators
         
+        materials = try container.decode([Material].self, forKey: .materials)
+        
+        MaterialStore.shared.materials = materials
+        
         models = try container.decode([Model].self, forKey: .models)
     }
+    
+//    func encode(to encoder: Encoder) throws {
+//        var container = encoder.container(keyedBy: CodkingKeys.self)
+//
+//        try container.encode(self.camera, forKey: .camera)
+//        try container.encode(self.animators, forKey: .animators)
+//        try container.encode(self.models, forKey: .models)
+//    }
 }
