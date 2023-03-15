@@ -82,7 +82,7 @@ class ObjectStore: ObservableObject {
         
         switch(type) {
         case .sphere:
-            let material = try await MaterialManager.shared.addMaterial(device: device, view: view, albedo: nil, normals: nil, metalness: nil, roughness: nil)
+            let material = try await MaterialManager.shared.addMaterial(device: device, view: view, material: nil)
             
             let sphere = try SphereAllocator.allocate(device: device, diameter: 5)
             
@@ -96,7 +96,7 @@ class ObjectStore: ObservableObject {
             break
             
         case .rectangle:
-            let material = try await MaterialManager.shared.addMaterial(device: device, view: view, albedo: nil, normals: nil, metalness: nil, roughness: nil)
+            let material = try await MaterialManager.shared.addMaterial(device: device, view: view, material: nil)
             
             object = try TestRectAllocator.allocate(device: device, model: model)
             
@@ -159,8 +159,6 @@ class ObjectStore: ObservableObject {
         
         if let data = try? Data(contentsOf: url) {
             do {
-//                let material = try await MaterialManager.shared.addMaterial(device: Renderer.shared.device!, view: Renderer.shared.view!, name: .terrain)
-
                 let file = try JSONDecoder().decode(File.self, from: data)
                 
                 var newLights: [Light] = []
@@ -169,10 +167,9 @@ class ObjectStore: ObservableObject {
                     for object in model.objects {
                         object.model = model
 
-                        let material = try await MaterialManager.shared.addMaterial(device: Renderer.shared.device!, view: Renderer.shared.view!, albedo: object.material?.albedo, normals: object.material?.normals, metalness: object.material?.metalness, roughness: object.material?.roughness)
-//                        let material = try await MaterialManager.shared.addMaterial(device: Renderer.shared.device!, view: Renderer.shared.view!, albedo: nil, normals: nil, metalness: nil, roughness: nil)
+                        object.materialEntry = try await MaterialManager.shared.addMaterial(device: Renderer.shared.device!, view: Renderer.shared.view!, material: object.material)
 
-                        material.objects.append(object)
+                        object.materialEntry?.objects.append(object)
                     }
                     
                     model.lights.forEach { light in

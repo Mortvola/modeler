@@ -19,16 +19,16 @@ class TerrainMaterial: BaseMaterial {
     let roughness: MTLTexture
     let ao: MTLTexture?
 
-    init(device: MTLDevice, view: MTKView, albedo: String?, normals: String?, metalness: String?, roughness: String?) async throws {
+    init(device: MTLDevice, view: MTKView, material: Material?) async throws {
         let vertexDescriptor = TerrainMaterial.buildVertexDescriptor()
         
         self.pipeline = try TerrainMaterial.buildPipeline(device: device, metalKitView: view, vertexDescriptor: vertexDescriptor)
         
         do {
             // Albedo
-            if let albedo = albedo {
+            if let material = material, !material.albedo.isEmpty {
                 do {
-                    self.texture = try await TextureManager.shared.addTexture(device: device, path: albedo)
+                    self.texture = try await TextureManager.shared.addTexture(device: device, path: material.albedo)
                 }
                 catch {
                     self.texture = try await TextureManager.shared.addTexture(device: device, color: Vec4(1.0, 1.0, 1.0, 1.0), pixelFormat: .bgra8Unorm_srgb)
@@ -39,9 +39,9 @@ class TerrainMaterial: BaseMaterial {
             }
             
             // Normals
-            if let normals = normals {
+            if let material = material, !material.normals.isEmpty {
                 do {
-                    self.normals = try await TextureManager.shared.addTexture(device: device, path: normals)
+                    self.normals = try await TextureManager.shared.addTexture(device: device, path: material.normals)
                 }
                 catch {
                     let normal = Vec3(0.0, 0.0, 1.0)
@@ -62,9 +62,9 @@ class TerrainMaterial: BaseMaterial {
             }
             
             // Metalness
-            if let metalness = metalness {
+            if let material = material, !material.metalness.isEmpty {
                 do {
-                    self.metallic = try await TextureManager.shared.addTexture(device: device, path: metalness)
+                    self.metallic = try await TextureManager.shared.addTexture(device: device, path: material.metalness)
                 }
                 catch {
                     self.metallic = try await TextureManager.shared.addTexture(device: device, color: 0.0)
@@ -75,9 +75,9 @@ class TerrainMaterial: BaseMaterial {
             }
             
             // Roughness
-            if let roughness = roughness {
+            if let material = material, !material.roughness.isEmpty {
                 do {
-                    self.roughness = try await TextureManager.shared.addTexture(device: device, path: roughness)
+                    self.roughness = try await TextureManager.shared.addTexture(device: device, path: material.roughness)
                 }
                 catch {
                     self.roughness = try await TextureManager.shared.addTexture(device: device, color: 1.0)

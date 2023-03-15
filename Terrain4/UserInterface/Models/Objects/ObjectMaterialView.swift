@@ -9,17 +9,26 @@ import SwiftUI
 
 struct ObjectMaterialView: View {
     @ObservedObject var object: RenderObject
+    @State var material: Material?
     
     var body: some View {
         HStack {
-            Picker("Type", selection: $object.material) {
+            Picker("Type", selection: $material) {
                 Text("None").tag(nil as Material?)
                 ForEach(MaterialStore.shared.materials) { material in
                     Text(material.name).tag(material as Material?)
                 }
             }
             .labelsHidden()
+            .onChange(of: material) { newMaterial in
+                Task {
+                    try? await object.setMaterial(newMaterial: newMaterial)
+                }
+            }
             Spacer()
+        }
+        .onAppear {
+            material = object.material
         }
     }
 }

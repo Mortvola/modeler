@@ -27,55 +27,17 @@ class MaterialManager {
         }
     }
     
-    struct MaterialKey: Hashable {
-        var albedo: String?
-        var normals: String?
-        var metalness: String?
-        var roughness: String?
-    }
-
-    var materials: [MaterialKey:MaterialEntry] = [:]
-    
-//    func addMaterial(device: MTLDevice, view: MTKView, name: MaterialName) async throws -> MaterialEntry {
-//        if let entry = self.materials[name] {
-//            return entry
-//        }
-//
-//        var material: BaseMaterial?
-//
-//        switch (name) {
-//        case .terrain:
-//            material = try await TerrainMaterial(device: device, view: view)
-//            break;
-//
-//        case .line:
-//            material = try LineMaterial(device: device, view: view)
-//            break;
-//
-//        case .pbrLine:
-//            material = try await PbrLineMaterial(device: device, view: view)
-//            break;
-//        }
-//
-//        guard let material = material else {
-//            throw Errors.invalidMaterial
-//        }
-//
-//        let entry = MaterialEntry(material: material)
-//        self.materials[name] = entry
-//
-//        return entry
-//    }
-    
-    func addMaterial(device: MTLDevice, view: MTKView, albedo: String?, normals: String?, metalness: String?, roughness: String?) async throws -> MaterialEntry {
+    var materials: [Material?:MaterialEntry] = [:]
         
-        let materialKey = MaterialKey(albedo: albedo, normals: normals, metalness: metalness, roughness: roughness)
+    func addMaterial(device: MTLDevice, view: MTKView, material: Material?) async throws -> MaterialEntry {
+        
+        let materialKey = material
  
         if let entry = self.materials[materialKey] {
             return entry
         }
 
-        let material = try await TerrainMaterial(device: device, view: view, albedo: albedo, normals: normals, metalness: metalness, roughness: roughness)
+        let material = try await TerrainMaterial(device: device, view: view, material: material)
 
         let entry = MaterialEntry(material: material)
         self.materials[materialKey] = entry
