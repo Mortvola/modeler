@@ -9,7 +9,7 @@ import Foundation
 import MetalKit
 import Metal
 
-class TerrainMaterial: BaseMaterial {
+class PbrMaterial: BaseMaterial {
     let pipeline: MTLRenderPipelineState
     let samplerState: MTLSamplerState
 
@@ -20,9 +20,9 @@ class TerrainMaterial: BaseMaterial {
     let ao: MTLTexture?
 
     init(device: MTLDevice, view: MTKView, material: Material?) async throws {
-        let vertexDescriptor = TerrainMaterial.buildVertexDescriptor()
+        let vertexDescriptor = PbrMaterial.buildVertexDescriptor()
         
-        self.pipeline = try TerrainMaterial.buildPipeline(device: device, metalKitView: view, vertexDescriptor: vertexDescriptor)
+        self.pipeline = try PbrMaterial.buildPipeline(device: device, metalKitView: view, vertexDescriptor: vertexDescriptor, name: material?.name ?? "Nil")
         
         do {
             // Albedo
@@ -95,7 +95,7 @@ class TerrainMaterial: BaseMaterial {
             throw error;
         }
         
-        self.samplerState = TerrainMaterial.buildSamplerState(device: device)
+        self.samplerState = PbrMaterial.buildSamplerState(device: device)
     }
     
     func getPipeline() -> MTLRenderPipelineState {
@@ -145,7 +145,8 @@ class TerrainMaterial: BaseMaterial {
     class func buildPipeline(
         device: MTLDevice,
         metalKitView: MTKView,
-        vertexDescriptor: MTLVertexDescriptor
+        vertexDescriptor: MTLVertexDescriptor,
+        name: String
     ) throws -> MTLRenderPipelineState {
         /// Build a render state pipeline object
         
@@ -159,7 +160,7 @@ class TerrainMaterial: BaseMaterial {
          }
 
         let pipelineDescriptor = MTLRenderPipelineDescriptor()
-        pipelineDescriptor.label = "TerrainPipeline"
+        pipelineDescriptor.label = name
         pipelineDescriptor.rasterSampleCount = metalKitView.sampleCount
         pipelineDescriptor.vertexFunction = vertexFunction
         pipelineDescriptor.fragmentFunction = fragmentFunction

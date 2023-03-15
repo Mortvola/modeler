@@ -37,7 +37,7 @@ class MaterialManager {
             return entry
         }
 
-        let material = try await TerrainMaterial(device: device, view: view, material: material)
+        let material = try await PbrMaterial(device: device, view: view, material: material)
 
         let entry = MaterialEntry(material: material)
         self.materials[materialKey] = entry

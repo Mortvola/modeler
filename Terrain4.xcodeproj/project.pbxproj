@@ -39,7 +39,7 @@
 		791E792229B93D6000FB45F3 /* Line.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791E791E29B93D6000FB45F3 /* Line.swift */; };
 		791E792329B93D6000FB45F3 /* TriangleMesh.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791E791F29B93D6000FB45F3 /* TriangleMesh.swift */; };
 		791E792B29B93D7000FB45F3 /* PbrLineMaterial.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791E792529B93D7000FB45F3 /* PbrLineMaterial.swift */; };
-		791E792C29B93D7000FB45F3 /* TerrainMaterial.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791E792629B93D7000FB45F3 /* TerrainMaterial.swift */; };
+		791E792C29B93D7000FB45F3 /* PbrMaterial.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791E792629B93D7000FB45F3 /* PbrMaterial.swift */; };
 		791E792D29B93D7000FB45F3 /* TextureManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791E792729B93D7000FB45F3 /* TextureManager.swift */; };
 		791E792E29B93D7000FB45F3 /* LineMaterial.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791E792829B93D7000FB45F3 /* LineMaterial.swift */; };
 		791E792F29B93D7000FB45F3 /* BaseMaterial.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791E792929B93D7000FB45F3 /* BaseMaterial.swift */; };
@@ -171,7 +171,7 @@
 		791E791E29B93D6000FB45F3 /* Line.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Line.swift; sourceTree = "<group>"; };
 		791E791F29B93D6000FB45F3 /* TriangleMesh.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TriangleMesh.swift; sourceTree = "<group>"; };
 		791E792529B93D7000FB45F3 /* PbrLineMaterial.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PbrLineMaterial.swift; sourceTree = "<group>"; };
-		791E792629B93D7000FB45F3 /* TerrainMaterial.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TerrainMaterial.swift; sourceTree = "<group>"; };
+		791E792629B93D7000FB45F3 /* PbrMaterial.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PbrMaterial.swift; sourceTree = "<group>"; };
 		791E792729B93D7000FB45F3 /* TextureManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TextureManager.swift; sourceTree = "<group>"; };
 		791E792829B93D7000FB45F3 /* LineMaterial.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LineMaterial.swift; sourceTree = "<group>"; };
 		791E792929B93D7000FB45F3 /* BaseMaterial.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseMaterial.swift; sourceTree = "<group>"; };
@@ -413,7 +413,7 @@
 			isa = PBXGroup;
 			children = (
 				791E792529B93D7000FB45F3 /* PbrLineMaterial.swift */,
-				791E792629B93D7000FB45F3 /* TerrainMaterial.swift */,
+				791E792629B93D7000FB45F3 /* PbrMaterial.swift */,
 				791E792729B93D7000FB45F3 /* TextureManager.swift */,
 				791E792829B93D7000FB45F3 /* LineMaterial.swift */,
 				791E792929B93D7000FB45F3 /* BaseMaterial.swift */,
@@ -663,7 +663,7 @@
 				791E792329B93D6000FB45F3 /* TriangleMesh.swift in Sources */,
 				791E790F29B93BDC00FB45F3 /* Vec3.swift in Sources */,
 				79F6D2C129BA58F5007CA69A /* Animator.swift in Sources */,
-				791E792C29B93D7000FB45F3 /* TerrainMaterial.swift in Sources */,
+				791E792C29B93D7000FB45F3 /* PbrMaterial.swift in Sources */,
 				791E793629B9430E00FB45F3 /* RenderViewController.swift in Sources */,
 				791E78C329B9390700FB45F3 /* Configuration.swift in Sources */,
 				791E78D629B93A2B00FB45F3 /* ContentView.swift in Sources */,
