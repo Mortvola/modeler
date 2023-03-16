@@ -31,8 +31,6 @@ class TextureManager {
         if !path.hasPrefix("http:") {
             let url = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent(path)
             
-            print(url)
-            
             data = try Data(contentsOf: url)
         }
         else {
@@ -54,49 +52,63 @@ class TextureManager {
         return texture
     }
     
-    func addTexture(device: MTLDevice, color: Float) async throws -> MTLTexture {
+    func addTexture(device: MTLDevice, color: Float) throws -> MTLTexture {
         let textureName = String(color)
-        
-        let texture = self.textures[textureName]
+        var texture = self.textures[textureName]
         
         if let texture = texture {
             return texture
         }
 
+        texture = try createTexture(device: device, color: color)
+
+        textures[textureName] = texture
+
+        return texture!
+    }
+    
+    func createTexture(device: MTLDevice, color: Float) throws -> MTLTexture {
         let descriptor = MTLTextureDescriptor.texture2DDescriptor(pixelFormat: .r8Unorm, width: 1, height: 1, mipmapped: false)
         
         if let texture = device.makeTexture(descriptor: descriptor) {
-            let unsafeMutablePointer = UnsafeMutableRawPointer.allocate(byteCount: 1, alignment: 0)
-
-            unsafeMutablePointer.storeBytes(of: UInt8(0xFF * color), as: UInt8.self)
-
-            let region = MTLRegion(origin: MTLOrigin(x:0, y: 0, z: 0), size: MTLSize(width: 1, height: 1, depth: 1))
-
-            texture.replace(region: region, mipmapLevel: 0, withBytes: unsafeMutablePointer, bytesPerRow: 1)
-
-            textures[textureName] = texture
-
+            TextureManager.setTextureValue(texture: texture, value: color)
             return texture
         }
         
         throw Errors.invalidTexture
     }
     
-    func addTexture(device: MTLDevice, color: Vec4, pixelFormat: MTLPixelFormat) async throws -> MTLTexture {
+    static func setTextureValue(texture: MTLTexture, value: Float) {
+        let unsafeMutablePointer = UnsafeMutableRawPointer.allocate(byteCount: 1, alignment: 0)
+
+        unsafeMutablePointer.storeBytes(of: UInt8(0xFF * max(min(value, 1.0), 0.0)), as: UInt8.self)
+
+        let region = MTLRegion(origin: MTLOrigin(x:0, y: 0, z: 0), size: MTLSize(width: 1, height: 1, depth: 1))
+
+        texture.replace(region: region, mipmapLevel: 0, withBytes: unsafeMutablePointer, bytesPerRow: 1)
+    }
+    
+    func addTexture(device: MTLDevice, color: Vec4, pixelFormat: MTLPixelFormat) throws -> MTLTexture {
         let textureName = "\(color[0]), \(color[1]), \(color[2]), \(color[3])"
-        let texture = self.textures[textureName]
+        var texture = self.textures[textureName]
         
         if let texture = texture {
             return texture
         }
 
+        texture = try createTexture(device: device, color: color, pixelFormat: pixelFormat)
+
+        textures[textureName] = texture
+
+        return texture!
+    }
+    
+    func createTexture(device: MTLDevice, color: Vec4, pixelFormat: MTLPixelFormat) throws -> MTLTexture {
         let descriptor = MTLTextureDescriptor.texture2DDescriptor(pixelFormat: pixelFormat, width: 1, height: 1, mipmapped: false)
         
         if let texture = device.makeTexture(descriptor: descriptor) {
             let unsafeMutablePointer = UnsafeMutableRawPointer.allocate(byteCount: 4, alignment: 4)
 
-            print(color)
-            
             let b = UInt32(UInt32(color[3] * Float(0xFF)) << 24)
             let g = UInt32(UInt32(color[0] * Float(0xFF)) << 16)
             let r = UInt32(UInt32(color[1] * Float(0xFF)) << 8)
@@ -104,15 +116,11 @@ class TextureManager {
             
             let v: UInt32 =  b | g | r | a
 
-            print(String(format: "%x", r), String(format: "%x", g), String(format: "%x", b), String(format: "%x", a), String(format: "%x", v))
-            
             unsafeMutablePointer.storeBytes(of: v, as: UInt32.self)
 
             let region = MTLRegion(origin: MTLOrigin(x:0, y: 0, z: 0), size: MTLSize(width: 1, height: 1, depth: 1))
 
             texture.replace(region: region, mipmapLevel: 0, withBytes: unsafeMutablePointer, bytesPerRow: 4)
-
-            textures[textureName] = texture
 
             return texture
         }

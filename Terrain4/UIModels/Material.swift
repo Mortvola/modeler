@@ -26,6 +26,8 @@ class Material: Identifiable, ObservableObject, Equatable, Hashable, Codable {
     @Published var roughness: String = ""
     @Published var normals: String = ""
     
+    var materialEntry: MaterialManager.MaterialEntry? = nil
+    
     init() {
         id = UUID()
         name = "Material_\(Material.materialCounter)"

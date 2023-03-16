@@ -161,6 +161,10 @@ class ObjectStore: ObservableObject {
             do {
                 let file = try JSONDecoder().decode(File.self, from: data)
                 
+                for material in MaterialStore.shared.materials {
+                    material.materialEntry = try await MaterialManager.shared.addMaterial(device: Renderer.shared.device!, view: Renderer.shared.view!, material: material)
+                }
+                
                 var newLights: [Light] = []
                 
                 for model in file.models {

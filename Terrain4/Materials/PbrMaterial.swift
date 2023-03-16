@@ -10,83 +10,93 @@ import MetalKit
 import Metal
 
 class PbrMaterial: BaseMaterial {
-    let pipeline: MTLRenderPipelineState
+    static var pipeline: MTLRenderPipelineState? = nil
     let samplerState: MTLSamplerState
 
-    let texture: MTLTexture
-    let normals: MTLTexture
-    let metallic: MTLTexture
-    let roughness: MTLTexture
-    let ao: MTLTexture?
+    struct TextureStyle {
+        var map: MTLTexture? = nil
+        var simple: MTLTexture? = nil
+        var useSimple = false
+    }
+        
+    var albedo = TextureStyle()
+    var normals = TextureStyle()
+    var metallic = TextureStyle()
+    var roughness = TextureStyle()
+    var ao: MTLTexture?
 
+    func useTextureStyle(style: TextureStyle) -> MTLTexture {
+        if let map = style.map, !style.useSimple {
+            return map
+        }
+        
+        return style.simple!
+    }
+    
+    var currentAlbedo: MTLTexture {
+        useTextureStyle(style: albedo)
+    }
+
+    var currentNormals: MTLTexture {
+        useTextureStyle(style: normals)
+    }
+
+    var currentMetallic: MTLTexture {
+        useTextureStyle(style: metallic)
+    }
+
+    var currentRoughness: MTLTexture {
+        useTextureStyle(style: roughness)
+    }
+
+    func setSimpleMetallic(_ value: Float) {
+        TextureManager.setTextureValue(texture: self.metallic.simple!, value: value)
+    }
+
+    func setSimpleRoughness(_ value: Float) {
+        TextureManager.setTextureValue(texture: self.roughness.simple!, value: value)
+    }
+    
     init(device: MTLDevice, view: MTKView, material: Material?) async throws {
-        let vertexDescriptor = PbrMaterial.buildVertexDescriptor()
+        if PbrMaterial.pipeline == nil {
+            PbrMaterial.pipeline = try PbrMaterial.buildPipeline(device: device, metalKitView: view)
+        }
         
-        self.pipeline = try PbrMaterial.buildPipeline(device: device, metalKitView: view, vertexDescriptor: vertexDescriptor, name: material?.name ?? "Nil")
-        
+        self.samplerState = PbrMaterial.buildSamplerState(device: device)
+
         do {
             // Albedo
             if let material = material, !material.albedo.isEmpty {
-                do {
-                    self.texture = try await TextureManager.shared.addTexture(device: device, path: material.albedo)
-                }
-                catch {
-                    self.texture = try await TextureManager.shared.addTexture(device: device, color: Vec4(1.0, 1.0, 1.0, 1.0), pixelFormat: .bgra8Unorm_srgb)
-                }
+                self.albedo.map = try? await TextureManager.shared.addTexture(device: device, path: material.albedo)
             }
-            else {
-                self.texture = try await TextureManager.shared.addTexture(device: device, color: Vec4(1.0, 1.0, 1.0, 1.0), pixelFormat: .bgra8Unorm_srgb)
-            }
+
+            self.albedo.simple = try TextureManager.shared.addTexture(device: device, color: Vec4(1.0, 1.0, 1.0, 1.0), pixelFormat: .bgra8Unorm_srgb)
             
             // Normals
             if let material = material, !material.normals.isEmpty {
-                do {
-                    self.normals = try await TextureManager.shared.addTexture(device: device, path: material.normals)
-                }
-                catch {
-                    let normal = Vec3(0.0, 0.0, 1.0)
-                        .add(Vec3(1.0, 1.0, 1.0))
-                        .multiply(Vec3(0.5, 0.5, 0.5))
-
-                    print(normal)
-                    
-                    self.normals = try await TextureManager.shared.addTexture(device: device, color: Vec4(normal[0], normal[1], normal[2], 1.0), pixelFormat: .bgra8Unorm)
-                }
+                self.normals.map = try? await TextureManager.shared.addTexture(device: device, path: material.normals)
             }
-            else {
-                let normal = Vec3(0.0, 0.0, 1.0)
-                    .add(Vec3(1.0, 1.0, 1.0))
-                    .multiply(Vec3(0.5, 0.5, 0.5))
+            
+            let normal = Vec3(0.0, 0.0, 1.0)
+                .add(Vec3(1.0, 1.0, 1.0))
+                .multiply(Vec3(0.5, 0.5, 0.5))
 
-                self.normals = try await TextureManager.shared.addTexture(device: device, color: Vec4(normal[0], normal[1], normal[2], 1.0), pixelFormat: .bgra8Unorm)
-            }
+            self.normals.simple = try TextureManager.shared.createTexture(device: device, color: Vec4(normal[0], normal[1], normal[2], 1.0), pixelFormat: .bgra8Unorm)
             
             // Metalness
             if let material = material, !material.metalness.isEmpty {
-                do {
-                    self.metallic = try await TextureManager.shared.addTexture(device: device, path: material.metalness)
-                }
-                catch {
-                    self.metallic = try await TextureManager.shared.addTexture(device: device, color: 0.0)
-                }
+                self.metallic.map = try? await TextureManager.shared.addTexture(device: device, path: material.metalness)
             }
-            else {
-                self.metallic = try await TextureManager.shared.addTexture(device: device, color: 0.0)
-            }
-            
+
+            self.metallic.simple = try TextureManager.shared.createTexture(device: device, color: 0.0)
+
             // Roughness
             if let material = material, !material.roughness.isEmpty {
-                do {
-                    self.roughness = try await TextureManager.shared.addTexture(device: device, path: material.roughness)
-                }
-                catch {
-                    self.roughness = try await TextureManager.shared.addTexture(device: device, color: 1.0)
-                }
+                self.roughness.map = try? await TextureManager.shared.addTexture(device: device, path: material.roughness)
             }
-            else {
-                self.roughness = try await TextureManager.shared.addTexture(device: device, color: 1.0)
-            }
-            
+
+            self.roughness.simple = try TextureManager.shared.createTexture(device: device, color: 1.0)
+
             self.ao = nil
         }
         catch {
@@ -94,21 +104,19 @@ class PbrMaterial: BaseMaterial {
             
             throw error;
         }
-        
-        self.samplerState = PbrMaterial.buildSamplerState(device: device)
     }
     
     func getPipeline() -> MTLRenderPipelineState {
-        self.pipeline
+        PbrMaterial.pipeline!
     }
     
     func prepare(renderEncoder: MTLRenderCommandEncoder) {
-        renderEncoder.setRenderPipelineState(self.getPipeline())
+        renderEncoder.setRenderPipelineState(PbrMaterial.pipeline!)
         
-        renderEncoder.setFragmentTexture(self.texture, index: TextureIndex.color.rawValue)
-        renderEncoder.setFragmentTexture(self.normals, index: TextureIndex.normals.rawValue)
-        renderEncoder.setFragmentTexture(self.metallic, index: TextureIndex.metallic.rawValue)
-        renderEncoder.setFragmentTexture(self.roughness, index: TextureIndex.roughness.rawValue)
+        renderEncoder.setFragmentTexture(self.currentAlbedo, index: TextureIndex.color.rawValue)
+        renderEncoder.setFragmentTexture(self.currentNormals, index: TextureIndex.normals.rawValue)
+        renderEncoder.setFragmentTexture(self.currentMetallic, index: TextureIndex.metallic.rawValue)
+        renderEncoder.setFragmentTexture(self.currentRoughness, index: TextureIndex.roughness.rawValue)
         renderEncoder.setFragmentTexture(self.ao, index: TextureIndex.ao.rawValue)
 
         renderEncoder.setFragmentSamplerState(samplerState, index: SamplerIndex.sampler.rawValue)
@@ -144,11 +152,9 @@ class PbrMaterial: BaseMaterial {
     
     class func buildPipeline(
         device: MTLDevice,
-        metalKitView: MTKView,
-        vertexDescriptor: MTLVertexDescriptor,
-        name: String
+        metalKitView: MTKView
     ) throws -> MTLRenderPipelineState {
-        /// Build a render state pipeline object
+        let vertexDescriptor = PbrMaterial.buildVertexDescriptor()
         
         let library = device.makeDefaultLibrary()
         
@@ -160,7 +166,7 @@ class PbrMaterial: BaseMaterial {
          }
 
         let pipelineDescriptor = MTLRenderPipelineDescriptor()
-        pipelineDescriptor.label = name
+        pipelineDescriptor.label = "PbrPipeline"
         pipelineDescriptor.rasterSampleCount = metalKitView.sampleCount
         pipelineDescriptor.vertexFunction = vertexFunction
         pipelineDescriptor.fragmentFunction = fragmentFunction

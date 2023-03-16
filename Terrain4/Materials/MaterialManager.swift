@@ -12,17 +12,17 @@ import Metal
 class MaterialManager {
     static var shared = MaterialManager()
 
-    enum MaterialName {
-        case terrain
-        case line
-        case pbrLine
-    }
-
+//    enum MaterialName {
+//        case terrain
+//        case line
+//        case pbrLine
+//    }
+//
     class MaterialEntry {
-        var material: BaseMaterial
+        var material: PbrMaterial
         var objects: [RenderObject] = []
 
-        init(material: BaseMaterial) {
+        init(material: PbrMaterial) {
             self.material = material
         }
     }
