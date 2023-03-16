@@ -10,6 +10,7 @@ import SwiftUI
 enum TabSelection {
     case objects
     case animators
+    case materials
 }
 
 struct ContentView: View {
@@ -34,7 +35,7 @@ struct ContentView: View {
                     .tabItem {
                         Label("Matrials", systemImage: "line.3.crossed.swirl.circle.fill")
                     }
-                    .tag(TabSelection.animators)
+                    .tag(TabSelection.materials)
             }
             .padding()
             .toolbar {
