@@ -57,6 +57,10 @@ class PbrMaterial: BaseMaterial {
         TextureManager.setTextureValue(texture: self.roughness.simple!, value: value)
     }
     
+    func setSimpleAlbedo(_ color: Vec4) {
+        TextureManager.setTextureValue(texture: self.albedo.simple!, color: color)
+    }
+    
     init(device: MTLDevice, view: MTKView, material: Material?) async throws {
         if PbrMaterial.pipeline == nil {
             PbrMaterial.pipeline = try PbrMaterial.buildPipeline(device: device, metalKitView: view)

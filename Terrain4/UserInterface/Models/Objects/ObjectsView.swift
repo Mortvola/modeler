@@ -12,26 +12,16 @@ struct ObjectsView: View {
     @ObservedObject var model: Model
     
     var body: some View {
-        ForEach(model.objects, id: \.id) { object in
-            ListItem(label: object.name) {
-                if objectStore.selectedObject == object {
-                    objectStore.selectObject(nil);
-                }
-                else {
-                    objectStore.selectObject(object);
-                }
+        ForEach($model.objects, id: \.id) { $object in
+            ListItem(text: $object.name) {
+                objectStore.selectObject(object);
             }
             .selected(selected: object == objectStore.selectedObject)
         }
 
-        ForEach(model.lights, id: \.id) { light in
-            ListItem(label: light.name) {
-                if objectStore.selectedLight == light {
-                    objectStore.selectObject(nil);
-                }
-                else {
-                    objectStore.selectLight(light);
-                }
+        ForEach($model.lights, id: \.id) { $light in
+            ListItem(text: $light.name) {
+                objectStore.selectLight(light);
             }
             .selected(selected: light == objectStore.selectedLight)
         }

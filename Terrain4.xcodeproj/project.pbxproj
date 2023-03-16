@@ -88,7 +88,7 @@
 		79F6D2FC29C16769007CA69A /* MaterialListItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F6D2FB29C16769007CA69A /* MaterialListItem.swift */; };
 		79F6D2FE29C16894007CA69A /* MaterialDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F6D2FD29C16894007CA69A /* MaterialDetailView.swift */; };
 		79F6D30029C16FC5007CA69A /* Selected.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F6D2FF29C16FC5007CA69A /* Selected.swift */; };
-		79F6D30229C1DC79007CA69A /* ListItemLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F6D30129C1DC78007CA69A /* ListItemLabel.swift */; };
+		79F6D30229C1DC79007CA69A /* ListItemField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F6D30129C1DC78007CA69A /* ListItemField.swift */; };
 		79F6D30429C1DD7F007CA69A /* ListItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F6D30329C1DD7F007CA69A /* ListItem.swift */; };
 		79F6D30629C1E25E007CA69A /* OpenFileButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F6D30529C1E25E007CA69A /* OpenFileButton.swift */; };
 		79F6D30929C1EDBE007CA69A /* ObjectMaterialView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F6D30829C1EDBE007CA69A /* ObjectMaterialView.swift */; };
@@ -226,7 +226,7 @@
 		79F6D2FB29C16769007CA69A /* MaterialListItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MaterialListItem.swift; sourceTree = "<group>"; };
 		79F6D2FD29C16894007CA69A /* MaterialDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MaterialDetailView.swift; sourceTree = "<group>"; };
 		79F6D2FF29C16FC5007CA69A /* Selected.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Selected.swift; sourceTree = "<group>"; };
-		79F6D30129C1DC78007CA69A /* ListItemLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListItemLabel.swift; sourceTree = "<group>"; };
+		79F6D30129C1DC78007CA69A /* ListItemField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListItemField.swift; sourceTree = "<group>"; };
 		79F6D30329C1DD7F007CA69A /* ListItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListItem.swift; sourceTree = "<group>"; };
 		79F6D30529C1E25E007CA69A /* OpenFileButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenFileButton.swift; sourceTree = "<group>"; };
 		79F6D30829C1EDBE007CA69A /* ObjectMaterialView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObjectMaterialView.swift; sourceTree = "<group>"; };
@@ -356,7 +356,7 @@
 				79F6D2C929BA6C34007CA69A /* Border.swift */,
 				79F6D2FF29C16FC5007CA69A /* Selected.swift */,
 				79F6D2EC29BCC53E007CA69A /* LabeledNumericField.swift */,
-				79F6D30129C1DC78007CA69A /* ListItemLabel.swift */,
+				79F6D30129C1DC78007CA69A /* ListItemField.swift */,
 				79F6D30329C1DD7F007CA69A /* ListItem.swift */,
 				79F6D2E829BCBD83007CA69A /* NumericField.swift */,
 				79F6D2EE29BCC983007CA69A /* VectorFieldView.swift */,
@@ -699,7 +699,7 @@
 				791E792B29B93D7000FB45F3 /* PbrLineMaterial.swift in Sources */,
 				791E795229B944D000FB45F3 /* PbrShaders.metal in Sources */,
 				791E793D29B9433F00FB45F3 /* World.swift in Sources */,
-				79F6D30229C1DC79007CA69A /* ListItemLabel.swift in Sources */,
+				79F6D30229C1DC79007CA69A /* ListItemField.swift in Sources */,
 				791E791929B93C7D00FB45F3 /* Errors.swift in Sources */,
 				79F6D2CE29BAA245007CA69A /* Object.swift in Sources */,
 				79F6D2CA29BA6C34007CA69A /* Border.swift in Sources */,

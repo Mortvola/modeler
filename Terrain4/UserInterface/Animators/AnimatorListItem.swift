@@ -12,13 +12,8 @@ struct AnimatorListItem: View {
     @ObservedObject var animatorStore = AnimatorStore.shared
 
     var body: some View {
-        ListItem(label: animator.name) {
-            if animatorStore.selectedAnimator == animator {
-                animatorStore.selectedAnimator = nil
-            }
-            else {
-                animatorStore.selectedAnimator = animator
-            }
+        ListItem(text: $animator.name) {
+            animatorStore.selectedAnimator = animator
         }
     }
 }

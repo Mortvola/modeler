@@ -88,6 +88,23 @@ class TextureManager {
         texture.replace(region: region, mipmapLevel: 0, withBytes: unsafeMutablePointer, bytesPerRow: 1)
     }
     
+    static func setTextureValue(texture: MTLTexture, color: Vec4) {
+        let unsafeMutablePointer = UnsafeMutableRawPointer.allocate(byteCount: 4, alignment: 4)
+
+        let b = UInt32(UInt32(color[3] * Float(0xFF)) << 24)
+        let g = UInt32(UInt32(color[0] * Float(0xFF)) << 16)
+        let r = UInt32(UInt32(color[1] * Float(0xFF)) << 8)
+        let a = UInt32(UInt32(color[2] * Float(0xFF)))
+        
+        let v: UInt32 =  b | g | r | a
+
+        unsafeMutablePointer.storeBytes(of: v, as: UInt32.self)
+
+        let region = MTLRegion(origin: MTLOrigin(x:0, y: 0, z: 0), size: MTLSize(width: 1, height: 1, depth: 1))
+
+        texture.replace(region: region, mipmapLevel: 0, withBytes: unsafeMutablePointer, bytesPerRow: 4)
+    }
+    
     func addTexture(device: MTLDevice, color: Vec4, pixelFormat: MTLPixelFormat) throws -> MTLTexture {
         let textureName = "\(color[0]), \(color[1]), \(color[2]), \(color[3])"
         var texture = self.textures[textureName]
@@ -107,21 +124,7 @@ class TextureManager {
         let descriptor = MTLTextureDescriptor.texture2DDescriptor(pixelFormat: pixelFormat, width: 1, height: 1, mipmapped: false)
         
         if let texture = device.makeTexture(descriptor: descriptor) {
-            let unsafeMutablePointer = UnsafeMutableRawPointer.allocate(byteCount: 4, alignment: 4)
-
-            let b = UInt32(UInt32(color[3] * Float(0xFF)) << 24)
-            let g = UInt32(UInt32(color[0] * Float(0xFF)) << 16)
-            let r = UInt32(UInt32(color[1] * Float(0xFF)) << 8)
-            let a = UInt32(UInt32(color[2] * Float(0xFF)))
-            
-            let v: UInt32 =  b | g | r | a
-
-            unsafeMutablePointer.storeBytes(of: v, as: UInt32.self)
-
-            let region = MTLRegion(origin: MTLOrigin(x:0, y: 0, z: 0), size: MTLSize(width: 1, height: 1, depth: 1))
-
-            texture.replace(region: region, mipmapLevel: 0, withBytes: unsafeMutablePointer, bytesPerRow: 4)
-
+            TextureManager.setTextureValue(texture: texture, color: color)
             return texture
         }
         

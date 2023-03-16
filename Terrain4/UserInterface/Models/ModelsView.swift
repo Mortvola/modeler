@@ -15,14 +15,9 @@ struct ModelsView: View {
     var body: some View {
         VStack {
             List {
-                ForEach(objectStore.models, id: \.id) { model in
-                    ListItem(label: model.name) {
-                        if objectStore.selectedModel == model {
-                            objectStore.selectModel(nil);
-                        }
-                        else {
-                            objectStore.selectModel(model);
-                        }
+                ForEach($objectStore.models, id: \.id) { $model in
+                    ListItem(text: $model.name) {
+                        objectStore.selectModel(model);
                     }
                     .selected(selected: objectStore.selectedModel == model)
                     ObjectsView(model: model)

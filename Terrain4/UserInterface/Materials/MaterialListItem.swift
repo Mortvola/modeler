@@ -12,13 +12,8 @@ struct MaterialListItem: View {
     @ObservedObject var materialStore = MaterialStore.shared
     
     var body: some View {
-        ListItem(label: material.name) {
-            if materialStore.selectedMaterial == material {
-                materialStore.selectedMaterial = nil
-            }
-            else {
-                materialStore.selectedMaterial = material
-            }
+        ListItem(text: $material.name) {
+            materialStore.selectedMaterial = material
         }
     }
 }

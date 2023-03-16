@@ -20,8 +20,8 @@ struct RoughnessView: View {
             }
             VStack {
                 HStack {
-                    Text("Map")
-                    TextField("", text: $material.roughness)
+                    Text("Map:")
+                    Text(material.roughness)
                     OpenFileButton(image: "photo") { url in
                         material.roughness = url
                     }

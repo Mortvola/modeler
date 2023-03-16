@@ -20,8 +20,8 @@ struct MetallicView: View {
             }
             VStack {
                 HStack {
-                    Text("Map")
-                    TextField("", text: $material.metalness)
+                    Text("Map:")
+                    Text(material.metalness)
                     OpenFileButton(image: "photo") { url in
                         material.metalness = url
                     }

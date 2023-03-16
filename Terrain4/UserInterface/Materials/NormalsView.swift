@@ -19,8 +19,8 @@ struct NormalsView: View {
             }
             VStack {
                 HStack {
-                    Text("Map")
-                    TextField("", text: $material.normals)
+                    Text("Map:")
+                    Text(material.normals)
                     OpenFileButton(image: "photo") { url in
                         material.normals = url
                     }

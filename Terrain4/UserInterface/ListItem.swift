@@ -8,14 +8,14 @@
 import SwiftUI
 
 struct ListItem: View {
-    let label: String
+    @Binding var text: String
     let action: () -> Void
     
     var body: some View {
         Button {
             action()
         } label: {
-            ListItemLabel(label: label)
+            ListItemField(text: $text)
         }
         .buttonStyle(.plain)
     }
@@ -23,7 +23,7 @@ struct ListItem: View {
 
 struct ListItem_Previews: PreviewProvider {
     static var previews: some View {
-        ListItem(label: "Test") {
+        ListItem(text: .constant("Test")) {
             print("It workedd!")
         }
     }

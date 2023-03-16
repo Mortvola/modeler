@@ -7,20 +7,20 @@
 
 import SwiftUI
 
-struct ListItemLabel: View {
-    var label: String
+struct ListItemField: View {
+    @Binding var text: String
     
     var body: some View {
         HStack {
-            Text(label)
+            TextField("", text: $text)
             Spacer()
         }
         .contentShape(Rectangle())
     }
 }
 
-struct ListItemLabel_Previews: PreviewProvider {
+struct ListItemField_Previews: PreviewProvider {
     static var previews: some View {
-        ListItemLabel(label: "Test")
+        ListItemField(text: .constant("Test"))
     }
 }
