@@ -9,6 +9,7 @@ import SwiftUI
 
 struct AnimatorsView: View {
     @ObservedObject var animatorStore = AnimatorStore.shared
+    @State var hidden = false
     
     var body: some View {
         VStack {
@@ -24,8 +25,14 @@ struct AnimatorsView: View {
                         .selected(selected: animator == animatorStore.selectedAnimator)
                 }
             }
-            if let animator = animatorStore.selectedAnimator {
+            if let animator = animatorStore.selectedAnimator, !hidden {
                 AnimatorDetailsView(animator: animator)
+                    .onChange(of: animatorStore.selectedAnimator) { _ in
+                        hidden = true
+                        Task {
+                            hidden = false
+                        }
+                    }
             }
             Spacer()
         }

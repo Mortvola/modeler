@@ -10,6 +10,7 @@ import SwiftUI
 struct MaterialsView: View {
 //    @State var openFile = false
     @ObservedObject var materialStore = MaterialStore.shared
+    @State var hidden = false
     
     var body: some View {
         VStack {
@@ -25,8 +26,14 @@ struct MaterialsView: View {
                         .selected(selected: material == materialStore.selectedMaterial)
                 }
             }
-            if let material = materialStore.selectedMaterial {
+            if let material = materialStore.selectedMaterial, !hidden {
                 MaterialDetailView(material: material)
+                    .onChange(of: materialStore.selectedMaterial) { _ in
+                        hidden = true
+                        Task {
+                            hidden = false
+                        }
+                    }
             }
         }
     }
