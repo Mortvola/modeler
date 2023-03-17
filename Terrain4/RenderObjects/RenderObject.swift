@@ -17,7 +17,8 @@ class RenderObject: Object {
 
     @MainActor
     func setMaterial(materialId: UUID?) {
-        if materialId != self.material?.id {
+        // Process if there is a change or if the material is not set
+        if materialId != self.material?.id || material == nil {
             // Remove object from current material object list
             if let materialEntry = MaterialManager.shared.materials[self.material?.id] {
                 let index = materialEntry.objects.firstIndex {
