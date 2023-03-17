@@ -82,7 +82,7 @@ class ObjectStore: ObservableObject {
         
         switch(type) {
         case .sphere:
-            let material = try await MaterialManager.shared.addMaterial(device: device, view: view, material: nil)
+            let material = try await MaterialManager.shared.addMaterial(device: device, view: view, descriptor: nil)
             
             let sphere = try SphereAllocator.allocate(device: device, diameter: 5)
             
@@ -96,7 +96,7 @@ class ObjectStore: ObservableObject {
             break
             
         case .rectangle:
-            let material = try await MaterialManager.shared.addMaterial(device: device, view: view, material: nil)
+            let material = try await MaterialManager.shared.addMaterial(device: device, view: view, descriptor: nil)
             
             object = try TestRectAllocator.allocate(device: device, model: model)
             
@@ -161,18 +161,40 @@ class ObjectStore: ObservableObject {
             do {
                 let file = try JSONDecoder().decode(File.self, from: data)
                 
-                for material in MaterialStore.shared.materials {
-                    material.materialEntry = try await MaterialManager.shared.addMaterial(device: Renderer.shared.device!, view: Renderer.shared.view!, material: material)
+                for material in file.materials {
+                    let descriptor = MaterialDescriptor()
+                    
+                    descriptor.id = material.id
+                    descriptor.name = material.name
+                    
+                    descriptor.albedo.map = material.albedo.map
+                    descriptor.albedo.useSimple = material.albedo.useSimple
+                    descriptor.albedo.color = material.albedo.color
+                    
+                    descriptor.normals.map = material.normals.map
+                    descriptor.normals.useSimple = material.normals.useSimple
+                    descriptor.normals.normal = material.normals.normal
+
+                    descriptor.metallic.map = material.metallic.map
+                    descriptor.metallic.useSimple = material.metallic.useSimple
+                    descriptor.metallic.value = material.metallic.value
+
+                    descriptor.roughness.map = material.roughness.map
+                    descriptor.roughness.useSimple = material.roughness.useSimple
+                    descriptor.roughness.value = material.roughness.value
+
+                    _ = try await MaterialManager.shared.addMaterial(device: Renderer.shared.device!, view: Renderer.shared.view!, descriptor: descriptor)
                 }
-                
+
                 var newLights: [Light] = []
                 
                 for model in file.models {
                     for object in model.objects {
                         object.model = model
 
-                        object.materialEntry = try await MaterialManager.shared.addMaterial(device: Renderer.shared.device!, view: Renderer.shared.view!, material: object.material)
+                        object.materialEntry = MaterialManager.shared.materials[object.materialId]
 
+                        object.material = object.materialEntry?.material
                         object.materialEntry?.objects.append(object)
                     }
                     
@@ -189,90 +211,4 @@ class ObjectStore: ObservableObject {
             }
         }
     }
-}
-
-
-struct File: Codable {
-    struct Camera: Codable {
-        var position: Vec3
-        var yaw: Float
-        var pitch: Float
-        
-        init(position: Vec3, yaw: Float, pitch: Float) {
-            self.position = position
-            self.yaw = yaw
-            self.pitch = pitch
-        }
-        
-        enum CodingKeys: CodingKey {
-            case position
-            case yaw
-            case pitch
-        }
-        
-        init(from decoder: Decoder) throws {
-            let container = try decoder.container(keyedBy: CodingKeys.self)
-
-            self.position = try container.decode(Vec3.self, forKey: .position)
-            self.yaw = try container.decode(Float.self, forKey: .yaw)
-            self.pitch = try container.decode(Float.self, forKey: .pitch)
-        }
-        
-        func encode(to encoder: Encoder) throws {
-            var container = encoder.container(keyedBy: CodingKeys.self)
-            
-            try container.encode(position, forKey: .position)
-            try container.encode(yaw, forKey: .yaw)
-            try container.encode(pitch, forKey: .pitch)
-        }
-    }
-
-    var models: [Model]
-    var animators: [Animator]
-    var camera: Camera
-    var materials: [Material]
-    
-    enum CodkingKeys: CodingKey {
-        case models
-        case animators
-        case camera
-        case materials
-    }
-    
-    init() {
-        self.models = ObjectStore.shared.models
-        self.animators = AnimatorStore.shared.animators
-        self.camera = Camera(position: Renderer.shared.camera.cameraOffset, yaw: Renderer.shared.camera.yaw, pitch: Renderer.shared.camera.pitch)
-        self.materials = MaterialStore.shared.materials
-    }
-
-    init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        
-        camera = try container.decode(Camera.self, forKey: .camera)
-        
-        Renderer.shared.camera.cameraOffset = camera.position
-        Renderer.shared.camera.yaw = camera.yaw
-        Renderer.shared.camera.pitch = camera.pitch
-        
-        Renderer.shared.camera.updateLookAt(yawChange: 0, pitchChange: 0)
-
-        animators = try container.decode([Animator].self, forKey: .animators)
-        
-        AnimatorStore.shared.animators = animators
-        
-        materials = try container.decode([Material].self, forKey: .materials)
-        
-        MaterialStore.shared.materials = materials
-        
-        models = try container.decode([Model].self, forKey: .models)
-    }
-    
-//    func encode(to encoder: Encoder) throws {
-//        var container = encoder.container(keyedBy: CodkingKeys.self)
-//
-//        try container.encode(self.camera, forKey: .camera)
-//        try container.encode(self.animators, forKey: .animators)
-//        try container.encode(self.models, forKey: .models)
-//    }
 }

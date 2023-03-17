@@ -42,37 +42,37 @@ class TerrainTile: Model {
     }
 
     func load() async throws {
-        if let response: Http.Response<TerrainTileProps> = try? await Http.get(path: "/tile/terrain3d/\(dimension)/\(x)/\(y)") {
-            if let data = response.data {
-                self.xDimension = data.xDimension
-                self.yDimension = data.yDimension
-                self.elevation = data.ele
-
-                for object in data.objects {
-                    switch (object.type) {
-                    case "triangles":
-                        let material = try await MaterialManager.shared.addMaterial(device: self.device, view: self.view, material: Material())
-                        let object: RenderObject = TriangleMesh(device: self.device, points: object.points, normals: object.normals, indices: object.indices, model: self)
-                        
-                        material.objects.append(object)
-                        self.objects.append(object)
-                        break;
-                        
-                    case "line":
-                        let material = try await MaterialManager.shared.addMaterial(device: self.device, view: self.view, material: Material())
-                        
-                        let object: RenderObject = Line(device: self.device, points: object.points, model: self)
-
-                        material.objects.append(object)
-                        self.objects.append(object)
-                        
-                        break;
-                    default:
-                        break;
-                    }
-                }
-            }
-        }
+//        if let response: Http.Response<TerrainTileProps> = try? await Http.get(path: "/tile/terrain3d/\(dimension)/\(x)/\(y)") {
+//            if let data = response.data {
+//                self.xDimension = data.xDimension
+//                self.yDimension = data.yDimension
+//                self.elevation = data.ele
+//
+//                for object in data.objects {
+//                    switch (object.type) {
+//                    case "triangles":
+//                        let material = try await MaterialManager.shared.addMaterial(device: self.device, view: self.view, material: Material())
+//                        let object: RenderObject = TriangleMesh(device: self.device, points: object.points, normals: object.normals, indices: object.indices, model: self)
+//
+//                        material.objects.append(object)
+//                        self.objects.append(object)
+//                        break;
+//
+//                    case "line":
+//                        let material = try await MaterialManager.shared.addMaterial(device: self.device, view: self.view, material: Material())
+//
+//                        let object: RenderObject = Line(device: self.device, points: object.points, model: self)
+//
+//                        material.objects.append(object)
+//                        self.objects.append(object)
+//
+//                        break;
+//                    default:
+//                        break;
+//                    }
+//                }
+//            }
+//        }
     }
     
     func setScale(scale: Float) {

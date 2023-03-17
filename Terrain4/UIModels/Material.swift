@@ -21,10 +21,10 @@ class Material: Identifiable, ObservableObject, Equatable, Hashable, Codable {
     var name: String
     static var materialCounter = 0
 
-    @Published var albedo: String = ""
-    @Published var metalness: String = ""
-    @Published var roughness: String = ""
-    @Published var normals: String = ""
+    var albedo = AlbedoLayer()
+    var normals = NormalsLayer()
+    var metallic = MetallicLayer()
+    var roughness = RoughnessLayer()
     
     var materialEntry: MaterialManager.MaterialEntry? = nil
     
@@ -48,10 +48,10 @@ class Material: Identifiable, ObservableObject, Equatable, Hashable, Codable {
         
         id = try container.decode(UUID.self, forKey: .id)
         name = try container.decode(String.self, forKey: .name)
-        albedo = try container.decode(String.self, forKey: .albedo)
-        normals = try container.decode(String.self, forKey: .normals)
-        metalness = try container.decode(String.self, forKey: .metalness)
-        roughness = try container.decode(String.self, forKey: .roughness)
+//        albedo = try container.decode(AlbedoLayer.self, forKey: .albedo)
+//        normals = try container.decode(NormalsLayer.self, forKey: .normals)
+//        metallic = try container.decode(MetallicLayer.self, forKey: .metalness)
+//        roughness = try container.decode(RoughnessLayer.self, forKey: .roughness)
     }
     
     func encode(to encoder: Encoder) throws {
@@ -59,9 +59,9 @@ class Material: Identifiable, ObservableObject, Equatable, Hashable, Codable {
         
         try container.encode(id, forKey: .id)
         try container.encode(name, forKey: .name)
-        try container.encode(albedo, forKey: .albedo)
-        try container.encode(metalness, forKey: .metalness)
-        try container.encode(roughness, forKey: .roughness)
-        try container.encode(normals, forKey: .normals)
+//        try container.encode(albedo, forKey: .albedo)
+//        try container.encode(metallic, forKey: .metalness)
+//        try container.encode(roughness, forKey: .roughness)
+//        try container.encode(normals, forKey: .normals)
     }
 }

@@ -9,15 +9,9 @@ import Foundation
 import MetalKit
 import Metal
 
-class MaterialManager {
+class MaterialManager: ObservableObject {
     static var shared = MaterialManager()
 
-//    enum MaterialName {
-//        case terrain
-//        case line
-//        case pbrLine
-//    }
-//
     class MaterialEntry {
         var material: PbrMaterial
         var objects: [RenderObject] = []
@@ -27,17 +21,25 @@ class MaterialManager {
         }
     }
     
-    var materials: [Material?:MaterialEntry] = [:]
+    @Published var materials: [UUID?:MaterialEntry] = [:]
         
-    func addMaterial(device: MTLDevice, view: MTKView, material: Material?) async throws -> MaterialEntry {
+    func addMaterial() async throws {
+        let materialDescriptor = MaterialDescriptor()
         
-        let materialKey = material
+        materialDescriptor.name = "Material_0"
+        
+        _ = try await addMaterial(device: Renderer.shared.device!, view: Renderer.shared.view!, descriptor: materialDescriptor)
+    }
+
+    func addMaterial(device: MTLDevice, view: MTKView, descriptor: MaterialDescriptor?) async throws -> MaterialEntry {
+        
+        let materialKey = descriptor?.id
  
         if let entry = self.materials[materialKey] {
             return entry
         }
 
-        let material = try await PbrMaterial(device: device, view: view, material: material)
+        let material = try await PbrMaterial(device: device, view: view, descriptor: descriptor)
 
         let entry = MaterialEntry(material: material)
         self.materials[materialKey] = entry

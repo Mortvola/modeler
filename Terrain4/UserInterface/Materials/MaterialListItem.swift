@@ -8,18 +8,19 @@
 import SwiftUI
 
 struct MaterialListItem: View {
-    @ObservedObject var material: Material
-    @ObservedObject var materialStore = MaterialStore.shared
+    @ObservedObject var material: PbrMaterial
+    @ObservedObject var materialStore = MaterialManager.shared
+    @Binding var selectedMaterial: PbrMaterial?
     
     var body: some View {
         ListItem(text: $material.name) {
-            materialStore.selectedMaterial = material
+            selectedMaterial = material
         }
     }
 }
 
-struct MaterialListItem_Previews: PreviewProvider {
-    static var previews: some View {
-        MaterialListItem(material: Material())
-    }
-}
+//struct MaterialListItem_Previews: PreviewProvider {
+//    static var previews: some View {
+//        MaterialListItem(material: Material())
+//    }
+//}

@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct NormalsView: View {
-    @ObservedObject var material: Material
+    @ObservedObject var material: PbrMaterial
     @State private var useSimple = true
 
     var body: some View {
@@ -20,9 +20,9 @@ struct NormalsView: View {
             VStack {
                 HStack {
                     Text("Map:")
-                    Text(material.normals)
+                    Text(material.normals.map)
                     OpenFileButton(image: "photo") { url in
-                        material.normals = url
+                        material.normals.map = url
                     }
                 }
                 HStack {
@@ -33,16 +33,16 @@ struct NormalsView: View {
             .padding(.leading, 8)
         }
         .onChange(of: useSimple) { newUseSimple in
-            material.materialEntry?.material.normals.useSimple = newUseSimple
+            material.normals.useSimple = newUseSimple
         }
         .onAppear {
-            useSimple = material.materialEntry?.material.normals.useSimple ?? true
+            useSimple = material.normals.useSimple
         }
     }
 }
 
-struct NormalsView_Previews: PreviewProvider {
-    static var previews: some View {
-        NormalsView(material: Material())
-    }
-}
+//struct NormalsView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        NormalsView(material: Material())
+//    }
+//}

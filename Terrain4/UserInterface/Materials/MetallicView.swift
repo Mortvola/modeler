@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct MetallicView: View {
-    @ObservedObject var material: Material
+    @ObservedObject var material: PbrMaterial
     @State private var useSimple = true
     @State private var metallic = Float(1.0)
 
@@ -21,9 +21,9 @@ struct MetallicView: View {
             VStack {
                 HStack {
                     Text("Map:")
-                    Text(material.metalness)
+                    Text(material.metallic.map)
                     OpenFileButton(image: "photo") { url in
-                        material.metalness = url
+                        material.metallic.map = url
                     }
                 }
                 HStack {
@@ -35,19 +35,19 @@ struct MetallicView: View {
             .padding(.leading, 8)
         }
         .onChange(of: useSimple) { newUseSimple in
-            material.materialEntry?.material.metallic.useSimple = newUseSimple
+            material.metallic.useSimple = newUseSimple
         }
         .onAppear {
-            useSimple = material.materialEntry?.material.metallic.useSimple ?? true
+            useSimple = material.metallic.useSimple
         }
         .onChange(of: metallic) { newMetallic in
-            material.materialEntry?.material.setSimpleMetallic(newMetallic)
+            material.setSimpleMetallic(newMetallic)
         }
     }
 }
 
-struct MetallicView_Previews: PreviewProvider {
-    static var previews: some View {
-        MetallicView(material: Material())
-    }
-}
+//struct MetallicView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        MetallicView(material: Material())
+//    }
+//}

@@ -12,12 +12,13 @@ class RenderObject: Object {
     // lights that may affect this object.
     var lights: [Light] = []
     
-    @Published var material: Material?
+    var materialId: UUID?
+    @Published var material: PbrMaterial?
     public var materialEntry: MaterialManager.MaterialEntry?
 
     @MainActor
-    func setMaterial(newMaterial: Material?) async throws {
-        if newMaterial != self.material {
+    func setMaterial(materialId: UUID?) async throws {
+        if materialId != self.material?.id {
             if let materialEntry = materialEntry {
                 let index = materialEntry.objects.firstIndex {
                     $0.id == self.id
@@ -30,11 +31,12 @@ class RenderObject: Object {
                 self.materialEntry = nil
             }
             
-            self.materialEntry = try await MaterialManager.shared.addMaterial(device: Renderer.shared.device!, view: Renderer.shared.view!, material: newMaterial)
+            self.materialEntry = MaterialManager.shared.materials.first {
+                $0.key == materialId
+            }?.value
             
             self.materialEntry?.objects.append(self)
-            
-            material = newMaterial
+            material = self.materialEntry?.material
         }
     }
     
@@ -53,12 +55,8 @@ class RenderObject: Object {
     required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         
-        let id = try container.decode(UUID?.self, forKey: .material)
+        materialId = try container.decode(UUID?.self, forKey: .material)
         
-        self.material = MaterialStore.shared.materials.first { m in
-            m.id == id
-        }
-    
         try super.init(from: decoder)
     }
 

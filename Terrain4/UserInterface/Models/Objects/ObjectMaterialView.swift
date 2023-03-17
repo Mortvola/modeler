@@ -9,26 +9,36 @@ import SwiftUI
 
 struct ObjectMaterialView: View {
     @ObservedObject var object: RenderObject
-    @State var material: Material?
+    @State var materialId: UUID?
     
+    var materialList: [PbrMaterial] {
+        MaterialManager.shared.materials.compactMap { entry in
+            if entry.key == nil {
+                return nil
+            }
+            
+            return entry.value.material
+        }
+    }
+
     var body: some View {
         HStack {
-            Picker("Type", selection: $material) {
-                Text("None").tag(nil as Material?)
-                ForEach(MaterialStore.shared.materials) { material in
-                    Text(material.name).tag(material as Material?)
+            Picker("Type", selection: $materialId) {
+                Text("None").tag(nil as UUID?)
+                ForEach(materialList, id: \.id) { material in
+                    Text(material.name).tag(material.id as UUID?)
                 }
             }
             .labelsHidden()
-            .onChange(of: material) { newMaterial in
+            .onChange(of: materialId) { newMaterialId in
                 Task {
-                    try? await object.setMaterial(newMaterial: newMaterial)
+                    try? await object.setMaterial(materialId: newMaterialId)
                 }
             }
             Spacer()
         }
         .onAppear {
-            material = object.material
+            materialId = object.material?.id
         }
     }
 }

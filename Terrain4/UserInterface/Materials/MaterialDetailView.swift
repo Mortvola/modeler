@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct MaterialDetailView: View {
-    @ObservedObject var material: Material
+    @ObservedObject var material: PbrMaterial
     
     var body: some View {
         VStack(spacing: 32) {
@@ -23,8 +23,8 @@ struct MaterialDetailView: View {
     }
 }
 
-struct MaterialDetailView_Previews: PreviewProvider {
-    static var previews: some View {
-        MaterialDetailView(material: Material())
-    }
-}
+//struct MaterialDetailView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        MaterialDetailView(material: Material())
+//    }
+//}

@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct AlbedoView: View {
-    @ObservedObject var material: Material
+    @ObservedObject var material: PbrMaterial
     @State private var useSimple = true
     @State private var color = Color(.white)
     
@@ -21,9 +21,9 @@ struct AlbedoView: View {
             VStack {
                 HStack {
                     Text("Map:")
-                    Text(material.albedo)
+                    Text(material.albedo.map)
                     OpenFileButton(image: "photo") { url in
-                        material.albedo = url
+                        material.albedo.map = url
                     }
                 }
                 HStack {
@@ -35,22 +35,22 @@ struct AlbedoView: View {
             .padding(.leading, 8)
         }
         .onChange(of: useSimple) { newUseSimple in
-            material.materialEntry?.material.albedo.useSimple = newUseSimple
+            material.albedo.useSimple = newUseSimple
         }
         .onAppear {
-            useSimple = material.materialEntry?.material.albedo.useSimple ?? true
+            useSimple = material.albedo.useSimple
         }
         .onChange(of: color) { newColor in
-            material.materialEntry?.material.setSimpleAlbedo(color.getColor())
+            material.setSimpleAlbedo(color.getColor())
         }
     }
 }
 
-struct AlbedoView_Previews: PreviewProvider {
-    static var previews: some View {
-        AlbedoView(material: Material())
-    }
-}
+//struct AlbedoView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        AlbedoView(material: Material())
+//    }
+//}
 
 extension Color {
     func getColor() -> Vec4 {
