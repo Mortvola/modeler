@@ -161,29 +161,29 @@ class ObjectStore: ObservableObject {
             do {
                 let file = try JSONDecoder().decode(File.self, from: data)
                 
-                for material in file.materials {
-                    let descriptor = MaterialDescriptor()
-                    
-                    descriptor.id = material.id
-                    descriptor.name = material.name
-                    
-                    descriptor.albedo.map = material.albedo.map
-                    descriptor.albedo.useSimple = material.albedo.useSimple
-                    descriptor.albedo.color = material.albedo.color
-                    
-                    descriptor.normals.map = material.normals.map
-                    descriptor.normals.useSimple = material.normals.useSimple
-                    descriptor.normals.normal = material.normals.normal
+                for materialDescriptor in file.materials {
+//                    let descriptor = MaterialDescriptor()
+//
+//                    descriptor.id = material.id
+//                    descriptor.name = material.name
+//
+//                    descriptor.albedo.map = material.albedo.map
+//                    descriptor.albedo.useSimple = material.albedo.useSimple
+//                    descriptor.albedo.color = material.albedo.color
+//
+//                    descriptor.normals.map = material.normals.map
+//                    descriptor.normals.useSimple = material.normals.useSimple
+//                    descriptor.normals.normal = material.normals.normal
+//
+//                    descriptor.metallic.map = material.metallic.map
+//                    descriptor.metallic.useSimple = material.metallic.useSimple
+//                    descriptor.metallic.value = material.metallic.value
+//
+//                    descriptor.roughness.map = material.roughness.map
+//                    descriptor.roughness.useSimple = material.roughness.useSimple
+//                    descriptor.roughness.value = material.roughness.value
 
-                    descriptor.metallic.map = material.metallic.map
-                    descriptor.metallic.useSimple = material.metallic.useSimple
-                    descriptor.metallic.value = material.metallic.value
-
-                    descriptor.roughness.map = material.roughness.map
-                    descriptor.roughness.useSimple = material.roughness.useSimple
-                    descriptor.roughness.value = material.roughness.value
-
-                    _ = try await MaterialManager.shared.addMaterial(device: Renderer.shared.device!, view: Renderer.shared.view!, descriptor: descriptor)
+                    _ = try await MaterialManager.shared.addMaterial(device: Renderer.shared.device!, view: Renderer.shared.view!, descriptor: materialDescriptor)
                 }
 
                 var newLights: [Light] = []

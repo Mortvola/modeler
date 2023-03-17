@@ -11,7 +11,7 @@ struct File: Codable {
     var models: [Model]
     var animators: [Animator]
     var camera: Camera
-    var materials: [Material]
+    var materials: [MaterialDescriptor]
     
     enum CodkingKeys: CodingKey {
         case models
@@ -31,7 +31,7 @@ struct File: Codable {
                 return nil
             }
         
-            return Material(material: material.value.material)
+            return MaterialDescriptor(material: material.value.material)
         }
     }
 
@@ -50,7 +50,7 @@ struct File: Codable {
         
         AnimatorStore.shared.animators = animators
         
-        materials = try container.decode([Material].self, forKey: .materials)
+        materials = try container.decode([MaterialDescriptor].self, forKey: .materials)
         
         models = try container.decode([Model].self, forKey: .models)
     }

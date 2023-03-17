@@ -71,13 +71,12 @@
 		798D3BF929C3C27400B96C5F /* RoughnessLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 798D3BF829C3C27400B96C5F /* RoughnessLayer.swift */; };
 		798D3BFD29C3CBF400B96C5F /* File.swift in Sources */ = {isa = PBXBuildFile; fileRef = 798D3BFC29C3CBF400B96C5F /* File.swift */; };
 		798D3BFF29C3CC4300B96C5F /* FileCamera.swift in Sources */ = {isa = PBXBuildFile; fileRef = 798D3BFE29C3CC4300B96C5F /* FileCamera.swift */; };
-		798D3C0129C3CC7F00B96C5F /* FileMaterial.swift in Sources */ = {isa = PBXBuildFile; fileRef = 798D3C0029C3CC7F00B96C5F /* FileMaterial.swift */; };
-		798D3C0329C3CCC400B96C5F /* FileAlbedoLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 798D3C0229C3CCC400B96C5F /* FileAlbedoLayer.swift */; };
-		798D3C0529C3CCCC00B96C5F /* FileNormalsLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 798D3C0429C3CCCC00B96C5F /* FileNormalsLayer.swift */; };
-		798D3C0729C3CCD400B96C5F /* FileMetallicLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 798D3C0629C3CCD400B96C5F /* FileMetallicLayer.swift */; };
-		798D3C0929C3CCE200B96C5F /* FileRoughnessLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 798D3C0829C3CCE200B96C5F /* FileRoughnessLayer.swift */; };
-		798D3C0B29C3CCE900B96C5F /* FileMaterialLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 798D3C0A29C3CCE900B96C5F /* FileMaterialLayer.swift */; };
 		798D3C0D29C4162D00B96C5F /* MaterialDescriptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 798D3C0C29C4162D00B96C5F /* MaterialDescriptor.swift */; };
+		798D3C1029C4A72B00B96C5F /* AlbedoLayerDescriptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 798D3C0F29C4A72B00B96C5F /* AlbedoLayerDescriptor.swift */; };
+		798D3C1229C4A74C00B96C5F /* MaterialLayerDescriptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 798D3C1129C4A74C00B96C5F /* MaterialLayerDescriptor.swift */; };
+		798D3C1429C4A7E800B96C5F /* NormalsLayerDescriptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 798D3C1329C4A7E800B96C5F /* NormalsLayerDescriptor.swift */; };
+		798D3C1629C4A90C00B96C5F /* MetallicLayerDescriptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 798D3C1529C4A90C00B96C5F /* MetallicLayerDescriptor.swift */; };
+		798D3C1829C4A99500B96C5F /* RoughnessLayerDescriptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 798D3C1729C4A99500B96C5F /* RoughnessLayerDescriptor.swift */; };
 		79F6D2C129BA58F5007CA69A /* Animator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F6D2C029BA58F5007CA69A /* Animator.swift */; };
 		79F6D2C629BA5C80007CA69A /* AnimatorsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F6D2C529BA5C80007CA69A /* AnimatorsView.swift */; };
 		79F6D2C829BA5F10007CA69A /* MaterialsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F6D2C729BA5F10007CA69A /* MaterialsView.swift */; };
@@ -221,13 +220,12 @@
 		798D3BF829C3C27400B96C5F /* RoughnessLayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoughnessLayer.swift; sourceTree = "<group>"; };
 		798D3BFC29C3CBF400B96C5F /* File.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = File.swift; sourceTree = "<group>"; };
 		798D3BFE29C3CC4300B96C5F /* FileCamera.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileCamera.swift; sourceTree = "<group>"; };
-		798D3C0029C3CC7F00B96C5F /* FileMaterial.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileMaterial.swift; sourceTree = "<group>"; };
-		798D3C0229C3CCC400B96C5F /* FileAlbedoLayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileAlbedoLayer.swift; sourceTree = "<group>"; };
-		798D3C0429C3CCCC00B96C5F /* FileNormalsLayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileNormalsLayer.swift; sourceTree = "<group>"; };
-		798D3C0629C3CCD400B96C5F /* FileMetallicLayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileMetallicLayer.swift; sourceTree = "<group>"; };
-		798D3C0829C3CCE200B96C5F /* FileRoughnessLayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileRoughnessLayer.swift; sourceTree = "<group>"; };
-		798D3C0A29C3CCE900B96C5F /* FileMaterialLayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileMaterialLayer.swift; sourceTree = "<group>"; };
 		798D3C0C29C4162D00B96C5F /* MaterialDescriptor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MaterialDescriptor.swift; sourceTree = "<group>"; };
+		798D3C0F29C4A72B00B96C5F /* AlbedoLayerDescriptor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlbedoLayerDescriptor.swift; sourceTree = "<group>"; };
+		798D3C1129C4A74C00B96C5F /* MaterialLayerDescriptor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MaterialLayerDescriptor.swift; sourceTree = "<group>"; };
+		798D3C1329C4A7E800B96C5F /* NormalsLayerDescriptor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NormalsLayerDescriptor.swift; sourceTree = "<group>"; };
+		798D3C1529C4A90C00B96C5F /* MetallicLayerDescriptor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetallicLayerDescriptor.swift; sourceTree = "<group>"; };
+		798D3C1729C4A99500B96C5F /* RoughnessLayerDescriptor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoughnessLayerDescriptor.swift; sourceTree = "<group>"; };
 		79F6D2C029BA58F5007CA69A /* Animator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Animator.swift; sourceTree = "<group>"; };
 		79F6D2C529BA5C80007CA69A /* AnimatorsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimatorsView.swift; sourceTree = "<group>"; };
 		79F6D2C729BA5F10007CA69A /* MaterialsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MaterialsView.swift; sourceTree = "<group>"; };
@@ -443,6 +441,7 @@
 		791E792429B93D7000FB45F3 /* Materials */ = {
 			isa = PBXGroup;
 			children = (
+				798D3C0E29C4A71100B96C5F /* Descriptors */,
 				791E792529B93D7000FB45F3 /* PbrLineMaterial.swift */,
 				791E792629B93D7000FB45F3 /* PbrMaterial.swift */,
 				798D3BF029C3C17E00B96C5F /* MaterialLayer.swift */,
@@ -454,7 +453,6 @@
 				791E792829B93D7000FB45F3 /* LineMaterial.swift */,
 				791E792929B93D7000FB45F3 /* BaseMaterial.swift */,
 				791E792A29B93D7000FB45F3 /* MaterialManager.swift */,
-				798D3C0C29C4162D00B96C5F /* MaterialDescriptor.swift */,
 			);
 			path = Materials;
 			sourceTree = "<group>";
@@ -464,14 +462,21 @@
 			children = (
 				798D3BFC29C3CBF400B96C5F /* File.swift */,
 				798D3BFE29C3CC4300B96C5F /* FileCamera.swift */,
-				798D3C0029C3CC7F00B96C5F /* FileMaterial.swift */,
-				798D3C0229C3CCC400B96C5F /* FileAlbedoLayer.swift */,
-				798D3C0429C3CCCC00B96C5F /* FileNormalsLayer.swift */,
-				798D3C0629C3CCD400B96C5F /* FileMetallicLayer.swift */,
-				798D3C0829C3CCE200B96C5F /* FileRoughnessLayer.swift */,
-				798D3C0A29C3CCE900B96C5F /* FileMaterialLayer.swift */,
 			);
 			path = File;
+			sourceTree = "<group>";
+		};
+		798D3C0E29C4A71100B96C5F /* Descriptors */ = {
+			isa = PBXGroup;
+			children = (
+				798D3C0C29C4162D00B96C5F /* MaterialDescriptor.swift */,
+				798D3C0F29C4A72B00B96C5F /* AlbedoLayerDescriptor.swift */,
+				798D3C1329C4A7E800B96C5F /* NormalsLayerDescriptor.swift */,
+				798D3C1129C4A74C00B96C5F /* MaterialLayerDescriptor.swift */,
+				798D3C1529C4A90C00B96C5F /* MetallicLayerDescriptor.swift */,
+				798D3C1729C4A99500B96C5F /* RoughnessLayerDescriptor.swift */,
+			);
+			path = Descriptors;
 			sourceTree = "<group>";
 		};
 		79F6D2CF29BAA8C7007CA69A /* Allocators */ = {
@@ -702,17 +707,17 @@
 				791E792229B93D6000FB45F3 /* Line.swift in Sources */,
 				79F6D2E129BBA375007CA69A /* ObjectDetailsView.swift in Sources */,
 				791E78D029B93A2B00FB45F3 /* EditObject.swift in Sources */,
-				798D3C0729C3CCD400B96C5F /* FileMetallicLayer.swift in Sources */,
-				798D3C0329C3CCC400B96C5F /* FileAlbedoLayer.swift in Sources */,
 				79F6D30429C1DD7F007CA69A /* ListItem.swift in Sources */,
 				791E794329B9441800FB45F3 /* Utilities.swift in Sources */,
 				79F6D30929C1EDBE007CA69A /* ObjectMaterialView.swift in Sources */,
+				798D3C1829C4A99500B96C5F /* RoughnessLayerDescriptor.swift in Sources */,
 				791E793F29B9436800FB45F3 /* TerrainTile.swift in Sources */,
 				79F6D2CC29BA7EFA007CA69A /* LIght.swift in Sources */,
 				791E793B29B9433F00FB45F3 /* Camera.swift in Sources */,
 				791E78D529B93A2B00FB45F3 /* CheckBox.swift in Sources */,
 				79F6D2DF29BB941F007CA69A /* AnimatorPickerItem.swift in Sources */,
 				79F6D2DD29BB92C7007CA69A /* AnimatorListItem.swift in Sources */,
+				798D3C1229C4A74C00B96C5F /* MaterialLayerDescriptor.swift in Sources */,
 				79F6D2C829BA5F10007CA69A /* MaterialsView.swift in Sources */,
 				791E78D429B93A2B00FB45F3 /* AddObject.swift in Sources */,
 				791E78B529B9388400FB45F3 /* AppDelegate.swift in Sources */,
@@ -720,6 +725,7 @@
 				79F6D2D529BB6236007CA69A /* ObjectsView.swift in Sources */,
 				791E792329B93D6000FB45F3 /* TriangleMesh.swift in Sources */,
 				791E790F29B93BDC00FB45F3 /* Vec3.swift in Sources */,
+				798D3C1629C4A90C00B96C5F /* MetallicLayerDescriptor.swift in Sources */,
 				79F6D2C129BA58F5007CA69A /* Animator.swift in Sources */,
 				791E792C29B93D7000FB45F3 /* PbrMaterial.swift in Sources */,
 				791E793629B9430E00FB45F3 /* RenderViewController.swift in Sources */,
@@ -749,8 +755,8 @@
 				791E795229B944D000FB45F3 /* PbrShaders.metal in Sources */,
 				791E793D29B9433F00FB45F3 /* World.swift in Sources */,
 				79F6D30229C1DC79007CA69A /* ListItemField.swift in Sources */,
+				798D3C1029C4A72B00B96C5F /* AlbedoLayerDescriptor.swift in Sources */,
 				791E791929B93C7D00FB45F3 /* Errors.swift in Sources */,
-				798D3C0129C3CC7F00B96C5F /* FileMaterial.swift in Sources */,
 				79F6D2CE29BAA245007CA69A /* Object.swift in Sources */,
 				79F6D2CA29BA6C34007CA69A /* Border.swift in Sources */,
 				791E792D29B93D7000FB45F3 /* TextureManager.swift in Sources */,
@@ -758,7 +764,6 @@
 				79F6D2E529BC2C6A007CA69A /* LightDetailsView.swift in Sources */,
 				791E794E29B944D000FB45F3 /* Pbr.metal in Sources */,
 				798D3BED29C361D700B96C5F /* MetallicView.swift in Sources */,
-				798D3C0929C3CCE200B96C5F /* FileRoughnessLayer.swift in Sources */,
 				791E78D229B93A2B00FB45F3 /* TransformView.swift in Sources */,
 				791E793029B93D7000FB45F3 /* MaterialManager.swift in Sources */,
 				791E794F29B944D000FB45F3 /* PbrLineShaders.metal in Sources */,
@@ -768,15 +773,14 @@
 				791E792129B93D6000FB45F3 /* RenderObject.swift in Sources */,
 				791E792029B93D6000FB45F3 /* Mesh.swift in Sources */,
 				798D3BE929C35EE600B96C5F /* AlbedoView.swift in Sources */,
-				798D3C0529C3CCCC00B96C5F /* FileNormalsLayer.swift in Sources */,
 				798D3C0D29C4162D00B96C5F /* MaterialDescriptor.swift in Sources */,
 				791E792F29B93D7000FB45F3 /* BaseMaterial.swift in Sources */,
 				791E794729B9446A00FB45F3 /* Types.swift in Sources */,
 				798D3BEB29C3613700B96C5F /* NormalsView.swift in Sources */,
 				791E78D329B93A2B00FB45F3 /* TransformsView.swift in Sources */,
 				798D3BF929C3C27400B96C5F /* RoughnessLayer.swift in Sources */,
-				798D3C0B29C3CCE900B96C5F /* FileMaterialLayer.swift in Sources */,
 				791E794129B943E800FB45F3 /* RenderView.swift in Sources */,
+				798D3C1429C4A7E800B96C5F /* NormalsLayerDescriptor.swift in Sources */,
 				798D3BF529C3C1FB00B96C5F /* MetallicLayer.swift in Sources */,
 				79F6D30029C16FC5007CA69A /* Selected.swift in Sources */,
 				791E790E29B93BDC00FB45F3 /* Matrix4x4.swift in Sources */,
