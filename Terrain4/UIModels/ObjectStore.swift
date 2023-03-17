@@ -84,9 +84,9 @@ class ObjectStore: ObservableObject {
         case .sphere:
             let material = try await MaterialManager.shared.addMaterial(device: device, view: view, descriptor: nil)
             
-            let sphere = try SphereAllocator.allocate(device: device, diameter: 5)
+            let mesh = try SphereAllocator.allocate(device: device, diameter: 5)
             
-            object = Mesh(mesh: sphere, model: model)
+            object = Mesh(mesh: mesh, model: model)
             
             if let object = object {
                 material.objects.append(object)
@@ -98,8 +98,12 @@ class ObjectStore: ObservableObject {
         case .rectangle:
             let material = try await MaterialManager.shared.addMaterial(device: device, view: view, descriptor: nil)
             
-            object = try TestRectAllocator.allocate(device: device, model: model)
+            let dimensions = Vec2(5, 5)
+            let segments = VecUInt2(5, 5)
+            let mesh = try RetangleAllocator.allocate(device: device, dimensions: dimensions, segments: segments)
             
+            object = Mesh(mesh: mesh, model: model)
+
             if let object = object {
                 material.objects.append(object)
                 model.objects.append(object)

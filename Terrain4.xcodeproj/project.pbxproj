@@ -60,6 +60,7 @@
 		791E795129B944D000FB45F3 /* Shaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = 791E794B29B944D000FB45F3 /* Shaders.metal */; };
 		791E795229B944D000FB45F3 /* PbrShaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = 791E794C29B944D000FB45F3 /* PbrShaders.metal */; };
 		791E795329B944D000FB45F3 /* SkyboxShaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = 791E794D29B944D000FB45F3 /* SkyboxShaders.metal */; };
+		79345D3929C509E200E9F074 /* RectangleAllocator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79345D3629C509E200E9F074 /* RectangleAllocator.swift */; };
 		798D3BE929C35EE600B96C5F /* AlbedoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 798D3BE829C35EE600B96C5F /* AlbedoView.swift */; };
 		798D3BEB29C3613700B96C5F /* NormalsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 798D3BEA29C3613700B96C5F /* NormalsView.swift */; };
 		798D3BED29C361D700B96C5F /* MetallicView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 798D3BEC29C361D700B96C5F /* MetallicView.swift */; };
@@ -209,6 +210,7 @@
 		791E794C29B944D000FB45F3 /* PbrShaders.metal */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.metal; path = PbrShaders.metal; sourceTree = "<group>"; };
 		791E794D29B944D000FB45F3 /* SkyboxShaders.metal */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.metal; path = SkyboxShaders.metal; sourceTree = "<group>"; };
 		791E795429B9457700FB45F3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		79345D3629C509E200E9F074 /* RectangleAllocator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RectangleAllocator.swift; sourceTree = "<group>"; };
 		798D3BE829C35EE600B96C5F /* AlbedoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlbedoView.swift; sourceTree = "<group>"; };
 		798D3BEA29C3613700B96C5F /* NormalsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NormalsView.swift; sourceTree = "<group>"; };
 		798D3BEC29C361D700B96C5F /* MetallicView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetallicView.swift; sourceTree = "<group>"; };
@@ -484,6 +486,7 @@
 			children = (
 				79F6D2D029BAA8DB007CA69A /* SphereAllocator.swift */,
 				79F6D2D229BAC193007CA69A /* TestRectAllocator.swift */,
+				79345D3629C509E200E9F074 /* RectangleAllocator.swift */,
 			);
 			path = Allocators;
 			sourceTree = "<group>";
@@ -766,6 +769,7 @@
 				798D3BED29C361D700B96C5F /* MetallicView.swift in Sources */,
 				791E78D229B93A2B00FB45F3 /* TransformView.swift in Sources */,
 				791E793029B93D7000FB45F3 /* MaterialManager.swift in Sources */,
+				79345D3929C509E200E9F074 /* RectangleAllocator.swift in Sources */,
 				791E794F29B944D000FB45F3 /* PbrLineShaders.metal in Sources */,
 				791E795329B944D000FB45F3 /* SkyboxShaders.metal in Sources */,
 				791E795129B944D000FB45F3 /* Shaders.metal in Sources */,

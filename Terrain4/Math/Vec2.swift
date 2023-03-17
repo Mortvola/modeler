@@ -14,3 +14,5 @@ extension Vec2 {
         Vec2(self.x - v.x, self.y - v.y)
     }
 }
+
+typealias VecUInt2 = vector_uint2
