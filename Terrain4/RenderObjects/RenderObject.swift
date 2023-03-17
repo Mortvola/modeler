@@ -14,12 +14,12 @@ class RenderObject: Object {
     
     var materialId: UUID?
     @Published var material: PbrMaterial?
-    public var materialEntry: MaterialManager.MaterialEntry?
 
     @MainActor
-    func setMaterial(materialId: UUID?) async throws {
+    func setMaterial(materialId: UUID?) {
         if materialId != self.material?.id {
-            if let materialEntry = materialEntry {
+            // Remove object from current material object list
+            if let materialEntry = MaterialManager.shared.materials[self.material?.id] {
                 let index = materialEntry.objects.firstIndex {
                     $0.id == self.id
                 }
@@ -27,16 +27,12 @@ class RenderObject: Object {
                 if let index = index {
                     materialEntry.objects.remove(at: index)
                 }
-                
-                self.materialEntry = nil
             }
             
-            self.materialEntry = MaterialManager.shared.materials.first {
-                $0.key == materialId
-            }?.value
+            let materialEntry = MaterialManager.shared.materials[materialId]
             
-            self.materialEntry?.objects.append(self)
-            material = self.materialEntry?.material
+            materialEntry?.objects.append(self)
+            material = materialId != nil ? materialEntry?.material : nil
         }
     }
     

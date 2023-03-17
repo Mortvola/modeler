@@ -26,7 +26,6 @@
 		791E78FD29B93B6F00FB45F3 /* Http.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 791E78F929B93B2A00FB45F3 /* Http.framework */; };
 		791E78FE29B93B6F00FB45F3 /* Http.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 791E78F929B93B2A00FB45F3 /* Http.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		791E790529B93BB600FB45F3 /* ObjectStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791E790129B93BB600FB45F3 /* ObjectStore.swift */; };
-		791E790629B93BB600FB45F3 /* MaterialStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791E790229B93BB600FB45F3 /* MaterialStore.swift */; };
 		791E790829B93BB600FB45F3 /* Transform.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791E790429B93BB600FB45F3 /* Transform.swift */; };
 		791E790E29B93BDC00FB45F3 /* Matrix4x4.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791E790A29B93BDC00FB45F3 /* Matrix4x4.swift */; };
 		791E790F29B93BDC00FB45F3 /* Vec3.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791E790B29B93BDC00FB45F3 /* Vec3.swift */; };
@@ -98,7 +97,6 @@
 		79F6D2EB29BCBD83007CA69A /* NumericField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F6D2E829BCBD83007CA69A /* NumericField.swift */; };
 		79F6D2ED29BCC53E007CA69A /* LabeledNumericField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F6D2EC29BCC53E007CA69A /* LabeledNumericField.swift */; };
 		79F6D2EF29BCC983007CA69A /* VectorFieldView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F6D2EE29BCC983007CA69A /* VectorFieldView.swift */; };
-		79F6D2FA29C161E7007CA69A /* Material.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F6D2F929C161E7007CA69A /* Material.swift */; };
 		79F6D2FC29C16769007CA69A /* MaterialListItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F6D2FB29C16769007CA69A /* MaterialListItem.swift */; };
 		79F6D2FE29C16894007CA69A /* MaterialDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F6D2FD29C16894007CA69A /* MaterialDetailView.swift */; };
 		79F6D30029C16FC5007CA69A /* Selected.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F6D2FF29C16FC5007CA69A /* Selected.swift */; };
@@ -176,7 +174,6 @@
 		791E78CF29B93A2B00FB45F3 /* ContentView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		791E78F329B93B2A00FB45F3 /* Http.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Http.xcodeproj; path = ../Http/Http.xcodeproj; sourceTree = "<group>"; };
 		791E790129B93BB600FB45F3 /* ObjectStore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ObjectStore.swift; sourceTree = "<group>"; };
-		791E790229B93BB600FB45F3 /* MaterialStore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MaterialStore.swift; sourceTree = "<group>"; };
 		791E790429B93BB600FB45F3 /* Transform.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Transform.swift; sourceTree = "<group>"; };
 		791E790A29B93BDC00FB45F3 /* Matrix4x4.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Matrix4x4.swift; sourceTree = "<group>"; };
 		791E790B29B93BDC00FB45F3 /* Vec3.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Vec3.swift; sourceTree = "<group>"; };
@@ -250,7 +247,6 @@
 		79F6D2E829BCBD83007CA69A /* NumericField.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NumericField.swift; sourceTree = "<group>"; };
 		79F6D2EC29BCC53E007CA69A /* LabeledNumericField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LabeledNumericField.swift; sourceTree = "<group>"; };
 		79F6D2EE29BCC983007CA69A /* VectorFieldView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VectorFieldView.swift; sourceTree = "<group>"; };
-		79F6D2F929C161E7007CA69A /* Material.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Material.swift; sourceTree = "<group>"; };
 		79F6D2FB29C16769007CA69A /* MaterialListItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MaterialListItem.swift; sourceTree = "<group>"; };
 		79F6D2FD29C16894007CA69A /* MaterialDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MaterialDetailView.swift; sourceTree = "<group>"; };
 		79F6D2FF29C16FC5007CA69A /* Selected.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Selected.swift; sourceTree = "<group>"; };
@@ -412,10 +408,8 @@
 			isa = PBXGroup;
 			children = (
 				791E790129B93BB600FB45F3 /* ObjectStore.swift */,
-				79F6D2F929C161E7007CA69A /* Material.swift */,
 				798D3BFB29C3CBD100B96C5F /* File */,
 				79F6D2CB29BA7EFA007CA69A /* LIght.swift */,
-				791E790229B93BB600FB45F3 /* MaterialStore.swift */,
 				791E790429B93BB600FB45F3 /* Transform.swift */,
 				79F6D2C029BA58F5007CA69A /* Animator.swift */,
 				79F6D2D629BB6642007CA69A /* AnimatorStore.swift */,
@@ -702,7 +696,6 @@
 				791E78D129B93A2B00FB45F3 /* ModelsView.swift in Sources */,
 				791E794529B9443F00FB45F3 /* Sun.swift in Sources */,
 				79F6D2D729BB6642007CA69A /* AnimatorStore.swift in Sources */,
-				79F6D2FA29C161E7007CA69A /* Material.swift in Sources */,
 				791E791129B93BDC00FB45F3 /* Vec2.swift in Sources */,
 				791E793729B9430E00FB45F3 /* RenderDelegate.swift in Sources */,
 				791E793529B9430E00FB45F3 /* Renderer.swift in Sources */,
@@ -719,7 +712,6 @@
 				791E793B29B9433F00FB45F3 /* Camera.swift in Sources */,
 				791E78D529B93A2B00FB45F3 /* CheckBox.swift in Sources */,
 				79F6D2DF29BB941F007CA69A /* AnimatorPickerItem.swift in Sources */,
-				791E790629B93BB600FB45F3 /* MaterialStore.swift in Sources */,
 				79F6D2DD29BB92C7007CA69A /* AnimatorListItem.swift in Sources */,
 				79F6D2C829BA5F10007CA69A /* MaterialsView.swift in Sources */,
 				791E78D429B93A2B00FB45F3 /* AddObject.swift in Sources */,

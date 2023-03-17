@@ -31,9 +31,7 @@ struct ObjectMaterialView: View {
             }
             .labelsHidden()
             .onChange(of: materialId) { newMaterialId in
-                Task {
-                    try? await object.setMaterial(materialId: newMaterialId)
-                }
+                object.setMaterial(materialId: newMaterialId)
             }
             Spacer()
         }

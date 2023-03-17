@@ -192,10 +192,7 @@ class ObjectStore: ObservableObject {
                     for object in model.objects {
                         object.model = model
 
-                        object.materialEntry = MaterialManager.shared.materials[object.materialId]
-
-                        object.material = object.materialEntry?.material
-                        object.materialEntry?.objects.append(object)
+                        object.setMaterial(materialId: object.materialId)
                     }
                     
                     model.lights.forEach { light in
