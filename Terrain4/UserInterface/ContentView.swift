@@ -11,6 +11,7 @@ enum TabSelection {
     case objects
     case animators
     case materials
+    case textures
 }
 
 struct ContentView: View {
@@ -39,6 +40,12 @@ struct ContentView: View {
                         Label("Matrials", systemImage: "line.3.crossed.swirl.circle.fill")
                     }
                     .tag(TabSelection.materials)
+
+                TexturesView()
+                    .tabItem {
+                        Label("Textures", systemImage: "line.3.crossed.swirl.circle.fill")
+                    }
+                    .tag(TabSelection.textures)
             }
             .padding()
             .toolbarRole(.automatic)

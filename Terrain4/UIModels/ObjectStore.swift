@@ -17,10 +17,11 @@ class ObjectStore: ObservableObject {
     
     var lights: [Light] = []
     
+    @Published  var skybox: Skybox?
+    
     enum ObjectType: String, CaseIterable {
         case sphere
         case rectangle
-        case skybox
         case light
         
         var name: String {rawValue}
@@ -111,8 +112,6 @@ class ObjectStore: ObservableObject {
             
             break
             
-        case .skybox:
-            break;
         case .light:
             break;
         }
@@ -130,6 +129,11 @@ class ObjectStore: ObservableObject {
         self.lights.append(light)
         
         selectLight(light)
+    }
+    
+    @MainActor
+    func addSkybox() async throws {
+        try await self.skybox = Skybox(device: Renderer.shared.device!, view: Renderer.shared.view!)
     }
 
     func getDocumentsDirectory() -> URL {

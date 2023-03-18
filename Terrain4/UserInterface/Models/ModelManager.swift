@@ -36,7 +36,17 @@ struct ModelManager: View {
                 }
                 .buttonStyle(.bordered)
                 .disabled(!somethingSelected)
-                
+
+                Button {
+                    Task {
+                        try? await ObjectStore.shared.addSkybox()
+                    }
+                } label: {
+                    Text("Add Skybox")
+                }
+                .buttonStyle(.bordered)
+                .disabled(ObjectStore.shared.skybox != nil)
+
                 Spacer()
                 
                 Button {

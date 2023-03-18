@@ -42,8 +42,6 @@ class Renderer {
     
     private let world = World()
     
-    private var skybox: Skybox?
-    
     public var camera: Camera
     
     private var lightVector = Vec3(0, -1, 1)
@@ -99,16 +97,6 @@ class Renderer {
     }
 
     public func load(lat: Double, lng: Double, dimension: Int) async throws {
-        guard let device = self.device else {
-            throw Errors.deviceNotSet
-        }
-        
-        guard let view = self.view else {
-            throw Errors.viewNotSet
-        }
-
-        try await self.skybox = Skybox(device: device, view: view)
-
         if self.test {
 //            try await TestMesh(device: self.device, view: self.view)
             
@@ -289,9 +277,6 @@ class Renderer {
             uniforms[0].viewMatrix = self.camera.getViewMatrix()
             uniforms[0].cameraPos = self.camera.cameraOffset
             uniforms[0].lightVector = self.lightVector
-//            uniforms[0].pointLight = Lights.shared.pointLight
-//            uniforms[0].lightPos = self.lights!.position
-//            uniforms[0].lightColor = Vec3(self.lights!.red, self.lights!.green, self.lights!.blue)
 
             /// Delay getting the currentRenderPassDescriptor until we absolutely need it to avoid
             ///   holding onto the drawable and blocking the display pipeline any longer than necessary
@@ -317,9 +302,7 @@ class Renderer {
                     if self.world.terrainLoaded {
                         try MaterialManager.shared.render(renderEncoder: renderEncoder)
 
-//                        if Lights.shared.enableSkybox {
-//                            self.skybox?.draw(renderEncoder: renderEncoder)
-//                        }
+                        ObjectStore.shared.skybox?.draw(renderEncoder: renderEncoder)
                     }
                     
                     renderEncoder.popDebugGroup()
