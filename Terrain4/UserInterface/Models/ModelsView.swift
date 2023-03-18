@@ -28,6 +28,7 @@ struct ModelsView: View {
                 }
                 .selected(selected: objectStore.selectedNode == SelectedNode.directLight(objectStore.directionalLight))
             }
+            .listStyle(.inset)
 
             if (!hidden) {
                 switch objectStore.selectedNode {
