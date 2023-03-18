@@ -12,8 +12,8 @@ struct TestApp: App {
     @UIApplicationDelegateAdaptor private var appDelegate: AppDelegate
 
     var body: some Scene {
-        WindowGroup {
-            ContentView()
+        DocumentGroup(newDocument: { SceneDocument() }) { file in
+            ContentView(file: file.document)
         }
     }
 }

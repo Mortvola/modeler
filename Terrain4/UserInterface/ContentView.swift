@@ -14,7 +14,10 @@ enum TabSelection {
 }
 
 struct ContentView: View {
+    var file: SceneDocument
     @State private var tabSelection: TabSelection = .objects
+    @State var openPicker = false
+    @State var openSave = false
     
     var body: some View {
         NavigationSplitView {
@@ -38,20 +41,23 @@ struct ContentView: View {
                     .tag(TabSelection.materials)
             }
             .padding()
-            .toolbar {
-                ToolbarItem(placement: .automatic) {
-                    Button("Open") {
-                        Task {
-                            try await ObjectStore.shared.open()
-                        }
-                    }
-                }
-                ToolbarItem(placement: .automatic) {
-                    Button("Save") {
-                        ObjectStore.shared.save()
-                    }
-                }
-            }
+            .toolbarRole(.automatic)
+//            .toolbar {
+//                ToolbarItem(placement: .automatic) {
+//                    Button("Open") {
+//                        openPicker = true
+//                    }
+//                }
+//                ToolbarItem(placement: .automatic) {
+//                    Button("Save") {
+//                        if SceneDocument.shared.bookmark == nil {
+//                            openSave = true
+//                        } else {
+////                            ObjectStore.shared.save()
+//                        }
+//                    }
+//                }
+//            }
         } detail: {
             ZStack {
                 RenderView()
@@ -64,12 +70,33 @@ struct ContentView: View {
                 }
                 .padding()
             }
+            .onAppear {
+                if let data = file.data {
+                    Task {
+                        await file.parse(data: data)
+                        file.data = nil
+                    }
+                }
+            }
         }
+        .toolbar(.hidden)
+//        .fileImporter(isPresented: $openPicker, allowedContentTypes: [.sceneDocument]) { result in
+//            if let url = try? result.get() {
+//                Task {
+//                    try? await SceneDocument.shared.open(url: url)
+//                }
+//            }
+//        }
+//        .fileExporter(isPresented: $openSave, document: SceneDocument.shared, contentType: .sceneDocument, defaultFilename: nil) { result in
+//            if let url = try? result.get() {
+//                SceneDocument.shared.bookmark = try? url.bookmarkData(options: .withSecurityScope)
+//            }
+//        }
     }
 }
 
-struct ContentView_Previews: PreviewProvider {
-    static var previews: some View {
-        ContentView()
-    }
-}
+//struct ContentView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        ContentView(file: SceneDocument())
+//    }
+//}

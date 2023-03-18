@@ -78,6 +78,7 @@
 		798D3C1429C4A7E800B96C5F /* NormalsLayerDescriptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 798D3C1329C4A7E800B96C5F /* NormalsLayerDescriptor.swift */; };
 		798D3C1629C4A90C00B96C5F /* MetallicLayerDescriptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 798D3C1529C4A90C00B96C5F /* MetallicLayerDescriptor.swift */; };
 		798D3C1829C4A99500B96C5F /* RoughnessLayerDescriptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 798D3C1729C4A99500B96C5F /* RoughnessLayerDescriptor.swift */; };
+		79DF5C5729C52D5F0005CF41 /* SceneDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79DF5C5629C52D5F0005CF41 /* SceneDocument.swift */; };
 		79F6D2C129BA58F5007CA69A /* Animator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F6D2C029BA58F5007CA69A /* Animator.swift */; };
 		79F6D2C629BA5C80007CA69A /* AnimatorsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F6D2C529BA5C80007CA69A /* AnimatorsView.swift */; };
 		79F6D2C829BA5F10007CA69A /* MaterialsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F6D2C729BA5F10007CA69A /* MaterialsView.swift */; };
@@ -228,6 +229,7 @@
 		798D3C1329C4A7E800B96C5F /* NormalsLayerDescriptor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NormalsLayerDescriptor.swift; sourceTree = "<group>"; };
 		798D3C1529C4A90C00B96C5F /* MetallicLayerDescriptor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetallicLayerDescriptor.swift; sourceTree = "<group>"; };
 		798D3C1729C4A99500B96C5F /* RoughnessLayerDescriptor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoughnessLayerDescriptor.swift; sourceTree = "<group>"; };
+		79DF5C5629C52D5F0005CF41 /* SceneDocument.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDocument.swift; sourceTree = "<group>"; };
 		79F6D2C029BA58F5007CA69A /* Animator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Animator.swift; sourceTree = "<group>"; };
 		79F6D2C529BA5C80007CA69A /* AnimatorsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimatorsView.swift; sourceTree = "<group>"; };
 		79F6D2C729BA5F10007CA69A /* MaterialsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MaterialsView.swift; sourceTree = "<group>"; };
@@ -408,6 +410,7 @@
 			isa = PBXGroup;
 			children = (
 				791E790129B93BB600FB45F3 /* ObjectStore.swift */,
+				79DF5C5629C52D5F0005CF41 /* SceneDocument.swift */,
 				798D3BFB29C3CBD100B96C5F /* File */,
 				79F6D2CB29BA7EFA007CA69A /* LIght.swift */,
 				791E790429B93BB600FB45F3 /* Transform.swift */,
@@ -759,6 +762,7 @@
 				791E793D29B9433F00FB45F3 /* World.swift in Sources */,
 				79F6D30229C1DC79007CA69A /* ListItemField.swift in Sources */,
 				798D3C1029C4A72B00B96C5F /* AlbedoLayerDescriptor.swift in Sources */,
+				79DF5C5729C52D5F0005CF41 /* SceneDocument.swift in Sources */,
 				791E791929B93C7D00FB45F3 /* Errors.swift in Sources */,
 				79F6D2CE29BAA245007CA69A /* Object.swift in Sources */,
 				79F6D2CA29BA6C34007CA69A /* Border.swift in Sources */,
@@ -952,7 +956,6 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Terrain4/Info.plist;
-				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UIRequiredDeviceCapabilities = metal;
@@ -990,7 +993,6 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Terrain4/Info.plist;
-				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UIRequiredDeviceCapabilities = metal;
