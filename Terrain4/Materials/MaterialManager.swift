@@ -52,7 +52,9 @@ class MaterialManager: ObservableObject {
             entry.material.prepare(renderEncoder: renderEncoder)
             
             try entry.objects.forEach { object in
-                try object.draw(renderEncoder: renderEncoder, modelMatrix: object.modelMatrix())
+                if !object.disabled && !(object.model?.disabled ?? true) {
+                    try object.draw(renderEncoder: renderEncoder, modelMatrix: object.modelMatrix())
+                }
             }
         }
     }

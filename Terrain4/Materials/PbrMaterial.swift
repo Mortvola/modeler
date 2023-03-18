@@ -9,7 +9,7 @@ import Foundation
 import MetalKit
 import Metal
 
-class PbrMaterial: BaseMaterial, Equatable, Hashable, ObservableObject {
+class PbrMaterial: Node, BaseMaterial, Equatable, Hashable {
     static func == (lhs: PbrMaterial, rhs: PbrMaterial) -> Bool {
         lhs.id == rhs.id
     }
@@ -22,7 +22,6 @@ class PbrMaterial: BaseMaterial, Equatable, Hashable, ObservableObject {
     let samplerState: MTLSamplerState
 
     var id = UUID()
-    @Published var name = ""
 
     var albedo = AlbedoLayer()
     var normals = NormalsLayer()
@@ -48,7 +47,6 @@ class PbrMaterial: BaseMaterial, Equatable, Hashable, ObservableObject {
         }
         
         self.id = descriptor?.id ?? UUID()
-        self.name = descriptor?.name ?? ""
         
         self.samplerState = PbrMaterial.buildSamplerState(device: device)
 
@@ -108,6 +106,8 @@ class PbrMaterial: BaseMaterial, Equatable, Hashable, ObservableObject {
             
             throw error;
         }
+        
+        super.init(name: descriptor?.name ?? "")
     }
     
     func getPipeline() -> MTLRenderPipelineState {

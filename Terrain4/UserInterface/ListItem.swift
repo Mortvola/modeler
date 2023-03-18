@@ -8,22 +8,30 @@
 import SwiftUI
 
 struct ListItem: View {
-    @Binding var text: String
+    @ObservedObject var node: Node
     let action: () -> Void
     
     var body: some View {
-        Button {
-            action()
-        } label: {
-            ListItemField(text: $text)
+        HStack {
+            Button {
+                action()
+            } label: {
+                ListItemField(text: $node.name)
+            }
+            .buttonStyle(.plain)
+            Spacer()
+            Button {
+                node.disabled.toggle()
+            } label: {
+                node.disabled ? Image(systemName: "eye.slash") : Image(systemName: "eye")
+            }
         }
-        .buttonStyle(.plain)
     }
 }
 
 struct ListItem_Previews: PreviewProvider {
     static var previews: some View {
-        ListItem(text: .constant("Test")) {
+        ListItem(node: Node(name: "test")) {
             print("It workedd!")
         }
     }

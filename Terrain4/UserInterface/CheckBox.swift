@@ -12,12 +12,14 @@ struct CheckBox: View {
     var label: String
     
     var body: some View {
-        Image(systemName: checked ? "checkmark.square.fill" : "square")
-            .foregroundColor(checked ? Color(.systemBlue) : Color.secondary)
-            .onTapGesture {
-                self.checked.toggle()
-            }
-        Text(label)
+        HStack {
+            Image(systemName: checked ? "checkmark.square.fill" : "square")
+                .foregroundColor(checked ? Color(.systemBlue) : Color.secondary)
+                .onTapGesture {
+                    self.checked.toggle()
+                }
+            Text(label)
+        }
     }
 }
 

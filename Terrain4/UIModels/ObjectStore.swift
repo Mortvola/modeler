@@ -7,15 +7,81 @@
 
 import Foundation
 
+enum SelectedNode: Equatable {
+    static func == (lhs: SelectedNode, rhs: SelectedNode) -> Bool {
+        switch lhs {
+        case .model(let m1):
+            switch rhs {
+            case .model(let m2):
+                return m2 == m1
+            default:
+                return false
+            }
+        case .object(let o1):
+            switch rhs {
+            case .object(let o2):
+                return o1 == o2
+            default:
+                return false
+            }
+        case .light(let l1):
+            switch rhs {
+            case .light(let l2):
+                return l1 == l2
+            default:
+                return false
+            }
+        case .directLight(let d1):
+            switch rhs {
+            case .directLight(let d2):
+                return d1 == d2
+            default:
+                return false
+            }
+        }
+    }
+    
+    case model(Model)
+    case object(RenderObject)
+    case light(Light)
+    case directLight(DirectionalLight)
+}
+
+class Node: ObservableObject {
+    @Published var name: String
+    @Published var disabled = false
+    
+    init(name: String) {
+        self.name = name
+    }
+    
+//    enum CodingKeys: CodingKey {
+//        case name
+//    }
+//
+//    required init(from decoder: Decoder) throws {
+//        let container = try decoder.container(keyedBy: CodingKeys.self)
+//
+//        name = try container.decode(String.self, forKey: .name)
+//    }
+//
+//    func encode(to encoder: Encoder) throws {
+//        var container = encoder.container(keyedBy: CodingKeys.self)
+//
+//        try container.encode(name, forKey: .name)
+//    }
+}
+
 class ObjectStore: ObservableObject {
     static let shared = ObjectStore()
     
     @Published var models: [Model] = []
-    @Published var selectedModel: Model? = nil
-    @Published var selectedObject: RenderObject? = nil
-    @Published var selectedLight: Light? = nil
+    @Published var selectedNode: SelectedNode? = nil
+//    @Published var selectedObject: RenderObject? = nil
+//    @Published var selectedLight: Light? = nil
     
     var lights: [Light] = []
+    var directionalLight = DirectionalLight(name: "Directional Light")
     
     @Published  var skybox: Skybox?
     
@@ -28,21 +94,34 @@ class ObjectStore: ObservableObject {
     }
     
     func selectModel(_ model: Model?) {
-        self.selectedModel = model
-        self.selectedObject = nil
-        self.selectedLight = nil
+        if let model = model {
+            self.selectedNode = SelectedNode.model(model)
+        }
+        else {
+            self.selectedNode = nil
+        }
     }
     
     func selectObject(_ object: RenderObject?) {
-        self.selectedModel = nil
-        self.selectedObject = object
-        self.selectedLight = nil
+        if let object = object {
+            self.selectedNode = SelectedNode.object(object)
+        }
+        else {
+            self.selectedNode = nil
+        }
     }
     
     func selectLight(_ light: Light?) {
-        self.selectedModel = nil
-        self.selectedObject = nil
-        self.selectedLight = light
+        if let light = light {
+            self.selectedNode = SelectedNode.light(light)
+        }
+        else {
+            self.selectedNode = nil
+        }
+    }
+    
+    func selectDirectionalLight() {
+        self.selectedNode = SelectedNode.directLight(self.directionalLight)
     }
     
     @MainActor
@@ -54,15 +133,20 @@ class ObjectStore: ObservableObject {
     }
     
     private func getModel() -> Model? {
-        if let model = selectedObject?.model {
-            return model
+        if let selectedNode = selectedNode {
+            switch selectedNode {
+            case .model(let m):
+                return m;
+            case .object(let o):
+                return o.model;
+            case .light(let l):
+                return l.model
+            case .directLight:
+                return nil
+            }
         }
-        
-        if let model = selectedLight?.model {
-            return model
-        }
-        
-        return selectedModel
+
+        return nil
     }
     
     @MainActor

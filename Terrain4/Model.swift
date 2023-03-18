@@ -7,7 +7,7 @@
 
 import Foundation
 
-class Model: Identifiable, ObservableObject, Hashable, Codable {
+class Model: Node, Identifiable, Hashable, Codable {
     static func == (lhs: Model, rhs: Model) -> Bool {
         lhs.id == rhs.id
     }
@@ -18,7 +18,6 @@ class Model: Identifiable, ObservableObject, Hashable, Codable {
     
     var id = UUID()
     
-    var name: String
     private static var modelCounter = 0
 
     @Published var objects: [RenderObject] = []
@@ -32,8 +31,9 @@ class Model: Identifiable, ObservableObject, Hashable, Codable {
     var rotation: Float = 0.0
 
     init() {
-        self.name = "Model_\(Model.modelCounter)"
+        super.init(name: "Model_\(Model.modelCounter)")
         Model.modelCounter += 1
+
     }
     
     enum CodingKeys: CodingKey {
@@ -47,8 +47,11 @@ class Model: Identifiable, ObservableObject, Hashable, Codable {
     public required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         
+        let name = try container.decode(String.self, forKey: .name)
+
+        super.init(name: name)
+        
         id = try container.decode(UUID.self, forKey: .id)
-        name = try container.decode(String.self, forKey: .name)
         objects = try container.decode([Mesh].self, forKey: .objects)
         lights = try container.decode([Light].self, forKey: .lights)
         transforms = try container.decode([Transform].self, forKey: .transforms)

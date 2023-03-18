@@ -16,42 +16,55 @@ struct ModelsView: View {
         VStack {
             List {
                 ForEach($objectStore.models, id: \.id) { $model in
-                    ListItem(text: $model.name) {
+                    ListItem(node: model) {
                         objectStore.selectModel(model);
                     }
-                    .selected(selected: objectStore.selectedModel == model)
+                    .selected(selected: objectStore.selectedNode == SelectedNode.model(model))
                     ObjectsView(model: model)
                         .padding(.leading, 16)
                 }
+                ListItem(node: objectStore.directionalLight) {
+                    objectStore.selectDirectionalLight()
+                }
+                .selected(selected: objectStore.selectedNode == SelectedNode.directLight(objectStore.directionalLight))
             }
 
             if (!hidden) {
-                if let model = objectStore.selectedModel {
-                    ModelDetailsView(model: model)
-                        .onChange(of: objectStore.selectedModel) { _ in
+                switch objectStore.selectedNode {
+                case .model(let m):
+                    ModelDetailsView(model: m)
+                        .onChange(of: objectStore.selectedNode) { _ in
                             hidden = true
                             Task {
                                 hidden = false
                             }
                         }
-                }
-                else if let object = objectStore.selectedObject {
-                    ObjectDetailsView(object: object)
-                        .onChange(of: objectStore.selectedObject) { _ in
+                case .object(let o):
+                    ObjectDetailsView(object: o)
+                        .onChange(of: objectStore.selectedNode) { _ in
                             hidden = true
                             Task {
                                 hidden = false
                             }
                         }
-                }
-                else if let light = objectStore.selectedLight {
-                    LightDetailsView(light: light)
-                        .onChange(of: objectStore.selectedLight) { _ in
+                case .light(let l):
+                    LightDetailsView(light: l)
+                        .onChange(of: objectStore.selectedNode) { _ in
                             hidden = true
                             Task {
                                 hidden = false
                             }
                         }
+                case .directLight(let d):
+                    DirectionalLightView(light: d)
+                        .onChange(of: objectStore.selectedNode) { _ in
+                            hidden = true
+                            Task {
+                                hidden = false
+                            }
+                        }
+                default:
+                    EmptyView()
                 }
             }
         }

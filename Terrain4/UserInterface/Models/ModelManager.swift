@@ -12,7 +12,7 @@ struct ModelManager: View {
     @State var addObject = false
     
     var somethingSelected: Bool {
-        objectStore.selectedModel != nil || objectStore.selectedObject != nil || objectStore.selectedLight != nil
+        objectStore.selectedNode != nil
     }
     
     var body: some View {

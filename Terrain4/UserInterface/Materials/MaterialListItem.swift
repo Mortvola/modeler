@@ -13,7 +13,7 @@ struct MaterialListItem: View {
     @Binding var selectedMaterial: PbrMaterial?
     
     var body: some View {
-        ListItem(text: $material.name) {
+        ListItem(node: material) {
             selectedMaterial = material
         }
     }

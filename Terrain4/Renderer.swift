@@ -213,7 +213,9 @@ class Renderer {
                     object.lights = []
                     
                     ObjectStore.shared.lights.forEach { light in
-                        object.lights.append(light)
+                        if !light.disabled && !(light.model?.disabled ?? true) {
+                            object.lights.append(light)
+                        }
                     }
                 }
             }

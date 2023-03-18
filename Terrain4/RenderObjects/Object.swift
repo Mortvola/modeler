@@ -7,7 +7,7 @@
 
 import Foundation
 
-class Object: Identifiable, ObservableObject, Hashable, Codable {
+class Object: Node, Identifiable, Hashable, Codable {
     static func == (lhs: Object, rhs: Object) -> Bool {
         lhs.id == rhs.id
     }
@@ -20,7 +20,6 @@ class Object: Identifiable, ObservableObject, Hashable, Codable {
 
     var model: Model? = nil
     
-    var name: String
     private static var objectCounter = 0
 
     @Published var translation = Vec3(0, 0, 0)
@@ -31,7 +30,8 @@ class Object: Identifiable, ObservableObject, Hashable, Codable {
     
     init (model: Model) {
         self.model = model
-        self.name = "Object_\(Object.objectCounter)"
+        
+        super.init(name: "Object_\(Object.objectCounter)")
         Object.objectCounter += 1
     }
     
@@ -45,10 +45,12 @@ class Object: Identifiable, ObservableObject, Hashable, Codable {
     public required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
 
-        name = try container.decode(String.self, forKey: .name)
+        let name = try container.decode(String.self, forKey: .name)
         translation = try container.decode(Vec3.self, forKey: .translation)
         rotation = try container.decode(Vec3.self, forKey: .rotation)
         scale = try container.decode(Vec3.self, forKey: .scale)
+        
+        super.init(name: name)
     }
 
     func encode(to encoder: Encoder) throws {

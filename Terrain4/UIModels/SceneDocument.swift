@@ -79,6 +79,7 @@ class SceneDocument: ReferenceFileDocument {
                 }
                 
                 model.lights.forEach { light in
+                    light.model = model
                     newLights.append(light)
                 }
             }

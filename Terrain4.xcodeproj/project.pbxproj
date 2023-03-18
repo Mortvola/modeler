@@ -79,6 +79,8 @@
 		798D3C1629C4A90C00B96C5F /* MetallicLayerDescriptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 798D3C1529C4A90C00B96C5F /* MetallicLayerDescriptor.swift */; };
 		798D3C1829C4A99500B96C5F /* RoughnessLayerDescriptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 798D3C1729C4A99500B96C5F /* RoughnessLayerDescriptor.swift */; };
 		799B4BBA29C6067800B6826A /* TexturesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799B4BB929C6067800B6826A /* TexturesView.swift */; };
+		799B4BBD29C651AE00B6826A /* DirectionalLightView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799B4BBC29C651AE00B6826A /* DirectionalLightView.swift */; };
+		799B4BBF29C652D200B6826A /* DirectionalLight.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799B4BBE29C652D200B6826A /* DirectionalLight.swift */; };
 		79DF5C5729C52D5F0005CF41 /* SceneDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79DF5C5629C52D5F0005CF41 /* SceneDocument.swift */; };
 		79F6D2C129BA58F5007CA69A /* Animator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F6D2C029BA58F5007CA69A /* Animator.swift */; };
 		79F6D2C629BA5C80007CA69A /* AnimatorsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F6D2C529BA5C80007CA69A /* AnimatorsView.swift */; };
@@ -231,6 +233,8 @@
 		798D3C1529C4A90C00B96C5F /* MetallicLayerDescriptor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetallicLayerDescriptor.swift; sourceTree = "<group>"; };
 		798D3C1729C4A99500B96C5F /* RoughnessLayerDescriptor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoughnessLayerDescriptor.swift; sourceTree = "<group>"; };
 		799B4BB929C6067800B6826A /* TexturesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TexturesView.swift; sourceTree = "<group>"; };
+		799B4BBC29C651AE00B6826A /* DirectionalLightView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DirectionalLightView.swift; sourceTree = "<group>"; };
+		799B4BBE29C652D200B6826A /* DirectionalLight.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DirectionalLight.swift; sourceTree = "<group>"; };
 		79DF5C5629C52D5F0005CF41 /* SceneDocument.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDocument.swift; sourceTree = "<group>"; };
 		79F6D2C029BA58F5007CA69A /* Animator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Animator.swift; sourceTree = "<group>"; };
 		79F6D2C529BA5C80007CA69A /* AnimatorsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimatorsView.swift; sourceTree = "<group>"; };
@@ -413,6 +417,7 @@
 			isa = PBXGroup;
 			children = (
 				791E790129B93BB600FB45F3 /* ObjectStore.swift */,
+				799B4BBE29C652D200B6826A /* DirectionalLight.swift */,
 				79DF5C5629C52D5F0005CF41 /* SceneDocument.swift */,
 				798D3BFB29C3CBD100B96C5F /* File */,
 				79F6D2CB29BA7EFA007CA69A /* LIght.swift */,
@@ -552,6 +557,7 @@
 				79F6D2D429BB6236007CA69A /* ObjectsView.swift */,
 				791E78C929B93A2B00FB45F3 /* EditObject.swift */,
 				79F6D2E429BC2C6A007CA69A /* LightDetailsView.swift */,
+				799B4BBC29C651AE00B6826A /* DirectionalLightView.swift */,
 				791E78CD29B93A2B00FB45F3 /* AddObject.swift */,
 			);
 			path = Objects;
@@ -786,6 +792,7 @@
 				791E793029B93D7000FB45F3 /* MaterialManager.swift in Sources */,
 				799B4BBA29C6067800B6826A /* TexturesView.swift in Sources */,
 				79345D3929C509E200E9F074 /* RectangleAllocator.swift in Sources */,
+				799B4BBD29C651AE00B6826A /* DirectionalLightView.swift in Sources */,
 				791E794F29B944D000FB45F3 /* PbrLineShaders.metal in Sources */,
 				791E795329B944D000FB45F3 /* SkyboxShaders.metal in Sources */,
 				791E795129B944D000FB45F3 /* Shaders.metal in Sources */,
@@ -796,6 +803,7 @@
 				798D3C0D29C4162D00B96C5F /* MaterialDescriptor.swift in Sources */,
 				791E792F29B93D7000FB45F3 /* BaseMaterial.swift in Sources */,
 				791E794729B9446A00FB45F3 /* Types.swift in Sources */,
+				799B4BBF29C652D200B6826A /* DirectionalLight.swift in Sources */,
 				798D3BEB29C3613700B96C5F /* NormalsView.swift in Sources */,
 				791E78D329B93A2B00FB45F3 /* TransformsView.swift in Sources */,
 				798D3BF929C3C27400B96C5F /* RoughnessLayer.swift in Sources */,
