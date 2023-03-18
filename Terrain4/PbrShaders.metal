@@ -21,6 +21,7 @@ struct VertexOut {
     float2 texCoords;
     float3 viewPos;
     float3 fragPos;
+    float3 lightVector;
     float3 lightPos0;
     float3 lightPos1;
     float3 lightPos2;
@@ -60,10 +61,13 @@ vertex VertexOut pbrVertexShader(
     vertexOut.fragPos = TBN * worldVertexPosition;
     vertexOut.normal = TBN * (modelMatrix * float4(in.normal, 0.0)).xyz;
     
+    // Convert positions to tangent space
     thread float3 *lightPos = &vertexOut.lightPos0;
     for (int i = 0; i < lights.numberOfLights; i += 1) {
         lightPos[i] = TBN * lights.position[i];
     }
+    
+    vertexOut.lightVector = TBN * uniforms.lightVector;
     
     vertexOut.texCoords = in.texCoord;
 
@@ -82,6 +86,7 @@ float3 computeLo(
 
 fragment float4 pbrFragmentShader(
     VertexOut in [[stage_in]],
+    const device Uniforms& uniforms [[ buffer(BufferIndexUniforms) ]],
     const device Lights& lights [[ buffer(BufferIndexLightPos) ]],
     texture2d<float> albedoMap [[texture(TextureIndexColor)]],
     texture2d<float> normalMap [[texture(TextureIndexNormals)]],
@@ -111,14 +116,15 @@ fragment float4 pbrFragmentShader(
         float attenuation = 1.0 / (distance * distance);
         float3 radiance = lights.intensity[i] * attenuation;
         float3 L = normalize(lightPos[i] - in.fragPos);
-        //    }
-        //    else {
-        //        radiance = uniforms.lightColor;
-        //        L = normalize(in.lightPos);
-        //    }
         
         Lo += computeLo(albedo, metallic, roughness, N, V, L, radiance);
     }
+
+    // Directional light
+    float3 radiance = uniforms.lightColor;
+    float3 L = normalize(-in.lightVector);
+
+    Lo += computeLo(albedo, metallic, roughness, N, V, L, radiance);
 
     // ambient lighting (note that the next IBL tutorial will replace
     // this ambient lighting with environment lighting).

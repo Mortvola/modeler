@@ -16,7 +16,18 @@ struct DirectionalLightView: View {
                 CheckBox(checked: $light.enabled, label: "Enabled")
                 Spacer()
             }
+            HStack {
+                Text("Direction")
+                Spacer()
+            }
             VectorFieldView(vector: $light.direction)
+                .padding(.leading, 16)
+            HStack {
+                Text("Intensity")
+                Spacer()
+            }
+            VectorFieldView(vector: $light.intensity, label: ["Red:", "Green:", "Blue:"])
+                .padding(.leading, 16)
             Spacer()
         }
     }

@@ -14,4 +14,5 @@ class DirectionalLight: Node, Equatable {
     
     @Published var enabled = false
     @Published var direction = Vec3(0, -1, 1).normalize()
+    @Published var intensity = Vec3(25, 25, 25)
 }

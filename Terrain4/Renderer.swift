@@ -278,7 +278,8 @@ class Renderer {
             uniforms[0].projectionMatrix = self.camera.projectionMatrix
             uniforms[0].viewMatrix = self.camera.getViewMatrix()
             uniforms[0].cameraPos = self.camera.cameraOffset
-            uniforms[0].lightVector = self.lightVector
+            uniforms[0].lightVector = ObjectStore.shared.directionalLight.direction
+            uniforms[0].lightColor = ObjectStore.shared.directionalLight.disabled ? Vec3(0, 0, 0) : ObjectStore.shared.directionalLight.intensity
 
             /// Delay getting the currentRenderPassDescriptor until we absolutely need it to avoid
             ///   holding onto the drawable and blocking the display pipeline any longer than necessary

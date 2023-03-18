@@ -54,10 +54,8 @@ typedef struct {
     matrix_float4x4 projectionMatrix;
     matrix_float4x4 viewMatrix;
     vector_float3 lightVector;
+    vector_float3 lightColor;
     vector_float3 cameraPos;
-//    vector_float3 lightPos[4];
-//    vector_float3 lightColor[4];
-//    bool pointLight[4];
 } Uniforms;
 
 typedef struct {

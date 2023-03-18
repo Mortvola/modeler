@@ -9,12 +9,13 @@ import SwiftUI
 
 struct VectorFieldView: View {
     @Binding var vector: Vec3
+    var label: [String] = ["X:", "Y:", "Z:"]
     
     var body: some View {
         VStack {
-            LabeledNumericField(label: "X:", value: $vector[0])
-            LabeledNumericField(label: "Y:", value: $vector[1])
-            LabeledNumericField(label: "Z:", value: $vector[2])
+            LabeledNumericField(label: label[0], value: $vector[0])
+            LabeledNumericField(label: label[1], value: $vector[1])
+            LabeledNumericField(label: label[2], value: $vector[2])
         }
     }
 }
