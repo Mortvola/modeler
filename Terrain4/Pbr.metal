@@ -24,13 +24,13 @@ float DistributionGGX(float3 N, float3 H, float roughness)
 }
 
 // ----------------------------------------------------------------------------
-float GeometrySchlickGGX(float NdotV, float roughness)
+float GeometrySchlickGGX(float NdotX, float roughness)
 {
     float r = (roughness + 1.0);
     float k = (r*r) / 8.0;
 
-    float nom   = NdotV;
-    float denom = NdotV * (1.0 - k) + k;
+    float nom   = NdotX;
+    float denom = NdotX * (1.0 - k) + k;
 
     return nom / denom;
 }

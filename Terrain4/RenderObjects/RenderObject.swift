@@ -45,6 +45,10 @@ class RenderObject: Object {
         throw Errors.notImplemented
     }
     
+    func simpleDraw(renderEncoder: MTLRenderCommandEncoder, modelMatrix: Matrix4x4) throws {
+        throw Errors.notImplemented
+    }
+    
     enum CodingKeys: CodingKey {
         case material
     }

@@ -54,6 +54,8 @@ class Renderer {
     
     private var previousFrameTime: Double?
     
+    private var depthShadowPipeline: DepthShadowMaterial?
+    
     init() {
         self.camera = Camera(world: world)
     }
@@ -94,6 +96,15 @@ class Renderer {
         }
         
         self.depthState = state
+        
+        self.depthShadowPipeline = try DepthShadowMaterial(device: device!, view: view!)
+        
+        let shadowMapSize = 2048
+        let shadowTextureDescriptor = MTLTextureDescriptor.texture2DDescriptor(pixelFormat: .depth32Float, width: shadowMapSize, height: shadowMapSize, mipmapped: false)
+        shadowTextureDescriptor.storageMode = .private
+        shadowTextureDescriptor.usage = [.renderTarget, .shaderRead]
+        
+        ObjectStore.shared.directionalLight.shadowTexture = device?.makeTexture(descriptor: shadowTextureDescriptor)
     }
 
     public func load(lat: Double, lng: Double, dimension: Int) async throws {
@@ -254,6 +265,75 @@ class Renderer {
         self.previousFrameTime = now;
     }
     
+    func renderShadowPass(commandBuffer: MTLCommandBuffer) throws {
+        let renderPassDescriptor = MTLRenderPassDescriptor()
+        renderPassDescriptor.depthAttachment.loadAction = .clear
+        renderPassDescriptor.depthAttachment.storeAction = .store
+        renderPassDescriptor.depthAttachment.clearDepth = 1.0
+        renderPassDescriptor.depthAttachment.texture = ObjectStore.shared.directionalLight.shadowTexture!
+        
+        guard let renderEncoder = commandBuffer.makeRenderCommandEncoder(descriptor: renderPassDescriptor) else {
+            return
+        }
+        
+        renderEncoder.label = "Shadow Pass Encoder"
+        
+        renderEncoder.pushDebugGroup("Shadow Pass")
+
+        renderEncoder.setFrontFacing(.clockwise)
+        renderEncoder.setCullMode(.back)
+        renderEncoder.setDepthStencilState(self.depthState)
+
+        renderEncoder.setVertexBuffer(self.dynamicUniformBuffer, offset: self.uniformBufferOffset, index: BufferIndex.uniforms.rawValue)
+
+        if ObjectStore.shared.directionalLight.shadowCaster {
+            depthShadowPipeline!.prepare(renderEncoder: renderEncoder)
+            
+            let projectionViewMatrix = ObjectStore.shared.directionalLight.getProjectionViewMatrix();
+            
+            for model in ObjectStore.shared.models {
+                for object in model.objects {
+                    let matrix = projectionViewMatrix * object.modelMatrix()
+                    try object.simpleDraw(renderEncoder: renderEncoder, modelMatrix: matrix)
+                }
+            }
+        }
+        
+        renderEncoder.popDebugGroup()
+        
+        renderEncoder.endEncoding()
+    }
+    
+    func renderMainPass(renderPassDescriptor: MTLRenderPassDescriptor, commandBuffer: MTLCommandBuffer) throws {
+        if let renderEncoder = commandBuffer.makeRenderCommandEncoder(descriptor: renderPassDescriptor) {
+            
+            /// Final pass rendering code here
+            renderEncoder.label = "Primary Render Encoder"
+            
+            renderEncoder.pushDebugGroup("Main Pass")
+            
+            renderEncoder.setFrontFacing(.clockwise)
+            renderEncoder.setCullMode(.back)
+            renderEncoder.setDepthStencilState(self.depthState)
+            
+            renderEncoder.setVertexBuffer(self.dynamicUniformBuffer, offset: self.uniformBufferOffset, index: BufferIndex.uniforms.rawValue)
+
+            renderEncoder.setFragmentBuffer(self.dynamicUniformBuffer, offset: self.uniformBufferOffset, index: BufferIndex.uniforms.rawValue)
+
+            renderEncoder.setFragmentTexture(ObjectStore.shared.directionalLight.shadowTexture!, index: TextureIndex.depth.rawValue)
+
+            if self.world.terrainLoaded {
+                try MaterialManager.shared.render(renderEncoder: renderEncoder)
+
+                ObjectStore.shared.skybox?.draw(renderEncoder: renderEncoder)
+            }
+            
+            renderEncoder.popDebugGroup()
+            
+            renderEncoder.endEncoding()
+        }
+    }
+    
     func render(in view: MTKView) throws {
         guard let uniforms = self.uniforms else {
             return
@@ -281,40 +361,18 @@ class Renderer {
             uniforms[0].lightVector = ObjectStore.shared.directionalLight.direction
             uniforms[0].lightColor = ObjectStore.shared.directionalLight.disabled ? Vec3(0, 0, 0) : ObjectStore.shared.directionalLight.intensity
 
+            uniforms[0].lightViewProjectionMatrix = ObjectStore.shared.directionalLight.getProjectionViewMatrix()
+
             /// Delay getting the currentRenderPassDescriptor until we absolutely need it to avoid
             ///   holding onto the drawable and blocking the display pipeline any longer than necessary
             if let renderPassDescriptor = view.currentRenderPassDescriptor {
-                //                renderPassDescriptor.colorAttachments[0].loadAction = .clear
-                //                renderPassDescriptor.colorAttachments[0].storeAction = .store
                 
-                if let renderEncoder = commandBuffer.makeRenderCommandEncoder(descriptor: renderPassDescriptor) {
-                    
-                    /// Final pass rendering code here
-                    renderEncoder.label = "Primary Render Encoder"
-                    
-                    renderEncoder.pushDebugGroup("Draw Box")
-                    
-                    renderEncoder.setFrontFacing(.clockwise)
-                    renderEncoder.setCullMode(.back)
-                    renderEncoder.setDepthStencilState(self.depthState)
-                    
-                    renderEncoder.setVertexBuffer(self.dynamicUniformBuffer, offset: self.uniformBufferOffset, index: BufferIndex.uniforms.rawValue)
-
-                    renderEncoder.setFragmentBuffer(self.dynamicUniformBuffer, offset: self.uniformBufferOffset, index: BufferIndex.uniforms.rawValue)
-
-                    if self.world.terrainLoaded {
-                        try MaterialManager.shared.render(renderEncoder: renderEncoder)
-
-                        ObjectStore.shared.skybox?.draw(renderEncoder: renderEncoder)
-                    }
-                    
-                    renderEncoder.popDebugGroup()
-                    
-                    renderEncoder.endEncoding()
-                    
-                    if let drawable = view.currentDrawable {
-                        commandBuffer.present(drawable)
-                    }
+                try renderShadowPass(commandBuffer: commandBuffer)
+                
+                try renderMainPass(renderPassDescriptor: renderPassDescriptor, commandBuffer: commandBuffer)
+                
+                if let drawable = view.currentDrawable {
+                    commandBuffer.present(drawable)
                 }
             }
             

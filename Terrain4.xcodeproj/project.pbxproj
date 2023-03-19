@@ -81,6 +81,8 @@
 		799B4BBA29C6067800B6826A /* TexturesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799B4BB929C6067800B6826A /* TexturesView.swift */; };
 		799B4BBD29C651AE00B6826A /* DirectionalLightView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799B4BBC29C651AE00B6826A /* DirectionalLightView.swift */; };
 		799B4BBF29C652D200B6826A /* DirectionalLight.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799B4BBE29C652D200B6826A /* DirectionalLight.swift */; };
+		799B4BC129C6853900B6826A /* ShadowShaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = 799B4BC029C6853900B6826A /* ShadowShaders.metal */; };
+		799B4BC329C72D3100B6826A /* DepthShadowMaterial.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799B4BC229C72D3100B6826A /* DepthShadowMaterial.swift */; };
 		79DF5C5729C52D5F0005CF41 /* SceneDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79DF5C5629C52D5F0005CF41 /* SceneDocument.swift */; };
 		79F6D2C129BA58F5007CA69A /* Animator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F6D2C029BA58F5007CA69A /* Animator.swift */; };
 		79F6D2C629BA5C80007CA69A /* AnimatorsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F6D2C529BA5C80007CA69A /* AnimatorsView.swift */; };
@@ -235,6 +237,8 @@
 		799B4BB929C6067800B6826A /* TexturesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TexturesView.swift; sourceTree = "<group>"; };
 		799B4BBC29C651AE00B6826A /* DirectionalLightView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DirectionalLightView.swift; sourceTree = "<group>"; };
 		799B4BBE29C652D200B6826A /* DirectionalLight.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DirectionalLight.swift; sourceTree = "<group>"; };
+		799B4BC029C6853900B6826A /* ShadowShaders.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = ShadowShaders.metal; sourceTree = "<group>"; };
+		799B4BC229C72D3100B6826A /* DepthShadowMaterial.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DepthShadowMaterial.swift; sourceTree = "<group>"; };
 		79DF5C5629C52D5F0005CF41 /* SceneDocument.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDocument.swift; sourceTree = "<group>"; };
 		79F6D2C029BA58F5007CA69A /* Animator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Animator.swift; sourceTree = "<group>"; };
 		79F6D2C529BA5C80007CA69A /* AnimatorsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimatorsView.swift; sourceTree = "<group>"; };
@@ -320,9 +324,10 @@
 				791E794A29B944D000FB45F3 /* LineShaders.metal */,
 				791E794829B944D000FB45F3 /* Pbr.metal */,
 				791E794929B944D000FB45F3 /* PbrLineShaders.metal */,
-				791E794C29B944D000FB45F3 /* PbrShaders.metal */,
 				791E794B29B944D000FB45F3 /* Shaders.metal */,
+				791E794C29B944D000FB45F3 /* PbrShaders.metal */,
 				791E794D29B944D000FB45F3 /* SkyboxShaders.metal */,
+				799B4BC029C6853900B6826A /* ShadowShaders.metal */,
 				791E795429B9457700FB45F3 /* Info.plist */,
 				791E78B429B9388400FB45F3 /* AppDelegate.swift */,
 				791E793829B9433F00FB45F3 /* Camera.swift */,
@@ -456,6 +461,7 @@
 			children = (
 				798D3C0E29C4A71100B96C5F /* Descriptors */,
 				791E792529B93D7000FB45F3 /* PbrLineMaterial.swift */,
+				799B4BC229C72D3100B6826A /* DepthShadowMaterial.swift */,
 				791E792629B93D7000FB45F3 /* PbrMaterial.swift */,
 				798D3BF029C3C17E00B96C5F /* MaterialLayer.swift */,
 				798D3BF229C3C1B200B96C5F /* AlbedoLayer.swift */,
@@ -748,6 +754,7 @@
 				79F6D2D529BB6236007CA69A /* ObjectsView.swift in Sources */,
 				791E792329B93D6000FB45F3 /* TriangleMesh.swift in Sources */,
 				791E790F29B93BDC00FB45F3 /* Vec3.swift in Sources */,
+				799B4BC129C6853900B6826A /* ShadowShaders.metal in Sources */,
 				798D3C1629C4A90C00B96C5F /* MetallicLayerDescriptor.swift in Sources */,
 				79F6D2C129BA58F5007CA69A /* Animator.swift in Sources */,
 				791E792C29B93D7000FB45F3 /* PbrMaterial.swift in Sources */,
@@ -811,6 +818,7 @@
 				798D3C1429C4A7E800B96C5F /* NormalsLayerDescriptor.swift in Sources */,
 				798D3BF529C3C1FB00B96C5F /* MetallicLayer.swift in Sources */,
 				79F6D30029C16FC5007CA69A /* Selected.swift in Sources */,
+				799B4BC329C72D3100B6826A /* DepthShadowMaterial.swift in Sources */,
 				791E790E29B93BDC00FB45F3 /* Matrix4x4.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

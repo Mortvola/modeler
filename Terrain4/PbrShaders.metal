@@ -19,14 +19,15 @@ struct VertexIn {
 struct VertexOut {
     float4 position [[position]];
     float2 texCoords;
-    float3 viewPos;
-    float3 fragPos;
+    float3 tangentViewPos;
+    float3 tangentFragPos;
+    float3 worldFragPos;
     float3 lightVector;
     float3 lightPos0;
     float3 lightPos1;
     float3 lightPos2;
     float3 lightPos3;
-    float3 normal;
+//    float3 tangentNormal;
 };
 
 matrix_float3x3 subMatrix3x3(matrix_float4x4 m4x4) {
@@ -46,9 +47,9 @@ vertex VertexOut pbrVertexShader(
 ) {
     VertexOut vertexOut;
     
-    float3 worldVertexPosition = float3(modelMatrix * float4(in.position, 1.0));
+    vertexOut.worldFragPos = float3(modelMatrix * float4(in.position, 1.0));
     
-    vertexOut.position =  uniforms.projectionMatrix * uniforms.viewMatrix * float4(worldVertexPosition, 1.0);
+    vertexOut.position =  uniforms.projectionMatrix * uniforms.viewMatrix * float4(vertexOut.worldFragPos, 1.0);
 
     float3 T = normalize(normalMatrix * in.tangent);
     float3 N = normalize(normalMatrix * in.normal);
@@ -57,9 +58,9 @@ vertex VertexOut pbrVertexShader(
 
     float3x3 TBN = transpose(float3x3(T, B, N));
     
-    vertexOut.viewPos = TBN * uniforms.cameraPos;
-    vertexOut.fragPos = TBN * worldVertexPosition;
-    vertexOut.normal = TBN * (modelMatrix * float4(in.normal, 0.0)).xyz;
+    vertexOut.tangentViewPos = TBN * uniforms.cameraPos;
+    vertexOut.tangentFragPos = TBN * vertexOut.worldFragPos;
+//    vertexOut.tangentNormal = TBN * (modelMatrix * float4(in.normal, 0.0)).xyz;
     
     // Convert positions to tangent space
     thread float3 *lightPos = &vertexOut.lightPos0;
@@ -84,6 +85,34 @@ float3 computeLo(
     float3 radiance
 );
 
+float shadowed(
+             float3 worldPos,
+             const device float4x4 &viewProjectionMatrix,
+             depth2d<float, access::sample> shadowMap
+) {
+    float4 pos = viewProjectionMatrix * float4(worldPos, 1.0);
+    // NDC range from X -1 to 1, Y -1 to 1 and Z 0 to 1
+    // The perspective divide isn't necessary for directional lights be we will
+    // do it anyway to support point lights.
+    float3 ndc = pos.xyz / pos.w; // After this the z coord holds the depth value
+    
+    // Convert coordinates to texture coordinates ranging from 0 to 1 in both directions.
+    float2 coords = ndc.xy * 0.5 + 0.5;
+    coords.y = 1 - coords.y;
+    
+    constexpr sampler shadowSampler(coord::normalized,
+                                    address::clamp_to_edge,
+                                    filter::linear,
+                                    compare_func::greater_equal);
+
+    // Bias to help avoid shadow acne.
+    // Todo: adjust this based on the light angle to the surface
+    float bias = 0.005;
+    float shadowed = shadowMap.sample_compare(shadowSampler, coords, ndc.z - bias);
+    
+    return shadowed;
+}
+
 fragment float4 pbrFragmentShader(
     VertexOut in [[stage_in]],
     const device Uniforms& uniforms [[ buffer(BufferIndexUniforms) ]],
@@ -93,29 +122,27 @@ fragment float4 pbrFragmentShader(
     texture2d<float> metallicMap [[texture(TextureIndexMetallic)]],
     texture2d<float> roughnessMap [[texture(TextureIndexRoughness)]],
     texture2d<float> aoMap [[texture(TextureIndexAo)]],
-    sampler sampler [[sampler(SamplerIndexSampler)]]
+    sampler sampler [[sampler(SamplerIndexSampler)]],
+    depth2d<float, access::sample> shadowMap [[texture(TextureIndexDepth)]]
 ) {
     float3 albedo = pow(albedoMap.sample(sampler, in.texCoords).rgb, float3(2.2));
     
-    float3 tNormal = normalize(normalMap.sample(sampler, in.texCoords).rgb * 2 - 1);
-    // float3 tNormal = normalize(float3(0, 0, 5)); // in.normal;
-
     float metallic = metallicMap.sample(sampler, in.texCoords).r;
     float roughness = roughnessMap.sample(sampler, in.texCoords).r;
     float ao = 1.0; // aoMap.sample(sampler, fragmentIn.texCoords).r;
     
-    float3 N = tNormal;
-    float3 V = normalize(in.viewPos - in.fragPos);
+    float3 N = normalize(normalMap.sample(sampler, in.texCoords).rgb * 2 - 1);
+    float3 V = normalize(in.tangentViewPos - in.tangentFragPos);
 
     float3 Lo = 0;
     
-    thread float3 *lightPos = &in.lightPos0;
+    thread float3 *tangentLightPos = &in.lightPos0;
     for (int i = 0; i < lights.numberOfLights; i++) {
         //    if (uniforms.pointLight) {
-        float distance = length(lightPos[i] - in.fragPos);
+        float distance = length(tangentLightPos[i] - in.tangentFragPos);
         float attenuation = 1.0 / (distance * distance);
         float3 radiance = lights.intensity[i] * attenuation;
-        float3 L = normalize(lightPos[i] - in.fragPos);
+        float3 L = normalize(tangentLightPos[i] - in.tangentFragPos);
         
         Lo += computeLo(albedo, metallic, roughness, N, V, L, radiance);
     }
@@ -124,7 +151,9 @@ fragment float4 pbrFragmentShader(
     float3 radiance = uniforms.lightColor;
     float3 L = normalize(-in.lightVector);
 
-    Lo += computeLo(albedo, metallic, roughness, N, V, L, radiance);
+    float shadowFactor = 1 - shadowed(in.worldFragPos, uniforms.lightViewProjectionMatrix, shadowMap);
+    
+    Lo += computeLo(albedo, metallic, roughness, N, V, L, radiance) * shadowFactor;
 
     // ambient lighting (note that the next IBL tutorial will replace
     // this ambient lighting with environment lighting).

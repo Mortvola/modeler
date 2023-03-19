@@ -49,11 +49,13 @@ class MaterialManager: ObservableObject {
     
     func render(renderEncoder: MTLRenderCommandEncoder) throws {
         try self.materials.forEach { key, entry in
-            entry.material.prepare(renderEncoder: renderEncoder)
-            
-            try entry.objects.forEach { object in
-                if !object.disabled && !(object.model?.disabled ?? true) {
-                    try object.draw(renderEncoder: renderEncoder, modelMatrix: object.modelMatrix())
+            if entry.objects.count > 0 {
+                entry.material.prepare(renderEncoder: renderEncoder)
+                
+                try entry.objects.forEach { object in
+                    if !object.disabled && !(object.model?.disabled ?? true) {
+                        try object.draw(renderEncoder: renderEncoder, modelMatrix: object.modelMatrix())
+                    }
                 }
             }
         }

@@ -17,6 +17,10 @@ struct DirectionalLightView: View {
                 Spacer()
             }
             HStack {
+                CheckBox(checked: $light.shadowCaster, label: "Shadow Caster")
+                Spacer()
+            }
+            HStack {
                 Text("Direction")
                 Spacer()
             }

@@ -30,10 +30,6 @@ class Mesh: RenderObject {
 
         renderEncoder.setVertexBytes(&normalMatrix, length: MemoryLayout<matrix_float3x3>.size, index: BufferIndex.normalMatrix.rawValue)
 
-        // Pass the model matrix to the vertex shader.
-        var modelMatrixCopy = modelMatrix
-        renderEncoder.setVertexBytes(&modelMatrixCopy, length: MemoryLayout<Matrix4x4>.size, index: BufferIndex.modelMatrix.rawValue)
-
         // Pass the light information
         var lightData = Lights()
         lightData.numberOfLights = Int32(self.lights.count)
@@ -57,6 +53,14 @@ class Mesh: RenderObject {
         renderEncoder.setVertexBytes(&lightData, length: MemoryLayout<Lights>.size, index: BufferIndex.lightPos.rawValue)
         renderEncoder.setFragmentBytes(&lightData, length: MemoryLayout<Lights>.size, index: BufferIndex.lightPos.rawValue)
 
+        try self.simpleDraw(renderEncoder: renderEncoder, modelMatrix: modelMatrix)
+    }
+    
+    override func simpleDraw(renderEncoder: MTLRenderCommandEncoder, modelMatrix: Matrix4x4) throws {
+        // Pass the model matrix to the vertex shader.
+        var modelMatrixCopy = modelMatrix
+        renderEncoder.setVertexBytes(&modelMatrixCopy, length: MemoryLayout<Matrix4x4>.size, index: BufferIndex.modelMatrix.rawValue)
+
         // Pass the vertex and index information ot the vertex shader
         for (i, buffer) in self.mesh.vertexBuffers.enumerated() {
             renderEncoder.setVertexBuffer(buffer.buffer, offset: buffer.offset, index: i)
@@ -66,7 +70,7 @@ class Mesh: RenderObject {
             renderEncoder.drawIndexedPrimitives(type: submesh.primitiveType, indexCount: submesh.indexCount, indexType: submesh.indexType, indexBuffer: submesh.indexBuffer.buffer, indexBufferOffset: submesh.indexBuffer.offset)
         }
     }
-    
+
     enum CodingKeys: CodingKey {
         case points
         case texcoords

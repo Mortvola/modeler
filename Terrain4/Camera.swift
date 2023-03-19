@@ -24,7 +24,7 @@ class Camera {
     
     let velocity: Float = 1.1176 * 10; // meters per second
 
-    var projectionMatrix: Matrix4x4 = Matrix4x4()
+    var projectionMatrix = Matrix4x4()
     
     var world: World
     
@@ -111,6 +111,6 @@ class Camera {
         /// Respond to drawable size or orientation changes here
         
         let aspect = Float(height) / Float(width)
-        self.projectionMatrix = matrix_perspective_left_hand(fovyRadians: degreesToRadians(45), aspect: aspect, nearZ: 1, farZ: 16000.0)
+        self.projectionMatrix = Matrix4x4.perspectiveLeftHand(fovyRadians: degreesToRadians(45), aspect: aspect, nearZ: 1, farZ: 16000.0)
     }
 }

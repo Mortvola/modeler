@@ -109,26 +109,35 @@ extension Matrix4x4 {
     func multiply(_ other: Vec4) -> Vec4 {
         matrix_multiply(self, other)
     }
-}
+    
+    static func perspectiveLeftHand(fovyRadians fovy: Float, aspect: Float, nearZ: Float, farZ: Float) -> Matrix4x4 {
+        let ys = 1 / tanf(fovy * 0.5);
+        let xs = ys * aspect;
+        let zs = farZ / (farZ - nearZ);
+        return Matrix4x4(columns: (
+            vector_float4(xs, 0, 0, 0),
+            vector_float4(0, ys, 0, 0),
+            vector_float4(0, 0, zs, 1),
+            vector_float4(0, 0, -nearZ * zs, 0)
+        ))
+    }
+    
+    static func orthographic(left: Float, right: Float, top: Float, bottom: Float, near: Float, far: Float) -> Matrix4x4 {
+        let xScale = 2 / (right - left)
+        let yScale = 2 / (top - bottom)
+        let zScale = 1 / (far - near)
 
-//func matrix_perspective_right_hand(fovyRadians fovy: Float, aspect: Float, nearZ: Float, farZ: Float) -> Matrix4x4 {
-//    let ys = 1 / tanf(fovy * 0.5)
-//    let xs = ys / aspect
-//    let zs = 1 / (nearZ - farZ)
-//    return Matrix4x4.init(columns:(vector_float4(xs,  0, 0,   0),
-//                                         vector_float4( 0, ys, 0,   0),
-//                                         vector_float4( 0,  0, (farZ - nearZ) * zs, -1),
-//                                         vector_float4( 0,  0, 2 * farZ * nearZ * zs, 0)))
-//}
-
-func matrix_perspective_left_hand(fovyRadians fovy: Float, aspect: Float, nearZ: Float, farZ: Float) -> Matrix4x4 {
-    let ys = 1 / tanf(fovy * 0.5);
-    let xs = ys * aspect;
-    let zs = farZ / (farZ - nearZ);
-    return Matrix4x4(columns: (vector_float4(xs, 0, 0, 0),
-                                     vector_float4(0, ys, 0, 0),
-                                     vector_float4(0, 0, zs, 1),
-                                     vector_float4(0, 0, -nearZ * zs, 0)))
+        let xOffset = (right + left) * 0.5 * xScale
+        let yOffset = (top + bottom) * 0.5 * yScale
+        let zOffset = near * zScale
+        
+        return Matrix4x4(columns: (
+            vector_float4(xScale, 0, 0, 0),
+            vector_float4(0, yScale, 0, 0),
+            vector_float4(0, 0, zScale, 0),
+            vector_float4(-xOffset, -yOffset, -zOffset, 1)
+        ))
+    }
 }
 
 func degreesToRadians(_ degrees: Float) -> Float {

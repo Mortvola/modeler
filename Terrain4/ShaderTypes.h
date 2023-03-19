@@ -43,7 +43,8 @@ typedef NS_ENUM(EnumBackingType, TextureIndex) {
     TextureIndexNormals = 1,
     TextureIndexMetallic = 2,
     TextureIndexRoughness = 3,
-    TextureIndexAo = 4
+    TextureIndexAo = 4,
+    TextureIndexDepth = 5
 };
 
 typedef NS_ENUM(EnumBackingType, SamplerIndex) {
@@ -56,6 +57,7 @@ typedef struct {
     vector_float3 lightVector;
     vector_float3 lightColor;
     vector_float3 cameraPos;
+    matrix_float4x4 lightViewProjectionMatrix;
 } Uniforms;
 
 typedef struct {
