@@ -103,12 +103,7 @@ class Renderer {
         
         self.depthShadowPipeline = try DepthShadowMaterial(device: device!, view: view!)
         
-        let shadowMapSize = 2048
-        let shadowTextureDescriptor = MTLTextureDescriptor.texture2DDescriptor(pixelFormat: .depth32Float, width: shadowMapSize, height: shadowMapSize, mipmapped: false)
-        shadowTextureDescriptor.storageMode = .private
-        shadowTextureDescriptor.usage = [.renderTarget, .shaderRead]
-        
-        file.objectStore.directionalLight.shadowTexture = device?.makeTexture(descriptor: shadowTextureDescriptor)
+        file.objectStore.directionalLight.createShadowTexture(device: device!)
     }
 
     public func load(lat: Double, lng: Double, dimension: Int) async throws {
