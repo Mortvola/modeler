@@ -61,7 +61,7 @@ class Renderer {
     init() {
         self.camera = Camera(world: world)
     }
-
+    
     func initialize(file: SceneDocument, metalKitView: MTKView) throws {
         self.file = file
         
@@ -69,23 +69,14 @@ class Renderer {
         
         self.device = metalKitView.device!
         self.view = metalKitView
-
+        
         guard let queue = metalKitView.device!.makeCommandQueue() else {
             throw Errors.makeCommandQueueFailed
         }
         
         self.commandQueue = queue
-        
-        let uniformBufferSize = alignedUniformsSize * maxBuffersInFlight
-        
-        guard let buffer = metalKitView.device!.makeBuffer(length:uniformBufferSize, options:[MTLResourceOptions.storageModeShared]) else {
-            throw Errors.makeBufferFailed
-        }
 
-        buffer.label = "UniformBuffer"
-        self.dynamicUniformBuffer = buffer
-
-        self.uniforms = UnsafeMutableRawPointer(buffer.contents()).bindMemory(to:Uniforms.self, capacity:1)
+        try makeUniformsBuffer()
         
         metalKitView.depthStencilPixelFormat = MTLPixelFormat.depth32Float
         metalKitView.colorPixelFormat = .bgra8Unorm_srgb
@@ -105,30 +96,43 @@ class Renderer {
         
         file.objectStore.directionalLight.createShadowTexture(device: device!)
     }
-
+    
+    func makeUniformsBuffer() throws {
+        let uniformBufferSize = alignedUniformsSize * maxBuffersInFlight
+        
+        guard let buffer = self.view!.device!.makeBuffer(length:uniformBufferSize, options:[MTLResourceOptions.storageModeShared]) else {
+            throw Errors.makeBufferFailed
+        }
+        
+        buffer.label = "UniformBuffer"
+        self.dynamicUniformBuffer = buffer
+        
+        self.uniforms = UnsafeMutableRawPointer(buffer.contents()).bindMemory(to:Uniforms.self, capacity:1)
+    }
+    
     public func load(lat: Double, lng: Double, dimension: Int) async throws {
         if self.test {
-//            try await TestMesh(device: self.device, view: self.view)
+            //            try await TestMesh(device: self.device, view: self.view)
             
             self.world.terrainLoaded = true
         }
         else {
             self.initializeLightVector(latitude: lat)
-
+            
             let latLng = LatLng(lat, lng)
             let (x, z) = latLngToTerrainTile(latLng.lat, latLng.lng, dimension);
-
+            
             let swLatLng = terrainTileToLatLng(Double(x), Double(z), dimension);
             let neLatLng = terrainTileToLatLng(Double(x + 1), Double(z + 1), dimension);
             let latLngCenter = LatLng(
                 swLatLng.lat + (neLatLng.lat - swLatLng.lat) / 2,
                 swLatLng.lng + (neLatLng.lng - swLatLng.lng) / 2
             )
-
+            
             self.camera.scale = cos(degreesToRadians(Float(latLngCenter.lat)));
-
+            
             try await self.world.loadTiles(x: x, z: z, dimension: dimension, renderer: self)
-
+            
             let cameraOffset = self.getCameraOffset(latLng: latLng, latLngCenter: latLngCenter)
             self.camera.cameraOffset = Vec3(cameraOffset.0, self.camera.cameraOffset.y, cameraOffset.1)
         }
@@ -147,11 +151,11 @@ class Renderer {
     private func getCameraOffset(latLng: LatLng, latLngCenter: LatLng) -> (Float, Float) {
         let positionMerc = latLngToMercator(lat: latLng.lat, lng: latLng.lng)
         let centerMerc = latLngToMercator(lat: latLngCenter.lat, lng: latLngCenter.lng)
-
-      return (
-        Float(positionMerc.0 - centerMerc.0),
-        Float(positionMerc.1 - centerMerc.1)
-      )
+        
+        return (
+            Float(positionMerc.0 - centerMerc.0),
+            Float(positionMerc.1 - centerMerc.1)
+        )
     }
     
     private func updateDynamicBufferState() {
@@ -171,18 +175,35 @@ class Renderer {
     private func updateTimeOfDay(elapsedTime: Double) {
         self.hour += Float((1 / 10.0) * elapsedTime)
         self.hour.formTruncatingRemainder(dividingBy: 24.0)
-
+        
         self.lightVector = getSunLightVector(day: self.day, hour: Double(self.hour), latitude: self.latitude)
     }
+    
+    func getElapsedTime() -> Double? {
+        let now = ProcessInfo.processInfo.systemUptime
 
+        defer {
+            previousFrameTime = now
+        }
+        
+        if MovieManager.shared.recording {
+            return 1 / 30.0
+        }
+        else {
+            if let previousFrameTime = previousFrameTime {
+                let elapsedTime = now - previousFrameTime
+                
+                return elapsedTime
+            }
+        }
+        
+        return nil
+    }
+    
     private func updateState() {
         /// Update any game state before rendering
-
-        let now = ProcessInfo.processInfo.systemUptime
         
-        if let previousFrameTime = self.previousFrameTime {
-            let elapsedTime = now - previousFrameTime
-            
+        if let elapsedTime = getElapsedTime() {
             self.camera.updatePostion(elapsedTime: elapsedTime)
             
             self.updateTimeOfDay(elapsedTime: elapsedTime)
@@ -196,11 +217,11 @@ class Renderer {
             file!.objectStore.models.forEach { model in
                 let transform = model.transforms.reversed().reduce(Matrix4x4.identity()) { accum, transform in
                     var t = transform.values
-
+                    
                     if let animator = transform.animator {
                         t = t.add(animator.accum)
                     }
-
+                    
                     switch(transform.transform) {
                     case .translate:
                         return accum.translate(t.x, t.y, t.z)
@@ -217,7 +238,7 @@ class Renderer {
                 }
                 
                 model.modelMatrix = transform
-
+                
                 model.objects.forEach { object in
                     
                     object.lights = []
@@ -230,38 +251,36 @@ class Renderer {
                 }
             }
             
-//            if Lights.shared.rotateObject {
-//                if let testModel = self.testModel {
-//                    let r = Float((2 * .pi) / 4 * elapsedTime)
-//                    testModel.rotation += r
-//
-//                    if testModel.rotation > 2 * .pi {
-//                        testModel.rotation = (2 * .pi).remainder(dividingBy: 2 * .pi)
-//                    }
-//
-//                    testModel.setRotationY(radians: testModel.rotation, axis: Vec3(0, 1, 0))
-//                }
-//            }
+            //            if Lights.shared.rotateObject {
+            //                if let testModel = self.testModel {
+            //                    let r = Float((2 * .pi) / 4 * elapsedTime)
+            //                    testModel.rotation += r
+            //
+            //                    if testModel.rotation > 2 * .pi {
+            //                        testModel.rotation = (2 * .pi).remainder(dividingBy: 2 * .pi)
+            //                    }
+            //
+            //                    testModel.setRotationY(radians: testModel.rotation, axis: Vec3(0, 1, 0))
+            //                }
+            //            }
             
-//            if Lights.shared.rotateLight {
-//                let r = Float((2 * .pi) / 4 * elapsedTime)
-//                Lights.shared.rotation += r
-//
-//                if Lights.shared.rotation > 2 * .pi {
-//                    Lights.shared.rotation = (2 * .pi).remainder(dividingBy: 2 * .pi)
-//                }
-//
-//                let translation = matrix4x4_translation(0, 0, -11)
-//                let rotation = Matrix4x4.rotation(radians: Lights.shared.rotation, axis: Vec3(0, 1, 0))
-//
-//                var position = translation.multiply(Vec4(0, 0, 0, 1))
-//                position = rotation.multiply(position)
-//
-//                Lights.shared.position = Vec3(position.x, position.y, position.z)
-//            }
+            //            if Lights.shared.rotateLight {
+            //                let r = Float((2 * .pi) / 4 * elapsedTime)
+            //                Lights.shared.rotation += r
+            //
+            //                if Lights.shared.rotation > 2 * .pi {
+            //                    Lights.shared.rotation = (2 * .pi).remainder(dividingBy: 2 * .pi)
+            //                }
+            //
+            //                let translation = matrix4x4_translation(0, 0, -11)
+            //                let rotation = Matrix4x4.rotation(radians: Lights.shared.rotation, axis: Vec3(0, 1, 0))
+            //
+            //                var position = translation.multiply(Vec4(0, 0, 0, 1))
+            //                position = rotation.multiply(position)
+            //
+            //                Lights.shared.position = Vec3(position.x, position.y, position.z)
+            //            }
         }
-        
-        self.previousFrameTime = now;
     }
     
     func renderShadowPass(commandBuffer: MTLCommandBuffer) throws {
@@ -278,13 +297,13 @@ class Renderer {
         renderEncoder.label = "Shadow Pass Encoder"
         
         renderEncoder.pushDebugGroup("Shadow Pass")
-
+        
         renderEncoder.setFrontFacing(.clockwise)
         renderEncoder.setCullMode(.back)
         renderEncoder.setDepthStencilState(self.depthState)
-
+        
         renderEncoder.setVertexBuffer(self.dynamicUniformBuffer, offset: self.uniformBufferOffset, index: BufferIndex.uniforms.rawValue)
-
+        
         if file!.objectStore.directionalLight.shadowCaster {
             depthShadowPipeline!.prepare(renderEncoder: renderEncoder)
             
@@ -320,14 +339,14 @@ class Renderer {
             renderEncoder.setDepthStencilState(self.depthState)
             
             renderEncoder.setVertexBuffer(self.dynamicUniformBuffer, offset: self.uniformBufferOffset, index: BufferIndex.uniforms.rawValue)
-
+            
             renderEncoder.setFragmentBuffer(self.dynamicUniformBuffer, offset: self.uniformBufferOffset, index: BufferIndex.uniforms.rawValue)
-
+            
             renderEncoder.setFragmentTexture(file!.objectStore.directionalLight.shadowTexture!, index: TextureIndex.depth.rawValue)
-
+            
             if self.world.terrainLoaded {
                 try MaterialManager.shared.render(renderEncoder: renderEncoder)
-
+                
                 file!.objectStore.skybox?.draw(renderEncoder: renderEncoder)
             }
             
@@ -355,7 +374,7 @@ class Renderer {
             }
             
             self.updateDynamicBufferState()
-                        
+            
             self.updateState()
             
             uniforms[0].projectionMatrix = self.camera.projectionMatrix
@@ -363,9 +382,9 @@ class Renderer {
             uniforms[0].cameraPos = self.camera.cameraOffset
             uniforms[0].lightVector = file!.objectStore.directionalLight.direction
             uniforms[0].lightColor = file!.objectStore.directionalLight.disabled ? Vec3(0, 0, 0) : file!.objectStore.directionalLight.intensity
-
+            
             uniforms[0].lightViewProjectionMatrix = file!.objectStore.directionalLight.getProjectionViewMatrix()
-
+            
             /// Delay getting the currentRenderPassDescriptor until we absolutely need it to avoid
             ///   holding onto the drawable and blocking the display pipeline any longer than necessary
             if let renderPassDescriptor = view.currentRenderPassDescriptor {
@@ -380,10 +399,70 @@ class Renderer {
             }
             
             commandBuffer.commit()
+            
+            if MovieManager.shared.recording {
+                if let texture = view.currentDrawable?.texture, !texture.isFramebufferOnly {
+                    commandBuffer.waitUntilCompleted()
+                    
+                    if let image = try? texture.toImage() {
+                        print("captured image \(image.width)x\(image.height)")
+                        MovieManager.shared.addFrame(image: image) {
+                            view.framebufferOnly = true
+                        }
+                    }
+                }
+            }
         }
     }
     
     public func mtkView(_ view: MTKView, drawableSizeWillChange size: CGSize) {
         self.camera.updateViewDimensions(width: Float(size.width), height: Float(size.height))
+    }
+
+    func startVideoCapture() {
+        view!.framebufferOnly = false
+
+        Task {
+            let width = 1280
+            let height = 720
+            try? MovieManager.shared.startMovieCreation(width: width, height: height, duration: 10)
+        }
+    }
+}
+
+extension MTLTexture {
+  
+    func bytes() throws -> UnsafeMutableRawPointer {
+        let width = self.width
+        let height = self.height
+        let rowBytes = self.width * 4
+        let p = UnsafeMutableRawPointer.allocate(byteCount: width * height * 4, alignment: 0)
+
+        self.getBytes(p, bytesPerRow: rowBytes, from: MTLRegionMake2D(0, 0, width, height), mipmapLevel: 0)
+
+        return p
+    }
+  
+    func toImage() throws -> CGImage? {
+        let p = try bytes()
+    
+        let pColorSpace = CGColorSpaceCreateDeviceRGB()
+    
+        let rawBitmapInfo = CGImageAlphaInfo.noneSkipFirst.rawValue | CGBitmapInfo.byteOrder32Little.rawValue
+        let bitmapInfo:CGBitmapInfo = CGBitmapInfo(rawValue: rawBitmapInfo)
+    
+        let selftureSize = self.width * self.height * 4
+        let rowBytes = self.width * 4
+        let provider = CGDataProvider(dataInfo: nil, data: p, size: selftureSize) { _, _, _ in
+              
+        }
+      
+        guard let provider = provider else {
+            throw Errors.mallocError
+        }
+        
+        let cgImage = CGImage(width: self.width, height: self.height, bitsPerComponent: 8, bitsPerPixel: 32, bytesPerRow: rowBytes, space: pColorSpace, bitmapInfo: bitmapInfo, provider: provider, decode: nil, shouldInterpolate: true, intent: CGColorRenderingIntent.defaultIntent)!
+    
+        return cgImage
     }
 }

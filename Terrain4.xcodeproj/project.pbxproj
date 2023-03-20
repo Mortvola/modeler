@@ -62,6 +62,7 @@
 		791E795329B944D000FB45F3 /* SkyboxShaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = 791E794D29B944D000FB45F3 /* SkyboxShaders.metal */; };
 		7921DF6F29C7E5EF0013E317 /* UndoProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7921DF6E29C7E5EF0013E317 /* UndoProvider.swift */; };
 		7921DF7129C888310013E317 /* ModelTreeListItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7921DF7029C888310013E317 /* ModelTreeListItem.swift */; };
+		7921DF7329C8A58D0013E317 /* MovieManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7921DF7229C8A58D0013E317 /* MovieManager.swift */; };
 		79345D3929C509E200E9F074 /* RectangleAllocator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79345D3629C509E200E9F074 /* RectangleAllocator.swift */; };
 		798D3BE929C35EE600B96C5F /* AlbedoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 798D3BE829C35EE600B96C5F /* AlbedoView.swift */; };
 		798D3BEB29C3613700B96C5F /* NormalsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 798D3BEA29C3613700B96C5F /* NormalsView.swift */; };
@@ -220,6 +221,7 @@
 		791E795429B9457700FB45F3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		7921DF6E29C7E5EF0013E317 /* UndoProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UndoProvider.swift; sourceTree = "<group>"; };
 		7921DF7029C888310013E317 /* ModelTreeListItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelTreeListItem.swift; sourceTree = "<group>"; };
+		7921DF7229C8A58D0013E317 /* MovieManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieManager.swift; sourceTree = "<group>"; };
 		79345D3629C509E200E9F074 /* RectangleAllocator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RectangleAllocator.swift; sourceTree = "<group>"; };
 		798D3BE829C35EE600B96C5F /* AlbedoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlbedoView.swift; sourceTree = "<group>"; };
 		798D3BEA29C3613700B96C5F /* NormalsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NormalsView.swift; sourceTree = "<group>"; };
@@ -341,6 +343,7 @@
 				791E794029B943E800FB45F3 /* RenderView.swift */,
 				791E793429B9430E00FB45F3 /* RenderDelegate.swift */,
 				791E793229B9430E00FB45F3 /* Renderer.swift */,
+				7921DF7229C8A58D0013E317 /* MovieManager.swift */,
 				791E793329B9430E00FB45F3 /* RenderViewController.swift */,
 				791E793929B9433F00FB45F3 /* Skybox.swift */,
 				791E794429B9443F00FB45F3 /* Sun.swift */,
@@ -818,6 +821,7 @@
 				791E792F29B93D7000FB45F3 /* BaseMaterial.swift in Sources */,
 				791E794729B9446A00FB45F3 /* Types.swift in Sources */,
 				799B4BBF29C652D200B6826A /* DirectionalLight.swift in Sources */,
+				7921DF7329C8A58D0013E317 /* MovieManager.swift in Sources */,
 				798D3BEB29C3613700B96C5F /* NormalsView.swift in Sources */,
 				791E78D329B93A2B00FB45F3 /* TransformsView.swift in Sources */,
 				798D3BF929C3C27400B96C5F /* RoughnessLayer.swift in Sources */,

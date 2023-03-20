@@ -15,5 +15,14 @@ struct TestApp: App {
         DocumentGroup(newDocument: { SceneDocument() }) { file in
             ContentView(file: file.document)
         }
+        .commands {
+            CommandMenu("Video") {
+                Button {
+                    Renderer.shared.startVideoCapture()
+                } label: {
+                    Text("Record")
+                }
+            }
+        }
     }
 }

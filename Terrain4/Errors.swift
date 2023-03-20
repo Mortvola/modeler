@@ -23,4 +23,7 @@ enum Errors: Error {
     case notImplemented
     case modelNotSelected
     case unknownGeometryType
+    case mallocError
+    case invalidURL
+    case invalidAssetWriterInput
 }
