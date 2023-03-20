@@ -20,7 +20,7 @@ struct ModelsView: View {
                         objectStore.selectModel(model);
                     }
                     .selected(selected: objectStore.selectedNode == SelectedNode.model(model))
-                    ObjectsView(model: model)
+                    ObjectsView(objectStore: objectStore, model: model)
                         .padding(.leading, 16)
                 }
                 ListItem(node: objectStore.directionalLight) {
