@@ -19,7 +19,9 @@ struct AnimatorDetailsView: View {
             VStack {
                 HStack {
                     Text("Name:")
-                    TextField("Name", text: $animator.name)
+                    UndoProvider($animator.name) { $value in
+                        TextField("Name", text: $value)
+                    }
                 }
                 VectorFieldView(vector: $animator.delta)
             }

@@ -73,12 +73,8 @@ class Node: ObservableObject {
 }
 
 class ObjectStore: ObservableObject {
-    static let shared = ObjectStore()
-    
     @Published var models: [Model] = []
     @Published var selectedNode: SelectedNode? = nil
-//    @Published var selectedObject: RenderObject? = nil
-//    @Published var selectedLight: Light? = nil
     
     var lights: [Light] = []
     var directionalLight = DirectionalLight(name: "Directional Light")
@@ -219,12 +215,12 @@ class ObjectStore: ObservableObject {
     func addSkybox() async throws {
         try await self.skybox = Skybox(device: Renderer.shared.device!, view: Renderer.shared.view!)
     }
+}
 
-    func getDocumentsDirectory() -> URL {
-        // find all possible documents directories for this user
-        let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
+func getDocumentsDirectory() -> URL {
+    // find all possible documents directories for this user
+    let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
 
-        // just send back the first one, which ought to be the only one
-        return paths[0]
-    }
+    // just send back the first one, which ought to be the only one
+    return paths[0]
 }

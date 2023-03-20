@@ -46,6 +46,10 @@ extension Vec3 {
         Vec3(self.x + v.x, self.y + v.y, self.z + v.z)
     }
     
+    func add(_ v: Float) -> Vec3 {
+        Vec3(self.x + v, self.y + v, self.z + v)
+    }
+    
     func subtract(_ v: Vec3) -> Vec3 {
         Vec3(self.x - v.x, self.y - v.y, self.z - v.z)
     }

@@ -22,15 +22,20 @@ struct MetallicView: View {
                 HStack {
                     Text("Map:")
                     Text(material.metallic.map)
+                    Spacer()
                     OpenFileButton(image: "photo") { url in
                         material.metallic.map = url
                     }
                 }
                 HStack {
-                    CheckBox(checked: $useSimple, label: "Simple")
+                    UndoProvider($useSimple) { $value in
+                        CheckBox(checked: $value, label: "Simple")
+                    }
                     Spacer()
                 }
-                NumericField(value: $metallic)
+                UndoProvider($metallic) { $value in
+                    NumericField(value: $value)
+                }
             }
             .padding(.leading, 8)
         }

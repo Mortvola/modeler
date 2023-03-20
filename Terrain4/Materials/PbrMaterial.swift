@@ -31,14 +31,20 @@ class PbrMaterial: Node, BaseMaterial, Equatable, Hashable {
 
     func setSimpleMetallic(_ value: Float) {
         TextureManager.setTextureValue(texture: self.metallic.simpleTexture!, value: value)
+        
+        self.metallic.value = value
     }
 
     func setSimpleRoughness(_ value: Float) {
         TextureManager.setTextureValue(texture: self.roughness.simpleTexture!, value: value)
+
+        self.roughness.value = value
     }
     
     func setSimpleAlbedo(_ color: Vec4) {
         TextureManager.setTextureValue(texture: self.albedo.simpleTexture!, color: color)
+        
+        self.albedo.color = color
     }
     
     init(device: MTLDevice, view: MTKView, descriptor: MaterialDescriptor?) async throws {
@@ -52,52 +58,50 @@ class PbrMaterial: Node, BaseMaterial, Equatable, Hashable {
 
         do {
             // Albedo
-            if let material = descriptor, !material.albedo.map.isEmpty {
-                self.albedo.map = material.albedo.map
-                self.albedo.useSimple = material.albedo.useSimple
-                self.albedo.color = material.albedo.color
-                
-                self.albedo.mapTexture = try? await TextureManager.shared.addTexture(device: device, path: material.albedo.map)
+            self.albedo.useSimple = descriptor?.albedo.useSimple ?? false
+            self.albedo.color = descriptor?.albedo.color ?? Vec4(1.0, 1.0, 1.0, 1.0)
+            self.albedo.map = descriptor?.albedo.map ?? ""
+            
+            if self.albedo.map.isEmpty {
+                self.albedo.mapTexture = try? await TextureManager.shared.addTexture(device: device, path: self.albedo.map)
             }
 
-            self.albedo.simpleTexture = try TextureManager.shared.addTexture(device: device, color: Vec4(1.0, 1.0, 1.0, 1.0), pixelFormat: .bgra8Unorm_srgb)
+            self.albedo.simpleTexture = try TextureManager.shared.createTexture(device: device, color: self.albedo.color, pixelFormat: .bgra8Unorm_srgb)
             
             // Normals
-            if let material = descriptor, !material.normals.map.isEmpty {
-                self.normals.map = material.normals.map
-                self.normals.useSimple = material.normals.useSimple
-                self.normals.normal = material.normals.normal
-                
-                self.normals.mapTexture = try? await TextureManager.shared.addTexture(device: device, path: material.normals.map)
+            self.normals.useSimple = descriptor?.normals.useSimple ?? false
+            self.normals.normal = (Vec4(0.0, 0.0, 1.0, 1.0)
+                .add(1.0)
+                .multiply(0.5))
+            self.normals.map = descriptor?.normals.map ?? ""
+
+            if !self.normals.map.isEmpty {
+                self.normals.mapTexture = try? await TextureManager.shared.addTexture(device: device, path: self.normals.map)
             }
             
-            let normal = Vec3(0.0, 0.0, 1.0)
-                .add(Vec3(1.0, 1.0, 1.0))
-                .multiply(Vec3(0.5, 0.5, 0.5))
-
-            self.normals.simpleTexture = try TextureManager.shared.createTexture(device: device, color: Vec4(normal[0], normal[1], normal[2], 1.0), pixelFormat: .bgra8Unorm)
+            self.normals.simpleTexture = try TextureManager.shared.createTexture(device: device, color: self.normals.normal, pixelFormat: .bgra8Unorm)
             
             // Metalness
-            if let material = descriptor, !material.metallic.map.isEmpty {
-                self.metallic.map = material.metallic.map
-                self.metallic.useSimple = material.metallic.useSimple
-                self.metallic.value = material.metallic.value
-                
-                self.metallic.mapTexture = try? await TextureManager.shared.addTexture(device: device, path: material.metallic.map)
+            self.metallic.useSimple = descriptor?.metallic.useSimple ?? false
+            self.metallic.value = descriptor?.metallic.value ?? 1.0
+            self.metallic.map = descriptor?.metallic.map ?? ""
+
+            if !self.metallic.map.isEmpty {
+                self.metallic.mapTexture = try? await TextureManager.shared.addTexture(device: device, path: self.metallic.map)
             }
 
-            self.metallic.simpleTexture = try TextureManager.shared.createTexture(device: device, color: 0.0)
+            self.metallic.simpleTexture = try TextureManager.shared.createTexture(device: device, color: self.metallic.value)
 
             // Roughness
-            if let material = descriptor, !material.roughness.map.isEmpty {
-                self.roughness.map = material.roughness.map
-                self.roughness.useSimple = material.roughness.useSimple
-                self.roughness.value = material.roughness.value
-                
-                self.roughness.mapTexture = try? await TextureManager.shared.addTexture(device: device, path: material.roughness.map)
+            self.roughness.useSimple = descriptor?.roughness.useSimple ?? false
+            self.roughness.value = descriptor?.roughness.value ?? 1.0
+            self.roughness.map = descriptor?.roughness.map ?? ""
+
+            if !self.roughness.map.isEmpty {
+                self.roughness.mapTexture = try? await TextureManager.shared.addTexture(device: device, path: self.roughness.map)
             }
 
-            self.roughness.simpleTexture = try TextureManager.shared.createTexture(device: device, color: 1.0)
+            self.roughness.simpleTexture = try TextureManager.shared.createTexture(device: device, color: self.roughness.value)
 
             self.ao = nil
         }

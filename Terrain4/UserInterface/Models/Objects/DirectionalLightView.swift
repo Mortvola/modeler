@@ -13,11 +13,15 @@ struct DirectionalLightView: View {
     var body: some View {
         VStack {
             HStack {
-                CheckBox(checked: $light.enabled, label: "Enabled")
+                UndoProvider($light.enabled) { $value in
+                    CheckBox(checked: $value, label: "Enabled")
+                }
                 Spacer()
             }
             HStack {
-                CheckBox(checked: $light.shadowCaster, label: "Shadow Caster")
+                UndoProvider($light.shadowCaster) { $value in
+                    CheckBox(checked: $value, label: "Shadow Caster")
+                }
                 Spacer()
             }
             HStack {

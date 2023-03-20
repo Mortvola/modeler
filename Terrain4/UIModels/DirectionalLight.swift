@@ -31,6 +31,6 @@ class DirectionalLight: Node, Equatable {
     func getProjectionViewMatrix() -> Matrix4x4 {
         Matrix4x4
             .orthographic(left: -30, right: 30, top: 30, bottom: -30, near: 0, far: 100)
-            .multiply(ObjectStore.shared.directionalLight.getViewMatrix())
+            .multiply(self.getViewMatrix())
     }
 }

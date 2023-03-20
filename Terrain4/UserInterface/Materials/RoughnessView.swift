@@ -22,15 +22,20 @@ struct RoughnessView: View {
                 HStack {
                     Text("Map:")
                     Text(material.roughness.map)
+                    Spacer()
                     OpenFileButton(image: "photo") { url in
                         material.roughness.map = url
                     }
                 }
                 HStack {
-                    CheckBox(checked: $useSimple, label: "Simple")
+                    UndoProvider($useSimple) { $value in
+                        CheckBox(checked: $value, label: "Simple")
+                    }
                     Spacer()
                 }
-                NumericField(value: $roughness)
+                UndoProvider($roughness) { $value in
+                    NumericField(value: $value)
+                }
             }
             .padding(.leading, 8)
         }

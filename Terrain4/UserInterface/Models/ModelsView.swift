@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct ModelsView: View {
-    @ObservedObject var objectStore = ObjectStore.shared
+    @ObservedObject var objectStore: ObjectStore
     @State var editedObject: Model? = nil
     @State var hidden = false
     
@@ -74,6 +74,6 @@ struct ModelsView: View {
 
 struct ModelsView_Previews: PreviewProvider {
     static var previews: some View {
-        ModelsView()
+        ModelsView(objectStore: ObjectStore())
     }
 }

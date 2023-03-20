@@ -12,7 +12,9 @@ struct ListItemField: View {
     
     var body: some View {
         HStack {
-            TextField("", text: $text)
+            UndoProvider($text) { $value in
+                TextField("", text: $value)
+            }
             Spacer()
         }
         .contentShape(Rectangle())

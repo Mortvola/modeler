@@ -8,7 +8,9 @@
 import SwiftUI
 
 struct ModelManager: View {
-    @ObservedObject var objectStore = ObjectStore.shared
+    @Environment(\.undoManager) var undoManager
+    @EnvironmentObject private var file: SceneDocument
+    @ObservedObject var objectStore: ObjectStore
     @State var addObject = false
     
     var somethingSelected: Bool {
@@ -19,16 +21,19 @@ struct ModelManager: View {
         VStack {
             HStack {
                 Spacer()
-                
+
                 Button {
                     objectStore.addModel()
+                    undoManager?.registerUndo(withTarget: file) { _ in
+                        print("undo")
+                    }
                 } label: {
                     Text("Add Model")
                 }
                 .buttonStyle(.bordered)
-                
+
                 Spacer()
-                
+
                 Button {
                     addObject = true
                 } label: {
@@ -39,16 +44,16 @@ struct ModelManager: View {
 
                 Button {
                     Task {
-                        try? await ObjectStore.shared.addSkybox()
+                        try? await objectStore.addSkybox()
                     }
                 } label: {
                     Text("Add Skybox")
                 }
                 .buttonStyle(.bordered)
-                .disabled(ObjectStore.shared.skybox != nil)
+                .disabled(objectStore.skybox != nil)
 
                 Spacer()
-                
+
                 Button {
                     try? objectStore.addLight()
                 } label: {
@@ -56,20 +61,20 @@ struct ModelManager: View {
                 }
                 .buttonStyle(.bordered)
                 .disabled(!somethingSelected)
-                
+
                 Spacer()
             }
-            ModelsView()
+            ModelsView(objectStore: objectStore)
             Spacer();
         }
         .sheet(isPresented: $addObject) {
-            AddObject(isOpen: $addObject)
+            AddObject(undoManager: undoManager, isOpen: $addObject)
         }
     }
 }
 
 struct ModelManager_Previews: PreviewProvider {
     static var previews: some View {
-        ModelManager()
+        ModelManager(objectStore: ObjectStore())
     }
 }

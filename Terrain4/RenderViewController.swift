@@ -21,6 +21,7 @@ extension MTKView {
 
 // Our iOS specific view controller
 class RenderViewController: UIViewController {
+    var file: SceneDocument?
     
     var renderer: RenderDelegate!
     
@@ -45,7 +46,7 @@ class RenderViewController: UIViewController {
         
         mtkView.device = defaultDevice
         
-        guard let renderer = try? RenderDelegate(metalKitView: mtkView) else {
+        guard let renderer = try? RenderDelegate(file: file!, metalKitView: mtkView) else {
             print("Renderer cannot be initialized")
             return
         }

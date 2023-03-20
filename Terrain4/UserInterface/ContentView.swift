@@ -23,7 +23,7 @@ struct ContentView: View {
     var body: some View {
         NavigationSplitView {
             TabView(selection: $tabSelection) {
-                ModelManager()
+                ModelManager(objectStore: file.objectStore)
                     .tabItem {
                         Label("Objects", systemImage: "circle.grid.2x2")
                     }
@@ -49,6 +49,7 @@ struct ContentView: View {
             }
             .padding()
             .toolbarRole(.automatic)
+            .environmentObject(file)
 //            .toolbar {
 //                ToolbarItem(placement: .automatic) {
 //                    Button("Open") {
@@ -67,7 +68,7 @@ struct ContentView: View {
 //            }
         } detail: {
             ZStack {
-                RenderView()
+                RenderView(file: file)
                 VStack {
                     Spacer()
                     HStack {
@@ -87,6 +88,7 @@ struct ContentView: View {
             }
         }
         .toolbar(.hidden)
+        .environmentObject(file)
 //        .fileImporter(isPresented: $openPicker, allowedContentTypes: [.sceneDocument]) { result in
 //            if let url = try? result.get() {
 //                Task {

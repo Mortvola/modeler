@@ -31,7 +31,7 @@ class Skybox {
         
         let loader = MTKTextureLoader(device: device)
         
-        let url = ObjectStore.shared.getDocumentsDirectory().appendingPathComponent("skybox-clouds.png")
+        let url = getDocumentsDirectory().appendingPathComponent("skybox-clouds.png")
         let data = try Data(contentsOf: url)
 
         self.texture = try await loader.newTexture(data: data, options: [.cubeLayout: MTKTextureLoader.CubeLayout.vertical])

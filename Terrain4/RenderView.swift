@@ -9,10 +9,16 @@ import Foundation
 import SwiftUI
 
 struct RenderView: UIViewControllerRepresentable {
+    var file: SceneDocument
+    
     typealias UIViewControllerType = RenderViewController
     
     func makeUIViewController(context: Context) -> RenderViewController {
-        return RenderViewController()
+        let viewController = RenderViewController()
+        
+        viewController.file = self.file
+        
+        return viewController
     }
     
     func updateUIViewController(_ uiViewController: RenderViewController, context: Context) {

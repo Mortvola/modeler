@@ -29,7 +29,7 @@ class NormalsLayerDescriptor: MaterialLayerDescriptor {
     required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         
-        normal = try container.decodeIfPresent(Vec4.self, forKey: .normal) ?? Vec4(0.0, 0.0, 1.0, 1.0)
+        normal = try container.decodeIfPresent(Vec4.self, forKey: .normal) ?? Vec4(0.0, 0.0, 1.0, 1.0).add(1.0).multiply(0.5)
         
         try super.init(from: decoder)
     }

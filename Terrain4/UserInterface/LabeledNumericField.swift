@@ -17,7 +17,9 @@ struct LabeledNumericField: View {
             HStack {
                 Text(label)
                 Spacer()
-                NumericField(value: $value)
+                UndoProvider($value) { $value in
+                    NumericField(value: $value)
+                }
             }
             .frame(maxWidth: maxEditWidth)
             Spacer()

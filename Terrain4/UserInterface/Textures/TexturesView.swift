@@ -68,7 +68,7 @@ struct TexturesView: View {
                         
                         if let pngData = newImage.pngData() {
                             let filename = url.lastPathComponent
-                            let fileUrl = ObjectStore.shared.getDocumentsDirectory().appendingPathComponent(filename)
+                            let fileUrl = getDocumentsDirectory().appendingPathComponent(filename)
                             
                             try? pngData.write(to: fileUrl)
                         }

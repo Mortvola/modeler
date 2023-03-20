@@ -37,7 +37,7 @@ class Transform: ObservableObject, Identifiable, Codable {
         id = UUID()
         transform = try container.decode(TransformType.self, forKey: .transform)
         values = try container.decode(Vec3.self, forKey: .values)
-        let animatorID = try container.decode(UUID.self, forKey: .animator)
+        let animatorID = try container.decodeIfPresent(UUID.self, forKey: .animator)
         
         animator = AnimatorStore.shared.animators.first { anim in
             anim.id == animatorID

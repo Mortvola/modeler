@@ -21,12 +21,15 @@ struct NormalsView: View {
                 HStack {
                     Text("Map:")
                     Text(material.normals.map)
+                    Spacer()
                     OpenFileButton(image: "photo") { url in
                         material.normals.map = url
                     }
                 }
                 HStack {
-                    CheckBox(checked: $useSimple, label: "Simple")
+                    UndoProvider($useSimple) { $value in
+                        CheckBox(checked: $value, label: "Simple")
+                    }
                     Spacer()
                 }
             }

@@ -21,15 +21,20 @@ class SceneDocument: ReferenceFileDocument {
     }
     
     func fileWrapper(snapshot: Data, configuration: WriteConfiguration) throws -> FileWrapper {
-        return FileWrapper(regularFileWithContents: snapshot)
+        let wrapper = FileWrapper(regularFileWithContents: snapshot)
+        
+        return wrapper
     }
     
     typealias Snapshot = Data
     
     static var readableContentTypes: [UTType] { [UTType.sceneDocument] }
+    static var writableContenttypes: [UTType] { [UTType.sceneDocument] }
     
     var data: Data?
     var bookmark: Data?
+    
+    @Published var objectStore = ObjectStore()
     
     init() {
         
@@ -42,7 +47,7 @@ class SceneDocument: ReferenceFileDocument {
     }
     
     func encodeData() throws -> Data {
-        let file = File()
+        let file = File(file: self)
         
         return try JSONEncoder().encode(file)
     }
@@ -84,11 +89,11 @@ class SceneDocument: ReferenceFileDocument {
                 }
             }
             
-            ObjectStore.shared.models = file.models
-            ObjectStore.shared.lights = newLights
+            objectStore.models = file.models
+            objectStore.lights = newLights
 
         } catch {
-            print("Error: Can't decode contents")
+            print("Error: Can't decode contents \(error)")
         }
     }
     

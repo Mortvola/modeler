@@ -19,4 +19,3 @@ vertex float4 shadowVertexShader(
 ) {
     return modelViewProjectionMatrix * float4(in.position, 1.0);
 }
-

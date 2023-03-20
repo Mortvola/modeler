@@ -13,8 +13,8 @@ class RenderDelegate: NSObject, MTKViewDelegate {
         Renderer.shared.mtkView(view, drawableSizeWillChange: size)
     }
     
-    init(metalKitView: MTKView) throws {
-        try Renderer.shared.initialize(metalKitView: metalKitView)
+    init(file: SceneDocument, metalKitView: MTKView) throws {
+        try Renderer.shared.initialize(file: file, metalKitView: metalKitView)
         Task {
             _ = try await MaterialManager.shared.addMaterial(device: metalKitView.device!, view: metalKitView, descriptor: nil)
             

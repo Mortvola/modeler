@@ -20,8 +20,8 @@ struct File: Codable {
         case materials
     }
     
-    init() {
-        self.models = ObjectStore.shared.models
+    init(file: SceneDocument) {
+        self.models = file.objectStore.models
         self.animators = AnimatorStore.shared.animators
         self.camera = Camera(position: Renderer.shared.camera.cameraOffset, yaw: Renderer.shared.camera.yaw, pitch: Renderer.shared.camera.pitch)
         self.materials = []

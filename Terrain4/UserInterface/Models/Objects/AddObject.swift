@@ -8,7 +8,9 @@
 import SwiftUI
 
 struct AddObject: View {
-    @State var type = ObjectStore.ObjectType.sphere
+    var undoManager: UndoManager?
+    @EnvironmentObject private var file: SceneDocument
+    @State private var type = ObjectStore.ObjectType.sphere
     @Binding var isOpen: Bool
     
     var body: some View {
@@ -32,7 +34,11 @@ struct AddObject: View {
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Done") {
                         Task {
-                            try? await ObjectStore.shared.addObject(type: type)
+                            try? await file.objectStore.addObject(type: type)
+                            print("\(undoManager.debugDescription)")
+                            undoManager?.registerUndo(withTarget: file) { _ in
+                                print("undo add object")
+                            }
                             isOpen = false
                         }
                     }

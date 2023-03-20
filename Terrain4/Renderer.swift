@@ -56,11 +56,15 @@ class Renderer {
     
     private var depthShadowPipeline: DepthShadowMaterial?
     
+    private var file: SceneDocument?
+    
     init() {
         self.camera = Camera(world: world)
     }
 
-    func initialize(metalKitView: MTKView) throws {
+    func initialize(file: SceneDocument, metalKitView: MTKView) throws {
+        self.file = file
+        
         self.camera = Camera(world: world)
         
         self.device = metalKitView.device!
@@ -104,7 +108,7 @@ class Renderer {
         shadowTextureDescriptor.storageMode = .private
         shadowTextureDescriptor.usage = [.renderTarget, .shaderRead]
         
-        ObjectStore.shared.directionalLight.shadowTexture = device?.makeTexture(descriptor: shadowTextureDescriptor)
+        file.objectStore.directionalLight.shadowTexture = device?.makeTexture(descriptor: shadowTextureDescriptor)
     }
 
     public func load(lat: Double, lng: Double, dimension: Int) async throws {
@@ -194,7 +198,7 @@ class Renderer {
             }
             
             // Update the model matrix for each model
-            ObjectStore.shared.models.forEach { model in
+            file!.objectStore.models.forEach { model in
                 let transform = model.transforms.reversed().reduce(Matrix4x4.identity()) { accum, transform in
                     var t = transform.values
 
@@ -223,7 +227,7 @@ class Renderer {
                     
                     object.lights = []
                     
-                    ObjectStore.shared.lights.forEach { light in
+                    file!.objectStore.lights.forEach { light in
                         if !light.disabled && !(light.model?.disabled ?? true) {
                             object.lights.append(light)
                         }
@@ -270,7 +274,7 @@ class Renderer {
         renderPassDescriptor.depthAttachment.loadAction = .clear
         renderPassDescriptor.depthAttachment.storeAction = .store
         renderPassDescriptor.depthAttachment.clearDepth = 1.0
-        renderPassDescriptor.depthAttachment.texture = ObjectStore.shared.directionalLight.shadowTexture!
+        renderPassDescriptor.depthAttachment.texture = file!.objectStore.directionalLight.shadowTexture!
         
         guard let renderEncoder = commandBuffer.makeRenderCommandEncoder(descriptor: renderPassDescriptor) else {
             return
@@ -286,12 +290,12 @@ class Renderer {
 
         renderEncoder.setVertexBuffer(self.dynamicUniformBuffer, offset: self.uniformBufferOffset, index: BufferIndex.uniforms.rawValue)
 
-        if ObjectStore.shared.directionalLight.shadowCaster {
+        if file!.objectStore.directionalLight.shadowCaster {
             depthShadowPipeline!.prepare(renderEncoder: renderEncoder)
             
-            let projectionViewMatrix = ObjectStore.shared.directionalLight.getProjectionViewMatrix();
+            let projectionViewMatrix = file!.objectStore.directionalLight.getProjectionViewMatrix();
             
-            for model in ObjectStore.shared.models {
+            for model in file!.objectStore.models {
                 for object in model.objects {
                     let matrix = projectionViewMatrix * object.modelMatrix()
                     try object.simpleDraw(renderEncoder: renderEncoder, modelMatrix: matrix)
@@ -320,12 +324,12 @@ class Renderer {
 
             renderEncoder.setFragmentBuffer(self.dynamicUniformBuffer, offset: self.uniformBufferOffset, index: BufferIndex.uniforms.rawValue)
 
-            renderEncoder.setFragmentTexture(ObjectStore.shared.directionalLight.shadowTexture!, index: TextureIndex.depth.rawValue)
+            renderEncoder.setFragmentTexture(file!.objectStore.directionalLight.shadowTexture!, index: TextureIndex.depth.rawValue)
 
             if self.world.terrainLoaded {
                 try MaterialManager.shared.render(renderEncoder: renderEncoder)
 
-                ObjectStore.shared.skybox?.draw(renderEncoder: renderEncoder)
+                file!.objectStore.skybox?.draw(renderEncoder: renderEncoder)
             }
             
             renderEncoder.popDebugGroup()
@@ -358,10 +362,10 @@ class Renderer {
             uniforms[0].projectionMatrix = self.camera.projectionMatrix
             uniforms[0].viewMatrix = self.camera.getViewMatrix()
             uniforms[0].cameraPos = self.camera.cameraOffset
-            uniforms[0].lightVector = ObjectStore.shared.directionalLight.direction
-            uniforms[0].lightColor = ObjectStore.shared.directionalLight.disabled ? Vec3(0, 0, 0) : ObjectStore.shared.directionalLight.intensity
+            uniforms[0].lightVector = file!.objectStore.directionalLight.direction
+            uniforms[0].lightColor = file!.objectStore.directionalLight.disabled ? Vec3(0, 0, 0) : file!.objectStore.directionalLight.intensity
 
-            uniforms[0].lightViewProjectionMatrix = ObjectStore.shared.directionalLight.getProjectionViewMatrix()
+            uniforms[0].lightViewProjectionMatrix = file!.objectStore.directionalLight.getProjectionViewMatrix()
 
             /// Delay getting the currentRenderPassDescriptor until we absolutely need it to avoid
             ///   holding onto the drawable and blocking the display pipeline any longer than necessary

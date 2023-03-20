@@ -13,7 +13,9 @@ struct LightDetailsView: View {
     var body: some View {
         VStack {
             HStack {
-                CheckBox(checked: $light.pointLight, label: "Point Light")
+                UndoProvider($light.pointLight) { $value in
+                    CheckBox(checked: $value, label: "Point Light")
+                }
                 Spacer()
             }
             VStack(spacing: 4) {
