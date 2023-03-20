@@ -13,14 +13,14 @@ struct ObjectsView: View {
     
     var body: some View {
         ForEach($model.objects, id: \.id) { $object in
-            ListItem(node: object) {
+            ModelTreeListItem(node: object) {
                 objectStore.selectObject(object);
             }
             .selected(selected: SelectedNode.object(object) == objectStore.selectedNode)
         }
 
         ForEach($model.lights, id: \.id) { $light in
-            ListItem(node: light) {
+            ModelTreeListItem(node: light) {
                 objectStore.selectLight(light);
             }
             .selected(selected: SelectedNode.light(light) == objectStore.selectedNode)

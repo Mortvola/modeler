@@ -9,7 +9,7 @@ import Foundation
 import MetalKit
 import Metal
 
-class PbrMaterial: Node, BaseMaterial, Equatable, Hashable {
+class PbrMaterial: Item, BaseMaterial, Equatable, Hashable {
     static func == (lhs: PbrMaterial, rhs: PbrMaterial) -> Bool {
         lhs.id == rhs.id
     }

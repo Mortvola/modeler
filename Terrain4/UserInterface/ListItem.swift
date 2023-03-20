@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct ListItem: View {
-    @ObservedObject var node: Node
+    @ObservedObject var item: Item
     let action: () -> Void
     
     var body: some View {
@@ -16,22 +16,16 @@ struct ListItem: View {
             Button {
                 action()
             } label: {
-                ListItemField(text: $node.name)
+                ListItemField(text: $item.name)
             }
             .buttonStyle(.plain)
-            Spacer()
-            Button {
-                node.disabled.toggle()
-            } label: {
-                node.disabled ? Image(systemName: "eye.slash") : Image(systemName: "eye")
-            }
         }
     }
 }
 
 struct ListItem_Previews: PreviewProvider {
     static var previews: some View {
-        ListItem(node: Node(name: "test")) {
+        ListItem(item: Item(name: "test")) {
             print("It workedd!")
         }
     }

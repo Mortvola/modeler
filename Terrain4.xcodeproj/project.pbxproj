@@ -61,6 +61,7 @@
 		791E795229B944D000FB45F3 /* PbrShaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = 791E794C29B944D000FB45F3 /* PbrShaders.metal */; };
 		791E795329B944D000FB45F3 /* SkyboxShaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = 791E794D29B944D000FB45F3 /* SkyboxShaders.metal */; };
 		7921DF6F29C7E5EF0013E317 /* UndoProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7921DF6E29C7E5EF0013E317 /* UndoProvider.swift */; };
+		7921DF7129C888310013E317 /* ModelTreeListItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7921DF7029C888310013E317 /* ModelTreeListItem.swift */; };
 		79345D3929C509E200E9F074 /* RectangleAllocator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79345D3629C509E200E9F074 /* RectangleAllocator.swift */; };
 		798D3BE929C35EE600B96C5F /* AlbedoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 798D3BE829C35EE600B96C5F /* AlbedoView.swift */; };
 		798D3BEB29C3613700B96C5F /* NormalsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 798D3BEA29C3613700B96C5F /* NormalsView.swift */; };
@@ -218,6 +219,7 @@
 		791E794D29B944D000FB45F3 /* SkyboxShaders.metal */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.metal; path = SkyboxShaders.metal; sourceTree = "<group>"; };
 		791E795429B9457700FB45F3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		7921DF6E29C7E5EF0013E317 /* UndoProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UndoProvider.swift; sourceTree = "<group>"; };
+		7921DF7029C888310013E317 /* ModelTreeListItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelTreeListItem.swift; sourceTree = "<group>"; };
 		79345D3629C509E200E9F074 /* RectangleAllocator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RectangleAllocator.swift; sourceTree = "<group>"; };
 		798D3BE829C35EE600B96C5F /* AlbedoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlbedoView.swift; sourceTree = "<group>"; };
 		798D3BEA29C3613700B96C5F /* NormalsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NormalsView.swift; sourceTree = "<group>"; };
@@ -399,6 +401,7 @@
 				79F6D30129C1DC78007CA69A /* ListItemField.swift */,
 				7921DF6E29C7E5EF0013E317 /* UndoProvider.swift */,
 				79F6D30329C1DD7F007CA69A /* ListItem.swift */,
+				7921DF7029C888310013E317 /* ModelTreeListItem.swift */,
 				79F6D2E829BCBD83007CA69A /* NumericField.swift */,
 				79F6D2EE29BCC983007CA69A /* VectorFieldView.swift */,
 			);
@@ -823,6 +826,7 @@
 				798D3BF529C3C1FB00B96C5F /* MetallicLayer.swift in Sources */,
 				79F6D30029C16FC5007CA69A /* Selected.swift in Sources */,
 				799B4BC329C72D3100B6826A /* DepthShadowMaterial.swift in Sources */,
+				7921DF7129C888310013E317 /* ModelTreeListItem.swift in Sources */,
 				791E790E29B93BDC00FB45F3 /* Matrix4x4.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

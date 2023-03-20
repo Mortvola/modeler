@@ -16,14 +16,14 @@ struct ModelsView: View {
         VStack {
             List {
                 ForEach($objectStore.models, id: \.id) { $model in
-                    ListItem(node: model) {
+                    ModelTreeListItem(node: model) {
                         objectStore.selectModel(model);
                     }
                     .selected(selected: objectStore.selectedNode == SelectedNode.model(model))
                     ObjectsView(objectStore: objectStore, model: model)
                         .padding(.leading, 16)
                 }
-                ListItem(node: objectStore.directionalLight) {
+                ModelTreeListItem(node: objectStore.directionalLight) {
                     objectStore.selectDirectionalLight()
                 }
                 .selected(selected: objectStore.selectedNode == SelectedNode.directLight(objectStore.directionalLight))

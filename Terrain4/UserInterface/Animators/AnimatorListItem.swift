@@ -12,7 +12,7 @@ struct AnimatorListItem: View {
     @ObservedObject var animatorStore = AnimatorStore.shared
 
     var body: some View {
-        ListItem(node: animator) {
+        ListItem(item: animator) {
             animatorStore.selectedAnimator = animator
         }
     }

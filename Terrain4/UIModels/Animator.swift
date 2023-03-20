@@ -7,7 +7,7 @@
 
 import Foundation
 
-class Animator: Node, Identifiable, Equatable, Hashable, Codable {
+class Animator: Item, Identifiable, Equatable, Hashable, Codable {
     static func == (lhs: Animator, rhs: Animator) -> Bool {
         lhs.id == rhs.id
     }
