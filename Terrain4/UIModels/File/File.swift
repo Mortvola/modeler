@@ -12,12 +12,14 @@ struct File: Codable {
     var animators: [Animator]
     var camera: Camera
     var materials: [MaterialDescriptor]
+    var directionalLight: DirectionalLight
     
     enum CodkingKeys: CodingKey {
         case models
         case animators
         case camera
         case materials
+        case directionalLight
     }
     
     init(file: SceneDocument) {
@@ -33,6 +35,8 @@ struct File: Codable {
         
             return MaterialDescriptor(material: material.value.material)
         }
+        
+        self.directionalLight = file.objectStore.directionalLight
     }
 
     init(from decoder: Decoder) throws {
@@ -53,6 +57,8 @@ struct File: Codable {
         materials = try container.decode([MaterialDescriptor].self, forKey: .materials)
         
         models = try container.decode([Model].self, forKey: .models)
+        
+        directionalLight = try container.decodeIfPresent(DirectionalLight.self, forKey: .directionalLight) ?? DirectionalLight()
     }
     
 //    func encode(to encoder: Encoder) throws {

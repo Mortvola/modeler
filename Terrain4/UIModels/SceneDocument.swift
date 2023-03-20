@@ -91,6 +91,10 @@ class SceneDocument: ReferenceFileDocument {
             
             objectStore.models = file.models
             objectStore.lights = newLights
+            
+            file.directionalLight.createShadowTexture(device: Renderer.shared.device!)
+            
+            objectStore.directionalLight = file.directionalLight
 
         } catch {
             print("Error: Can't decode contents \(error)")

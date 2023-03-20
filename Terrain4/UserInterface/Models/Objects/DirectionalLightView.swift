@@ -43,6 +43,6 @@ struct DirectionalLightView: View {
 
 struct DirectionalLightView_Previews: PreviewProvider {
     static var previews: some View {
-        DirectionalLightView(light: DirectionalLight(name: "Directional Light"))
+        DirectionalLightView(light: DirectionalLight())
     }
 }

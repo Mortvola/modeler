@@ -77,7 +77,7 @@ class ObjectStore: ObservableObject {
     @Published var selectedNode: SelectedNode? = nil
     
     var lights: [Light] = []
-    var directionalLight = DirectionalLight(name: "Directional Light")
+    var directionalLight = DirectionalLight()
     
     @Published  var skybox: Skybox?
     
