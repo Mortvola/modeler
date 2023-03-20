@@ -32,7 +32,6 @@ class SceneDocument: ReferenceFileDocument {
     static var writableContenttypes: [UTType] { [UTType.sceneDocument] }
     
     var data: Data?
-    var bookmark: Data?
     
     @Published var objectStore = ObjectStore()
     
@@ -42,7 +41,6 @@ class SceneDocument: ReferenceFileDocument {
     
     required init(configuration: ReadConfiguration) throws {
         // Do not open the file here. Need to have the metal view/device instantiated first
-//        print(configuration.file.regularFileContents)
         self.data = configuration.file.regularFileContents
     }
     
@@ -52,18 +50,18 @@ class SceneDocument: ReferenceFileDocument {
         return try JSONEncoder().encode(file)
     }
 
-    func getURLFromBookmark(bookmark: Data) -> URL? {
-        var bookmarkIsStale = false
-        let url = try? URL(resolvingBookmarkData: bookmark, options: [.withSecurityScope], relativeTo: nil, bookmarkDataIsStale: &bookmarkIsStale)
-        
-        if let url = url, bookmarkIsStale {
-            let bookmark = try? url.bookmarkData(options: .withSecurityScope)
-            
-            self.bookmark = bookmark
-        }
-        
-        return url
-    }
+//    func getURLFromBookmark(bookmark: Data) -> URL? {
+//        var bookmarkIsStale = false
+//        let url = try? URL(resolvingBookmarkData: bookmark, options: [.withSecurityScope], relativeTo: nil, bookmarkDataIsStale: &bookmarkIsStale)
+//
+//        if let url = url, bookmarkIsStale {
+//            let bookmark = try? url.bookmarkData(options: .withSecurityScope)
+//
+//            self.bookmark = bookmark
+//        }
+//
+//        return url
+//    }
     
     @MainActor
     func parse(data: Data) async {
@@ -101,14 +99,14 @@ class SceneDocument: ReferenceFileDocument {
         }
     }
     
-    @MainActor
-    func open(url: URL) async throws {
-        self.bookmark = try? url.bookmarkData(options: .withSecurityScope)
-        
-        if let bookmark = self.bookmark, let url = getURLFromBookmark(bookmark: bookmark) {
-            if let data = try? Data(contentsOf: url) {
-                await parse(data: data)
-            }
-        }
-    }
+//    @MainActor
+//    func open(url: URL) async throws {
+//        self.bookmark = try? url.bookmarkData(options: .withSecurityScope)
+//
+//        if let bookmark = self.bookmark, let url = getURLFromBookmark(bookmark: bookmark) {
+//            if let data = try? Data(contentsOf: url) {
+//                await parse(data: data)
+//            }
+//        }
+//    }
 }

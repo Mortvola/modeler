@@ -13,7 +13,6 @@ class DirectionalLight: Node, Equatable, Codable {
         lhs === rhs
     }
     
-    @Published var enabled = false
     @Published var direction = Vec3(0, -1, 1).normalize()
     @Published var intensity = Vec3(15, 15, 15)
     @Published var shadowCaster = true
@@ -49,7 +48,6 @@ class DirectionalLight: Node, Equatable, Codable {
     required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         
-        enabled = try container.decode(Bool.self, forKey: .enabled)
         direction = try container.decode(Vec3.self, forKey: .direction)
         intensity = try container.decode(Vec3.self, forKey: .intensity)
         shadowCaster = try container.decode(Bool.self, forKey: .shadowCaster)
@@ -63,7 +61,6 @@ class DirectionalLight: Node, Equatable, Codable {
         var container = encoder.container(keyedBy: CodingKeys.self)
         
         try container.encode(name, forKey: .name)
-        try container.encode(enabled, forKey: .enabled)
         try container.encode(direction, forKey: .direction)
         try container.encode(intensity, forKey: .intensity)
         try container.encode(shadowCaster, forKey: .shadowCaster)

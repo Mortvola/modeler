@@ -296,9 +296,13 @@ class Renderer {
             let projectionViewMatrix = file!.objectStore.directionalLight.getProjectionViewMatrix();
             
             for model in file!.objectStore.models {
-                for object in model.objects {
-                    let matrix = projectionViewMatrix * object.modelMatrix()
-                    try object.simpleDraw(renderEncoder: renderEncoder, modelMatrix: matrix)
+                if !model.disabled {
+                    for object in model.objects {
+                        if !object.disabled {
+                            let matrix = projectionViewMatrix * object.modelMatrix()
+                            try object.simpleDraw(renderEncoder: renderEncoder, modelMatrix: matrix)
+                        }
+                    }
                 }
             }
         }
