@@ -15,7 +15,7 @@ class Light: Object {
     
     private static var lightCounter = 0
     
-    override init(model: Model) {
+    override init(model: Model?) {
         super.init(model: model)
         
         self.name = "Light_\(Light.lightCounter)"

@@ -15,6 +15,8 @@ class RenderObject: Object {
     var materialId: UUID?
     @Published var material: PbrMaterial?
 
+    var uniforms: MTLBuffer?
+    
     @MainActor
     func setMaterial(materialId: UUID?) {
         // Process if there is a change or if the material is not set
@@ -37,15 +39,27 @@ class RenderObject: Object {
         }
     }
     
-    override init(model: Model) {
+    override init(model: Model?) {
         super.init(model: model)
+        allocateUniformsBuffer()
     }
 
-    func draw(renderEncoder: MTLRenderCommandEncoder, modelMatrix: Matrix4x4) throws {
+    func allocateUniformsBuffer() {
+        self.uniforms = Renderer.shared.device!.makeBuffer(length: 3 * MemoryLayout<NodeUniforms>.size, options: [MTLResourceOptions.storageModeShared])!
+        self.uniforms!.label = "node uniforms"
+    }
+    
+    func getUniformsBuffer(index: Int) -> UnsafeMutablePointer<NodeUniforms> {
+        UnsafeMutableRawPointer(self.uniforms!.contents())
+            .advanced(by: index * MemoryLayout<NodeUniforms>.stride)
+            .bindMemory(to: NodeUniforms.self, capacity: 1)
+    }
+    
+    func draw(renderEncoder: MTLRenderCommandEncoder, modelMatrix: Matrix4x4, frame: Int) throws {
         throw Errors.notImplemented
     }
     
-    func simpleDraw(renderEncoder: MTLRenderCommandEncoder, modelMatrix: Matrix4x4) throws {
+    func simpleDraw(renderEncoder: MTLRenderCommandEncoder, modelMatrix: Matrix4x4, frame: Int) throws {
         throw Errors.notImplemented
     }
     
@@ -59,6 +73,8 @@ class RenderObject: Object {
         materialId = try container.decode(UUID?.self, forKey: .material)
         
         try super.init(from: decoder)
+        
+        allocateUniformsBuffer()
     }
 
     override func encode(to encoder: Encoder) throws {

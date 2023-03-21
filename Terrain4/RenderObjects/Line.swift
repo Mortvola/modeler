@@ -51,11 +51,14 @@ class Line: RenderObject {
         try super.init(from: decoder)
     }
 
-    override func draw(renderEncoder: MTLRenderCommandEncoder, modelMatrix: Matrix4x4) {
+    override func draw(renderEncoder: MTLRenderCommandEncoder, modelMatrix: Matrix4x4, frame: Int) {
         renderEncoder.setVertexBuffer(self.vertices, offset: 0, index: BufferIndex.meshPositions.rawValue)
 
-        var modelMatrixCopy = modelMatrix
-        renderEncoder.setVertexBytes(&modelMatrixCopy, length: MemoryLayout<Matrix4x4>.size, index: BufferIndex.modelMatrix.rawValue)
+        let u = getUniformsBuffer(index: frame)
+        u[0].modelMatrix = modelMatrix
+
+        renderEncoder.setVertexBuffer(self.uniforms, offset: 0, index: BufferIndex.nodeUniforms.rawValue)
+
         renderEncoder.drawPrimitives(type: .lineStrip, vertexStart: 0, vertexCount: self.numVertices)
     }
 }

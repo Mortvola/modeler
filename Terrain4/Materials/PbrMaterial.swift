@@ -67,6 +67,7 @@ class PbrMaterial: Item, BaseMaterial, Equatable, Hashable {
             }
 
             self.albedo.simpleTexture = try TextureManager.shared.createTexture(device: device, color: self.albedo.color, pixelFormat: .bgra8Unorm_srgb)
+            self.albedo.simpleTexture?.label = "\(descriptor?.name ?? "Unknown") Simple Albedo"
             
             // Normals
             self.normals.useSimple = descriptor?.normals.useSimple ?? false
@@ -80,7 +81,8 @@ class PbrMaterial: Item, BaseMaterial, Equatable, Hashable {
             }
             
             self.normals.simpleTexture = try TextureManager.shared.createTexture(device: device, color: self.normals.normal, pixelFormat: .bgra8Unorm)
-            
+            self.normals.simpleTexture?.label = "\(descriptor?.name ?? "Unknown") Simple Normals"
+
             // Metalness
             self.metallic.useSimple = descriptor?.metallic.useSimple ?? false
             self.metallic.value = descriptor?.metallic.value ?? 1.0
@@ -91,6 +93,7 @@ class PbrMaterial: Item, BaseMaterial, Equatable, Hashable {
             }
 
             self.metallic.simpleTexture = try TextureManager.shared.createTexture(device: device, color: self.metallic.value)
+            self.metallic.simpleTexture?.label = "\(descriptor?.name ?? "Unknown") Simple Metallic"
 
             // Roughness
             self.roughness.useSimple = descriptor?.roughness.useSimple ?? false
@@ -102,6 +105,7 @@ class PbrMaterial: Item, BaseMaterial, Equatable, Hashable {
             }
 
             self.roughness.simpleTexture = try TextureManager.shared.createTexture(device: device, color: self.roughness.value)
+            self.roughness.simpleTexture?.label = "\(descriptor?.name ?? "Unknown") Simple Roughness"
 
             self.ao = nil
         }

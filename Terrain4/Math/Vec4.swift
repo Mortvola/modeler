@@ -25,4 +25,8 @@ extension Vec4 {
     func multiply(_ v: Float) -> Vec4 {
         Vec4(self.x * v, self.y * v, self.z * v, self.w * v)
     }
+    
+    func vec3() -> Vec3 {
+        Vec3(self.x, self.y, self.z)
+    }
 }

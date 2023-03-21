@@ -20,20 +20,20 @@ struct VertexOut {
 
 vertex VertexOut lineVertexShader(
     LineVertexIn in [[stage_in]],
-    const device Uniforms& uniforms [[ buffer(BufferIndexUniforms) ]],
-    const device matrix_float4x4& modelMatrix [[ buffer(BufferIndexModelMatrix) ]]
+    const device FrameUniforms& uniforms [[ buffer(BufferIndexUniforms) ]],
+    const device NodeUniforms& nodeUniforms [[ buffer(BufferIndexNodeUniforms) ]]
 ) {
     VertexOut vertexOut;
     
     float4 position = float4(in.position, 1.0);
-    vertexOut.position = uniforms.projectionMatrix * uniforms.viewMatrix * modelMatrix * position;
+    vertexOut.position = uniforms.projectionMatrix * uniforms.viewMatrix * nodeUniforms.modelMatrix * position;
 
-    vertexOut.color = float4(1.0, 0.0, 0.0, 1.0);
+    vertexOut.color = nodeUniforms.color;
     
     return vertexOut;
 }
 
-fragment float4 simpleFragmentShader(VertexOut interpolated [[stage_in]]) {
-    return interpolated.color;
+fragment float4 simpleFragmentShader(VertexOut in [[stage_in]]) {
+    return in.color;
 }
 

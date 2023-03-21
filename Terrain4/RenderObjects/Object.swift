@@ -28,7 +28,7 @@ class Object: Node, Identifiable, Hashable, Codable {
     
     @Published var scale = Vec3(1, 1, 1)
     
-    init (model: Model) {
+    init (model: Model?) {
         self.model = model
         
         super.init(name: "Object_\(Object.objectCounter)")

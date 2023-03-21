@@ -23,6 +23,13 @@ struct TestApp: App {
                     Text("Record")
                 }
             }
+            CommandGroup(after: .newItem) {
+                Button {
+                    Renderer.shared.freezeFustrum.toggle()
+                } label: {
+                    Text("Freeze Fustrum")
+                }
+            }
         }
     }
 }

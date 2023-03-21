@@ -162,7 +162,7 @@ class World {
             try row.forEach { tile in
                 if let terrainTile = tile.tile {
                     try terrainTile.objects.forEach { object in
-                        try object.draw(renderEncoder: renderEncoder, modelMatrix: terrainTile.modelMatrix)
+                        try object.draw(renderEncoder: renderEncoder, modelMatrix: terrainTile.modelMatrix, frame: 0)
                     }
                 }
             }

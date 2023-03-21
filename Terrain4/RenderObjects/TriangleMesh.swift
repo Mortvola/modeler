@@ -32,7 +32,7 @@ class TriangleMesh: RenderObject {
         try super.init(from: decoder)
     }
 
-    override func draw(renderEncoder: MTLRenderCommandEncoder, modelMatrix: Matrix4x4) {
+    override func draw(renderEncoder: MTLRenderCommandEncoder, modelMatrix: Matrix4x4, frame: Int) {
         var normalMatrix = matrix_float3x3(columns: (
             vector_float3(modelMatrix[0][0], modelMatrix[0][1], modelMatrix[0][2]),
             vector_float3(modelMatrix[1][0], modelMatrix[1][1], modelMatrix[1][2]),
@@ -44,10 +44,11 @@ class TriangleMesh: RenderObject {
         renderEncoder.setVertexBuffer(self.vertices, offset: 0, index: BufferIndex.meshPositions.rawValue)
         renderEncoder.setVertexBuffer(self.normals, offset: 0, index: BufferIndex.normals.rawValue)
 
-        var modelMatrixCopy = modelMatrix
-        renderEncoder.setVertexBytes(&modelMatrixCopy, length: MemoryLayout<Matrix4x4>.size, index: BufferIndex.modelMatrix.rawValue)
+        let u = getUniformsBuffer(index: frame)
+        u[0].modelMatrix = modelMatrix
+        u[0].normalMatrix = normalMatrix
 
-        renderEncoder.setVertexBytes(&normalMatrix, length: MemoryLayout<matrix_float3x3>.size, index: BufferIndex.normalMatrix.rawValue)
+        renderEncoder.setVertexBuffer(self.uniforms, offset: 0, index: BufferIndex.nodeUniforms.rawValue)
 
         renderEncoder.drawPrimitives(type: .triangle, vertexStart: 0, vertexCount: self.numVertices)
     }

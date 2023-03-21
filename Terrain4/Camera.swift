@@ -28,6 +28,8 @@ class Camera {
     
     var world: World
     
+    var farZ: Float = 100.0
+    
     init(world: World) {
         self.world = world
         updateLookAt(yawChange: 0, pitchChange: 0)
@@ -109,8 +111,7 @@ class Camera {
     
     func updateViewDimensions(width: Float, height: Float) {
         /// Respond to drawable size or orientation changes here
-        
         let aspect = Float(height) / Float(width)
-        self.projectionMatrix = Matrix4x4.perspectiveLeftHand(fovyRadians: degreesToRadians(45), aspect: aspect, nearZ: 1, farZ: 16000.0)
+        self.projectionMatrix = Matrix4x4.perspectiveLeftHand(fovyRadians: degreesToRadians(45), aspect: aspect, nearZ: 1, farZ: farZ)
     }
 }

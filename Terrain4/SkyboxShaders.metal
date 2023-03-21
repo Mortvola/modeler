@@ -20,7 +20,7 @@ struct VertexOut {
 
 vertex VertexOut skyboxVertexShader(
     VertexIn in [[stage_in]],
-    const device Uniforms& uniforms [[ buffer(BufferIndexUniforms) ]]
+    const device FrameUniforms& uniforms [[ buffer(BufferIndexUniforms) ]]
 ) {
     VertexOut vertexOut;
     

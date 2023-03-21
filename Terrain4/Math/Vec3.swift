@@ -69,4 +69,8 @@ extension Vec3 {
     func cross(_ other: Vec3) -> Vec3 {
         simd_cross(self, other)
     }
+    
+    func vec4() -> Vec4 {
+        return Vec4(self.x, self.y, self.z, 1.0)
+    }
 }

@@ -30,17 +30,16 @@ struct VertexOut {
 
 vertex VertexOut texturedVertexShader(
     VertexIn in [[stage_in]],
-    const device Uniforms& uniforms [[ buffer(BufferIndexUniforms) ]],
-    const device matrix_float4x4& modelMatrix [[ buffer(BufferIndexModelMatrix) ]],
-    const device matrix_float3x3& normalMatrix [[ buffer(BufferIndexNormalMatrix) ]]
+    const device FrameUniforms& uniforms [[ buffer(BufferIndexUniforms) ]],
+    const device NodeUniforms& nodeUniforms [[ buffer(BufferIndexNodeUniforms) ]]
 ) {
     VertexOut vertexOut;
     
     float4 position = float4(in.position, 1.0);
-    vertexOut.position = uniforms.projectionMatrix * uniforms.viewMatrix * modelMatrix * position;
+    vertexOut.position = uniforms.projectionMatrix * uniforms.viewMatrix * nodeUniforms.modelMatrix * position;
 
-    float3 T = normalize(normalMatrix * in.tangent);
-    float3 N = normalize(normalMatrix * in.normal);
+    float3 T = normalize(nodeUniforms.normalMatrix * in.tangent);
+    float3 N = normalize(nodeUniforms.normalMatrix * in.normal);
     T = normalize(T - dot(T, N) * N);
     float3 B = cross(N, T);
     

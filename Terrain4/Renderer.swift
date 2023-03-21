@@ -12,7 +12,7 @@ import MetalKit
 import simd
 
 // The 256 byte aligned size of our uniform structure
-let alignedUniformsSize = (MemoryLayout<Uniforms>.size + 0xFF) & -0x100
+let alignedUniformsSize = (MemoryLayout<FrameUniforms>.size + 0xFF) & -0x100
 
 let maxBuffersInFlight = 3
 
@@ -38,7 +38,7 @@ class Renderer {
     
     private var uniformBufferIndex = 0
     
-    private var uniforms: UnsafeMutablePointer<Uniforms>?
+    private var uniforms: UnsafeMutablePointer<FrameUniforms>?
     
     private let world = World()
     
@@ -55,9 +55,18 @@ class Renderer {
     private var previousFrameTime: Double?
     
     private var depthShadowPipeline: DepthShadowMaterial?
+    private var shadowDepthState: MTLDepthStencilState?
     
     private var file: SceneDocument?
     
+    private var lineMaterial: LineMaterial?
+    
+    private var fustrums: [WireBox] = []
+
+    private var lightFustrums: [WireBox] = []
+    
+    public var freezeFustrum = false
+
     init() {
         self.camera = Camera(world: world)
     }
@@ -91,10 +100,18 @@ class Renderer {
         }
         
         self.depthState = state
+
+        guard let state = metalKitView.device!.makeDepthStencilState(descriptor:depthStateDescriptor) else {
+            throw Errors.makeDepthStencilStateFailed
+        }
+        
+        self.shadowDepthState = state
         
         self.depthShadowPipeline = try DepthShadowMaterial(device: device!, view: view!)
         
-        file.objectStore.directionalLight.createShadowTexture(device: device!)
+//        file.objectStore.directionalLight.createShadowTexture(device: device!)
+        
+        self.lineMaterial = try LineMaterial(device: device!, view: view!)
     }
     
     func makeUniformsBuffer() throws {
@@ -107,7 +124,7 @@ class Renderer {
         buffer.label = "UniformBuffer"
         self.dynamicUniformBuffer = buffer
         
-        self.uniforms = UnsafeMutableRawPointer(buffer.contents()).bindMemory(to:Uniforms.self, capacity:1)
+        self.uniforms = UnsafeMutableRawPointer(buffer.contents()).bindMemory(to: FrameUniforms.self, capacity: 1)
     }
     
     public func load(lat: Double, lng: Double, dimension: Int) async throws {
@@ -169,7 +186,7 @@ class Renderer {
         
         self.uniformBufferOffset = alignedUniformsSize * uniformBufferIndex
         
-        self.uniforms = UnsafeMutableRawPointer(dynamicUniformBuffer.contents() + self.uniformBufferOffset).bindMemory(to:Uniforms.self, capacity:1)
+        self.uniforms = UnsafeMutableRawPointer(dynamicUniformBuffer.contents() + self.uniformBufferOffset).bindMemory(to: FrameUniforms.self, capacity: 1)
     }
     
     private func updateTimeOfDay(elapsedTime: Double) {
@@ -284,55 +301,53 @@ class Renderer {
     }
     
     func renderShadowPass(commandBuffer: MTLCommandBuffer) throws {
-        let renderPassDescriptor = MTLRenderPassDescriptor()
-        renderPassDescriptor.depthAttachment.loadAction = .clear
-        renderPassDescriptor.depthAttachment.storeAction = .store
-        renderPassDescriptor.depthAttachment.clearDepth = 1.0
-        renderPassDescriptor.depthAttachment.texture = file!.objectStore.directionalLight.shadowTexture!
-        
-        guard let renderEncoder = commandBuffer.makeRenderCommandEncoder(descriptor: renderPassDescriptor) else {
-            return
-        }
-        
-        renderEncoder.label = "Shadow Pass Encoder"
-        
-        renderEncoder.pushDebugGroup("Shadow Pass")
-        
-        renderEncoder.setFrontFacing(.clockwise)
-        renderEncoder.setCullMode(.back)
-        renderEncoder.setDepthStencilState(self.depthState)
-        
-        renderEncoder.setVertexBuffer(self.dynamicUniformBuffer, offset: self.uniformBufferOffset, index: BufferIndex.uniforms.rawValue)
-        
-        if file!.objectStore.directionalLight.shadowCaster {
-            depthShadowPipeline!.prepare(renderEncoder: renderEncoder)
+        if let renderPassDescriptor = file!.objectStore.directionalLight.renderPassDescriptor {
+            guard let renderEncoder = commandBuffer.makeRenderCommandEncoder(descriptor: renderPassDescriptor) else {
+                return
+            }
             
-            let projectionViewMatrix = file!.objectStore.directionalLight.getProjectionViewMatrix();
+            renderEncoder.label = "Shadow Pass Encoder"
             
-            for model in file!.objectStore.models {
-                if !model.disabled {
-                    for object in model.objects {
-                        if !object.disabled {
-                            let matrix = projectionViewMatrix * object.modelMatrix()
-                            try object.simpleDraw(renderEncoder: renderEncoder, modelMatrix: matrix)
+            //        renderEncoder.pushDebugGroup("Shadow Pass")
+            
+            renderEncoder.setFrontFacing(.clockwise)
+            renderEncoder.setCullMode(.back)
+            renderEncoder.setDepthClipMode(.clamp) // Pancaking??
+            renderEncoder.setDepthStencilState(self.shadowDepthState)
+            
+//            let viewport = MTLViewport(originX: 0, originY: 0, width: Double(file!.objectStore.directionalLight.shadowTexture!.width), height: Double(file!.objectStore.directionalLight.shadowTexture!.height), znear: 0.0, zfar: 1.0)
+//            renderEncoder.setViewport(viewport)
+            //        renderEncoder.setDepthBias(0.015, slopeScale: 7, clamp: 0.02)
+            
+            renderEncoder.setVertexBuffer(self.dynamicUniformBuffer, offset: self.uniformBufferOffset, index: BufferIndex.uniforms.rawValue)
+            
+            if file!.objectStore.directionalLight.shadowCaster {
+                depthShadowPipeline!.prepare(renderEncoder: renderEncoder)
+                
+                for model in file!.objectStore.models {
+                    if !model.disabled {
+                        for object in model.objects {
+                            if !object.disabled {
+                                try object.simpleDraw(renderEncoder: renderEncoder, modelMatrix: object.modelMatrix(), frame: self.uniformBufferIndex)
+                            }
                         }
                     }
                 }
             }
+            
+            //        renderEncoder.popDebugGroup()
+            
+            renderEncoder.endEncoding()
         }
-        
-        renderEncoder.popDebugGroup()
-        
-        renderEncoder.endEncoding()
     }
     
-    func renderMainPass(renderPassDescriptor: MTLRenderPassDescriptor, commandBuffer: MTLCommandBuffer) throws {
+    func renderMainPass(renderPassDescriptor: MTLRenderPassDescriptor, commandBuffer: MTLCommandBuffer) throws {        
         if let renderEncoder = commandBuffer.makeRenderCommandEncoder(descriptor: renderPassDescriptor) {
             
             /// Final pass rendering code here
             renderEncoder.label = "Primary Render Encoder"
             
-            renderEncoder.pushDebugGroup("Main Pass")
+//            renderEncoder.pushDebugGroup("Main Pass")
             
             renderEncoder.setFrontFacing(.clockwise)
             renderEncoder.setCullMode(.back)
@@ -342,15 +357,29 @@ class Renderer {
             
             renderEncoder.setFragmentBuffer(self.dynamicUniformBuffer, offset: self.uniformBufferOffset, index: BufferIndex.uniforms.rawValue)
             
-            renderEncoder.setFragmentTexture(file!.objectStore.directionalLight.shadowTexture!, index: TextureIndex.depth.rawValue)
+            if file!.objectStore.directionalLight.shadowTexture != nil {
+                renderEncoder.setFragmentTexture(file!.objectStore.directionalLight.shadowTexture!, index: TextureIndex.depth.rawValue)
+            }
             
             if self.world.terrainLoaded {
-                try MaterialManager.shared.render(renderEncoder: renderEncoder)
+                try MaterialManager.shared.render(renderEncoder: renderEncoder, frame: self.uniformBufferIndex)
                 
                 file!.objectStore.skybox?.draw(renderEncoder: renderEncoder)
             }
             
-            renderEncoder.popDebugGroup()
+            // Render fustrum
+            
+            if self.freezeFustrum {
+                self.lineMaterial?.prepare(renderEncoder: renderEncoder)
+                
+                self.fustrums[self.uniformBufferIndex].updateVertices(points: file!.objectStore.directionalLight.cameraFustrum)
+                self.fustrums[self.uniformBufferIndex].draw(renderEncoder: renderEncoder, modelMatrix: Matrix4x4.identity(), frame: self.uniformBufferIndex)
+
+                self.lightFustrums[self.uniformBufferIndex].updateVertices(points: file!.objectStore.directionalLight.lightFustrum)
+                self.lightFustrums[self.uniformBufferIndex].draw(renderEncoder: renderEncoder, modelMatrix: Matrix4x4.identity(), frame: self.uniformBufferIndex)
+            }
+
+//            renderEncoder.popDebugGroup()
             
             renderEncoder.endEncoding()
         }
@@ -368,28 +397,46 @@ class Renderer {
         _ = inFlightSemaphore.wait(timeout: DispatchTime.distantFuture)
         
         if let commandBuffer = commandQueue.makeCommandBuffer() {
+            commandBuffer.label = "\(self.uniformBufferIndex)"
+            
             let semaphore = inFlightSemaphore
             commandBuffer.addCompletedHandler { (_ commandBuffer)-> Swift.Void in
                 semaphore.signal()
             }
-            
+                        
             self.updateDynamicBufferState()
             
             self.updateState()
             
+            let projectionViewMatrix =  self.camera.projectionMatrix * self.camera.getViewMatrix()
+            if !self.freezeFustrum {
+                file!.objectStore.directionalLight.calculateProjectionViewMatrix(cameraProjectionView: projectionViewMatrix)
+            }
+            
             uniforms[0].projectionMatrix = self.camera.projectionMatrix
             uniforms[0].viewMatrix = self.camera.getViewMatrix()
+            uniforms[0].lightProjectionViewMatrix = file!.objectStore.directionalLight.projectionViewMatrix
             uniforms[0].cameraPos = self.camera.cameraOffset
             uniforms[0].lightVector = file!.objectStore.directionalLight.direction
             uniforms[0].lightColor = file!.objectStore.directionalLight.disabled ? Vec3(0, 0, 0) : file!.objectStore.directionalLight.intensity
+
+            if self.fustrums.count == 0 {
+                self.fustrums.append(WireBox(device: device!, points: file!.objectStore.directionalLight.cameraFustrum, color: Vec4(1, 0, 0, 1)))
+                self.fustrums.append(WireBox(device: device!, points: file!.objectStore.directionalLight.cameraFustrum, color: Vec4(1, 0, 0, 1)))
+                self.fustrums.append(WireBox(device: device!, points: file!.objectStore.directionalLight.cameraFustrum, color: Vec4(1, 0, 0, 1)))
+            }
             
-            uniforms[0].lightViewProjectionMatrix = file!.objectStore.directionalLight.getProjectionViewMatrix()
+            if self.lightFustrums.count == 0 {
+                self.lightFustrums.append(WireBox(device: device!, points: file!.objectStore.directionalLight.cameraFustrum, color: Vec4(0, 1, 0, 1)))
+                self.lightFustrums.append(WireBox(device: device!, points: file!.objectStore.directionalLight.cameraFustrum, color: Vec4(0, 1, 0, 1)))
+                self.lightFustrums.append(WireBox(device: device!, points: file!.objectStore.directionalLight.cameraFustrum, color: Vec4(1, 1, 0, 1)))
+            }
+
+            try renderShadowPass(commandBuffer: commandBuffer)
             
             /// Delay getting the currentRenderPassDescriptor until we absolutely need it to avoid
             ///   holding onto the drawable and blocking the display pipeline any longer than necessary
             if let renderPassDescriptor = view.currentRenderPassDescriptor {
-                
-                try renderShadowPass(commandBuffer: commandBuffer)
                 
                 try renderMainPass(renderPassDescriptor: renderPassDescriptor, commandBuffer: commandBuffer)
                 
@@ -405,7 +452,7 @@ class Renderer {
                     commandBuffer.waitUntilCompleted()
                     
                     if let image = try? texture.toImage() {
-                        print("captured image \(image.width)x\(image.height)")
+//                        print("captured image \(image.width)x\(image.height)")
                         MovieManager.shared.addFrame(image: image) {
                             view.framebufferOnly = true
                         }

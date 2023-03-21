@@ -69,6 +69,7 @@ class TextureManager {
     
     func createTexture(device: MTLDevice, color: Float) throws -> MTLTexture {
         let descriptor = MTLTextureDescriptor.texture2DDescriptor(pixelFormat: .r8Unorm, width: 1, height: 1, mipmapped: false)
+        descriptor.storageMode = .shared
         
         if let texture = device.makeTexture(descriptor: descriptor) {
             TextureManager.setTextureValue(texture: texture, value: color)
@@ -122,7 +123,8 @@ class TextureManager {
     
     func createTexture(device: MTLDevice, color: Vec4, pixelFormat: MTLPixelFormat) throws -> MTLTexture {
         let descriptor = MTLTextureDescriptor.texture2DDescriptor(pixelFormat: pixelFormat, width: 1, height: 1, mipmapped: false)
-        
+        descriptor.storageMode = .shared
+
         if let texture = device.makeTexture(descriptor: descriptor) {
             TextureManager.setTextureValue(texture: texture, color: color)
             return texture

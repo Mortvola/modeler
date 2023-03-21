@@ -22,37 +22,26 @@ struct VertexOut {
     float3 tangentViewPos;
     float3 tangentFragPos;
     float3 worldFragPos;
-    float3 lightVector;
-    float3 lightPos0;
+    float3 tangentLightVector;
+    float3 lightPos0; // these positions are in tangent space
     float3 lightPos1;
     float3 lightPos2;
     float3 lightPos3;
-//    float3 tangentNormal;
 };
-
-matrix_float3x3 subMatrix3x3(matrix_float4x4 m4x4) {
-    return matrix_float3x3(
-       m4x4[0][0], m4x4[0][1], m4x4[0][2],
-        m4x4[1][0], m4x4[1][1], m4x4[1][2],
-        m4x4[2][0], m4x4[2][1], m4x4[2][2]
-    );
-}
 
 vertex VertexOut pbrVertexShader(
     VertexIn in [[stage_in]],
-    const device Uniforms& uniforms [[ buffer(BufferIndexUniforms) ]],
-    const device matrix_float4x4& modelMatrix [[ buffer(BufferIndexModelMatrix) ]],
-    const device matrix_float3x3& normalMatrix [[ buffer(BufferIndexNormalMatrix) ]],
-    const device Lights& lights [[ buffer(BufferIndexLightPos) ]]
+    const device FrameUniforms& uniforms [[ buffer(BufferIndexUniforms) ]],
+    const device NodeUniforms& nodeUniforms [[ buffer(BufferIndexNodeUniforms) ]]
 ) {
     VertexOut vertexOut;
     
-    vertexOut.worldFragPos = float3(modelMatrix * float4(in.position, 1.0));
+    vertexOut.worldFragPos = float3(nodeUniforms.modelMatrix * float4(in.position, 1.0));
     
     vertexOut.position =  uniforms.projectionMatrix * uniforms.viewMatrix * float4(vertexOut.worldFragPos, 1.0);
 
-    float3 T = normalize(normalMatrix * in.tangent);
-    float3 N = normalize(normalMatrix * in.normal);
+    float3 T = normalize(nodeUniforms.normalMatrix * in.tangent);
+    float3 N = normalize(nodeUniforms.normalMatrix * in.normal);
     T = normalize(T - dot(T, N) * N);
     float3 B = cross(N, T);
 
@@ -60,15 +49,14 @@ vertex VertexOut pbrVertexShader(
     
     vertexOut.tangentViewPos = TBN * uniforms.cameraPos;
     vertexOut.tangentFragPos = TBN * vertexOut.worldFragPos;
-//    vertexOut.tangentNormal = TBN * (modelMatrix * float4(in.normal, 0.0)).xyz;
     
     // Convert positions to tangent space
     thread float3 *lightPos = &vertexOut.lightPos0;
-    for (int i = 0; i < lights.numberOfLights; i += 1) {
-        lightPos[i] = TBN * lights.position[i];
+    for (int i = 0; i < nodeUniforms.numberOfLights; i += 1) {
+        lightPos[i] = TBN * nodeUniforms.lights[i].position;
     }
     
-    vertexOut.lightVector = TBN * uniforms.lightVector;
+    vertexOut.tangentLightVector = TBN * uniforms.lightVector;
     
     vertexOut.texCoords = in.texCoord;
 
@@ -87,10 +75,10 @@ float3 computeLo(
 
 float shadowed(
              float3 worldPos,
-             const device float4x4 &viewProjectionMatrix,
-             depth2d<float, access::sample> shadowMap
+             const device float4x4 &projectionViewMatrix,
+             depth2d<float> shadowMap
 ) {
-    float4 pos = viewProjectionMatrix * float4(worldPos, 1.0);
+    float4 pos = projectionViewMatrix * float4(worldPos, 1.0);
     // NDC range from X -1 to 1, Y -1 to 1 and Z 0 to 1
     // The perspective divide isn't necessary for directional lights be we will
     // do it anyway to support point lights.
@@ -107,7 +95,7 @@ float shadowed(
 
     // Bias to help avoid shadow acne.
     // Todo: adjust this based on the light angle to the surface
-    float bias = 0.005;
+    float bias = 0.015625; // 0.005;
     float shadowed = shadowMap.sample_compare(shadowSampler, coords, ndc.z - bias);
     
     return shadowed;
@@ -115,15 +103,15 @@ float shadowed(
 
 fragment float4 pbrFragmentShader(
     VertexOut in [[stage_in]],
-    const device Uniforms& uniforms [[ buffer(BufferIndexUniforms) ]],
-    const device Lights& lights [[ buffer(BufferIndexLightPos) ]],
+    const device FrameUniforms& uniforms [[ buffer(BufferIndexUniforms) ]],
+    const device NodeUniforms& nodeUniforms [[ buffer(BufferIndexNodeUniforms) ]],
     texture2d<float> albedoMap [[texture(TextureIndexColor)]],
     texture2d<float> normalMap [[texture(TextureIndexNormals)]],
     texture2d<float> metallicMap [[texture(TextureIndexMetallic)]],
     texture2d<float> roughnessMap [[texture(TextureIndexRoughness)]],
     texture2d<float> aoMap [[texture(TextureIndexAo)]],
     sampler sampler [[sampler(SamplerIndexSampler)]],
-    depth2d<float, access::sample> shadowMap [[texture(TextureIndexDepth)]]
+    depth2d<float> shadowMap [[texture(TextureIndexDepth)]]
 ) {
     float3 albedo = pow(albedoMap.sample(sampler, in.texCoords).rgb, float3(2.2));
     
@@ -137,11 +125,11 @@ fragment float4 pbrFragmentShader(
     float3 Lo = 0;
     
     thread float3 *tangentLightPos = &in.lightPos0;
-    for (int i = 0; i < lights.numberOfLights; i++) {
+    for (int i = 0; i < nodeUniforms.numberOfLights; i++) {
         //    if (uniforms.pointLight) {
         float distance = length(tangentLightPos[i] - in.tangentFragPos);
         float attenuation = 1.0 / (distance * distance);
-        float3 radiance = lights.intensity[i] * attenuation;
+        float3 radiance = nodeUniforms.lights[i].intensity * attenuation;
         float3 L = normalize(tangentLightPos[i] - in.tangentFragPos);
         
         Lo += computeLo(albedo, metallic, roughness, N, V, L, radiance);
@@ -149,9 +137,9 @@ fragment float4 pbrFragmentShader(
 
     // Directional light
     float3 radiance = uniforms.lightColor;
-    float3 L = normalize(-in.lightVector);
+    float3 L = normalize(-in.tangentLightVector);
 
-    float shadowFactor = 1 - shadowed(in.worldFragPos, uniforms.lightViewProjectionMatrix, shadowMap);
+    float shadowFactor = 1 - shadowed(in.worldFragPos, uniforms.lightProjectionViewMatrix, shadowMap);
     
     Lo += computeLo(albedo, metallic, roughness, N, V, L, radiance) * shadowFactor;
 

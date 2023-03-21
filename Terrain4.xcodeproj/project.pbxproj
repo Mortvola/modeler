@@ -63,6 +63,8 @@
 		7921DF6F29C7E5EF0013E317 /* UndoProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7921DF6E29C7E5EF0013E317 /* UndoProvider.swift */; };
 		7921DF7129C888310013E317 /* ModelTreeListItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7921DF7029C888310013E317 /* ModelTreeListItem.swift */; };
 		7921DF7329C8A58D0013E317 /* MovieManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7921DF7229C8A58D0013E317 /* MovieManager.swift */; };
+		7921DF7529C9398A0013E317 /* WireBox.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7921DF7429C9398A0013E317 /* WireBox.swift */; };
+		7921DF7729CA2D980013E317 /* Matrix3x3.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7921DF7629CA2D980013E317 /* Matrix3x3.swift */; };
 		79345D3929C509E200E9F074 /* RectangleAllocator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79345D3629C509E200E9F074 /* RectangleAllocator.swift */; };
 		798D3BE929C35EE600B96C5F /* AlbedoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 798D3BE829C35EE600B96C5F /* AlbedoView.swift */; };
 		798D3BEB29C3613700B96C5F /* NormalsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 798D3BEA29C3613700B96C5F /* NormalsView.swift */; };
@@ -222,6 +224,8 @@
 		7921DF6E29C7E5EF0013E317 /* UndoProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UndoProvider.swift; sourceTree = "<group>"; };
 		7921DF7029C888310013E317 /* ModelTreeListItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelTreeListItem.swift; sourceTree = "<group>"; };
 		7921DF7229C8A58D0013E317 /* MovieManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieManager.swift; sourceTree = "<group>"; };
+		7921DF7429C9398A0013E317 /* WireBox.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WireBox.swift; sourceTree = "<group>"; };
+		7921DF7629CA2D980013E317 /* Matrix3x3.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Matrix3x3.swift; sourceTree = "<group>"; };
 		79345D3629C509E200E9F074 /* RectangleAllocator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RectangleAllocator.swift; sourceTree = "<group>"; };
 		798D3BE829C35EE600B96C5F /* AlbedoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlbedoView.swift; sourceTree = "<group>"; };
 		798D3BEA29C3613700B96C5F /* NormalsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NormalsView.swift; sourceTree = "<group>"; };
@@ -343,8 +347,8 @@
 				791E794029B943E800FB45F3 /* RenderView.swift */,
 				791E793429B9430E00FB45F3 /* RenderDelegate.swift */,
 				791E793229B9430E00FB45F3 /* Renderer.swift */,
-				7921DF7229C8A58D0013E317 /* MovieManager.swift */,
 				791E793329B9430E00FB45F3 /* RenderViewController.swift */,
+				7921DF7229C8A58D0013E317 /* MovieManager.swift */,
 				791E793929B9433F00FB45F3 /* Skybox.swift */,
 				791E794429B9443F00FB45F3 /* Sun.swift */,
 				791E793E29B9436800FB45F3 /* TerrainTile.swift */,
@@ -446,6 +450,7 @@
 			isa = PBXGroup;
 			children = (
 				791E790A29B93BDC00FB45F3 /* Matrix4x4.swift */,
+				7921DF7629CA2D980013E317 /* Matrix3x3.swift */,
 				791E790B29B93BDC00FB45F3 /* Vec3.swift */,
 				791E790C29B93BDC00FB45F3 /* Vec4.swift */,
 				791E790D29B93BDC00FB45F3 /* Vec2.swift */,
@@ -460,6 +465,7 @@
 				791E791D29B93D6000FB45F3 /* RenderObject.swift */,
 				79F6D2CD29BAA245007CA69A /* Object.swift */,
 				791E791E29B93D6000FB45F3 /* Line.swift */,
+				7921DF7429C9398A0013E317 /* WireBox.swift */,
 				791E791F29B93D6000FB45F3 /* TriangleMesh.swift */,
 			);
 			path = RenderObjects;
@@ -745,6 +751,7 @@
 				791E792229B93D6000FB45F3 /* Line.swift in Sources */,
 				79F6D2E129BBA375007CA69A /* ObjectDetailsView.swift in Sources */,
 				791E78D029B93A2B00FB45F3 /* EditObject.swift in Sources */,
+				7921DF7729CA2D980013E317 /* Matrix3x3.swift in Sources */,
 				79F6D30429C1DD7F007CA69A /* ListItem.swift in Sources */,
 				791E794329B9441800FB45F3 /* Utilities.swift in Sources */,
 				79F6D30929C1EDBE007CA69A /* ObjectMaterialView.swift in Sources */,
@@ -803,6 +810,7 @@
 				791E792D29B93D7000FB45F3 /* TextureManager.swift in Sources */,
 				791E795029B944D000FB45F3 /* LineShaders.metal in Sources */,
 				79F6D2E529BC2C6A007CA69A /* LightDetailsView.swift in Sources */,
+				7921DF7529C9398A0013E317 /* WireBox.swift in Sources */,
 				791E794E29B944D000FB45F3 /* Pbr.metal in Sources */,
 				798D3BED29C361D700B96C5F /* MetallicView.swift in Sources */,
 				791E78D229B93A2B00FB45F3 /* TransformView.swift in Sources */,

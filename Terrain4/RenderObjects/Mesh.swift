@@ -18,7 +18,7 @@ class Mesh: RenderObject {
         super.init(model: model)
     }
     
-    override func draw(renderEncoder: MTLRenderCommandEncoder, modelMatrix: Matrix4x4) throws {
+    override func draw(renderEncoder: MTLRenderCommandEncoder, modelMatrix: Matrix4x4, frame: Int) throws {
         // Pass the normal matrix (derived from the model matrix) to the vertex shader
         var normalMatrix = matrix_float3x3(columns: (
             vector_float3(modelMatrix[0][0], modelMatrix[0][1], modelMatrix[0][2]),
@@ -28,40 +28,41 @@ class Mesh: RenderObject {
         
         normalMatrix = normalMatrix.inverse.transpose;
 
-        renderEncoder.setVertexBytes(&normalMatrix, length: MemoryLayout<matrix_float3x3>.size, index: BufferIndex.normalMatrix.rawValue)
+        let u = getUniformsBuffer(index: frame)
+        u[0].normalMatrix = normalMatrix
 
         // Pass the light information
-        var lightData = Lights()
-        lightData.numberOfLights = Int32(self.lights.count)
+        u[0].numberOfLights = Int32(self.lights.count)
         
-        withUnsafeMutableBytes(of: &lightData.position) { rawPtr in
-            let ptr = rawPtr.baseAddress!.assumingMemoryBound(to: vector_float3.self)
+        withUnsafeMutableBytes(of: &u[0].lights) { rawPtr in
+            let light = rawPtr.baseAddress!.assumingMemoryBound(to: Lights.self)
 
             for i in stride(from: 0, to: self.lights.count, by: 1) {
-                ptr[i] = self.lights[i].position
+                light[i].position = self.lights[i].position
+                light[i].intensity = self.lights[i].intensity
             }
         }
 
-        withUnsafeMutableBytes(of: &lightData.intensity) { rawPtr in
-            let ptr = rawPtr.baseAddress!.assumingMemoryBound(to: vector_float3.self)
-
-            for i in stride(from: 0, to: self.lights.count, by: 1) {
-                ptr[i] = self.lights[i].intensity
-            }
-        }
-
-        renderEncoder.setVertexBytes(&lightData, length: MemoryLayout<Lights>.size, index: BufferIndex.lightPos.rawValue)
-        renderEncoder.setFragmentBytes(&lightData, length: MemoryLayout<Lights>.size, index: BufferIndex.lightPos.rawValue)
-
-        try self.simpleDraw(renderEncoder: renderEncoder, modelMatrix: modelMatrix)
+//        withUnsafeMutableBytes(of: &lightData.intensity) { rawPtr in
+//            let ptr = rawPtr.baseAddress!.assumingMemoryBound(to: vector_float3.self)
+//
+//            for i in stride(from: 0, to: self.lights.count, by: 1) {
+//                ptr[i] = self.lights[i].intensity
+//            }
+//        }
+        
+        try self.simpleDraw(renderEncoder: renderEncoder, modelMatrix: modelMatrix, frame: frame)
     }
     
-    override func simpleDraw(renderEncoder: MTLRenderCommandEncoder, modelMatrix: Matrix4x4) throws {
-        // Pass the model matrix to the vertex shader.
-        var modelMatrixCopy = modelMatrix
-        renderEncoder.setVertexBytes(&modelMatrixCopy, length: MemoryLayout<Matrix4x4>.size, index: BufferIndex.modelMatrix.rawValue)
+    override func simpleDraw(renderEncoder: MTLRenderCommandEncoder, modelMatrix: Matrix4x4, frame: Int) throws {
+        
+        let u = getUniformsBuffer(index: frame)
+        u[0].modelMatrix = modelMatrix
 
-        // Pass the vertex and index information ot the vertex shader
+        renderEncoder.setVertexBuffer(self.uniforms, offset: 0, index: BufferIndex.nodeUniforms.rawValue)
+        renderEncoder.setFragmentBuffer(self.uniforms, offset: 0, index: BufferIndex.nodeUniforms.rawValue)
+
+        // Pass the vertex and index information to the vertex shader
         for (i, buffer) in self.mesh.vertexBuffers.enumerated() {
             renderEncoder.setVertexBuffer(buffer.buffer, offset: buffer.offset, index: i)
         }
