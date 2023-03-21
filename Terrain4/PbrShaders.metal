@@ -93,11 +93,9 @@ float shadowed(
                                     filter::linear,
                                     compare_func::greater_equal);
 
-    // Bias to help avoid shadow acne.
-    // Todo: adjust this based on the light angle to the surface
-    float bias = 0.015625; // 0.005;
-    float shadowed = shadowMap.sample_compare(shadowSampler, coords, ndc.z - bias);
-    
+    // Bias to help avoid shadow acne is applied through the setDeptBias method
+    float shadowed = shadowMap.sample_compare(shadowSampler, coords, ndc.z);
+
     return shadowed;
 }
 

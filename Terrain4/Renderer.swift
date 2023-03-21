@@ -314,7 +314,8 @@ class Renderer {
             renderEncoder.setCullMode(.back)
             renderEncoder.setDepthClipMode(.clamp) // Pancaking??
             renderEncoder.setDepthStencilState(self.shadowDepthState)
-            
+            renderEncoder.setDepthBias(0.015, slopeScale: 7, clamp: 0.02)
+
 //            let viewport = MTLViewport(originX: 0, originY: 0, width: Double(file!.objectStore.directionalLight.shadowTexture!.width), height: Double(file!.objectStore.directionalLight.shadowTexture!.height), znear: 0.0, zfar: 1.0)
 //            renderEncoder.setViewport(viewport)
             //        renderEncoder.setDepthBias(0.015, slopeScale: 7, clamp: 0.02)
@@ -408,9 +409,8 @@ class Renderer {
             
             self.updateState()
             
-            let projectionViewMatrix =  self.camera.projectionMatrix * self.camera.getViewMatrix()
             if !self.freezeFustrum {
-                file!.objectStore.directionalLight.calculateProjectionViewMatrix(cameraProjectionView: projectionViewMatrix)
+                file!.objectStore.directionalLight.calculateProjectionViewMatrix()
             }
             
             uniforms[0].projectionMatrix = self.camera.projectionMatrix

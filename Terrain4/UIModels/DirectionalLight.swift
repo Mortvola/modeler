@@ -34,7 +34,11 @@ class DirectionalLight: Node, Equatable, Codable {
 //        projectionViewMatrix
 //    }
     
-    func calculateProjectionViewMatrix(cameraProjectionView: Matrix4x4) {
+    func calculateProjectionViewMatrix() {
+        let cameraProjectionMatrix = Renderer.shared.camera.createPerspectiveMatrix(nearZ: 1, farZ: 80)
+        let cameraViewMatrix = Renderer.shared.camera.getViewMatrix()
+        let cameraProjectionView = cameraProjectionMatrix * cameraViewMatrix
+        
         let inverse = cameraProjectionView.inverse
 //        var cameraFustrum: [Vec4] = []
 
