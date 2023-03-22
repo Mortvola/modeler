@@ -56,7 +56,7 @@ vertex VertexOut pbrVertexShader(
         lightPos[i] = TBN * nodeUniforms.lights[i].position;
     }
     
-    vertexOut.tangentLightVector = TBN * uniforms.lightVector;
+    vertexOut.tangentLightVector = TBN * uniforms.directionalLight.lightVector;
     
     vertexOut.texCoords = in.texCoord;
 
@@ -75,26 +75,39 @@ float3 computeLo(
 
 float shadowed(
              float3 worldPos,
-             const device float4x4 &projectionViewMatrix,
-             depth2d<float> shadowMap
+             const device DirectionalLight &directionalLight,
+             depth2d_array<float> shadowMap
 ) {
-    float4 pos = projectionViewMatrix * float4(worldPos, 1.0);
-    // NDC range from X -1 to 1, Y -1 to 1 and Z 0 to 1
-    // The perspective divide isn't necessary for directional lights be we will
-    // do it anyway to support point lights.
-    float3 ndc = pos.xyz / pos.w; // After this the z coord holds the depth value
+    float shadowed = 1;
     
-    // Convert coordinates to texture coordinates ranging from 0 to 1 in both directions.
-    float2 coords = ndc.xy * 0.5 + 0.5;
-    coords.y = 1 - coords.y;
-    
-    constexpr sampler shadowSampler(coord::normalized,
-                                    address::clamp_to_edge,
-                                    filter::linear,
-                                    compare_func::greater_equal);
-
-    // Bias to help avoid shadow acne is applied through the setDeptBias method
-    float shadowed = shadowMap.sample_compare(shadowSampler, coords, ndc.z);
+    for (int cascadeIndex = 0; cascadeIndex < 3; ++cascadeIndex) {
+        float4 pos = directionalLight.viewProjectionMatrix[cascadeIndex] * float4(worldPos, 1.0);
+        // NDC range from X -1 to 1, Y -1 to 1 and Z 0 to 1
+        // The perspective divide isn't necessary for directional lights be we will
+        // do it anyway to support point lights.
+        float3 ndc = pos.xyz / pos.w; // After this the z coord holds the depth value
+        
+        // Convert coordinates to texture coordinates ranging from 0 to 1 in both directions.
+        float2 coords = ndc.xy * 0.5 + 0.5;
+        coords.y = 1 - coords.y;
+        
+        if (all(ndc.xyz < 1.0) && all(ndc.xyz > float3(-1, -1, 0))) {
+            
+            //    constexpr sampler sam (min_filter::linear, mag_filter::linear, compare_func::less);
+            
+            constexpr sampler shadowSampler(coord::normalized,
+                                            address::clamp_to_edge,
+                                            filter::linear,
+                                            compare_func::greater_equal);
+            
+            float lightspaceDepth = ndc.z;
+            
+            // Bias to help avoid shadow acne is applied through the setDeptBias method
+            shadowed = shadowMap.sample_compare(shadowSampler, coords, cascadeIndex, lightspaceDepth, int2(0));
+            
+            break;
+        }
+    }
 
     return shadowed;
 }
@@ -106,7 +119,7 @@ fragment float4 pbrFragmentShader(
     array<texture2d<float>, 4> textures [[texture(TextureIndexColor)]],
     texture2d<float> aoMap [[texture(TextureIndexAo)]],
     sampler sampler [[sampler(SamplerIndexSampler)]],
-    depth2d<float> shadowMap [[texture(TextureIndexDepth)]]
+    depth2d_array<float> shadowMap [[texture(TextureIndexDepth)]]
 ) {
     float3 albedo = !is_null_texture(textures[0]) ? pow(textures[0].sample(sampler, in.texCoords).rgb, float3(2.2)) : pow(nodeUniforms.albedo, float3(2.2));
     float3 normal = !is_null_texture(textures[1]) ? textures[1].sample(sampler, in.texCoords).rgb : nodeUniforms.normals;
@@ -131,10 +144,10 @@ fragment float4 pbrFragmentShader(
     }
 
     // Directional light
-    float3 radiance = uniforms.lightColor;
+    float3 radiance = uniforms.directionalLight.lightColor;
     float3 L = normalize(-in.tangentLightVector);
 
-    float shadowFactor = 1 - shadowed(in.worldFragPos, uniforms.lightProjectionViewMatrix, shadowMap);
+    float shadowFactor = 1 - shadowed(in.worldFragPos, uniforms.directionalLight, shadowMap);
     
     Lo += computeLo(albedo, metallic, roughness, N, V, L, radiance) * shadowFactor;
 

@@ -17,45 +17,16 @@ class DirectionalLight: Node, Equatable, Codable {
     @Published var intensity = Vec3(15, 15, 15)
     @Published var shadowCaster = true
     
-    var viewMatrix = Matrix4x4()
-    var projectionMatrix = Matrix4x4()
-    var projectionViewMatrix = Matrix4x4()
+//    var viewMatrix = Matrix4x4()
+//    var projectionMatrix = Matrix4x4()
+//    var projectionViewMatrix = Matrix4x4()
     var shadowTexture: MTLTexture?
     var renderPassDescriptor: MTLRenderPassDescriptor?
     
-    var cameraFustrum: [Vec4] = []
-    var lightFustrum: [Vec4] = []
+//    var cameraFustrum: [Vec4] = []
+//    var lightFustrum: [Vec4] = []
     
-//    func getViewMatrix() -> Matrix4x4 {
-//        viewMatrix
-//    }
-//
-//    func getProjectionViewMatrix() -> Matrix4x4 {
-//        projectionViewMatrix
-//    }
-    
-    func calculateProjectionViewMatrix() {
-        let cameraProjectionMatrix = Renderer.shared.camera.createPerspectiveMatrix(nearZ: 1, farZ: 80)
-        let cameraViewMatrix = Renderer.shared.camera.getViewMatrix()
-        let cameraProjectionView = cameraProjectionMatrix * cameraViewMatrix
-        
-        let inverse = cameraProjectionView.inverse
-//        var cameraFustrum: [Vec4] = []
-
-        cameraFustrum = []
-        
-        // Create a box (8 points) in the camera's NDC coordinates and
-        // transform the points into world space
-        for z in [0, 1] {
-            for y in [-1, 1] {
-                for x in [-1, 1] {
-                    let point = inverse * Vec4(Float(x), Float(y), Float(z), 1.0)
-                    
-                    cameraFustrum.append(point * (1 / point.w))
-                }
-            }
-        }
-        
+    func calculateProjectionViewMatrix(cameraFustrum: [Vec4]) -> Matrix4x4 {
         var center = Vec4(0, 0, 0, 0)
         for corner in cameraFustrum {
             center += corner
@@ -66,7 +37,7 @@ class DirectionalLight: Node, Equatable, Codable {
         let up = Vec3(0.0, 1.0, 0.0)
         let position = center.vec3() - direction
 
-        let vm = Matrix4x4.lookAt(offset: position, target: center.vec3(), up: up)
+        let viewMatrix = Matrix4x4.lookAt(offset: position, target: center.vec3(), up: up)
         
         var minimum = Vec3(Float.greatestFiniteMagnitude, Float.greatestFiniteMagnitude, Float.greatestFiniteMagnitude)
         var maximum = Vec3(-Float.greatestFiniteMagnitude, -Float.greatestFiniteMagnitude, -Float.greatestFiniteMagnitude)
@@ -76,7 +47,7 @@ class DirectionalLight: Node, Equatable, Codable {
         // The result will be a fustrum (in view space) that
         // encompasses the camera's fustrum.
         for corner in cameraFustrum {
-            let trf = vm * corner
+            let trf = viewMatrix * corner
             
             minimum.x = min(minimum.x, trf.x)
             minimum.y = min(minimum.y, trf.y)
@@ -105,32 +76,28 @@ class DirectionalLight: Node, Equatable, Codable {
 //            maximum.z *= zMult;
 //        }
 
-        var lf: [Vec4] = []
-        
-        lf.append(Vec4(minimum.x, minimum.y, minimum.z, 1))
-        lf.append(Vec4(maximum.x, minimum.y, minimum.z, 1))
-        lf.append(Vec4(minimum.x, maximum.y, minimum.z, 1))
-        lf.append(Vec4(maximum.x, maximum.y, minimum.z, 1))
+//        var lf: [Vec4] = []
+//
+//        lf.append(Vec4(minimum.x, minimum.y, minimum.z, 1))
+//        lf.append(Vec4(maximum.x, minimum.y, minimum.z, 1))
+//        lf.append(Vec4(minimum.x, maximum.y, minimum.z, 1))
+//        lf.append(Vec4(maximum.x, maximum.y, minimum.z, 1))
+//
+//        lf.append(Vec4(minimum.x, minimum.y, maximum.z, 1))
+//        lf.append(Vec4(maximum.x, minimum.y, maximum.z, 1))
+//        lf.append(Vec4(minimum.x, maximum.y, maximum.z, 1))
+//        lf.append(Vec4(maximum.x, maximum.y, maximum.z, 1))
 
-        lf.append(Vec4(minimum.x, minimum.y, maximum.z, 1))
-        lf.append(Vec4(maximum.x, minimum.y, maximum.z, 1))
-        lf.append(Vec4(minimum.x, maximum.y, maximum.z, 1))
-        lf.append(Vec4(maximum.x, maximum.y, maximum.z, 1))
-
-        lightFustrum = []
-        let lightVMInverse = vm.inverse
-        for corner in lf {
-            lightFustrum.append(lightVMInverse * corner)
-        }
+//        lightFustrum = []
+//        let lightVMInverse = viewMatrix.inverse
+//        for corner in lf {
+//            lightFustrum.append(lightVMInverse * corner)
+//        }
         
-        let pm = Matrix4x4
+        let projectionMatrix = Matrix4x4
             .orthographic(left: minimum.x, right: maximum.x, top: maximum.y, bottom: minimum.y, near: minimum.z, far: maximum.z)
         
-        let pvm = projectionMatrix * vm
-        
-        viewMatrix = vm
-        projectionMatrix = pm
-        projectionViewMatrix = pvm
+        return projectionMatrix * viewMatrix
     }
 
     enum CodingKeys: CodingKey {
@@ -169,9 +136,12 @@ class DirectionalLight: Node, Equatable, Codable {
     func createShadowTexture(device: MTLDevice) {
         if shadowTexture == nil {
             let shadowMapSize = 1024
+
             let shadowTextureDescriptor = MTLTextureDescriptor.texture2DDescriptor(pixelFormat: .depth32Float, width: shadowMapSize, height: shadowMapSize, mipmapped: false)
             shadowTextureDescriptor.storageMode = .private  
             shadowTextureDescriptor.usage = [.renderTarget, .shaderRead]
+            shadowTextureDescriptor.textureType = .type2DArray
+            shadowTextureDescriptor.arrayLength = 3
             
             shadowTexture = device.makeTexture(descriptor: shadowTextureDescriptor)
             shadowTexture?.label = "Shadow Map"

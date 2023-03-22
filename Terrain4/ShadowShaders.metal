@@ -16,7 +16,8 @@ struct VertexIn {
 vertex float4 shadowVertexShader(
     VertexIn in [[stage_in]],
     const device FrameUniforms& uniforms [[ buffer(BufferIndexUniforms) ]],
-    const device NodeUniforms& nodeUniforms [[ buffer(BufferIndexNodeUniforms) ]]
+    const device NodeUniforms& nodeUniforms [[ buffer(BufferIndexNodeUniforms) ]],
+    const device int32_t &cascadeIndex [[ buffer(BufferIndexCascadeIndex) ]]
 ) {
-    return uniforms.lightProjectionViewMatrix * nodeUniforms.modelMatrix * float4(in.position, 1.0);
+    return uniforms.directionalLight.viewProjectionMatrix[cascadeIndex] * nodeUniforms.modelMatrix * float4(in.position, 1.0);
 }

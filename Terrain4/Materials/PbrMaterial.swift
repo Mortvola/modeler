@@ -32,19 +32,19 @@ class PbrMaterial: Item, BaseMaterial, Equatable, Hashable {
     var textures: [MTLTexture?] = []
 
     func setSimpleMetallic(_ value: Float) {
-        TextureManager.setTextureValue(texture: self.metallic.simpleTexture!, value: value)
+//        TextureManager.setTextureValue(texture: self.metallic.simpleTexture!, value: value)
         
         self.metallic.value = value
     }
 
     func setSimpleRoughness(_ value: Float) {
-        TextureManager.setTextureValue(texture: self.roughness.simpleTexture!, value: value)
+//        TextureManager.setTextureValue(texture: self.roughness.simpleTexture!, value: value)
 
         self.roughness.value = value
     }
     
     func setSimpleAlbedo(_ color: Vec4) {
-        TextureManager.setTextureValue(texture: self.albedo.simpleTexture!, color: color)
+//        TextureManager.setTextureValue(texture: self.albedo.simpleTexture!, color: color)
         
         self.albedo.color = color
     }

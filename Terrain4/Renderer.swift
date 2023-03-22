@@ -61,9 +61,9 @@ class Renderer {
     
     private var lineMaterial: LineMaterial?
     
-    private var fustrums: [WireBox] = []
-
-    private var lightFustrums: [WireBox] = []
+//    private var fustrums: [WireBox] = []
+//
+//    private var lightFustrums: [WireBox] = []
     
     public var freezeFustrum = false
 
@@ -302,43 +302,51 @@ class Renderer {
     
     func renderShadowPass(commandBuffer: MTLCommandBuffer) throws {
         if let renderPassDescriptor = file!.objectStore.directionalLight.renderPassDescriptor {
-            guard let renderEncoder = commandBuffer.makeRenderCommandEncoder(descriptor: renderPassDescriptor) else {
-                return
-            }
             
-            renderEncoder.label = "Shadow Pass Encoder"
-            
-            //        renderEncoder.pushDebugGroup("Shadow Pass")
-            
-            renderEncoder.setFrontFacing(.clockwise)
-            renderEncoder.setCullMode(.back)
-            renderEncoder.setDepthClipMode(.clamp) // Pancaking??
-            renderEncoder.setDepthStencilState(self.shadowDepthState)
-            renderEncoder.setDepthBias(0.015, slopeScale: 7, clamp: 0.02)
-
-//            let viewport = MTLViewport(originX: 0, originY: 0, width: Double(file!.objectStore.directionalLight.shadowTexture!.width), height: Double(file!.objectStore.directionalLight.shadowTexture!.height), znear: 0.0, zfar: 1.0)
-//            renderEncoder.setViewport(viewport)
-            //        renderEncoder.setDepthBias(0.015, slopeScale: 7, clamp: 0.02)
-            
-            renderEncoder.setVertexBuffer(self.dynamicUniformBuffer, offset: self.uniformBufferOffset, index: BufferIndex.uniforms.rawValue)
-            
-            if file!.objectStore.directionalLight.shadowCaster {
-                depthShadowPipeline!.prepare(renderEncoder: renderEncoder)
+            for cascade in 0...2 {
+                renderPassDescriptor.depthAttachment.slice = cascade
                 
-                for model in file!.objectStore.models {
-                    if !model.disabled {
-                        for object in model.objects {
-                            if !object.disabled {
-                                try object.simpleDraw(renderEncoder: renderEncoder, modelMatrix: object.modelMatrix(), frame: self.uniformBufferIndex)
+                guard let renderEncoder = commandBuffer.makeRenderCommandEncoder(descriptor: renderPassDescriptor) else {
+                    return
+                }
+                
+                renderEncoder.label = "Shadow Pass \(cascade)"
+                
+                //        renderEncoder.pushDebugGroup("Shadow Pass")
+                
+                renderEncoder.setFrontFacing(.clockwise)
+                renderEncoder.setCullMode(.front)
+                renderEncoder.setDepthClipMode(.clamp) // Pancaking??
+                renderEncoder.setDepthStencilState(self.shadowDepthState)
+                renderEncoder.setDepthBias(0.015, slopeScale: 7, clamp: 0.02)
+                
+                //            let viewport = MTLViewport(originX: 0, originY: 0, width: Double(file!.objectStore.directionalLight.shadowTexture!.width), height: Double(file!.objectStore.directionalLight.shadowTexture!.height), znear: 0.0, zfar: 1.0)
+                //            renderEncoder.setViewport(viewport)
+                //        renderEncoder.setDepthBias(0.015, slopeScale: 7, clamp: 0.02)
+                
+                renderEncoder.setVertexBuffer(self.dynamicUniformBuffer, offset: self.uniformBufferOffset, index: BufferIndex.uniforms.rawValue)
+                
+                var cascadeIndex = Int32(cascade)
+                renderEncoder.setVertexBytes(&cascadeIndex, length: MemoryLayout<Int>.size, index: BufferIndex.cascadeIndex.rawValue)
+                
+                if file!.objectStore.directionalLight.shadowCaster {
+                    depthShadowPipeline!.prepare(renderEncoder: renderEncoder)
+                    
+                    for model in file!.objectStore.models {
+                        if !model.disabled {
+                            for object in model.objects {
+                                if !object.disabled {
+                                    try object.simpleDraw(renderEncoder: renderEncoder, modelMatrix: object.modelMatrix(), frame: self.uniformBufferIndex)
+                                }
                             }
                         }
                     }
                 }
+                
+                //        renderEncoder.popDebugGroup()
+                
+                renderEncoder.endEncoding()
             }
-            
-            //        renderEncoder.popDebugGroup()
-            
-            renderEncoder.endEncoding()
         }
     }
     
@@ -370,15 +378,15 @@ class Renderer {
             
             // Render fustrum
             
-            if self.freezeFustrum {
-                self.lineMaterial?.prepare(renderEncoder: renderEncoder)
-                
-                self.fustrums[self.uniformBufferIndex].updateVertices(points: file!.objectStore.directionalLight.cameraFustrum)
-                self.fustrums[self.uniformBufferIndex].draw(renderEncoder: renderEncoder, modelMatrix: Matrix4x4.identity(), pbrProperties: nil, frame: self.uniformBufferIndex)
-
-                self.lightFustrums[self.uniformBufferIndex].updateVertices(points: file!.objectStore.directionalLight.lightFustrum)
-                self.lightFustrums[self.uniformBufferIndex].draw(renderEncoder: renderEncoder, modelMatrix: Matrix4x4.identity(), pbrProperties: nil, frame: self.uniformBufferIndex)
-            }
+//            if self.freezeFustrum {
+//                self.lineMaterial?.prepare(renderEncoder: renderEncoder)
+//                
+//                self.fustrums[self.uniformBufferIndex].updateVertices(points: file!.objectStore.directionalLight.cameraFustrum)
+//                self.fustrums[self.uniformBufferIndex].draw(renderEncoder: renderEncoder, modelMatrix: Matrix4x4.identity(), pbrProperties: nil, frame: self.uniformBufferIndex)
+//
+//                self.lightFustrums[self.uniformBufferIndex].updateVertices(points: file!.objectStore.directionalLight.lightFustrum)
+//                self.lightFustrums[self.uniformBufferIndex].draw(renderEncoder: renderEncoder, modelMatrix: Matrix4x4.identity(), pbrProperties: nil, frame: self.uniformBufferIndex)
+//            }
 
 //            renderEncoder.popDebugGroup()
             
@@ -408,29 +416,34 @@ class Renderer {
             self.updateDynamicBufferState()
             
             self.updateState()
-            
-            if !self.freezeFustrum {
-                file!.objectStore.directionalLight.calculateProjectionViewMatrix()
-            }
-            
+                        
             uniforms[0].projectionMatrix = self.camera.projectionMatrix
             uniforms[0].viewMatrix = self.camera.getViewMatrix()
-            uniforms[0].lightProjectionViewMatrix = file!.objectStore.directionalLight.projectionViewMatrix
             uniforms[0].cameraPos = self.camera.cameraOffset
-            uniforms[0].lightVector = file!.objectStore.directionalLight.direction
-            uniforms[0].lightColor = file!.objectStore.directionalLight.disabled ? Vec3(0, 0, 0) : file!.objectStore.directionalLight.intensity
-
-            if self.fustrums.count == 0 {
-                self.fustrums.append(WireBox(device: device!, points: file!.objectStore.directionalLight.cameraFustrum, color: Vec4(1, 0, 0, 1)))
-                self.fustrums.append(WireBox(device: device!, points: file!.objectStore.directionalLight.cameraFustrum, color: Vec4(1, 0, 0, 1)))
-                self.fustrums.append(WireBox(device: device!, points: file!.objectStore.directionalLight.cameraFustrum, color: Vec4(1, 0, 0, 1)))
-            }
+            uniforms[0].directionalLight.lightVector = file!.objectStore.directionalLight.direction
+            uniforms[0].directionalLight.lightColor = file!.objectStore.directionalLight.disabled ? Vec3(0, 0, 0) : file!.objectStore.directionalLight.intensity
             
-            if self.lightFustrums.count == 0 {
-                self.lightFustrums.append(WireBox(device: device!, points: file!.objectStore.directionalLight.cameraFustrum, color: Vec4(0, 1, 0, 1)))
-                self.lightFustrums.append(WireBox(device: device!, points: file!.objectStore.directionalLight.cameraFustrum, color: Vec4(0, 1, 0, 1)))
-                self.lightFustrums.append(WireBox(device: device!, points: file!.objectStore.directionalLight.cameraFustrum, color: Vec4(1, 1, 0, 1)))
+            let fustrumSegments: [Float] = [1, 80, 400, 1600]
+            withUnsafeMutableBytes(of: &uniforms[0].directionalLight.viewProjectionMatrix) { rawPtr in
+                let matrix = rawPtr.baseAddress!.assumingMemoryBound(to: Matrix4x4.self)
+
+                for i in 0...2 {
+                    let cameraFustrum = camera.getFustrumCorners(nearZ: fustrumSegments[i], farZ: fustrumSegments[i + 1])
+                    matrix[i] = file!.objectStore.directionalLight.calculateProjectionViewMatrix(cameraFustrum: cameraFustrum)
+                }
             }
+
+//            if self.fustrums.count == 0 {
+//                self.fustrums.append(WireBox(device: device!, points: file!.objectStore.directionalLight.cameraFustrum, color: Vec4(1, 0, 0, 1)))
+//                self.fustrums.append(WireBox(device: device!, points: file!.objectStore.directionalLight.cameraFustrum, color: Vec4(1, 0, 0, 1)))
+//                self.fustrums.append(WireBox(device: device!, points: file!.objectStore.directionalLight.cameraFustrum, color: Vec4(1, 0, 0, 1)))
+//            }
+//
+//            if self.lightFustrums.count == 0 {
+//                self.lightFustrums.append(WireBox(device: device!, points: file!.objectStore.directionalLight.cameraFustrum, color: Vec4(0, 1, 0, 1)))
+//                self.lightFustrums.append(WireBox(device: device!, points: file!.objectStore.directionalLight.cameraFustrum, color: Vec4(0, 1, 0, 1)))
+//                self.lightFustrums.append(WireBox(device: device!, points: file!.objectStore.directionalLight.cameraFustrum, color: Vec4(1, 1, 0, 1)))
+//            }
 
             try renderShadowPass(commandBuffer: commandBuffer)
             
