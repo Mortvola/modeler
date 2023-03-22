@@ -72,7 +72,7 @@ class WireBox: RenderObject {
         try super.init(from: decoder)
     }
 
-    override func draw(renderEncoder: MTLRenderCommandEncoder, modelMatrix: Matrix4x4, frame: Int) {
+    override func draw(renderEncoder: MTLRenderCommandEncoder, modelMatrix: Matrix4x4, pbrProperties: PbrProperties?, frame: Int) {
         renderEncoder.setVertexBuffer(self.vertices, offset: 0, index: BufferIndex.meshPositions.rawValue)
 
         let u = getUniformsBuffer(index: frame)

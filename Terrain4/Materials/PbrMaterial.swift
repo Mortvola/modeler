@@ -56,66 +56,58 @@ class PbrMaterial: Item, BaseMaterial, Equatable, Hashable {
         
         self.samplerState = PbrMaterial.buildSamplerState(device: device)
 
-        do {
-            // Albedo
-            self.albedo.useSimple = descriptor?.albedo.useSimple ?? false
-            self.albedo.color = descriptor?.albedo.color ?? Vec4(1.0, 1.0, 1.0, 1.0)
-            self.albedo.map = descriptor?.albedo.map ?? ""
-            
-            if self.albedo.map.isEmpty {
-                self.albedo.mapTexture = try? await TextureManager.shared.addTexture(device: device, path: self.albedo.map)
-            }
-
-            self.albedo.simpleTexture = try TextureManager.shared.createTexture(device: device, color: self.albedo.color, pixelFormat: .bgra8Unorm_srgb)
-            self.albedo.simpleTexture?.label = "\(descriptor?.name ?? "Unknown") Simple Albedo"
-            
-            // Normals
-            self.normals.useSimple = descriptor?.normals.useSimple ?? false
-            self.normals.normal = (Vec4(0.0, 0.0, 1.0, 1.0)
-                .add(1.0)
-                .multiply(0.5))
-            self.normals.map = descriptor?.normals.map ?? ""
-
-            if !self.normals.map.isEmpty {
-                self.normals.mapTexture = try? await TextureManager.shared.addTexture(device: device, path: self.normals.map)
-            }
-            
-            self.normals.simpleTexture = try TextureManager.shared.createTexture(device: device, color: self.normals.normal, pixelFormat: .bgra8Unorm)
-            self.normals.simpleTexture?.label = "\(descriptor?.name ?? "Unknown") Simple Normals"
-
-            // Metalness
-            self.metallic.useSimple = descriptor?.metallic.useSimple ?? false
-            self.metallic.value = descriptor?.metallic.value ?? 1.0
-            self.metallic.map = descriptor?.metallic.map ?? ""
-
-            if !self.metallic.map.isEmpty {
-                self.metallic.mapTexture = try? await TextureManager.shared.addTexture(device: device, path: self.metallic.map)
-            }
-
-            self.metallic.simpleTexture = try TextureManager.shared.createTexture(device: device, color: self.metallic.value)
-            self.metallic.simpleTexture?.label = "\(descriptor?.name ?? "Unknown") Simple Metallic"
-
-            // Roughness
-            self.roughness.useSimple = descriptor?.roughness.useSimple ?? false
-            self.roughness.value = descriptor?.roughness.value ?? 1.0
-            self.roughness.map = descriptor?.roughness.map ?? ""
-
-            if !self.roughness.map.isEmpty {
-                self.roughness.mapTexture = try? await TextureManager.shared.addTexture(device: device, path: self.roughness.map)
-            }
-
-            self.roughness.simpleTexture = try TextureManager.shared.createTexture(device: device, color: self.roughness.value)
-            self.roughness.simpleTexture?.label = "\(descriptor?.name ?? "Unknown") Simple Roughness"
-
-            self.ao = nil
-        }
-        catch {
-            print(error);
-            
-            throw error;
+        // Albedo
+        self.albedo.useSimple = descriptor?.albedo.useSimple ?? false
+        self.albedo.color = descriptor?.albedo.color ?? Vec4(1.0, 1.0, 1.0, 1.0)
+        self.albedo.map = descriptor?.albedo.map ?? ""
+        
+        if self.albedo.map.isEmpty {
+            self.albedo.mapTexture = try? await TextureManager.shared.addTexture(device: device, path: self.albedo.map)
         }
         
+        // Normals
+        self.normals.useSimple = descriptor?.normals.useSimple ?? false
+        self.normals.normal = (Vec4(0.0, 0.0, 1.0, 1.0)
+            .add(1.0)
+            .multiply(0.5))
+        self.normals.map = descriptor?.normals.map ?? ""
+
+        if !self.normals.map.isEmpty {
+            self.normals.mapTexture = try? await TextureManager.shared.addTexture(device: device, path: self.normals.map)
+        }
+
+        // Metalness
+        self.metallic.useSimple = descriptor?.metallic.useSimple ?? false
+        self.metallic.value = descriptor?.metallic.value ?? 1.0
+        self.metallic.map = descriptor?.metallic.map ?? ""
+
+        if !self.metallic.map.isEmpty {
+            self.metallic.mapTexture = try? await TextureManager.shared.addTexture(device: device, path: self.metallic.map)
+        }
+
+        // Roughness
+        self.roughness.useSimple = descriptor?.roughness.useSimple ?? false
+        self.roughness.value = descriptor?.roughness.value ?? 1.0
+        self.roughness.map = descriptor?.roughness.map ?? ""
+
+        if !self.roughness.map.isEmpty {
+            self.roughness.mapTexture = try? await TextureManager.shared.addTexture(device: device, path: self.roughness.map)
+        }
+
+        self.ao = nil
+        
         super.init(name: descriptor?.name ?? "")
+    }
+    
+    func getPbrProperties() -> PbrProperties? {
+        let p  = Float(2.2)
+        let r = pow(albedo.color.x, p)
+        let g = pow(albedo.color.y, p)
+        let b = pow(albedo.color.z, p)
+        
+        let color = Vec3(r, g, b)
+        
+        return PbrProperties(albedo: color, normal: self.normals.normal.vec3(), metallic: self.metallic.value, roughness: self.roughness.value)
     }
     
     func getPipeline() -> MTLRenderPipelineState {
@@ -125,10 +117,10 @@ class PbrMaterial: Item, BaseMaterial, Equatable, Hashable {
     func prepare(renderEncoder: MTLRenderCommandEncoder) {
         renderEncoder.setRenderPipelineState(PbrMaterial.pipeline!)
         
-        renderEncoder.setFragmentTexture(self.albedo.currentTexture(), index: TextureIndex.color.rawValue)
-        renderEncoder.setFragmentTexture(self.normals.currentTexture(), index: TextureIndex.normals.rawValue)
-        renderEncoder.setFragmentTexture(self.metallic.currentTexture(), index: TextureIndex.metallic.rawValue)
-        renderEncoder.setFragmentTexture(self.roughness.currentTexture(), index: TextureIndex.roughness.rawValue)
+        renderEncoder.setFragmentTexture(self.albedo.mapTexture, index: TextureIndex.color.rawValue)
+        renderEncoder.setFragmentTexture(self.normals.mapTexture, index: TextureIndex.normals.rawValue)
+        renderEncoder.setFragmentTexture(self.metallic.mapTexture, index: TextureIndex.metallic.rawValue)
+        renderEncoder.setFragmentTexture(self.roughness.mapTexture, index: TextureIndex.roughness.rawValue)
         renderEncoder.setFragmentTexture(self.ao, index: TextureIndex.ao.rawValue)
 
         renderEncoder.setFragmentSamplerState(samplerState, index: SamplerIndex.sampler.rawValue)
@@ -201,4 +193,11 @@ class PbrMaterial: Item, BaseMaterial, Equatable, Hashable {
         samplerDescriptor.mipFilter = .linear
         return device.makeSamplerState(descriptor: samplerDescriptor)!
     }
+}
+
+struct PbrProperties {
+    var albedo: Vec3
+    var normal: Vec3
+    var metallic: Float
+    var roughness: Float
 }

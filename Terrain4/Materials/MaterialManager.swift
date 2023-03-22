@@ -51,10 +51,11 @@ class MaterialManager: ObservableObject {
         try self.materials.forEach { key, entry in
             if entry.objects.count > 0 {
                 entry.material.prepare(renderEncoder: renderEncoder)
+                let pbrProperties = entry.material.getPbrProperties()
                 
-                try entry.objects.forEach { object in
-                    if !object.disabled && !(object.model?.disabled ?? true) {
-                        try object.draw(renderEncoder: renderEncoder, modelMatrix: object.modelMatrix(), frame: frame)
+                for renderObject in entry.objects {
+                    if !renderObject.disabled && !(renderObject.model?.disabled ?? true) {
+                        try renderObject.draw(renderEncoder: renderEncoder, modelMatrix: renderObject.modelMatrix(), pbrProperties: pbrProperties, frame: frame)
                     }
                 }
             }

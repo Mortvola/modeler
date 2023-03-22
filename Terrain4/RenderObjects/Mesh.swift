@@ -18,7 +18,7 @@ class Mesh: RenderObject {
         super.init(model: model)
     }
     
-    override func draw(renderEncoder: MTLRenderCommandEncoder, modelMatrix: Matrix4x4, frame: Int) throws {
+    override func draw(renderEncoder: MTLRenderCommandEncoder, modelMatrix: Matrix4x4, pbrProperties: PbrProperties?, frame: Int) throws {
         // Pass the normal matrix (derived from the model matrix) to the vertex shader
         var normalMatrix = matrix_float3x3(columns: (
             vector_float3(modelMatrix[0][0], modelMatrix[0][1], modelMatrix[0][2]),
@@ -43,7 +43,12 @@ class Mesh: RenderObject {
             }
         }
 
-//        withUnsafeMutableBytes(of: &lightData.intensity) { rawPtr in
+        u[0].albedo = pbrProperties?.albedo ?? Vec3(1.0, 1.0, 1.0)
+        u[0].normals = pbrProperties?.normal ?? Vec3(0.5, 0.5, 1.0)
+        u[0].metallic = pbrProperties?.metallic ?? 1.0
+        u[0].roughness = pbrProperties?.roughness ?? 1.0
+
+        //        withUnsafeMutableBytes(of: &lightData.intensity) { rawPtr in
 //            let ptr = rawPtr.baseAddress!.assumingMemoryBound(to: vector_float3.self)
 //
 //            for i in stride(from: 0, to: self.lights.count, by: 1) {

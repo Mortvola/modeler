@@ -111,13 +111,13 @@ fragment float4 pbrFragmentShader(
     sampler sampler [[sampler(SamplerIndexSampler)]],
     depth2d<float> shadowMap [[texture(TextureIndexDepth)]]
 ) {
-    float3 albedo = pow(albedoMap.sample(sampler, in.texCoords).rgb, float3(2.2));
-    
-    float metallic = metallicMap.sample(sampler, in.texCoords).r;
-    float roughness = roughnessMap.sample(sampler, in.texCoords).r;
+    float3 albedo = !is_null_texture(albedoMap) ? pow(albedoMap.sample(sampler, in.texCoords).rgb, float3(2.2)) : pow(nodeUniforms.albedo, float3(2.2));
+    float3 normal = !is_null_texture(normalMap) ? normalMap.sample(sampler, in.texCoords).rgb : nodeUniforms.normals;
+    float metallic = !is_null_texture(metallicMap) ? metallicMap.sample(sampler, in.texCoords).r : nodeUniforms.metallic;
+    float roughness = !is_null_texture(roughnessMap) ? roughnessMap.sample(sampler, in.texCoords).r : nodeUniforms.roughness;
     float ao = 1.0; // aoMap.sample(sampler, fragmentIn.texCoords).r;
     
-    float3 N = normalize(normalMap.sample(sampler, in.texCoords).rgb * 2 - 1);
+    float3 N = normalize(normal * 2 - 1);
     float3 V = normalize(in.tangentViewPos - in.tangentFragPos);
 
     float3 Lo = 0;

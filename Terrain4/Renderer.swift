@@ -121,7 +121,7 @@ class Renderer {
             throw Errors.makeBufferFailed
         }
         
-        buffer.label = "UniformBuffer"
+        buffer.label = "Frame Uniforms"
         self.dynamicUniformBuffer = buffer
         
         self.uniforms = UnsafeMutableRawPointer(buffer.contents()).bindMemory(to: FrameUniforms.self, capacity: 1)
@@ -374,10 +374,10 @@ class Renderer {
                 self.lineMaterial?.prepare(renderEncoder: renderEncoder)
                 
                 self.fustrums[self.uniformBufferIndex].updateVertices(points: file!.objectStore.directionalLight.cameraFustrum)
-                self.fustrums[self.uniformBufferIndex].draw(renderEncoder: renderEncoder, modelMatrix: Matrix4x4.identity(), frame: self.uniformBufferIndex)
+                self.fustrums[self.uniformBufferIndex].draw(renderEncoder: renderEncoder, modelMatrix: Matrix4x4.identity(), pbrProperties: nil, frame: self.uniformBufferIndex)
 
                 self.lightFustrums[self.uniformBufferIndex].updateVertices(points: file!.objectStore.directionalLight.lightFustrum)
-                self.lightFustrums[self.uniformBufferIndex].draw(renderEncoder: renderEncoder, modelMatrix: Matrix4x4.identity(), frame: self.uniformBufferIndex)
+                self.lightFustrums[self.uniformBufferIndex].draw(renderEncoder: renderEncoder, modelMatrix: Matrix4x4.identity(), pbrProperties: nil, frame: self.uniformBufferIndex)
             }
 
 //            renderEncoder.popDebugGroup()

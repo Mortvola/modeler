@@ -8,7 +8,7 @@
 import Foundation
 import Metal
 
-let alignedNodeUniformsSize = (MemoryLayout<NodeUniforms>.size + 0xFF) & -0x100
+let alignedNodeUniformsSize = MemoryLayout<NodeUniforms>.size // (MemoryLayout<NodeUniforms>.size + 0xFF) & -0x100
 
 class RenderObject: Object {
     // lights that may affect this object.
@@ -48,7 +48,7 @@ class RenderObject: Object {
 
     func allocateUniformsBuffer() {
         self.uniforms = Renderer.shared.device!.makeBuffer(length: 3 * alignedNodeUniformsSize, options: [MTLResourceOptions.storageModeShared])!
-        self.uniforms!.label = "node uniforms"
+        self.uniforms!.label = "Node Uniforms"
     }
     
     func getUniformsBuffer(index: Int) -> UnsafeMutablePointer<NodeUniforms> {
@@ -57,7 +57,7 @@ class RenderObject: Object {
             .bindMemory(to: NodeUniforms.self, capacity: 1)
     }
     
-    func draw(renderEncoder: MTLRenderCommandEncoder, modelMatrix: Matrix4x4, frame: Int) throws {
+    func draw(renderEncoder: MTLRenderCommandEncoder, modelMatrix: Matrix4x4, pbrProperties: PbrProperties?, frame: Int) throws {
         throw Errors.notImplemented
     }
     

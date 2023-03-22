@@ -67,6 +67,10 @@ typedef struct {
     vector_float4 color;
     matrix_float4x4 modelMatrix;
     matrix_float3x3 normalMatrix;
+    vector_float3 albedo;
+    vector_float3 normals;
+    float metallic;
+    float roughness;
     int numberOfLights;
     Lights lights[4];
 } NodeUniforms;
