@@ -50,10 +50,12 @@ typedef NS_ENUM(EnumBackingType, SamplerIndex) {
     SamplerIndexSampler = 0,
 };
 
+//const int MAX_CASCADES = 4;
+
 typedef struct {
     vector_float3 lightVector;
     vector_float3 lightColor;
-    matrix_float4x4 viewProjectionMatrix[3];
+    matrix_float4x4 viewProjectionMatrix[4];
 } DirectionalLight;
 
 typedef struct {

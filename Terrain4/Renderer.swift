@@ -303,7 +303,7 @@ class Renderer {
     func renderShadowPass(commandBuffer: MTLCommandBuffer) throws {
         if let renderPassDescriptor = file!.objectStore.directionalLight.renderPassDescriptor {
             
-            for cascade in 0...2 {
+            for cascade in 0..<shadowMapCascades {
                 renderPassDescriptor.depthAttachment.slice = cascade
                 
                 guard let renderEncoder = commandBuffer.makeRenderCommandEncoder(descriptor: renderPassDescriptor) else {
@@ -423,11 +423,11 @@ class Renderer {
             uniforms[0].directionalLight.lightVector = file!.objectStore.directionalLight.direction
             uniforms[0].directionalLight.lightColor = file!.objectStore.directionalLight.disabled ? Vec3(0, 0, 0) : file!.objectStore.directionalLight.intensity
             
-            let fustrumSegments: [Float] = [1, 80, 400, 1600]
+            let fustrumSegments: [Float] = [1, 70, 170, 400, 1600]
             withUnsafeMutableBytes(of: &uniforms[0].directionalLight.viewProjectionMatrix) { rawPtr in
                 let matrix = rawPtr.baseAddress!.assumingMemoryBound(to: Matrix4x4.self)
 
-                for i in 0...2 {
+                for i in 0..<shadowMapCascades {
                     let cameraFustrum = camera.getFustrumCorners(nearZ: fustrumSegments[i], farZ: fustrumSegments[i + 1])
                     matrix[i] = file!.objectStore.directionalLight.calculateProjectionViewMatrix(cameraFustrum: cameraFustrum)
                 }

@@ -73,14 +73,14 @@ float3 computeLo(
     float3 radiance
 );
 
-float shadowed(
+float getShadowedFactor(
              float3 worldPos,
              const device DirectionalLight &directionalLight,
              depth2d_array<float> shadowMap
 ) {
-    float shadowed = 1;
+    float shadowed = 0;
     
-    for (int cascadeIndex = 0; cascadeIndex < 3; ++cascadeIndex) {
+    for (int cascadeIndex = 0; cascadeIndex < 4; ++cascadeIndex) {
         float4 pos = directionalLight.viewProjectionMatrix[cascadeIndex] * float4(worldPos, 1.0);
         // NDC range from X -1 to 1, Y -1 to 1 and Z 0 to 1
         // The perspective divide isn't necessary for directional lights be we will
@@ -102,14 +102,20 @@ float shadowed(
             
             float lightspaceDepth = ndc.z;
             
-            // Bias to help avoid shadow acne is applied through the setDeptBias method
-            shadowed = shadowMap.sample_compare(shadowSampler, coords, cascadeIndex, lightspaceDepth, int2(0));
+            for (int j = -1; j <= 1; ++j) {
+                for (int i = -1; i <= 1; ++i) {
+                    // Bias to help avoid shadow acne is applied through the setDeptBias method
+                    shadowed += shadowMap.sample_compare(shadowSampler, coords, cascadeIndex, lightspaceDepth, int2(ndc.x + i, ndc.y + j));
+                }
+            }
+            
+            shadowed /= 9.0;
             
             break;
         }
     }
 
-    return shadowed;
+    return 1 - shadowed;
 }
 
 fragment float4 pbrFragmentShader(
@@ -147,7 +153,7 @@ fragment float4 pbrFragmentShader(
     float3 radiance = uniforms.directionalLight.lightColor;
     float3 L = normalize(-in.tangentLightVector);
 
-    float shadowFactor = 1 - shadowed(in.worldFragPos, uniforms.directionalLight, shadowMap);
+    float shadowFactor = getShadowedFactor(in.worldFragPos, uniforms.directionalLight, shadowMap);
     
     Lo += computeLo(albedo, metallic, roughness, N, V, L, radiance) * shadowFactor;
 

@@ -8,6 +8,8 @@
 import Foundation
 import Metal
 
+let shadowMapCascades = 4
+
 class DirectionalLight: Node, Equatable, Codable {
     static func == (lhs: DirectionalLight, rhs: DirectionalLight) -> Bool {
         lhs === rhs
@@ -141,7 +143,7 @@ class DirectionalLight: Node, Equatable, Codable {
             shadowTextureDescriptor.storageMode = .private  
             shadowTextureDescriptor.usage = [.renderTarget, .shaderRead]
             shadowTextureDescriptor.textureType = .type2DArray
-            shadowTextureDescriptor.arrayLength = 3
+            shadowTextureDescriptor.arrayLength = shadowMapCascades
             
             shadowTexture = device.makeTexture(descriptor: shadowTextureDescriptor)
             shadowTexture?.label = "Shadow Map"
