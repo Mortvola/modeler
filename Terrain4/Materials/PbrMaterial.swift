@@ -28,6 +28,8 @@ class PbrMaterial: Item, BaseMaterial, Equatable, Hashable {
     var metallic = MetallicLayer()
     var roughness = RoughnessLayer()
     var ao: MTLTexture?
+    
+    var textures: [MTLTexture?] = []
 
     func setSimpleMetallic(_ value: Float) {
         TextureManager.setTextureValue(texture: self.metallic.simpleTexture!, value: value)
@@ -62,7 +64,10 @@ class PbrMaterial: Item, BaseMaterial, Equatable, Hashable {
         self.albedo.map = descriptor?.albedo.map ?? ""
         
         if self.albedo.map.isEmpty {
-            self.albedo.mapTexture = try? await TextureManager.shared.addTexture(device: device, path: self.albedo.map)
+            self.textures.append(try? await TextureManager.shared.addTexture(device: device, path: self.albedo.map))
+        }
+        else {
+            self.textures.append(nil)
         }
         
         // Normals
@@ -73,7 +78,10 @@ class PbrMaterial: Item, BaseMaterial, Equatable, Hashable {
         self.normals.map = descriptor?.normals.map ?? ""
 
         if !self.normals.map.isEmpty {
-            self.normals.mapTexture = try? await TextureManager.shared.addTexture(device: device, path: self.normals.map)
+            self.textures.append(try? await TextureManager.shared.addTexture(device: device, path: self.normals.map))
+        }
+        else {
+            self.textures.append(nil)
         }
 
         // Metalness
@@ -82,7 +90,10 @@ class PbrMaterial: Item, BaseMaterial, Equatable, Hashable {
         self.metallic.map = descriptor?.metallic.map ?? ""
 
         if !self.metallic.map.isEmpty {
-            self.metallic.mapTexture = try? await TextureManager.shared.addTexture(device: device, path: self.metallic.map)
+            self.textures.append(try? await TextureManager.shared.addTexture(device: device, path: self.metallic.map))
+        }
+        else {
+            self.textures.append(nil)
         }
 
         // Roughness
@@ -91,7 +102,10 @@ class PbrMaterial: Item, BaseMaterial, Equatable, Hashable {
         self.roughness.map = descriptor?.roughness.map ?? ""
 
         if !self.roughness.map.isEmpty {
-            self.roughness.mapTexture = try? await TextureManager.shared.addTexture(device: device, path: self.roughness.map)
+            self.textures.append(try? await TextureManager.shared.addTexture(device: device, path: self.roughness.map))
+        }
+        else {
+            self.textures.append(nil)
         }
 
         self.ao = nil
@@ -117,11 +131,7 @@ class PbrMaterial: Item, BaseMaterial, Equatable, Hashable {
     func prepare(renderEncoder: MTLRenderCommandEncoder) {
         renderEncoder.setRenderPipelineState(PbrMaterial.pipeline!)
         
-        renderEncoder.setFragmentTexture(self.albedo.mapTexture, index: TextureIndex.color.rawValue)
-        renderEncoder.setFragmentTexture(self.normals.mapTexture, index: TextureIndex.normals.rawValue)
-        renderEncoder.setFragmentTexture(self.metallic.mapTexture, index: TextureIndex.metallic.rawValue)
-        renderEncoder.setFragmentTexture(self.roughness.mapTexture, index: TextureIndex.roughness.rawValue)
-        renderEncoder.setFragmentTexture(self.ao, index: TextureIndex.ao.rawValue)
+        renderEncoder.setFragmentTextures(self.textures, range: 0..<textures.count)
 
         renderEncoder.setFragmentSamplerState(samplerState, index: SamplerIndex.sampler.rawValue)
     }
