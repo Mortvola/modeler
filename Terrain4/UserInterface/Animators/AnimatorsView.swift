@@ -10,6 +10,7 @@ import SwiftUI
 struct AnimatorsView: View {
     @ObservedObject var animatorStore = AnimatorStore.shared
     @State var hidden = false
+    @State var selectedItem: Animator? = nil
     
     var body: some View {
         VStack {
@@ -21,11 +22,11 @@ struct AnimatorsView: View {
             .buttonStyle(.bordered)
             List {
                 ForEach(animatorStore.animators) { animator in
-                    AnimatorListItem(animator: animator)
+                    AnimatorListItem(animator: animator, selectedItem: $selectedItem)
                         .selected(selected: animator == animatorStore.selectedAnimator)
                 }
             }
-            if let animator = animatorStore.selectedAnimator, !hidden {
+            if let animator = selectedItem, !hidden {
                 AnimatorDetailsView(animator: animator)
                     .onChange(of: animatorStore.selectedAnimator) { _ in
                         hidden = true

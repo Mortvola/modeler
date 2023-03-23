@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum SelectedNode: Equatable {
+enum SelectedNode: Equatable, Codable, Identifiable {
     static func == (lhs: SelectedNode, rhs: SelectedNode) -> Bool {
         switch lhs {
         case .model(let m1):
@@ -31,9 +31,9 @@ enum SelectedNode: Equatable {
             default:
                 return false
             }
-        case .directLight(let d1):
+        case .directionalLight(let d1):
             switch rhs {
-            case .directLight(let d2):
+            case .directionalLight(let d2):
                 return d1 == d2
             default:
                 return false
@@ -41,13 +41,162 @@ enum SelectedNode: Equatable {
         }
     }
     
+    var id: UUID {
+        switch(self) {
+        case .model(let m):
+            return m.id
+        case .object(let o):
+            return o.id
+        case .light(let l):
+            return l.id
+        case .directionalLight(let d):
+            return d.id
+        }
+    }
+    
+    var item: Node {
+        switch(self) {
+        case .model(let m):
+            return m
+        case .object(let o):
+            return o
+        case .light(let l):
+            return l
+        case .directionalLight(let d):
+            return d
+        }
+    }
+    
     case model(Model)
     case object(RenderObject)
     case light(Light)
-    case directLight(DirectionalLight)
+    case directionalLight(DirectionalLight)
 }
 
-class Item: ObservableObject {
+class TreeNode: ObservableObject, Equatable, Identifiable {
+    static func == (lhs: TreeNode, rhs: TreeNode) -> Bool {
+        lhs.content == rhs.content
+    }
+    
+    var content: SelectedNode
+    
+    init(model: Model) {
+        content = SelectedNode.model(model)
+    }
+    
+    init(object: RenderObject) {
+        content = SelectedNode.object(object)
+    }
+    
+    init(light: Light) {
+        content = SelectedNode.light(light)
+    }
+    
+    init(directionalLight: DirectionalLight) {
+        content = SelectedNode.directionalLight(directionalLight)
+    }
+    
+    func getNearestModel() -> Model? {
+        switch content {
+        case .model(let m):
+            return m
+        case .object(let o):
+            return o.model
+        case .light(let l):
+            return l.model
+        case .directionalLight:
+            return nil
+        }
+    }
+    
+    var disabled: Bool {
+        get {
+            switch content {
+            case .model(let m):
+                return m.disabled
+            case .object(let o):
+                return o.disabled
+            case .light(let l):
+                return l.disabled
+            case .directionalLight(let d):
+                return d.disabled
+            }
+        }
+        set(newValue) {
+            switch content {
+            case .model(let m):
+                m.disabled = newValue
+            case .object(let o):
+                o.disabled = newValue
+            case .light(let l):
+                l.disabled = newValue
+            case .directionalLight(let d):
+                d.disabled = newValue
+            }
+        }
+    }
+
+    var name: String {
+        get {
+            switch content {
+            case .model(let m):
+                return m.name
+            case .object(let o):
+                return o.name
+            case .light(let l):
+                return l.name
+            case .directionalLight(let d):
+                return d.name
+            }
+        }
+        set(newValue) {
+            switch content {
+            case .model(let m):
+                m.name = newValue
+            case .object(let o):
+                o.name = newValue
+            case .light(let l):
+                l.name = newValue
+            case .directionalLight(let d):
+                d.name = newValue
+            }
+        }
+    }
+
+    var item: Item {
+        get {
+            switch content {
+            case .model(let m):
+                return m
+            case .object(let o):
+                return o
+            case .light(let l):
+                return l
+            case .directionalLight(let d):
+                return d
+            }
+        }
+//        set(newValue) {
+//            switch content {
+//            case .model(let m):
+//                m.disabled = newValue
+//            case .object(let o):
+//                o.disabled = newValue
+//            case .light(let l):
+//                l.disabled = newValue
+//            case .directionalLight(let d):
+//                d.disabled = newValue
+//            }
+//        }
+    }
+
+}
+
+class Item: ObservableObject, Equatable {
+    static func == (lhs: Item, rhs: Item) -> Bool {
+        lhs === rhs
+    }
+    
     @Published var name: String
     
     init(name: String) {
@@ -60,7 +209,7 @@ class Node: Item {
 }
 
 class ObjectStore: ObservableObject {
-    @Published var models: [Model] = []
+    @Published var models: [TreeNode] = []
     @Published var selectedNode: SelectedNode? = nil
     
     var lights: [Light] = []
@@ -76,14 +225,18 @@ class ObjectStore: ObservableObject {
         var name: String {rawValue}
     }
     
-    func selectModel(_ model: Model?) {
-        if let model = model {
-            self.selectedNode = SelectedNode.model(model)
-        }
-        else {
-            self.selectedNode = nil
-        }
+    func selectNode(_ node: SelectedNode) {
+        self.selectedNode = node
     }
+
+//    func selectModel(_ model: Model?) {
+//        if let model = model {
+//            self.selectedNode = SelectedNode.model(model)
+//        }
+//        else {
+//            self.selectedNode = nil
+//        }
+//    }
     
     func selectObject(_ object: RenderObject?) {
         if let object = object {
@@ -104,15 +257,15 @@ class ObjectStore: ObservableObject {
     }
     
     func selectDirectionalLight() {
-        self.selectedNode = SelectedNode.directLight(self.directionalLight)
+        self.selectedNode = SelectedNode.directionalLight(self.directionalLight)
     }
     
     @MainActor
-    func addModel() {
-        let model = Model()
-        models.append(model)
-        
-        selectModel(model)
+    func addModel() -> TreeNode {
+        let treeNode = TreeNode(model: Model())
+        models.append(treeNode)
+
+        return treeNode
     }
     
     private func getModel() -> Model? {
@@ -124,68 +277,14 @@ class ObjectStore: ObservableObject {
                 return o.model;
             case .light(let l):
                 return l.model
-            case .directLight:
+            case .directionalLight:
                 return nil
             }
         }
 
         return nil
     }
-    
-    @MainActor
-    func addObject(type: ObjectStore.ObjectType) async throws {
-        guard let device = Renderer.shared.device else {
-            throw Errors.deviceNotSet
-        }
         
-        guard let view = Renderer.shared.view else {
-            throw Errors.viewNotSet
-        }
-        
-        guard let model = getModel() else {
-            throw Errors.modelNotSelected
-        }
-        
-        var object: RenderObject? = nil
-        
-        switch(type) {
-        case .sphere:
-            let material = try await MaterialManager.shared.addMaterial(device: device, view: view, descriptor: nil)
-            
-            let mesh = try SphereAllocator.allocate(device: device, diameter: 5)
-            
-            object = Mesh(mesh: mesh, model: model)
-            
-            if let object = object {
-                material.objects.append(object)
-                model.objects.append(object)
-            }
-            
-            break
-            
-        case .rectangle:
-            let material = try await MaterialManager.shared.addMaterial(device: device, view: view, descriptor: nil)
-            
-            let dimensions = Vec2(5, 5)
-            let segments = VecUInt2(5, 5)
-            let mesh = try RetangleAllocator.allocate(device: device, dimensions: dimensions, segments: segments)
-            
-            object = Mesh(mesh: mesh, model: model)
-
-            if let object = object {
-                material.objects.append(object)
-                model.objects.append(object)
-            }
-            
-            break
-            
-        case .light:
-            break;
-        }
-        
-        selectObject(object)
-    }
-    
     @MainActor
     func addLight() throws {
         guard let model = getModel() else {

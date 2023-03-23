@@ -12,6 +12,8 @@ struct AddObject: View {
     @EnvironmentObject private var file: SceneDocument
     @State private var type = ObjectStore.ObjectType.sphere
     @Binding var isOpen: Bool
+    @Binding var selectedItem: TreeNode?
+    @Binding var model: Model?
     
     var body: some View {
         NavigationStack {
@@ -34,8 +36,12 @@ struct AddObject: View {
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Done") {
                         Task {
-                            try? await file.objectStore.addObject(type: type)
-                            print("\(undoManager.debugDescription)")
+                            let object = try? await model?.addObject(type: type)
+                            
+                            if let object = object {
+                                selectedItem = TreeNode(object: object)
+                            }
+                            
                             undoManager?.registerUndo(withTarget: file) { _ in
                                 print("undo add object")
                             }
@@ -48,8 +54,8 @@ struct AddObject: View {
     }
 }
 
-struct AddObject_Previews: PreviewProvider {
-    static var previews: some View {
-        AddObject(isOpen: .constant(true))
-    }
-}
+//struct AddObject_Previews: PreviewProvider {
+//    static var previews: some View {
+//        AddObject(isOpen: .constant(true), selected)
+//    }
+//}

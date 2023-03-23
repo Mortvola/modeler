@@ -34,8 +34,7 @@ struct MaterialsView: View {
             .buttonStyle(.bordered)
             List {
                 ForEach(materialList, id: \.id) { material in
-                    MaterialListItem(material: material, selectedMaterial: $selectedMaterial)
-                        .selected(selected: material == selectedMaterial)
+                    MaterialListItem(material: material, selectedItem: $selectedMaterial)
                 }
             }
             if let material = selectedMaterial, !hidden {

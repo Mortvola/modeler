@@ -8,26 +8,28 @@
 import SwiftUI
 
 struct ModelTreeListItem: View {
-    @ObservedObject var node: Node
-    let action: () -> Void
+    var node: TreeNode
+    @State var name: String = ""
+    @Binding var selectedItem: TreeNode?
 
     var body: some View {
         HStack {
-            ListItem(item: node, action: action)
-            Spacer()
-            Button {
-                node.disabled.toggle()
-            } label: {
-                node.disabled ? Image(systemName: "eye.slash") : Image(systemName: "eye")
+            VisibleButton(node: node, selectedItem: $selectedItem)
+            ListItemBase(text: $name, isSelected: selectedItem == node) {
+                selectedItem = node
             }
+        }
+        .onAppear {
+            name = node.name
+        }
+        .onChange(of: name) { newName in
+            node.name = name
         }
     }
 }
 
 struct ModelTreeListItem_Previews: PreviewProvider {
     static var previews: some View {
-        ModelTreeListItem(node: Node(name: "test")) {
-            print("It workedd!")
-        }
+        ModelTreeListItem(node: TreeNode(model: Model()), selectedItem: .constant(nil))
     }
 }

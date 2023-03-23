@@ -8,19 +8,11 @@
 import Foundation
 
 struct File: Codable {
-    var models: [Model]
+    var models: [TreeNode]
     var animators: [Animator]
     var camera: Camera
     var materials: [MaterialDescriptor]
     var directionalLight: DirectionalLight
-    
-    enum CodkingKeys: CodingKey {
-        case models
-        case animators
-        case camera
-        case materials
-        case directionalLight
-    }
     
     init(file: SceneDocument) {
         self.models = file.objectStore.models
@@ -37,6 +29,39 @@ struct File: Codable {
         }
         
         self.directionalLight = file.objectStore.directionalLight
+    }
+
+    enum CodingKeys: CodingKey {
+        case models
+        case animators
+        case camera
+        case materials
+        case directionalLight
+    }
+    
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+
+        let m = models.compactMap { node in
+            switch node.content {
+            case .model(let model):
+                return model
+            case .object:
+                break
+            case .light:
+                break
+            case .directionalLight:
+                break
+            }
+            
+            return nil
+        }
+
+        try container.encode(m, forKey: .models)
+        try container.encode(self.camera, forKey: .camera)
+        try container.encode(self.animators, forKey: .animators)
+        try container.encode(self.materials, forKey: .materials)
+        try container.encode(self.directionalLight, forKey: .directionalLight)
     }
 
     init(from decoder: Decoder) throws {
@@ -56,16 +81,13 @@ struct File: Codable {
         
         materials = try container.decode([MaterialDescriptor].self, forKey: .materials)
         
-        models = try container.decode([Model].self, forKey: .models)
+        let m = try container.decode([Model].self, forKey: .models)
+        
+        models = m.map { model in
+            TreeNode(model: model)
+        }
         
         directionalLight = try container.decodeIfPresent(DirectionalLight.self, forKey: .directionalLight) ?? DirectionalLight()
     }
-    
-//    func encode(to encoder: Encoder) throws {
-//        var container = encoder.container(keyedBy: CodkingKeys.self)
-//
-//        try container.encode(self.camera, forKey: .camera)
-//        try container.encode(self.animators, forKey: .animators)
-//        try container.encode(self.models, forKey: .models)
-//    }
 }
+

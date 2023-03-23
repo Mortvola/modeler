@@ -231,40 +231,50 @@ class Renderer {
             }
             
             // Update the model matrix for each model
-            file!.objectStore.models.forEach { model in
-                let transform = model.transforms.reversed().reduce(Matrix4x4.identity()) { accum, transform in
-                    var t = transform.values
-                    
-                    if let animator = transform.animator {
-                        t = t.add(animator.accum)
-                    }
-                    
-                    switch(transform.transform) {
-                    case .translate:
-                        return accum.translate(t.x, t.y, t.z)
+            for node in file!.objectStore.models {
+                switch node.content {
+                case .model(let model):
+                    let transform = model.transforms.reversed().reduce(Matrix4x4.identity()) { accum, transform in
+                        var t = transform.values
                         
-                    case .rotate:
-                        return accum
-                            .rotate(radians: degreesToRadians(t.x), axis: Vec3(1, 0, 0))
-                            .rotate(radians: degreesToRadians(t.y), axis: Vec3(0, 1, 0))
-                            .rotate(radians: degreesToRadians(t.z), axis: Vec3(0, 0, 1))
+                        if let animator = transform.animator {
+                            t = t.add(animator.accum)
+                        }
                         
-                    case .scale:
-                        return accum.scale(t.x, t.y, t.z)
-                    }
-                }
-                
-                model.modelMatrix = transform
-                
-                model.objects.forEach { object in
-                    
-                    object.lights = []
-                    
-                    file!.objectStore.lights.forEach { light in
-                        if !light.disabled && !(light.model?.disabled ?? true) {
-                            object.lights.append(light)
+                        switch(transform.transform) {
+                        case .translate:
+                            return accum.translate(t.x, t.y, t.z)
+                            
+                        case .rotate:
+                            return accum
+                                .rotate(radians: degreesToRadians(t.x), axis: Vec3(1, 0, 0))
+                                .rotate(radians: degreesToRadians(t.y), axis: Vec3(0, 1, 0))
+                                .rotate(radians: degreesToRadians(t.z), axis: Vec3(0, 0, 1))
+                            
+                        case .scale:
+                            return accum.scale(t.x, t.y, t.z)
                         }
                     }
+                    
+                    model.modelMatrix = transform
+                    
+                    model.objects.forEach { object in
+                        
+                        object.lights = []
+                        
+                        file!.objectStore.lights.forEach { light in
+                            if !light.disabled && !(light.model?.disabled ?? true) {
+                                object.lights.append(light)
+                            }
+                        }
+                    }
+
+                case .object:
+                    break
+                case .light:
+                    break
+                case .directionalLight:
+                    break
                 }
             }
             
@@ -332,13 +342,22 @@ class Renderer {
                 if file!.objectStore.directionalLight.shadowCaster {
                     depthShadowPipeline!.prepare(renderEncoder: renderEncoder)
                     
-                    for model in file!.objectStore.models {
-                        if !model.disabled {
-                            for object in model.objects {
-                                if !object.disabled {
-                                    try object.simpleDraw(renderEncoder: renderEncoder, modelMatrix: object.modelMatrix(), frame: self.uniformBufferIndex)
+                    for node in file!.objectStore.models {
+                        switch node.content {
+                        case .model(let model):
+                            if !model.disabled {
+                                for object in model.objects {
+                                    if !object.disabled {
+                                        try object.simpleDraw(renderEncoder: renderEncoder, modelMatrix: object.modelMatrix(), frame: self.uniformBufferIndex)
+                                    }
                                 }
                             }
+                        case .object:
+                            break
+                        case .light:
+                            break
+                        case .directionalLight:
+                            break
                         }
                     }
                 }

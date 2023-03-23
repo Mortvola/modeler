@@ -7,26 +7,19 @@
 
 import SwiftUI
 
-struct ListItem: View {
-    @ObservedObject var item: Item
-    let action: () -> Void
+struct ListItem<T>: View where T: Item {
+    @ObservedObject var item: T
+    @Binding var selectedItem: T?
     
     var body: some View {
-        HStack {
-            Button {
-                action()
-            } label: {
-                ListItemField(text: $item.name)
-            }
-            .buttonStyle(.plain)
+        ListItemBase(text: $item.name, isSelected: selectedItem == item) {
+            selectedItem = item
         }
     }
 }
 
 struct ListItem_Previews: PreviewProvider {
     static var previews: some View {
-        ListItem(item: Item(name: "test")) {
-            print("It workedd!")
-        }
+        ListItem(item: Item(name: "test"), selectedItem: .constant(nil))
     }
 }

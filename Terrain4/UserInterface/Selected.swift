@@ -11,15 +11,20 @@ struct Selected: ViewModifier {
     var selected: Bool
 
     func body(content: Content) -> some View {
-        content
-            .padding(4)
-            .overlay {
-                selected
-                ?
-                RoundedRectangle(cornerRadius: 5)
-                    .stroke(.blue, lineWidth: 1)
-                : nil
-            }
+        if selected {
+            RoundedRectangle(cornerRadius: 5)
+                .stroke(.blue, lineWidth: 1)
+                .background {
+                    Color(.systemBlue)
+                }
+                .overlay {
+                    content
+                        .foregroundColor(.white)
+                }
+        }
+        else {
+            content
+        }
     }
 }
 

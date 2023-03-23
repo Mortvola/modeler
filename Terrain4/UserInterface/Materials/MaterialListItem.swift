@@ -9,13 +9,10 @@ import SwiftUI
 
 struct MaterialListItem: View {
     @ObservedObject var material: PbrMaterial
-    @ObservedObject var materialStore = MaterialManager.shared
-    @Binding var selectedMaterial: PbrMaterial?
+    @Binding var selectedItem: PbrMaterial?
     
     var body: some View {
-        ListItem(item: material) {
-            selectedMaterial = material
-        }
+        ListItem(item: material, selectedItem: $selectedItem)
     }
 }
 

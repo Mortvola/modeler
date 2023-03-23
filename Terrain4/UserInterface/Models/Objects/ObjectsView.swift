@@ -8,28 +8,22 @@
 import SwiftUI
 
 struct ObjectsView: View {
-    @ObservedObject var objectStore: ObjectStore
     @ObservedObject var model: Model
+    @Binding var selectedItem: TreeNode?
     
     var body: some View {
         ForEach($model.objects, id: \.id) { $object in
-            ModelTreeListItem(node: object) {
-                objectStore.selectObject(object);
-            }
-            .selected(selected: SelectedNode.object(object) == objectStore.selectedNode)
+            ModelTreeListItem(node: TreeNode(object: object), selectedItem: $selectedItem)
         }
 
         ForEach($model.lights, id: \.id) { $light in
-            ModelTreeListItem(node: light) {
-                objectStore.selectLight(light);
-            }
-            .selected(selected: SelectedNode.light(light) == objectStore.selectedNode)
+            ModelTreeListItem(node: TreeNode(light: light), selectedItem: $selectedItem)
         }
     }
 }
 
 struct ObjectsView_Previews: PreviewProvider {
     static var previews: some View {
-        ObjectsView(objectStore: ObjectStore(), model: Model())
+        ObjectsView(model: Model(), selectedItem: .constant(nil))
     }
 }

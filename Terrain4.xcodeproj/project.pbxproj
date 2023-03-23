@@ -65,6 +65,8 @@
 		7921DF7329C8A58D0013E317 /* MovieManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7921DF7229C8A58D0013E317 /* MovieManager.swift */; };
 		7921DF7529C9398A0013E317 /* WireBox.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7921DF7429C9398A0013E317 /* WireBox.swift */; };
 		7921DF7729CA2D980013E317 /* Matrix3x3.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7921DF7629CA2D980013E317 /* Matrix3x3.swift */; };
+		7921DF7A29CB8DED0013E317 /* VisibleButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7921DF7929CB8DED0013E317 /* VisibleButton.swift */; };
+		7921DF7C29CBB2610013E317 /* ListItemBase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7921DF7B29CBB2610013E317 /* ListItemBase.swift */; };
 		79345D3929C509E200E9F074 /* RectangleAllocator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79345D3629C509E200E9F074 /* RectangleAllocator.swift */; };
 		798D3BE929C35EE600B96C5F /* AlbedoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 798D3BE829C35EE600B96C5F /* AlbedoView.swift */; };
 		798D3BEB29C3613700B96C5F /* NormalsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 798D3BEA29C3613700B96C5F /* NormalsView.swift */; };
@@ -226,6 +228,8 @@
 		7921DF7229C8A58D0013E317 /* MovieManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieManager.swift; sourceTree = "<group>"; };
 		7921DF7429C9398A0013E317 /* WireBox.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WireBox.swift; sourceTree = "<group>"; };
 		7921DF7629CA2D980013E317 /* Matrix3x3.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Matrix3x3.swift; sourceTree = "<group>"; };
+		7921DF7929CB8DED0013E317 /* VisibleButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisibleButton.swift; sourceTree = "<group>"; };
+		7921DF7B29CBB2610013E317 /* ListItemBase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListItemBase.swift; sourceTree = "<group>"; };
 		79345D3629C509E200E9F074 /* RectangleAllocator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RectangleAllocator.swift; sourceTree = "<group>"; };
 		798D3BE829C35EE600B96C5F /* AlbedoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlbedoView.swift; sourceTree = "<group>"; };
 		798D3BEA29C3613700B96C5F /* NormalsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NormalsView.swift; sourceTree = "<group>"; };
@@ -408,7 +412,9 @@
 				79F6D30129C1DC78007CA69A /* ListItemField.swift */,
 				7921DF6E29C7E5EF0013E317 /* UndoProvider.swift */,
 				79F6D30329C1DD7F007CA69A /* ListItem.swift */,
+				7921DF7B29CBB2610013E317 /* ListItemBase.swift */,
 				7921DF7029C888310013E317 /* ModelTreeListItem.swift */,
+				7921DF7929CB8DED0013E317 /* VisibleButton.swift */,
 				79F6D2E829BCBD83007CA69A /* NumericField.swift */,
 				79F6D2EE29BCC983007CA69A /* VectorFieldView.swift */,
 			);
@@ -743,6 +749,7 @@
 				79F6D2D329BAC193007CA69A /* TestRectAllocator.swift in Sources */,
 				798D3BF129C3C17E00B96C5F /* MaterialLayer.swift in Sources */,
 				791E78D129B93A2B00FB45F3 /* ModelsView.swift in Sources */,
+				7921DF7C29CBB2610013E317 /* ListItemBase.swift in Sources */,
 				791E794529B9443F00FB45F3 /* Sun.swift in Sources */,
 				79F6D2D729BB6642007CA69A /* AnimatorStore.swift in Sources */,
 				791E791129B93BDC00FB45F3 /* Vec2.swift in Sources */,
@@ -825,6 +832,7 @@
 				791E792129B93D6000FB45F3 /* RenderObject.swift in Sources */,
 				791E792029B93D6000FB45F3 /* Mesh.swift in Sources */,
 				798D3BE929C35EE600B96C5F /* AlbedoView.swift in Sources */,
+				7921DF7A29CB8DED0013E317 /* VisibleButton.swift in Sources */,
 				798D3C0D29C4162D00B96C5F /* MaterialDescriptor.swift in Sources */,
 				791E792F29B93D7000FB45F3 /* BaseMaterial.swift in Sources */,
 				791E794729B9446A00FB45F3 /* Types.swift in Sources */,

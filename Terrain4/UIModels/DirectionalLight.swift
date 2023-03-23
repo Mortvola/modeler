@@ -10,10 +10,12 @@ import Metal
 
 let shadowMapCascades = 4
 
-class DirectionalLight: Node, Equatable, Codable {
+class DirectionalLight: Node, Codable {
     static func == (lhs: DirectionalLight, rhs: DirectionalLight) -> Bool {
         lhs === rhs
     }
+    
+    let id = UUID()
     
     @Published var direction = Vec3(0, -1, 1).normalize()
     @Published var intensity = Vec3(15, 15, 15)

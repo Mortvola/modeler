@@ -74,16 +74,26 @@ class SceneDocument: ReferenceFileDocument {
 
             var newLights: [Light] = []
             
-            for model in file.models {
-                for object in model.objects {
-                    object.model = model
+            for node in file.models {
+                switch node.content {
+                case .model(let model):
+                    for object in model.objects {
+                        object.model = model
 
-                    object.setMaterial(materialId: object.materialId)
-                }
-                
-                model.lights.forEach { light in
-                    light.model = model
-                    newLights.append(light)
+                        object.setMaterial(materialId: object.materialId)
+                    }
+
+                    model.lights.forEach { light in
+                        light.model = model
+                        newLights.append(light)
+                    }
+
+                case .object:
+                    break
+                case .light:
+                    break
+                case .directionalLight:
+                    break
                 }
             }
             
