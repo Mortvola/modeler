@@ -14,6 +14,11 @@ struct AddObject: View {
     @Binding var isOpen: Bool
     @Binding var selectedItem: TreeNode?
     @Binding var model: Model?
+    @State var sphereOptions = SphereOptions()
+    @State var planeOptions = PlaneOptions()
+    @State var boxOptions = BoxOptions()
+    @State var cylinderOptions = CylinderOptions()
+    @State var coneOptions = ConeOptions()
     
     var body: some View {
         NavigationStack {
@@ -21,6 +26,22 @@ struct AddObject: View {
                 Picker("Type", selection: $type) {
                     ForEach(ObjectStore.ObjectType.allCases, id: \.rawValue) { value in
                         Text(value.name).tag(value)
+                    }
+                }
+                VStack {
+                    switch type {
+                    case .sphere:
+                        SphereOptionsView(options: $sphereOptions)
+                    case .light:
+                        EmptyView()
+                    case .plane:
+                        PlaneOptionsView(options: $planeOptions)
+                    case .box:
+                        BoxOptionsView(options: $boxOptions)
+                    case .cylinder:
+                        CylinderOptionsView(options: $cylinderOptions)
+                    case .cone:
+                        ConeOptionsView(options: $coneOptions)
                     }
                 }
                 Spacer()
@@ -36,7 +57,21 @@ struct AddObject: View {
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Done") {
                         Task {
-                            let object = try? await model?.addObject(type: type)
+                            var object: RenderObject?
+                            switch type {
+                            case .sphere:
+                                object = try? await model?.addSphere(options: sphereOptions)
+                            case .light:
+                                break
+                            case .plane:
+                                object = try? await model?.addPlane(options: planeOptions)
+                            case .box:
+                                object = try? await model?.addBox(options: boxOptions)
+                            case .cylinder:
+                                object = try? await model?.addCylinder(options: cylinderOptions)
+                            case .cone:
+                                object = try? await model?.addCone(options: coneOptions)
+                            }
                             
                             if let object = object {
                                 selectedItem = TreeNode(object: object)

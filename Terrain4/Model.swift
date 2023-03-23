@@ -77,7 +77,7 @@ class Model: Node, Identifiable, Hashable, Codable {
     }
     
     @MainActor
-    func addObject(type: ObjectStore.ObjectType) async throws -> RenderObject? {
+    func addSphere(options: SphereOptions) async throws -> RenderObject {
         guard let device = Renderer.shared.device else {
             throw Errors.deviceNotSet
         }
@@ -85,44 +85,105 @@ class Model: Node, Identifiable, Hashable, Codable {
         guard let view = Renderer.shared.view else {
             throw Errors.viewNotSet
         }
-                
-        var object: RenderObject? = nil
         
-        switch(type) {
-        case .sphere:
-            let material = try await MaterialManager.shared.addMaterial(device: device, view: view, descriptor: nil)
-            
-            let mesh = try SphereAllocator.allocate(device: device, diameter: 5)
-            
-            object = Mesh(mesh: mesh, model: self)
-            
-            if let object = object {
-                material.objects.append(object)
-                self.objects.append(object)
-            }
-            
-            break
-            
-        case .rectangle:
-            let material = try await MaterialManager.shared.addMaterial(device: device, view: view, descriptor: nil)
-            
-            let dimensions = Vec2(5, 5)
-            let segments = VecUInt2(5, 5)
-            let mesh = try RetangleAllocator.allocate(device: device, dimensions: dimensions, segments: segments)
-            
-            object = Mesh(mesh: mesh, model: self)
-
-            if let object = object {
-                material.objects.append(object)
-                self.objects.append(object)
-            }
-            
-            break
-            
-        case .light:
-            break;
-        }
+        let material = try await MaterialManager.shared.addMaterial(device: device, view: view, descriptor: nil)
+        
+        let mesh = try SphereAllocator.allocate(device: device, diameter: options.diameter, radialSegments: options.radialSegments, verticalSegments: options.verticalSegments, hemisphere: options.hemisphere)
+        
+        let object = Mesh(mesh: mesh, model: self)
+        
+        material.objects.append(object)
+        self.objects.append(object)
         
         return object
     }
+    
+    @MainActor
+    func addPlane(options: PlaneOptions) async throws -> RenderObject {
+        guard let device = Renderer.shared.device else {
+            throw Errors.deviceNotSet
+        }
+        
+        guard let view = Renderer.shared.view else {
+            throw Errors.viewNotSet
+        }
+        
+        let material = try await MaterialManager.shared.addMaterial(device: device, view: view, descriptor: nil)
+        
+        let mesh = try RetangleAllocator.allocate(device: device, dimensions: options.dimensions, segments: options.segments)
+        
+        let object = Mesh(mesh: mesh, model: self)
+        
+        material.objects.append(object)
+        self.objects.append(object)
+        
+        return object
+    }
+    
+    @MainActor
+    func addBox(options: BoxOptions) async throws -> RenderObject {
+        guard let device = Renderer.shared.device else {
+            throw Errors.deviceNotSet
+        }
+        
+        guard let view = Renderer.shared.view else {
+            throw Errors.viewNotSet
+        }
+        
+        let material = try await MaterialManager.shared.addMaterial(device: device, view: view, descriptor: nil)
+        
+        let mesh = try BoxAllocator.allocate(device: device, dimensions: options.dimensions, segments: options.segments)
+        
+        let object = Mesh(mesh: mesh, model: self)
+        
+        material.objects.append(object)
+        self.objects.append(object)
+        
+        return object
+    }
+    
+    @MainActor
+    func addCylinder(options: CylinderOptions) async throws -> RenderObject {
+        guard let device = Renderer.shared.device else {
+            throw Errors.deviceNotSet
+        }
+        
+        guard let view = Renderer.shared.view else {
+            throw Errors.viewNotSet
+        }
+        
+        let material = try await MaterialManager.shared.addMaterial(device: device, view: view, descriptor: nil)
+        
+        let mesh = try CylinderAllocator.allocate(device: device, options: options)
+        
+        let object = Mesh(mesh: mesh, model: self)
+        
+        material.objects.append(object)
+        self.objects.append(object)
+        
+        return object
+    }
+
+    @MainActor
+    func addCone(options: ConeOptions) async throws -> RenderObject {
+        guard let device = Renderer.shared.device else {
+            throw Errors.deviceNotSet
+        }
+        
+        guard let view = Renderer.shared.view else {
+            throw Errors.viewNotSet
+        }
+
+        let material = try await MaterialManager.shared.addMaterial(device: device, view: view, descriptor: nil)
+        
+        let mesh = try ConeAllocator.allocate(device: device, options: options)
+        
+        let object = Mesh(mesh: mesh, model: self)
+
+        material.objects.append(object)
+        self.objects.append(object)
+        
+        return object
+    }
+
 }

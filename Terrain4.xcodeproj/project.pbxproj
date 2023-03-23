@@ -67,6 +67,15 @@
 		7921DF7729CA2D980013E317 /* Matrix3x3.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7921DF7629CA2D980013E317 /* Matrix3x3.swift */; };
 		7921DF7A29CB8DED0013E317 /* VisibleButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7921DF7929CB8DED0013E317 /* VisibleButton.swift */; };
 		7921DF7C29CBB2610013E317 /* ListItemBase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7921DF7B29CBB2610013E317 /* ListItemBase.swift */; };
+		7921DF8029CBE8250013E317 /* SphereOptionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7921DF7F29CBE8250013E317 /* SphereOptionsView.swift */; };
+		7921DF8229CBF7730013E317 /* PlaneOptionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7921DF8129CBF7730013E317 /* PlaneOptionsView.swift */; };
+		7921DF8629CBFE7B0013E317 /* BoxOptionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7921DF8529CBFE7B0013E317 /* BoxOptionsView.swift */; };
+		7921DF8829CBFF140013E317 /* MeshAllocator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7921DF8729CBFF140013E317 /* MeshAllocator.swift */; };
+		7921DF8A29CBFF770013E317 /* BoxAllocator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7921DF8929CBFF770013E317 /* BoxAllocator.swift */; };
+		7921DF8C29CC031E0013E317 /* CylinderOptionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7921DF8B29CC031E0013E317 /* CylinderOptionsView.swift */; };
+		7921DF8E29CC04660013E317 /* CylinderAllocator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7921DF8D29CC04660013E317 /* CylinderAllocator.swift */; };
+		7921DF9029CC08570013E317 /* ConeOptionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7921DF8F29CC08570013E317 /* ConeOptionsView.swift */; };
+		7921DF9229CC08DC0013E317 /* ConeAllocator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7921DF9129CC08DC0013E317 /* ConeAllocator.swift */; };
 		79345D3929C509E200E9F074 /* RectangleAllocator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79345D3629C509E200E9F074 /* RectangleAllocator.swift */; };
 		798D3BE929C35EE600B96C5F /* AlbedoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 798D3BE829C35EE600B96C5F /* AlbedoView.swift */; };
 		798D3BEB29C3613700B96C5F /* NormalsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 798D3BEA29C3613700B96C5F /* NormalsView.swift */; };
@@ -230,6 +239,15 @@
 		7921DF7629CA2D980013E317 /* Matrix3x3.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Matrix3x3.swift; sourceTree = "<group>"; };
 		7921DF7929CB8DED0013E317 /* VisibleButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisibleButton.swift; sourceTree = "<group>"; };
 		7921DF7B29CBB2610013E317 /* ListItemBase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListItemBase.swift; sourceTree = "<group>"; };
+		7921DF7F29CBE8250013E317 /* SphereOptionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SphereOptionsView.swift; sourceTree = "<group>"; };
+		7921DF8129CBF7730013E317 /* PlaneOptionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaneOptionsView.swift; sourceTree = "<group>"; };
+		7921DF8529CBFE7B0013E317 /* BoxOptionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoxOptionsView.swift; sourceTree = "<group>"; };
+		7921DF8729CBFF140013E317 /* MeshAllocator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeshAllocator.swift; sourceTree = "<group>"; };
+		7921DF8929CBFF770013E317 /* BoxAllocator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoxAllocator.swift; sourceTree = "<group>"; };
+		7921DF8B29CC031E0013E317 /* CylinderOptionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CylinderOptionsView.swift; sourceTree = "<group>"; };
+		7921DF8D29CC04660013E317 /* CylinderAllocator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CylinderAllocator.swift; sourceTree = "<group>"; };
+		7921DF8F29CC08570013E317 /* ConeOptionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConeOptionsView.swift; sourceTree = "<group>"; };
+		7921DF9129CC08DC0013E317 /* ConeAllocator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConeAllocator.swift; sourceTree = "<group>"; };
 		79345D3629C509E200E9F074 /* RectangleAllocator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RectangleAllocator.swift; sourceTree = "<group>"; };
 		798D3BE829C35EE600B96C5F /* AlbedoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlbedoView.swift; sourceTree = "<group>"; };
 		798D3BEA29C3613700B96C5F /* NormalsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NormalsView.swift; sourceTree = "<group>"; };
@@ -531,8 +549,12 @@
 			isa = PBXGroup;
 			children = (
 				79F6D2D029BAA8DB007CA69A /* SphereAllocator.swift */,
+				7921DF8729CBFF140013E317 /* MeshAllocator.swift */,
 				79F6D2D229BAC193007CA69A /* TestRectAllocator.swift */,
 				79345D3629C509E200E9F074 /* RectangleAllocator.swift */,
+				7921DF8929CBFF770013E317 /* BoxAllocator.swift */,
+				7921DF8D29CC04660013E317 /* CylinderAllocator.swift */,
+				7921DF9129CC08DC0013E317 /* ConeAllocator.swift */,
 			);
 			path = Allocators;
 			sourceTree = "<group>";
@@ -586,6 +608,11 @@
 				79F6D2E429BC2C6A007CA69A /* LightDetailsView.swift */,
 				799B4BBC29C651AE00B6826A /* DirectionalLightView.swift */,
 				791E78CD29B93A2B00FB45F3 /* AddObject.swift */,
+				7921DF7F29CBE8250013E317 /* SphereOptionsView.swift */,
+				7921DF8129CBF7730013E317 /* PlaneOptionsView.swift */,
+				7921DF8529CBFE7B0013E317 /* BoxOptionsView.swift */,
+				7921DF8B29CC031E0013E317 /* CylinderOptionsView.swift */,
+				7921DF8F29CC08570013E317 /* ConeOptionsView.swift */,
 			);
 			path = Objects;
 			sourceTree = "<group>";
@@ -748,6 +775,7 @@
 				791E791729B93C2B00FB45F3 /* Model.swift in Sources */,
 				79F6D2D329BAC193007CA69A /* TestRectAllocator.swift in Sources */,
 				798D3BF129C3C17E00B96C5F /* MaterialLayer.swift in Sources */,
+				7921DF8A29CBFF770013E317 /* BoxAllocator.swift in Sources */,
 				791E78D129B93A2B00FB45F3 /* ModelsView.swift in Sources */,
 				7921DF7C29CBB2610013E317 /* ListItemBase.swift in Sources */,
 				791E794529B9443F00FB45F3 /* Sun.swift in Sources */,
@@ -796,11 +824,14 @@
 				79F6D2D929BB691E007CA69A /* ModelDetailsView.swift in Sources */,
 				79F6D30629C1E25E007CA69A /* OpenFileButton.swift in Sources */,
 				79F6D2C629BA5C80007CA69A /* AnimatorsView.swift in Sources */,
+				7921DF8C29CC031E0013E317 /* CylinderOptionsView.swift in Sources */,
 				79F6D2EB29BCBD83007CA69A /* NumericField.swift in Sources */,
+				7921DF8229CBF7730013E317 /* PlaneOptionsView.swift in Sources */,
 				791E792E29B93D7000FB45F3 /* LineMaterial.swift in Sources */,
 				791E791029B93BDC00FB45F3 /* Vec4.swift in Sources */,
 				79F6D2ED29BCC53E007CA69A /* LabeledNumericField.swift in Sources */,
 				791E790829B93BB600FB45F3 /* Transform.swift in Sources */,
+				7921DF8629CBFE7B0013E317 /* BoxOptionsView.swift in Sources */,
 				798D3BF329C3C1B200B96C5F /* AlbedoLayer.swift in Sources */,
 				791E78B329B9385400FB45F3 /* App.swift in Sources */,
 				79F6D2FC29C16769007CA69A /* MaterialListItem.swift in Sources */,
@@ -809,7 +840,9 @@
 				791E795229B944D000FB45F3 /* PbrShaders.metal in Sources */,
 				791E793D29B9433F00FB45F3 /* World.swift in Sources */,
 				79F6D30229C1DC79007CA69A /* ListItemField.swift in Sources */,
+				7921DF9229CC08DC0013E317 /* ConeAllocator.swift in Sources */,
 				798D3C1029C4A72B00B96C5F /* AlbedoLayerDescriptor.swift in Sources */,
+				7921DF8029CBE8250013E317 /* SphereOptionsView.swift in Sources */,
 				79DF5C5729C52D5F0005CF41 /* SceneDocument.swift in Sources */,
 				791E791929B93C7D00FB45F3 /* Errors.swift in Sources */,
 				79F6D2CE29BAA245007CA69A /* Object.swift in Sources */,
@@ -823,6 +856,7 @@
 				791E78D229B93A2B00FB45F3 /* TransformView.swift in Sources */,
 				791E793029B93D7000FB45F3 /* MaterialManager.swift in Sources */,
 				799B4BBA29C6067800B6826A /* TexturesView.swift in Sources */,
+				7921DF8E29CC04660013E317 /* CylinderAllocator.swift in Sources */,
 				79345D3929C509E200E9F074 /* RectangleAllocator.swift in Sources */,
 				799B4BBD29C651AE00B6826A /* DirectionalLightView.swift in Sources */,
 				791E794F29B944D000FB45F3 /* PbrLineShaders.metal in Sources */,
@@ -831,9 +865,11 @@
 				791C495629B94AEF00C00150 /* ModelManager.swift in Sources */,
 				791E792129B93D6000FB45F3 /* RenderObject.swift in Sources */,
 				791E792029B93D6000FB45F3 /* Mesh.swift in Sources */,
+				7921DF8829CBFF140013E317 /* MeshAllocator.swift in Sources */,
 				798D3BE929C35EE600B96C5F /* AlbedoView.swift in Sources */,
 				7921DF7A29CB8DED0013E317 /* VisibleButton.swift in Sources */,
 				798D3C0D29C4162D00B96C5F /* MaterialDescriptor.swift in Sources */,
+				7921DF9029CC08570013E317 /* ConeOptionsView.swift in Sources */,
 				791E792F29B93D7000FB45F3 /* BaseMaterial.swift in Sources */,
 				791E794729B9446A00FB45F3 /* Types.swift in Sources */,
 				799B4BBF29C652D200B6826A /* DirectionalLight.swift in Sources */,

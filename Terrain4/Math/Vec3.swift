@@ -74,3 +74,5 @@ extension Vec3 {
         return Vec4(self.x, self.y, self.z, 1.0)
     }
 }
+
+typealias VecUInt3 = vector_uint3

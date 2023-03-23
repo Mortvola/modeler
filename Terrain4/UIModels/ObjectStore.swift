@@ -219,7 +219,10 @@ class ObjectStore: ObservableObject {
     
     enum ObjectType: String, CaseIterable {
         case sphere
-        case rectangle
+        case plane
+        case box
+        case cylinder
+        case cone
         case light
         
         var name: String {rawValue}

@@ -192,7 +192,7 @@ class Mesh: RenderObject {
         
         let mdlSubmeshes = try Mesh.makeSubmeshes(submeshes: submeshes, allocator: allocator)
         
-        let mdlMesh = MDLMesh(vertexBuffers: vertexBuffers, vertexCount: numberOfPoints, descriptor: SphereAllocator.vertexDescriptor(), submeshes: mdlSubmeshes)
+        let mdlMesh = MDLMesh(vertexBuffers: vertexBuffers, vertexCount: numberOfPoints, descriptor: MeshAllocator.vertexDescriptor(), submeshes: mdlSubmeshes)
 
         mdlMesh.addTangentBasis(forTextureCoordinateAttributeNamed: MDLVertexAttributeTextureCoordinate, normalAttributeNamed: MDLVertexAttributeNormal, tangentAttributeNamed: MDLVertexAttributeTangent)
 

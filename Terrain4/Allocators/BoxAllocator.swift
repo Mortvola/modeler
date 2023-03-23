@@ -1,19 +1,19 @@
 //
-//  RectangleAllocator.swift
+//  BoxAllocator.swift
 //  Terrain4
 //
-//  Created by Richard Shields on 3/17/23.
+//  Created by Richard Shields on 3/22/23.
 //
 
 import Foundation
 import Metal
 import MetalKit
 
-class RetangleAllocator {
-    static func allocate(device: MTLDevice, dimensions: Vec2, segments: VecUInt2) throws -> MTKMesh {
+class BoxAllocator {
+    static func allocate(device: MTLDevice, dimensions: Vec3, segments: VecUInt3) throws -> MTKMesh {
         let meshBufferAllocator = MTKMeshBufferAllocator(device: device)
 
-        let mesh = MDLMesh.newPlane(withDimensions: dimensions, segments: segments, geometryType: .triangles, allocator: meshBufferAllocator)
+        let mesh = MDLMesh.newBox(withDimensions: dimensions, segments: segments, geometryType: .triangles, inwardNormals: false, allocator: meshBufferAllocator)
 
         mesh.addTangentBasis(forTextureCoordinateAttributeNamed: MDLVertexAttributeTextureCoordinate, normalAttributeNamed: MDLVertexAttributeNormal, tangentAttributeNamed: MDLVertexAttributeTangent)
 
