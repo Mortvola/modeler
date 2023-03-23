@@ -69,7 +69,7 @@ class SceneDocument: ReferenceFileDocument {
             let file = try JSONDecoder().decode(File.self, from: data)
             
             for materialDescriptor in file.materials {
-                _ = try await MaterialManager.shared.addMaterial(device: Renderer.shared.device!, view: Renderer.shared.view!, descriptor: materialDescriptor)
+                _ = try await Renderer.shared.pipelineManager!.pbrPipeline.addMaterial(device: Renderer.shared.device!, view: Renderer.shared.view!, descriptor: materialDescriptor)
             }
 
             var newLights: [Light] = []
@@ -78,9 +78,17 @@ class SceneDocument: ReferenceFileDocument {
                 switch node.content {
                 case .model(let model):
                     for object in model.objects {
-                        object.model = model
+                        switch object.content {
+                        case .mesh(let o):
+                            o.model = model
 
-                        object.setMaterial(materialId: object.materialId)
+                            o.setMaterial(materialId: o.materialId)
+                        case .point(let p):
+                            p.model = model
+                            p.setMaterial(materialId: p.materialId)
+                        default:
+                            break;
+                        }
                     }
 
                     model.lights.forEach { light in
@@ -88,7 +96,9 @@ class SceneDocument: ReferenceFileDocument {
                         newLights.append(light)
                     }
 
-                case .object:
+                case .mesh:
+                    break
+                case .point:
                     break
                 case .light:
                     break

@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import MetalKit
 
 class Model: Node, Identifiable, Hashable, Codable {
     static func == (lhs: Model, rhs: Model) -> Bool {
@@ -20,7 +21,7 @@ class Model: Node, Identifiable, Hashable, Codable {
     
     private static var modelCounter = 0
     
-    @Published var objects: [RenderObject] = []
+    @Published var objects: [TreeNode] = []
     
     @Published var lights: [Light] = []
     
@@ -52,7 +53,8 @@ class Model: Node, Identifiable, Hashable, Codable {
         super.init(name: name)
         
         id = try container.decode(UUID.self, forKey: .id)
-        objects = try container.decode([Mesh].self, forKey: .objects)
+        objects = try container.decode([TreeNode].self, forKey: .objects)
+
         lights = try container.decode([Light].self, forKey: .lights)
         transforms = try container.decode([Transform].self, forKey: .transforms)
     }
@@ -76,8 +78,14 @@ class Model: Node, Identifiable, Hashable, Codable {
         return light
     }
     
+    private func applyPbrMaterial(object: RenderObject, device: MTLDevice, view: MTKView) async throws {
+        let material = try await Renderer.shared.pipelineManager?.pbrPipeline.addMaterial(device: device, view: view, descriptor: nil)
+        
+        material?.objects.append(object)
+    }
+    
     @MainActor
-    func addSphere(options: SphereOptions) async throws -> RenderObject {
+    func addSphere(options: SphereOptions) async throws -> Mesh {
         guard let device = Renderer.shared.device else {
             throw Errors.deviceNotSet
         }
@@ -85,21 +93,20 @@ class Model: Node, Identifiable, Hashable, Codable {
         guard let view = Renderer.shared.view else {
             throw Errors.viewNotSet
         }
-        
-        let material = try await MaterialManager.shared.addMaterial(device: device, view: view, descriptor: nil)
         
         let mesh = try SphereAllocator.allocate(device: device, diameter: options.diameter, radialSegments: options.radialSegments, verticalSegments: options.verticalSegments, hemisphere: options.hemisphere)
         
         let object = Mesh(mesh: mesh, model: self)
         
-        material.objects.append(object)
-        self.objects.append(object)
+        try await applyPbrMaterial(object: object, device: device, view: view)
         
+        self.objects.append(TreeNode(mesh: object))
+
         return object
     }
     
     @MainActor
-    func addPlane(options: PlaneOptions) async throws -> RenderObject {
+    func addPlane(options: PlaneOptions) async throws -> Mesh {
         guard let device = Renderer.shared.device else {
             throw Errors.deviceNotSet
         }
@@ -107,21 +114,20 @@ class Model: Node, Identifiable, Hashable, Codable {
         guard let view = Renderer.shared.view else {
             throw Errors.viewNotSet
         }
-        
-        let material = try await MaterialManager.shared.addMaterial(device: device, view: view, descriptor: nil)
-        
+
         let mesh = try RetangleAllocator.allocate(device: device, dimensions: options.dimensions, segments: options.segments)
         
         let object = Mesh(mesh: mesh, model: self)
         
-        material.objects.append(object)
-        self.objects.append(object)
+        try await applyPbrMaterial(object: object, device: device, view: view)
         
+        self.objects.append(TreeNode(mesh: object))
+
         return object
     }
     
     @MainActor
-    func addBox(options: BoxOptions) async throws -> RenderObject {
+    func addBox(options: BoxOptions) async throws -> Mesh {
         guard let device = Renderer.shared.device else {
             throw Errors.deviceNotSet
         }
@@ -129,21 +135,20 @@ class Model: Node, Identifiable, Hashable, Codable {
         guard let view = Renderer.shared.view else {
             throw Errors.viewNotSet
         }
-        
-        let material = try await MaterialManager.shared.addMaterial(device: device, view: view, descriptor: nil)
         
         let mesh = try BoxAllocator.allocate(device: device, dimensions: options.dimensions, segments: options.segments)
         
         let object = Mesh(mesh: mesh, model: self)
         
-        material.objects.append(object)
-        self.objects.append(object)
+        try await applyPbrMaterial(object: object, device: device, view: view)
         
+        self.objects.append(TreeNode(mesh: object))
+
         return object
     }
     
     @MainActor
-    func addCylinder(options: CylinderOptions) async throws -> RenderObject {
+    func addCylinder(options: CylinderOptions) async throws -> Mesh {
         guard let device = Renderer.shared.device else {
             throw Errors.deviceNotSet
         }
@@ -151,21 +156,20 @@ class Model: Node, Identifiable, Hashable, Codable {
         guard let view = Renderer.shared.view else {
             throw Errors.viewNotSet
         }
-        
-        let material = try await MaterialManager.shared.addMaterial(device: device, view: view, descriptor: nil)
         
         let mesh = try CylinderAllocator.allocate(device: device, options: options)
         
         let object = Mesh(mesh: mesh, model: self)
         
-        material.objects.append(object)
-        self.objects.append(object)
+        try await applyPbrMaterial(object: object, device: device, view: view)
+        
+        self.objects.append(TreeNode(mesh: object))
         
         return object
     }
 
     @MainActor
-    func addCone(options: ConeOptions) async throws -> RenderObject {
+    func addCone(options: ConeOptions) async throws -> Mesh {
         guard let device = Renderer.shared.device else {
             throw Errors.deviceNotSet
         }
@@ -174,16 +178,58 @@ class Model: Node, Identifiable, Hashable, Codable {
             throw Errors.viewNotSet
         }
 
-        let material = try await MaterialManager.shared.addMaterial(device: device, view: view, descriptor: nil)
-        
         let mesh = try ConeAllocator.allocate(device: device, options: options)
         
         let object = Mesh(mesh: mesh, model: self)
 
-        material.objects.append(object)
-        self.objects.append(object)
+        try await applyPbrMaterial(object: object, device: device, view: view)
+        
+        self.objects.append(TreeNode(mesh: object))
         
         return object
     }
 
+    @MainActor
+    func addPoint(options: PointOptions) async throws -> Point {
+        guard let device = Renderer.shared.device else {
+            throw Errors.deviceNotSet
+        }
+        
+        guard let view = Renderer.shared.view else {
+            throw Errors.viewNotSet
+        }
+
+        let object = Point(model: self)
+        object.size = options.size
+        
+        let material = try await Renderer.shared.pipelineManager?.pointPipeline.addMaterial(device: device, view: view, descriptor: nil)
+        
+        material?.objects.append(object)
+
+        self.objects.append(TreeNode(point: object))
+        
+        return object
+    }
+}
+
+
+class TemporaryObject: Decodable {
+    var mesh: Mesh? = nil
+    var point: Point? = nil
+    
+    required init(from decoder: Decoder) throws {
+        let container = try decoder.singleValueContainer()
+        
+        do {
+            mesh = try container.decode(Mesh.self)
+        }
+        catch {
+            do {
+                point = try container.decode(Point.self)
+            }
+            catch {
+                print("Unkonwn object")
+            }
+        }
+    }
 }

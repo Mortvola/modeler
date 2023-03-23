@@ -9,7 +9,7 @@ import Foundation
 import Metal
 import MetalKit
 
-class Mesh: RenderObject {
+class Mesh: PbrObject {
     let mesh: MTKMesh
     
     init(mesh: MTKMesh, model: Model) {
@@ -47,14 +47,6 @@ class Mesh: RenderObject {
         u[0].normals = pbrProperties?.normal ?? Vec3(0.5, 0.5, 1.0)
         u[0].metallic = pbrProperties?.metallic ?? 1.0
         u[0].roughness = pbrProperties?.roughness ?? 1.0
-
-        //        withUnsafeMutableBytes(of: &lightData.intensity) { rawPtr in
-//            let ptr = rawPtr.baseAddress!.assumingMemoryBound(to: vector_float3.self)
-//
-//            for i in stride(from: 0, to: self.lights.count, by: 1) {
-//                ptr[i] = self.lights[i].intensity
-//            }
-//        }
         
         try self.simpleDraw(renderEncoder: renderEncoder, modelMatrix: modelMatrix, frame: frame)
     }

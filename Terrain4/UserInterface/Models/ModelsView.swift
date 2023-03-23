@@ -20,7 +20,9 @@ struct ModelsView: View {
                     case .model(let m):
                         ObjectsView(model: m, selectedItem: $selectedItem)
                             .padding(.leading, 16)
-                    case .object:
+                    case .mesh:
+                        EmptyView()
+                    case .point:
                         EmptyView()
                     case .light:
                         EmptyView()

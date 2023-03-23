@@ -33,24 +33,24 @@ class TriangleMesh: RenderObject {
     }
 
     override func draw(renderEncoder: MTLRenderCommandEncoder, modelMatrix: Matrix4x4, pbrProperties: PbrProperties?, frame: Int) {
-        var normalMatrix = matrix_float3x3(columns: (
-            vector_float3(modelMatrix[0][0], modelMatrix[0][1], modelMatrix[0][2]),
-            vector_float3(modelMatrix[1][0], modelMatrix[1][1], modelMatrix[1][2]),
-           vector_float3(modelMatrix[2][0], modelMatrix[2][1], modelMatrix[2][2])
-        ));
-        
-        normalMatrix = normalMatrix.inverse.transpose;
-
-        renderEncoder.setVertexBuffer(self.vertices, offset: 0, index: BufferIndex.meshPositions.rawValue)
-        renderEncoder.setVertexBuffer(self.normals, offset: 0, index: BufferIndex.normals.rawValue)
-
-        let u = getUniformsBuffer(index: frame)
-        u[0].modelMatrix = modelMatrix
-        u[0].normalMatrix = normalMatrix
-
-        renderEncoder.setVertexBuffer(self.uniforms, offset: 0, index: BufferIndex.nodeUniforms.rawValue)
-
-        renderEncoder.drawPrimitives(type: .triangle, vertexStart: 0, vertexCount: self.numVertices)
+//        var normalMatrix = matrix_float3x3(columns: (
+//            vector_float3(modelMatrix[0][0], modelMatrix[0][1], modelMatrix[0][2]),
+//            vector_float3(modelMatrix[1][0], modelMatrix[1][1], modelMatrix[1][2]),
+//           vector_float3(modelMatrix[2][0], modelMatrix[2][1], modelMatrix[2][2])
+//        ));
+//
+//        normalMatrix = normalMatrix.inverse.transpose;
+//
+//        renderEncoder.setVertexBuffer(self.vertices, offset: 0, index: BufferIndex.meshPositions.rawValue)
+//        renderEncoder.setVertexBuffer(self.normals, offset: 0, index: BufferIndex.normals.rawValue)
+//
+//        let u = getUniformsBuffer(index: frame)
+//        u[0].modelMatrix = modelMatrix
+//        u[0].normalMatrix = normalMatrix
+//
+//        renderEncoder.setVertexBuffer(self.uniforms, offset: 0, index: BufferIndex.nodeUniforms.rawValue)
+//
+//        renderEncoder.drawPrimitives(type: .triangle, vertexStart: 0, vertexCount: self.numVertices)
     }
 
     func formatData(

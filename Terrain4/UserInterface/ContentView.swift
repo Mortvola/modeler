@@ -78,14 +78,6 @@ struct ContentView: View {
                 }
                 .padding()
             }
-            .onAppear {
-                if let data = file.data {
-                    Task {
-                        await file.parse(data: data)
-                        file.data = nil
-                    }
-                }
-            }
         }
         .toolbar(.hidden)
         .environmentObject(file)

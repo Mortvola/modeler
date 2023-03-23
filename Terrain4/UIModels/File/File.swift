@@ -20,7 +20,7 @@ struct File: Codable {
         self.camera = Camera(position: Renderer.shared.camera.cameraOffset, yaw: Renderer.shared.camera.yaw, pitch: Renderer.shared.camera.pitch)
         self.materials = []
         
-        self.materials = MaterialManager.shared.materials.compactMap { material in
+        self.materials = Renderer.shared.pipelineManager!.pbrPipeline.materials.compactMap { material in
             if material.key == nil {
                 return nil
             }
@@ -42,22 +42,24 @@ struct File: Codable {
     func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
 
-        let m = models.compactMap { node in
-            switch node.content {
-            case .model(let model):
-                return model
-            case .object:
-                break
-            case .light:
-                break
-            case .directionalLight:
-                break
-            }
-            
-            return nil
-        }
+//        let m = models.compactMap { node in
+//            switch node.content {
+//            case .model(let model):
+//                return model
+//            case .pbrObject:
+//                break
+//            case .point:
+//                break
+//            case .light:
+//                break
+//            case .directionalLight:
+//                break
+//            }
+//
+//            return nil
+//        }
 
-        try container.encode(m, forKey: .models)
+        try container.encode(self.models, forKey: .models)
         try container.encode(self.camera, forKey: .camera)
         try container.encode(self.animators, forKey: .animators)
         try container.encode(self.materials, forKey: .materials)
@@ -81,11 +83,7 @@ struct File: Codable {
         
         materials = try container.decode([MaterialDescriptor].self, forKey: .materials)
         
-        let m = try container.decode([Model].self, forKey: .models)
-        
-        models = m.map { model in
-            TreeNode(model: model)
-        }
+        models = try container.decode([TreeNode].self, forKey: .models)
         
         directionalLight = try container.decodeIfPresent(DirectionalLight.self, forKey: .directionalLight) ?? DirectionalLight()
     }

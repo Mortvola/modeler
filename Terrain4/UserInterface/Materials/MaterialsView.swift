@@ -8,12 +8,11 @@
 import SwiftUI
 
 struct MaterialsView: View {
-    @ObservedObject var materialStore = MaterialManager.shared
     @State var hidden = false
     @State private var selectedMaterial: PbrMaterial?
     
     var materialList: [PbrMaterial] {
-        materialStore.materials.compactMap { entry in
+        Renderer.shared.pipelineManager!.pbrPipeline.materials.compactMap { entry in
             if entry.key == nil {
                 return nil
             }
@@ -26,7 +25,7 @@ struct MaterialsView: View {
         VStack {
             Button {
                 Task {
-                    try? await materialStore.addMaterial()
+//                    try? await materialStore.addMaterial()
                 }
             } label: {
                 Text("Add Material")

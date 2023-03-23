@@ -7,6 +7,18 @@
 
 import Foundation
 
+enum ObjectType: String, CaseIterable {
+    case sphere
+    case plane
+    case box
+    case cylinder
+    case cone
+    case light
+    case point
+    
+    var name: String {rawValue}
+}
+
 class Object: Node, Identifiable, Hashable, Codable {
     static func == (lhs: Object, rhs: Object) -> Bool {
         lhs.id == rhs.id

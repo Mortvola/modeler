@@ -57,7 +57,12 @@ struct ModelManager: View {
                         Spacer()
                         
                         Button {
-                            try? objectStore.addLight()
+                            if let model = selectedItem?.getNearestModel() {
+                                let light = model.addLight()
+                                
+                                selectedItem = TreeNode(light: light)
+                                objectStore.lights.append(light)
+                            }
                         } label: {
                             Text("Add Light")
                         }
@@ -81,7 +86,7 @@ struct ModelManager: View {
                                         hidden = false
                                     }
                                 }
-                        case .object(let o):
+                        case .mesh(let o):
                             ObjectDetailsView(object: o)
                                 .onChange(of: selectedItem) { _ in
                                     hidden = true

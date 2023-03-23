@@ -12,7 +12,7 @@ struct ObjectMaterialView: View {
     @State var materialId: UUID?
     
     var materialList: [PbrMaterial] {
-        MaterialManager.shared.materials.compactMap { entry in
+        Renderer.shared.pipelineManager!.pbrPipeline.materials.compactMap { entry in
             if entry.key == nil {
                 return nil
             }
@@ -22,22 +22,23 @@ struct ObjectMaterialView: View {
     }
 
     var body: some View {
-        HStack {
-            Picker("Type", selection: $materialId) {
-                Text("None").tag(nil as UUID?)
-                ForEach(materialList, id: \.id) { material in
-                    Text(material.name).tag(material.id as UUID?)
-                }
-            }
-            .labelsHidden()
-            .onChange(of: materialId) { newMaterialId in
-                object.setMaterial(materialId: newMaterialId)
-            }
-            Spacer()
-        }
-        .onAppear {
-            materialId = object.material?.id
-        }
+        Text("Materials")
+//        HStack {
+//            Picker("Type", selection: $materialId) {
+//                Text("None").tag(nil as UUID?)
+//                ForEach(materialList, id: \.id) { material in
+//                    Text(material.name).tag(material.id as UUID?)
+//                }
+//            }
+//            .labelsHidden()
+//            .onChange(of: materialId) { newMaterialId in
+//                object.setMaterial(materialId: newMaterialId)
+//            }
+//            Spacer()
+//        }
+//        .onAppear {
+//            materialId = object.material?.id
+//        }
     }
 }
 

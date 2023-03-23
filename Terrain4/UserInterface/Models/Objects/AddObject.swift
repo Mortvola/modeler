@@ -10,7 +10,7 @@ import SwiftUI
 struct AddObject: View {
     var undoManager: UndoManager?
     @EnvironmentObject private var file: SceneDocument
-    @State private var type = ObjectStore.ObjectType.sphere
+    @State private var type = ObjectType.sphere
     @Binding var isOpen: Bool
     @Binding var selectedItem: TreeNode?
     @Binding var model: Model?
@@ -19,12 +19,13 @@ struct AddObject: View {
     @State var boxOptions = BoxOptions()
     @State var cylinderOptions = CylinderOptions()
     @State var coneOptions = ConeOptions()
+    @State var pointOptions = PointOptions()
     
     var body: some View {
         NavigationStack {
             VStack {
                 Picker("Type", selection: $type) {
-                    ForEach(ObjectStore.ObjectType.allCases, id: \.rawValue) { value in
+                    ForEach(ObjectType.allCases, id: \.rawValue) { value in
                         Text(value.name).tag(value)
                     }
                 }
@@ -42,6 +43,8 @@ struct AddObject: View {
                         CylinderOptionsView(options: $cylinderOptions)
                     case .cone:
                         ConeOptionsView(options: $coneOptions)
+                    case .point:
+                        PointOptionsView(options: $pointOptions)
                     }
                 }
                 Spacer()
@@ -57,24 +60,33 @@ struct AddObject: View {
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Done") {
                         Task {
-                            var object: RenderObject?
                             switch type {
                             case .sphere:
-                                object = try? await model?.addSphere(options: sphereOptions)
+                                if let object = try? await model?.addSphere(options: sphereOptions) {
+                                    selectedItem = TreeNode(mesh: object)
+                                }
                             case .light:
                                 break
                             case .plane:
-                                object = try? await model?.addPlane(options: planeOptions)
+                                if let object = try? await model?.addPlane(options: planeOptions) {
+                                    selectedItem = TreeNode(mesh: object)
+                                }
                             case .box:
-                                object = try? await model?.addBox(options: boxOptions)
+                                if let object = try? await model?.addBox(options: boxOptions) {
+                                    selectedItem = TreeNode(mesh: object)
+                                }
                             case .cylinder:
-                                object = try? await model?.addCylinder(options: cylinderOptions)
+                                if let object = try? await model?.addCylinder(options: cylinderOptions) {
+                                    selectedItem = TreeNode(mesh: object)
+                                }
                             case .cone:
-                                object = try? await model?.addCone(options: coneOptions)
-                            }
-                            
-                            if let object = object {
-                                selectedItem = TreeNode(object: object)
+                                if let object = try? await model?.addCone(options: coneOptions) {
+                                    selectedItem = TreeNode(mesh: object)
+                                }
+                            case .point:
+                                if let object = try? await model?.addPoint(options: pointOptions) {
+                                    selectedItem = TreeNode(point: object)
+                                }
                             }
                             
                             undoManager?.registerUndo(withTarget: file) { _ in

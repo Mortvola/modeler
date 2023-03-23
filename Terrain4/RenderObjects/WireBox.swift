@@ -72,16 +72,16 @@ class WireBox: RenderObject {
         try super.init(from: decoder)
     }
 
-    override func draw(renderEncoder: MTLRenderCommandEncoder, modelMatrix: Matrix4x4, pbrProperties: PbrProperties?, frame: Int) {
-        renderEncoder.setVertexBuffer(self.vertices, offset: 0, index: BufferIndex.meshPositions.rawValue)
-
-        let u = getUniformsBuffer(index: frame)
-        u[0].color = color
-        u[0].modelMatrix = modelMatrix
-        u[0].normalMatrix = Matrix3x3.identity()
-        
-        renderEncoder.setVertexBuffer(self.uniforms, offset: 0, index: BufferIndex.nodeUniforms.rawValue)
-        
-        renderEncoder.drawPrimitives(type: .line, vertexStart: 0, vertexCount: self.numVertices)
-    }
+//    override func draw(renderEncoder: MTLRenderCommandEncoder, modelMatrix: Matrix4x4, pbrProperties: PbrProperties?, frame: Int) {
+//        renderEncoder.setVertexBuffer(self.vertices, offset: 0, index: BufferIndex.meshPositions.rawValue)
+//
+//        let u = getUniformsBuffer(index: frame)
+//        u[0].color = color
+//        u[0].modelMatrix = modelMatrix
+//        u[0].normalMatrix = Matrix3x3.identity()
+//        
+//        renderEncoder.setVertexBuffer(self.uniforms, offset: 0, index: BufferIndex.nodeUniforms.rawValue)
+//        
+//        renderEncoder.drawPrimitives(type: .line, vertexStart: 0, vertexCount: self.numVertices)
+//    }
 }

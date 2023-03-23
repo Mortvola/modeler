@@ -13,7 +13,7 @@ struct ObjectsView: View {
     
     var body: some View {
         ForEach($model.objects, id: \.id) { $object in
-            ModelTreeListItem(node: TreeNode(object: object), selectedItem: $selectedItem)
+            ModelTreeListItem(node: object, selectedItem: $selectedItem)
         }
 
         ForEach($model.lights, id: \.id) { $light in

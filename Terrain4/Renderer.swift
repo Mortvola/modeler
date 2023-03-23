@@ -67,6 +67,8 @@ class Renderer {
     
     public var freezeFustrum = false
 
+    public var pipelineManager: PipelineManager? = nil
+    
     init() {
         self.camera = Camera(world: world)
     }
@@ -112,6 +114,8 @@ class Renderer {
 //        file.objectStore.directionalLight.createShadowTexture(device: device!)
         
         self.lineMaterial = try LineMaterial(device: device!, view: view!)
+        
+        self.pipelineManager = try PipelineManager(device: self.device!, view: self.view!)
     }
     
     func makeUniformsBuffer() throws {
@@ -259,17 +263,29 @@ class Renderer {
                     model.modelMatrix = transform
                     
                     model.objects.forEach { object in
-                        
-                        object.lights = []
-                        
-                        file!.objectStore.lights.forEach { light in
-                            if !light.disabled && !(light.model?.disabled ?? true) {
-                                object.lights.append(light)
+                        switch object.content {
+                        case .model:
+                            break
+                        case .mesh(let o):
+                            o.lights = []
+                            
+                            file!.objectStore.lights.forEach { light in
+                                if !light.disabled && !(light.model?.disabled ?? true) {
+                                    o.lights.append(light)
+                                }
                             }
+                        case .point:
+                            break
+                        case .light:
+                            break
+                        case .directionalLight:
+                            break
                         }
                     }
 
-                case .object:
+                case .mesh:
+                    break
+                case .point:
                     break
                 case .light:
                     break
@@ -347,12 +363,25 @@ class Renderer {
                         case .model(let model):
                             if !model.disabled {
                                 for object in model.objects {
-                                    if !object.disabled {
-                                        try object.simpleDraw(renderEncoder: renderEncoder, modelMatrix: object.modelMatrix(), frame: self.uniformBufferIndex)
+                                    switch object.content {
+                                    case .model:
+                                        break
+                                    case .mesh(let o):
+                                        if !o.disabled {
+                                            try o.simpleDraw(renderEncoder: renderEncoder, modelMatrix: o.modelMatrix(), frame: self.uniformBufferIndex)
+                                        }
+                                    case .point:
+                                        break
+                                    case .light:
+                                        break
+                                    case .directionalLight:
+                                        break
                                     }
                                 }
                             }
-                        case .object:
+                        case .mesh:
+                            break
+                        case .point:
                             break
                         case .light:
                             break
@@ -369,7 +398,7 @@ class Renderer {
         }
     }
     
-    func renderMainPass(renderPassDescriptor: MTLRenderPassDescriptor, commandBuffer: MTLCommandBuffer) throws {        
+    func renderMainPass(renderPassDescriptor: MTLRenderPassDescriptor, commandBuffer: MTLCommandBuffer) throws {
         if let renderEncoder = commandBuffer.makeRenderCommandEncoder(descriptor: renderPassDescriptor) {
             
             /// Final pass rendering code here
@@ -390,8 +419,8 @@ class Renderer {
             }
             
             if self.world.terrainLoaded {
-                try MaterialManager.shared.render(renderEncoder: renderEncoder, frame: self.uniformBufferIndex)
-                
+                try pipelineManager?.pbrPipeline.render(renderEncoder: renderEncoder, frame: self.uniformBufferIndex)
+                try pipelineManager?.pointPipeline.render(renderEncoder: renderEncoder, frame: self.uniformBufferIndex)
                 file!.objectStore.skybox?.draw(renderEncoder: renderEncoder)
             }
             

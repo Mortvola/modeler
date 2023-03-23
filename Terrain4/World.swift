@@ -157,17 +157,17 @@ class World {
         //  ));
     }
     
-    func draw(renderEncoder: MTLRenderCommandEncoder) throws {
-        try self.tileGrid.forEach { row in
-            try row.forEach { tile in
-                if let terrainTile = tile.tile {
-                    try terrainTile.objects.forEach { object in
-                        try object.draw(renderEncoder: renderEncoder, modelMatrix: terrainTile.modelMatrix, pbrProperties: nil, frame: 0)
-                    }
-                }
-            }
-        }
-    }
+//    func draw(renderEncoder: MTLRenderCommandEncoder) throws {
+//        try self.tileGrid.forEach { row in
+//            try row.forEach { tile in
+//                if let terrainTile = tile.tile {
+//                    try terrainTile.objects.forEach { object in
+//                        try object.draw(renderEncoder: renderEncoder, modelMatrix: terrainTile.modelMatrix, pbrProperties: nil, frame: 0)
+//                    }
+//                }
+//            }
+//        }
+//    }
     
     func getElevation(x: Float, y: Float) -> Float? {
         self.tileGrid[self.tilePadding][self.tilePadding].tile?.getElevation(x: x, y: y)
