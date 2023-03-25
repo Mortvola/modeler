@@ -14,7 +14,7 @@ class RenderObject: Object {
     // lights that may affect this object.
     var lights: [Light] = []
     var materialId: UUID?
-    @Published var material: PbrMaterial?
+    @Published var material: MaterialEntry?
     
     override init(model: Model?) {
         super.init(model: model)

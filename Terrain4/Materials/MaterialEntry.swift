@@ -17,6 +17,10 @@ enum MaterialEntry: Equatable, Codable {
     case pointMaterial(PointMaterial)
     case billboardMaterial(BillboardMaterial)
     
+    var id: UUID {
+        material.id
+    }
+    
     var material: Material {
         switch(self) {
         case .pbrMaterial(let m):

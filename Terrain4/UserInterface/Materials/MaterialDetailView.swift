@@ -8,17 +8,22 @@
 import SwiftUI
 
 struct MaterialDetailView: View {
-    @ObservedObject var material: PbrMaterial
+    var material: MaterialEntry
     
     var body: some View {
-        VStack(spacing: 32) {
-            AlbedoView(material: material)
-            
-            NormalsView(material: material)
-            
-            MetallicView(material: material)
-            
-            RoughnessView(material: material)            
+        switch material {
+        case .pbrMaterial(let m):
+            VStack(spacing: 32) {
+                AlbedoView(material: m)
+                
+                NormalsView(material: m)
+                
+                MetallicView(material: m)
+                
+                RoughnessView(material: m)
+            }
+        default:
+            EmptyView()
         }
     }
 }

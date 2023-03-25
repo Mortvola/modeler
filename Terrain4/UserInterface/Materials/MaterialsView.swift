@@ -38,18 +38,13 @@ struct MaterialsView: View {
                     }
                 }
                 if let material = selectedMaterial, !hidden {
-                    switch material {
-                    case .pbrMaterial(let m):
-                        MaterialDetailView(material: m)
-                            .onChange(of: selectedMaterial) { _ in
-                                hidden = true
-                                Task {
-                                    hidden = false
-                                }
+                    MaterialDetailView(material: material)
+                        .onChange(of: selectedMaterial) { _ in
+                            hidden = true
+                            Task {
+                                hidden = false
                             }
-                    default:
-                        EmptyView()
-                    }
+                        }
                 }
             }
         }

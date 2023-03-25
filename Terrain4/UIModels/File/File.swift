@@ -21,16 +21,6 @@ struct File: Codable {
         
         self.materials = Renderer.shared.materialManager.materials.compactMap { entry in
             entry.value
-//            if entry.key == nil {
-//                return nil
-//            }
-//
-//            switch entry.value {
-//            case .pbrMaterial(let m):
-//                return MaterialDescriptor(material: m)
-//            default:
-//                return nil
-//            }
         }
 
         self.directionalLight = file.objectStore.directionalLight
@@ -46,23 +36,6 @@ struct File: Codable {
     
     func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-
-//        let m = models.compactMap { node in
-//            switch node.content {
-//            case .model(let model):
-//                return model
-//            case .pbrObject:
-//                break
-//            case .point:
-//                break
-//            case .light:
-//                break
-//            case .directionalLight:
-//                break
-//            }
-//
-//            return nil
-//        }
 
         try container.encode(self.models, forKey: .models)
         try container.encode(self.camera, forKey: .camera)

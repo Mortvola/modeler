@@ -10,21 +10,10 @@ import MetalKit
 
 class MaterialManager: ObservableObject {
     @Published var materials: [UUID:MaterialEntry] = [:]
-    var defaultMaterial: MaterialEntry
+    private var defaultMaterial: MaterialEntry
     
     init() {
         defaultMaterial = MaterialEntry.pbrMaterial(PbrMaterial())
-    }
-    
-    func getDefaultMaterial() throws -> PbrMaterial {
-        switch defaultMaterial {
-        case .pbrMaterial(let m):
-            return m
-        default:
-            break
-        }
-        
-        throw Errors.invalidTexture
     }
     
     func addMaterial(pbrMaterial: PbrMaterial) {
@@ -91,10 +80,11 @@ class MaterialManager: ObservableObject {
     }
     
     func setMaterial(object: RenderObject, materialEntry: MaterialEntry) {
+        object.material = materialEntry
+
         switch materialEntry {
         case .pbrMaterial(let m):
             m.objects.append(object)
-            object.material = m
             Renderer.shared.pipelineManager?.pbrPipeline.addMaterial(pbrMaterial: m)
         case .billboardMaterial:
             break //m.objects.append(self)

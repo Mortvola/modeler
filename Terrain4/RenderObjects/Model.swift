@@ -75,12 +75,6 @@ class Model: Node, Identifiable, Hashable {
         return light
     }
     
-    private func applyPbrMaterial(object: RenderObject) throws {
-        let material = try Renderer.shared.materialManager.getDefaultMaterial()
-        
-        material.objects.append(object)
-    }
-    
     @MainActor
     func addSphere(options: SphereOptions) async throws -> Mesh {
         guard let device = Renderer.shared.device else {
