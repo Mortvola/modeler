@@ -19,9 +19,9 @@ class SimpleMaterial: Material {
         super.init(name: "Simple Material")
     }
 
-    init(device: MTLDevice, view: MTKView, descriptor: MaterialDescriptor?) async throws {
-        super.init(name: "Simple Material")
-    }
+//    init(device: MTLDevice, view: MTKView, descriptor: MaterialDescriptor?) async throws {
+//        super.init(name: "Simple Material")
+//    }
 
     override func prepare(renderEncoder: MTLRenderCommandEncoder) {
     }

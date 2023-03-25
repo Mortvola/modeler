@@ -9,9 +9,9 @@ import Foundation
 import MetalKit
 
 class BillboardMaterial: Material {
-    init(device: MTLDevice, view:  MTKView, descriptor: MaterialDescriptor?) {
-        super.init(name: "Billboard Material")
-    }
+//    init(device: MTLDevice, view:  MTKView, descriptor: MaterialDescriptor?) {
+//        super.init(name: "Billboard Material")
+//    }
     
     required init(from decoder: Decoder) throws {
         try super.init(from: decoder)

@@ -9,9 +9,9 @@ import Foundation
 import MetalKit
 
 class PointMaterial: Material {
-    init(device: MTLDevice, view:  MTKView, descriptor: MaterialDescriptor?) {
-        super.init(name: "Point Material")
-    }
+//    init(device: MTLDevice, view:  MTKView, descriptor: MaterialDescriptor?) {
+//        super.init(name: "Point Material")
+//    }
 
     override func prepare(renderEncoder: MTLRenderCommandEncoder) {
         if let texture = Renderer.shared.textureStore?.texture {
