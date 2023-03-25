@@ -41,8 +41,8 @@ class World {
         var tilesLoaded = 0;
         // let promises: Promise<void | void[]>[] = [];
         
-        for z2 in stride(from: -tilePadding, to: tilePadding + 1, by: 1) {
-            for x2 in stride(from: -tilePadding, to: tilePadding + 1, by: 1) {
+        for z2 in -tilePadding..<(tilePadding + 1) {
+            for x2 in -tilePadding..<(tilePadding + 1) {
                 try await loadTile(gridX: x2 + tilePadding, gridZ: z2 + tilePadding, x: x + x2, z: z + z2, dimension: dimension, renderer: renderer)
                 tilesLoaded += 1;
                 print("tiles loaded: \(tilesLoaded)")
@@ -83,7 +83,7 @@ class World {
     }
     
     func setTileRowOffsets(z: Int, zOffset: Float) {
-        for x in stride(from: 1, to: tilePadding + 1, by: 1) {
+        for x in 1..<tilePadding + 1 {
             var prevTile = tileGrid[z][tilePadding + x - 1];
             var currentTile = tileGrid[z][tilePadding + x];
             
@@ -109,7 +109,7 @@ class World {
     func setTileGridOffsets() {
         setTileRowOffsets(z: tilePadding, zOffset: 0.0)
         
-        for z in stride(from: 1, to: tilePadding + 1, by: 1) {
+        for z in 1..<tilePadding + 1 {
             var prevTile = tileGrid[tilePadding + z - 1][tilePadding];
             let currentTile1 = tileGrid[tilePadding + z][tilePadding];
             
@@ -130,7 +130,7 @@ class World {
 //                currentTile2.tile!.setTranslation(x: currentTile2.offsetX, y: 0.0, z: currentTile2.offsetZ)
             }
             
-            for _ in stride(from: 1, to: tilePadding + 1, by: 1) {
+            for _ in 1..<tilePadding + 1 {
                 setTileRowOffsets(z: tilePadding + z, zOffset: currentTile1.offsetZ);
                 setTileRowOffsets(z: tilePadding - z, zOffset: currentTile2.offsetZ);
             }
@@ -140,10 +140,10 @@ class World {
     func initTileGrid() {
         let gridDimension = tilePadding * 2 + 1;
         
-        for _ in stride(from: 0, to: gridDimension, by: 1) {
+        for _ in 0..<gridDimension {
             var row: [Tile] = [];
             
-            for _ in stride(from: 0, to: gridDimension, by: 1) {
+            for _ in 0..<gridDimension {
                 row.append(Tile(offsetX: 0.0, offsetZ: 0.0));
                 // tileRenderOrder.push({ x, y });
             }

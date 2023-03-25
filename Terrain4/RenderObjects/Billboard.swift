@@ -14,20 +14,19 @@ class Billboard: RenderObject {
     
     var vertex: MTLBuffer?
     var vertexCount: Int = 0
-    var uniforms: MTLBuffer?
     
     let alignedNodeUniformsSize = MemoryLayout<BillboardUniforms>.size // (MemoryLayout<NodeUniforms>.size + 0xFF) & -0x100
 
     init(model: Model) {
         super.init(model: model)
         allocateVertexBuffer()
-        allocateUniformsBuffer()
+//        allocateUniformsBuffer()
     }
     
     required init(from decoder: Decoder) throws {
         try super.init(from: decoder)
         allocateVertexBuffer()
-        allocateUniformsBuffer()
+//        allocateUniformsBuffer()
     }
 
     func allocateVertexBuffer() {
@@ -38,16 +37,16 @@ class Billboard: RenderObject {
         self.vertexCount = v.count
     }
     
-    func allocateUniformsBuffer() {
-        self.uniforms = Renderer.shared.device!.makeBuffer(length: 3 * alignedNodeUniformsSize, options: [MTLResourceOptions.storageModeShared])!
-        self.uniforms!.label = "Billboard Uniforms"
-    }
+//    func allocateUniformsBuffer() {
+//        self.uniforms = Renderer.shared.device!.makeBuffer(length: 3 * alignedNodeUniformsSize, options: [MTLResourceOptions.storageModeShared])!
+//        self.uniforms!.label = "Billboard Uniforms"
+//    }
 
-    func getUniformsBuffer(index: Int) -> UnsafeMutablePointer<BillboardUniforms> {
-        UnsafeMutableRawPointer(self.uniforms!.contents())
-            .advanced(by: index * alignedNodeUniformsSize)
-            .bindMemory(to: BillboardUniforms.self, capacity: 1)
-    }
+//    func getUniformsBuffer(index: Int) -> UnsafeMutablePointer<BillboardUniforms> {
+//        UnsafeMutableRawPointer(self.uniforms!.contents())
+//            .advanced(by: index * alignedNodeUniformsSize)
+//            .bindMemory(to: BillboardUniforms.self, capacity: 1)
+//    }
 
 //    override func setMaterial(materialEntry: MaterialEntry) {
 //        switch materialEntry {
@@ -79,7 +78,7 @@ class Billboard: RenderObject {
     }
     
     override func simpleDraw(renderEncoder: MTLRenderCommandEncoder, modelMatrix: Matrix4x4, frame: Int) throws {
-        let u = self.getUniformsBuffer(index: frame)
+        let u: UnsafeMutablePointer<BillboardUniforms> = self.getUniformsBuffer(index: frame)
         u[0].modelMatrix = modelMatrix
         u[0].color = color
         u[0].scale = size

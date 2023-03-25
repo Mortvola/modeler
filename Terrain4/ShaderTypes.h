@@ -25,8 +25,9 @@ typedef NS_ENUM(EnumBackingType, BufferIndex) {
     BufferIndexMeshPositions = 0,
     BufferIndexNormals = 1,
     BufferIndexUniforms = 2,
-    BufferIndexNodeUniforms = 3,
-    BufferIndexCascadeIndex = 4
+    BufferIndexModelMatrix = 3,
+    BufferIndexNodeUniforms = 4,
+    BufferIndexCascadeIndex = 5
 };
 
 typedef NS_ENUM(EnumBackingType, VertexAttribute) {
@@ -73,7 +74,6 @@ typedef struct {
 
 typedef struct {
     vector_float4 color;
-    matrix_float4x4 modelMatrix;
     matrix_float3x3 normalMatrix;
     vector_float3 albedo;
     vector_float3 normals;

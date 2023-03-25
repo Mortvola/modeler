@@ -82,9 +82,9 @@ class SceneDocument: ReferenceFileDocument {
                 _ = await task.result
             }
             
-            for material in file.materials {
-                Renderer.shared.materialManager.materials[material.material.id] = material
-            }
+//            for material in file.materials {
+//                Renderer.shared.materialManager.materials[material.material.id] = material
+//            }
             
             var newLights: [Light] = []
             
@@ -95,13 +95,13 @@ class SceneDocument: ReferenceFileDocument {
                         switch object.content {
                         case .mesh(let o):
                             o.model = model
-                            o.setMaterial(materialId: o.materialId)
+//                            o.setMaterial(materialId: o.materialId)
                         case .point(let p):
                             p.model = model
-                            p.setMaterial(materialId: p.materialId)
+//                            p.setMaterial(materialId: p.materialId)
                         case .billboard(let b):
                             b.model = model
-                            b.setMaterial(materialId: b.materialId)
+//                            b.setMaterial(materialId: b.materialId)
                         default:
                             break;
                         }

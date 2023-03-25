@@ -73,7 +73,7 @@ class TriangleMesh: RenderObject {
           var textureCoords: [simd_float2] = [];
           var vertexNormals: [simd_float3] = [];
 
-          for j in stride(from: 0, to: 3, by: 1) {
+            for j in 0...2 {
               let index = indices[i + j];
 
               pointCoords.append(simd_make_float3(
@@ -94,7 +94,7 @@ class TriangleMesh: RenderObject {
               ))
           }
 
-          for j in stride(from: 0, to: 3, by: 1) {
+            for j in 0...2 {
               let edge1 = pointCoords[j + 0].subtract(pointCoords[(j + 1) % 3])
               let edge2 = pointCoords[j + 0].subtract(pointCoords[(j + 2) % 3])
               let deltaUV1 = textureCoords[j + 0].subtract(textureCoords[(j + 1) % 3])

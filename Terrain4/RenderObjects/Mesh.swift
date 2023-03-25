@@ -9,7 +9,7 @@ import Foundation
 import Metal
 import MetalKit
 
-class Mesh: PbrObject {
+class Mesh: RenderObject {
     let mesh: MTKMesh
     
     init(mesh: MTKMesh, model: Model) {
@@ -18,47 +18,13 @@ class Mesh: PbrObject {
         super.init(model: model)
     }
     
-    override func draw(renderEncoder: MTLRenderCommandEncoder, modelMatrix: Matrix4x4, pbrProperties: PbrProperties?, frame: Int) throws {
-        // Pass the normal matrix (derived from the model matrix) to the vertex shader
-        var normalMatrix = matrix_float3x3(columns: (
-            vector_float3(modelMatrix[0][0], modelMatrix[0][1], modelMatrix[0][2]),
-            vector_float3(modelMatrix[1][0], modelMatrix[1][1], modelMatrix[1][2]),
-           vector_float3(modelMatrix[2][0], modelMatrix[2][1], modelMatrix[2][2])
-        ));
-        
-        normalMatrix = normalMatrix.inverse.transpose;
+    init(points: [Float], texcoords: [Float], normals: [Float], submeshes: [Submesh], model: Model) throws {
+        self.mesh = try Mesh.makeMesh(points: points, texcoords: texcoords, normals: normals, submeshes: submeshes)
 
-        let u = getUniformsBuffer(index: frame)
-        u[0].normalMatrix = normalMatrix
-
-        // Pass the light information
-        u[0].numberOfLights = Int32(self.lights.count)
-        
-        withUnsafeMutableBytes(of: &u[0].lights) { rawPtr in
-            let light = rawPtr.baseAddress!.assumingMemoryBound(to: Lights.self)
-
-            for i in stride(from: 0, to: self.lights.count, by: 1) {
-                light[i].position = self.lights[i].position
-                light[i].intensity = self.lights[i].intensity
-            }
-        }
-
-        u[0].albedo = pbrProperties?.albedo ?? Vec3(1.0, 1.0, 1.0)
-        u[0].normals = pbrProperties?.normal ?? Vec3(0.5, 0.5, 1.0)
-        u[0].metallic = pbrProperties?.metallic ?? 1.0
-        u[0].roughness = pbrProperties?.roughness ?? 1.0
-        
-        try self.simpleDraw(renderEncoder: renderEncoder, modelMatrix: modelMatrix, frame: frame)
+        super.init(model: model)
     }
     
-    override func simpleDraw(renderEncoder: MTLRenderCommandEncoder, modelMatrix: Matrix4x4, frame: Int) throws {
-        
-        let u = getUniformsBuffer(index: frame)
-        u[0].modelMatrix = modelMatrix
-
-        renderEncoder.setVertexBuffer(self.uniforms, offset: 0, index: BufferIndex.nodeUniforms.rawValue)
-        renderEncoder.setFragmentBuffer(self.uniforms, offset: 0, index: BufferIndex.nodeUniforms.rawValue)
-
+    override func draw(renderEncoder: MTLRenderCommandEncoder) throws {
         // Pass the vertex and index information to the vertex shader
         for (i, buffer) in self.mesh.vertexBuffers.enumerated() {
             renderEncoder.setVertexBuffer(buffer.buffer, offset: buffer.offset, index: i)
@@ -111,7 +77,7 @@ class Mesh: PbrObject {
         
         let unsafeMutablePointer = UnsafeMutablePointer<Float>.allocate(capacity: numberOfPoints * 6)
 
-        for i in stride(from: 0, to: numberOfPoints, by: 1) {
+        for i in 0..<numberOfPoints {
             unsafeMutablePointer[i * 6 + 0] = points[i * 3 + 0]
             unsafeMutablePointer[i * 6 + 1] = points[i * 3 + 1]
             unsafeMutablePointer[i * 6 + 2] = points[i * 3 + 2]
@@ -131,7 +97,7 @@ class Mesh: PbrObject {
 
         let unsafeMutablePointer = UnsafeMutablePointer<Float>.allocate(capacity: numberOfPoints * 8)
         
-        for i in stride(from: 0, to: numberOfPoints, by: 1) {
+        for i in 0..<numberOfPoints {
             unsafeMutablePointer[i * 8 + 0] = normals[i * 3 + 0]
             unsafeMutablePointer[i * 8 + 1] = normals[i * 3 + 1]
             unsafeMutablePointer[i * 8 + 2] = normals[i * 3 + 2]
@@ -147,7 +113,7 @@ class Mesh: PbrObject {
         let mdlSubmeshes = try submeshes.map { submesh in
             let unsafeMutablePointer = UnsafeMutablePointer<UInt16>.allocate(capacity: submesh.indexes.count)
 
-            for i in stride(from: 0, to: submesh.indexes.count, by: 1) {
+            for i in 0..<submesh.indexes.count {
                 unsafeMutablePointer[i] = UInt16(submesh.indexes[i])
             }
             
@@ -171,29 +137,50 @@ class Mesh: PbrObject {
         let texcoords = try container.decode([Float].self, forKey: .texcoords)
         let normals = try container.decode([Float].self, forKey: .normals)
         
+//        let allocator = MTKMeshBufferAllocator(device: Renderer.shared.device!)
+
+//        var vertexBuffers: [MDLMeshBuffer] = []
+
+//        let (coordBuffer, numberOfPoints) = Mesh.makeCoordBuffer(points: points, texcoords: texcoords, allocator: allocator)
+//        vertexBuffers.append(coordBuffer)
+        
+//        let normalBuffer = Mesh.makeNormalBuffer(normals: normals, allocator: allocator)
+//        vertexBuffers.append(normalBuffer)
+        
+        let submeshes = try container.decode([Submesh].self, forKey: .submeshes)
+        
+//        let mdlSubmeshes = try Mesh.makeSubmeshes(submeshes: submeshes, allocator: allocator)
+        
+//        let mdlMesh = MDLMesh(vertexBuffers: vertexBuffers, vertexCount: numberOfPoints, descriptor: MeshAllocator.vertexDescriptor(), submeshes: mdlSubmeshes)
+
+//        mdlMesh.addTangentBasis(forTextureCoordinateAttributeNamed: MDLVertexAttributeTextureCoordinate, normalAttributeNamed: MDLVertexAttributeNormal, tangentAttributeNamed: MDLVertexAttributeTangent)
+
+//        self.mesh = try MTKMesh(mesh: mdlMesh, device: Renderer.shared.device!)
+        self.mesh = try Mesh.makeMesh(points: points, texcoords: texcoords, normals: normals, submeshes: submeshes)
+
+        try super.init(from: decoder)
+    }
+
+    private static func makeMesh(points: [Float], texcoords: [Float], normals: [Float], submeshes: [Submesh]) throws -> MTKMesh {
         let allocator = MTKMeshBufferAllocator(device: Renderer.shared.device!)
 
         var vertexBuffers: [MDLMeshBuffer] = []
 
         let (coordBuffer, numberOfPoints) = Mesh.makeCoordBuffer(points: points, texcoords: texcoords, allocator: allocator)
         vertexBuffers.append(coordBuffer)
-        
+
         let normalBuffer = Mesh.makeNormalBuffer(normals: normals, allocator: allocator)
         vertexBuffers.append(normalBuffer)
-        
-        let submeshes = try container.decode([Submesh].self, forKey: .submeshes)
-        
+
         let mdlSubmeshes = try Mesh.makeSubmeshes(submeshes: submeshes, allocator: allocator)
-        
+
         let mdlMesh = MDLMesh(vertexBuffers: vertexBuffers, vertexCount: numberOfPoints, descriptor: MeshAllocator.vertexDescriptor(), submeshes: mdlSubmeshes)
 
         mdlMesh.addTangentBasis(forTextureCoordinateAttributeNamed: MDLVertexAttributeTextureCoordinate, normalAttributeNamed: MDLVertexAttributeNormal, tangentAttributeNamed: MDLVertexAttributeTangent)
 
-        self.mesh = try MTKMesh(mesh: mdlMesh, device: Renderer.shared.device!)
-
-        try super.init(from: decoder)
+        return try MTKMesh(mesh: mdlMesh, device: Renderer.shared.device!)
     }
-
+    
     private func getCoordsFromBuffer() -> ([Float], [Float]) {
         let buffer = mesh.vertexBuffers[0]
         let points = buffer.buffer.contents().bindMemory(to: Float.self, capacity: buffer.length)
@@ -298,7 +285,7 @@ extension MTKSubmesh: Encodable {
         var indexes: [T] = []
         
         let count = buffer.length / MemoryLayout<T>.size
-        for i in stride(from: 0, to: count, by: 1) {
+        for i in 0..<count {
             indexes.append(points[i])
         }
         

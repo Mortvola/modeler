@@ -85,7 +85,7 @@ class Model: Node, Identifiable, Hashable {
         
         let object = Mesh(mesh: mesh, model: self)
         
-        object.setMaterial(materialId: nil)
+        object.setMaterial(material: nil)
 
         self.objects.append(TreeNode(mesh: object))
 
@@ -102,7 +102,7 @@ class Model: Node, Identifiable, Hashable {
         
         let object = Mesh(mesh: mesh, model: self)
         
-        object.setMaterial(materialId: nil)
+        object.setMaterial(material: nil)
 
         self.objects.append(TreeNode(mesh: object))
 
@@ -119,7 +119,7 @@ class Model: Node, Identifiable, Hashable {
         
         let object = Mesh(mesh: mesh, model: self)
         
-        object.setMaterial(materialId: nil)
+        object.setMaterial(material: nil)
 
         self.objects.append(TreeNode(mesh: object))
 
@@ -136,7 +136,7 @@ class Model: Node, Identifiable, Hashable {
         
         let object = Mesh(mesh: mesh, model: self)
         
-        object.setMaterial(materialId: nil)
+        object.setMaterial(material: nil)
 
         self.objects.append(TreeNode(mesh: object))
         
@@ -153,7 +153,7 @@ class Model: Node, Identifiable, Hashable {
         
         let object = Mesh(mesh: mesh, model: self)
 
-        object.setMaterial(materialId: nil)
+        object.setMaterial(material: nil)
 
         self.objects.append(TreeNode(mesh: object))
         
@@ -183,14 +183,14 @@ class Model: Node, Identifiable, Hashable {
     }
     
     @MainActor
-    func addBillboard(options: BillboardOptions) async throws -> Billboard {
-        let object = Billboard(model: self)
-        object.size = options.dimensions
+    func addBillboard(options: BillboardOptions) async throws -> Mesh {
+        let object = try BillboardAllocator.allocate(model: self)
+//        object.size = options.dimensions
         
-        object.setMaterial(materialId: nil)
+        object.setMaterial(material: nil)
 
-        self.objects.append(TreeNode(billboard: object))
-        
+        self.objects.append(TreeNode(mesh: object))
+
         return object
     }
 }

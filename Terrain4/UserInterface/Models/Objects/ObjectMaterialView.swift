@@ -21,13 +21,15 @@ struct ObjectMaterialView: View {
     var body: some View {
         Text("Materials")
         HStack {
-            Picker("Type", selection: $materialId) {
-                Text("None").tag(nil as UUID?)
-                ForEach(materialList, id: \.material.id) { entry in
-                    Text(entry.material.name).tag(entry.material.id as UUID?)
+            UndoProvider($materialId) { $value in
+                Picker("Type", selection: $value) {
+                    Text("None").tag(nil as UUID?)
+                    ForEach(materialList, id: \.material.id) { entry in
+                        Text(entry.material.name).tag(entry.material.id as UUID?)
+                    }
                 }
+                .labelsHidden()
             }
-            .labelsHidden()
             .onChange(of: materialId) { newMaterialId in
                 object.setMaterial(materialId: newMaterialId)
             }

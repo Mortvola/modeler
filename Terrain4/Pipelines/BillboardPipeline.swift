@@ -30,22 +30,6 @@ class BillboardPipeline {
         renderEncoder.setRenderPipelineState(self.pipeline)
     }
 
-//    func addMaterial(device: MTLDevice, view: MTKView, descriptor: MaterialDescriptor?) async throws -> SimpleMaterial {
-//
-//        let materialKey = descriptor?.id
-//
-//        if let entry = self.materials[materialKey] {
-//            return entry.material
-//        }
-//
-//        let material = try await SimpleMaterial(device: device, view: view, descriptor: descriptor)
-//
-//        let entry = MaterialEntry(material: material)
-//        self.materials[materialKey] = entry
-//
-//        return material
-//    }
-
     func addMaterial(material: SimpleMaterial) {
         let materialKey = material.id
         
@@ -57,17 +41,17 @@ class BillboardPipeline {
     func render(renderEncoder: MTLRenderCommandEncoder, frame: Int) throws {
         renderEncoder.setRenderPipelineState(pipeline)
         
-        for (_, entry) in self.materials {
-            if entry.material.objects.count > 0 {
-                entry.material.prepare(renderEncoder: renderEncoder)
-                
-                for object in entry.material.objects {
-                    if !object.disabled && !(object.model?.disabled ?? true) {
-                        try object.draw(renderEncoder: renderEncoder, modelMatrix: object.modelMatrix(), frame: frame)
-                    }
-                }
-            }
-        }
+//        for (_, entry) in self.materials {
+//            if entry.material.objects.count > 0 {
+//                entry.material.prepare(renderEncoder: renderEncoder)
+//                
+//                for object in entry.material.objects {
+//                    if !object.disabled && !(object.model?.disabled ?? true) {
+//                        try object.draw(renderEncoder: renderEncoder, modelMatrix: object.modelMatrix(), frame: frame)
+//                    }
+//                }
+//            }
+//        }
     }
 
     private static func buildVertexDescriptor() -> MTLVertexDescriptor {

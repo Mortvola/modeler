@@ -17,12 +17,6 @@ class RenderDelegate: NSObject, MTKViewDelegate {
         do {
             try Renderer.shared.initialize(file: file, metalKitView: metalKitView)
             Task {
-//                _ = try await Renderer.shared.materialManager.addMaterial(device: metalKitView.device!, view: metalKitView, descriptor: nil)
-
-//                _ = try await Renderer.shared.pipelineManager?.pointPipeline.addMaterial(device: metalKitView.device!, view: metalKitView, descriptor: nil)
-//
-//                _ = try await Renderer.shared.pipelineManager?.billboardPipeline.addMaterial(device: metalKitView.device!, view: metalKitView, descriptor: nil)
-
                 try await Renderer.shared.load(lat: 46.514279, lng: -121.456191, dimension: 128)
                 
                 if let data = file.data {

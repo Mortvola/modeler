@@ -61,6 +61,10 @@ struct File: Codable {
         
         materials = try container.decode([MaterialWrapper].self, forKey: .materials)
         
+        for material in materials {
+            Renderer.shared.materialManager.materials[material.material.id] = material
+        }
+
         models = try container.decode([TreeNode].self, forKey: .models)
         
         directionalLight = try container.decodeIfPresent(DirectionalLight.self, forKey: .directionalLight) ?? DirectionalLight()

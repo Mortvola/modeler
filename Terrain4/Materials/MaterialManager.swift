@@ -10,7 +10,7 @@ import MetalKit
 
 class MaterialManager: ObservableObject {
     @Published var materials: [UUID:MaterialWrapper] = [:]
-    private var defaultMaterial: MaterialWrapper
+    var defaultMaterial: MaterialWrapper
     
     init() {
         defaultMaterial = MaterialWrapper.pbrMaterial(PbrMaterial())
@@ -22,9 +22,6 @@ class MaterialManager: ObservableObject {
         if entry == nil {
             materials[pbrMaterial.id] = MaterialWrapper.pbrMaterial(pbrMaterial)
         }
-        
-        // Make sure it is added to the pipeline
-        Renderer.shared.pipelineManager?.pbrPipeline.addMaterial(pbrMaterial: pbrMaterial)
     }
     
     func addMaterial(simpleMaterial: SimpleMaterial) {
@@ -33,59 +30,56 @@ class MaterialManager: ObservableObject {
         if entry == nil {
             materials[simpleMaterial.id] = MaterialWrapper.simpleMaterial(simpleMaterial)
         }
-        
-        // Make sure it is added to the pipeline
-        Renderer.shared.pipelineManager?.billboardPipeline.addMaterial(material: simpleMaterial)
     }
     
-    func removeObjectFromMaterial(object: RenderObject, materialId: UUID?) {
-        // Remove object from current material object list
+//    func removeObjectFromMaterial(object: RenderObject, material: MaterialWrapper?) {
+//        // Remove object from current material object list
+//        if let material = material {
+//            material.material.removeObject(object: object)
+//        }
+//        else {
+//            defaultMaterial.material.removeObject(object: object)
+//        }
+//    }
+    
+    func setMaterial(object: RenderObject, materialId: UUID?) {
         if let materialId = materialId {
-            if let material = materials[materialId] {
-                let index = material.material.objects.firstIndex {
-                    $0.id == object.id
-                }
-                
-                if let index = index {
-                    material.material.objects.remove(at: index)
-                }
-            }
-        }
-        else {
-            let index = defaultMaterial.material.objects.firstIndex {
-                $0.id == object.id
-            }
-            
-            if let index = index {
-                defaultMaterial.material.objects.remove(at: index)
-            }
-        }
-    }
-    
-    func addObjectToMaterial(object: RenderObject, materialId: UUID?) {
-        if let materialId = materialId {
-            var materialEntry = materials[materialId]
-            
-            if materialEntry == nil {
-                materialEntry = defaultMaterial
-            }
-            
-            if let materialEntry = materialEntry {
-                setMaterial(object: object, materialEntry: materialEntry)
-            }
-        }
-        else {
-            setMaterial(object: object, materialEntry: defaultMaterial)
-        }
-    }
-    
-    func setMaterial(object: RenderObject, materialEntry: MaterialWrapper) {
-        object.material = materialEntry
+            let materialWrapper = materials[materialId]
 
-        switch materialEntry {
+            setMaterial(object: object, material: materialWrapper)
+        }
+        else {
+            setMaterial(object: object, material: defaultMaterial)
+        }
+    }
+
+    func setMaterial(object: RenderObject, material: MaterialWrapper?) {
+        if material != object.material {
+            if let oldMaterial = object.material {
+                oldMaterial.material.removeObject(object: object)
+            }
+            else {
+                defaultMaterial.material.removeObject(object: object)
+            }
+            
+            if let material = material {
+                material.material.addObject(object: object)
+                object.material = material
+            }
+            else {
+                defaultMaterial.material.addObject(object: object)
+                object.material = defaultMaterial
+            }
+
+            updatePipeline(object: object)
+        }
+    }
+
+    private func updatePipeline(object: RenderObject) {
+        switch object.material! {
         case .pbrMaterial(let m):
-            m.objects.append(object)
             Renderer.shared.pipelineManager?.pbrPipeline.addMaterial(pbrMaterial: m)
+            Renderer.shared.pipelineManager?.pbrPipeline.prepareObject(object: object)
         case .billboardMaterial:
             break //m.objects.append(self)
         case .pointMaterial:

@@ -29,14 +29,16 @@ struct VertexOut {
     float3 lightPos3;
 };
 
-vertex VertexOut pbrVertexShader(
+vertex VertexOut pbrVertexShader
+(
     VertexIn in [[stage_in]],
     const device FrameUniforms& uniforms [[ buffer(BufferIndexUniforms) ]],
+    const device float4x4& modelMatrix [[ buffer(BufferIndexModelMatrix) ]],
     const device NodeUniforms& nodeUniforms [[ buffer(BufferIndexNodeUniforms) ]]
 ) {
     VertexOut vertexOut;
     
-    vertexOut.worldFragPos = float3(nodeUniforms.modelMatrix * float4(in.position, 1.0));
+    vertexOut.worldFragPos = float3(modelMatrix * float4(in.position, 1.0));
     
     vertexOut.position =  uniforms.projectionMatrix * uniforms.viewMatrix * float4(vertexOut.worldFragPos, 1.0);
 

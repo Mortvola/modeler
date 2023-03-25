@@ -18,15 +18,17 @@ struct VertexOut {
     float4 color;
 };
 
-vertex VertexOut lineVertexShader(
+vertex VertexOut lineVertexShader
+(
     LineVertexIn in [[stage_in]],
     const device FrameUniforms& uniforms [[ buffer(BufferIndexUniforms) ]],
+    const device float4x4& modelMatrix [[ buffer(BufferIndexModelMatrix) ]],
     const device NodeUniforms& nodeUniforms [[ buffer(BufferIndexNodeUniforms) ]]
 ) {
     VertexOut vertexOut;
     
     float4 position = float4(in.position, 1.0);
-    vertexOut.position = uniforms.projectionMatrix * uniforms.viewMatrix * nodeUniforms.modelMatrix * position;
+    vertexOut.position = uniforms.projectionMatrix * uniforms.viewMatrix * modelMatrix * position;
 
     vertexOut.color = nodeUniforms.color;
     

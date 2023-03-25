@@ -92,7 +92,7 @@ struct AddObject: View {
                                 }
                             case .billboard:
                                 if let object = try? await model?.addBillboard(options: billboardOptions) {
-                                    selectedItem = TreeNode(billboard: object)
+                                    selectedItem = TreeNode(mesh: object)
                                 }
                             }
                             

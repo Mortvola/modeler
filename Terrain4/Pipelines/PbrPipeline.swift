@@ -28,6 +28,48 @@ class PbrPipeline {
         }
     }
     
+    func prepareObject(object: RenderObject) {
+        object.uniformsSize = alignedNodeUniformsSize
+        object.uniforms = Renderer.shared.device!.makeBuffer(length: 3 * alignedNodeUniformsSize, options: [MTLResourceOptions.storageModeShared])!
+        object.uniforms!.label = "Node Uniforms"
+    }
+    
+    func draw(object: RenderObject, renderEncoder: MTLRenderCommandEncoder, modelMatrix: Matrix4x4, pbrProperties: PbrProperties?, frame: Int) throws {
+        // Pass the normal matrix (derived from the model matrix) to the vertex shader
+        var normalMatrix = matrix_float3x3(columns: (
+            vector_float3(modelMatrix[0][0], modelMatrix[0][1], modelMatrix[0][2]),
+            vector_float3(modelMatrix[1][0], modelMatrix[1][1], modelMatrix[1][2]),
+           vector_float3(modelMatrix[2][0], modelMatrix[2][1], modelMatrix[2][2])
+        ));
+        
+        normalMatrix = normalMatrix.inverse.transpose;
+
+        let u: UnsafeMutablePointer<NodeUniforms> = object.getUniformsBuffer(index: frame)
+        u[0].normalMatrix = normalMatrix
+
+        // Pass the light information
+        u[0].numberOfLights = Int32(object.lights.count)
+        
+        withUnsafeMutableBytes(of: &u[0].lights) { rawPtr in
+            let light = rawPtr.baseAddress!.assumingMemoryBound(to: Lights.self)
+
+            for i in 0..<object.lights.count {
+                light[i].position = object.lights[i].position
+                light[i].intensity = object.lights[i].intensity
+            }
+        }
+
+        u[0].albedo = pbrProperties?.albedo ?? Vec3(1.0, 1.0, 1.0)
+        u[0].normals = pbrProperties?.normal ?? Vec3(0.5, 0.5, 1.0)
+        u[0].metallic = pbrProperties?.metallic ?? 1.0
+        u[0].roughness = pbrProperties?.roughness ?? 1.0
+
+        renderEncoder.setVertexBuffer(object.uniforms, offset: 0, index: BufferIndex.nodeUniforms.rawValue)
+        renderEncoder.setFragmentBuffer(object.uniforms, offset: 0, index: BufferIndex.nodeUniforms.rawValue)
+
+        try object.simpleDraw(renderEncoder: renderEncoder, modelMatrix: modelMatrix, frame: frame)
+    }
+    
     func render(renderEncoder: MTLRenderCommandEncoder, frame: Int) throws {
         renderEncoder.setRenderPipelineState(pipeline)
         renderEncoder.setFragmentSamplerState(samplerState, index: SamplerIndex.sampler.rawValue)
@@ -39,7 +81,7 @@ class PbrPipeline {
                 
                 for renderObject in material.objects {
                     if !renderObject.disabled && !(renderObject.model?.disabled ?? true) {
-                        try renderObject.draw(renderEncoder: renderEncoder, modelMatrix: renderObject.modelMatrix(), pbrProperties: pbrProperties, frame: frame)
+                        try self.draw(object: renderObject, renderEncoder: renderEncoder, modelMatrix: renderObject.modelMatrix(), pbrProperties: pbrProperties, frame: frame)
                     }
                 }
             }

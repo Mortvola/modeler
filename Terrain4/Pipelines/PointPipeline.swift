@@ -30,36 +30,20 @@ class PointPipeline {
         renderEncoder.setRenderPipelineState(self.pipeline)
     }
 
-//    func addMaterial(device: MTLDevice, view: MTKView, descriptor: MaterialDescriptor?) async throws -> PointMaterial {
-//        
-//        let materialKey = descriptor?.id
-//        
-//        if let entry = self.materials[materialKey] {
-//            return entry.material
-//        }
-//        
-//        let material = PointMaterial(device: device, view: view, descriptor: descriptor)
-//        
-//        let entry = MaterialEntry(material: material)
-//        self.materials[materialKey] = entry
-//        
-//        return material
-//    }
-
     func render(renderEncoder: MTLRenderCommandEncoder, frame: Int) throws {
         renderEncoder.setRenderPipelineState(pipeline)
         
-        for (_, entry) in self.materials {
-            if entry.material.objects.count > 0 {
-                entry.material.prepare(renderEncoder: renderEncoder)
-                
-                for point in entry.material.objects {
-                    if !point.disabled && !(point.model?.disabled ?? true) {
-                        try point.draw(renderEncoder: renderEncoder, modelMatrix: point.modelMatrix(), frame: frame)
-                    }
-                }
-            }
-        }
+//        for (_, entry) in self.materials {
+//            if entry.material.objects.count > 0 {
+//                entry.material.prepare(renderEncoder: renderEncoder)
+//                
+//                for point in entry.material.objects {
+//                    if !point.disabled && !(point.model?.disabled ?? true) {
+//                        try point.draw(renderEncoder: renderEncoder, modelMatrix: point.modelMatrix(), frame: frame)
+//                    }
+//                }
+//            }
+//        }
     }
 
     private static func buildVertexDescriptor() -> MTLVertexDescriptor {

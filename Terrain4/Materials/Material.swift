@@ -20,6 +20,26 @@ class Material: Item {
         super.init(name: name)
     }
 
+    func addObject(object: RenderObject) {
+        let index = objects.firstIndex {
+            $0.id == object.id
+        }
+
+        if index == nil {
+            objects.append(object)
+        }
+    }
+
+    func removeObject(object: RenderObject) {
+        let index = objects.firstIndex {
+            $0.id == object.id
+        }
+        
+        if let index = index {
+            objects.remove(at: index)
+        }
+    }
+
     enum CodingKeys: CodingKey {
         case id
     }

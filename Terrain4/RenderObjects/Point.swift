@@ -13,20 +13,20 @@ class Point: RenderObject {
     var size = Float(64)
     
     var vertex: MTLBuffer?
-    var uniforms: MTLBuffer?
+//    var uniforms: MTLBuffer?
     
     let alignedNodeUniformsSize = MemoryLayout<PointUniforms>.size // (MemoryLayout<NodeUniforms>.size + 0xFF) & -0x100
 
     init(model: Model) {
         super.init(model: model)
         allocateVertexBuffer()
-        allocateUniformsBuffer()
+//        allocateUniformsBuffer()
     }
     
     required init(from decoder: Decoder) throws {
         try super.init(from: decoder)
         allocateVertexBuffer()
-        allocateUniformsBuffer()
+//        allocateUniformsBuffer()
     }
 
     override func typeString() -> String {
@@ -40,16 +40,16 @@ class Point: RenderObject {
         self.vertex = Renderer.shared.device!.makeBuffer(bytes: &v, length: length, options: [])!
     }
     
-    func allocateUniformsBuffer() {
-        self.uniforms = Renderer.shared.device!.makeBuffer(length: 3 * alignedNodeUniformsSize, options: [MTLResourceOptions.storageModeShared])!
-        self.uniforms!.label = "Point Uniforms"
-    }
+//    func allocateUniformsBuffer() {
+//        self.uniforms = Renderer.shared.device!.makeBuffer(length: 3 * alignedNodeUniformsSize, options: [MTLResourceOptions.storageModeShared])!
+//        self.uniforms!.label = "Point Uniforms"
+//    }
 
-    func getUniformsBuffer(index: Int) -> UnsafeMutablePointer<PointUniforms> {
-        UnsafeMutableRawPointer(self.uniforms!.contents())
-            .advanced(by: index * alignedNodeUniformsSize)
-            .bindMemory(to: PointUniforms.self, capacity: 1)
-    }
+//    func getUniformsBuffer(index: Int) -> UnsafeMutablePointer<PointUniforms> {
+//        UnsafeMutableRawPointer(self.uniforms!.contents())
+//            .advanced(by: index * alignedNodeUniformsSize)
+//            .bindMemory(to: PointUniforms.self, capacity: 1)
+//    }
     
 //    override func setMaterial(materialEntry: MaterialEntry) {
 //        switch materialEntry {
@@ -81,7 +81,7 @@ class Point: RenderObject {
     }
     
     override func simpleDraw(renderEncoder: MTLRenderCommandEncoder, modelMatrix: Matrix4x4, frame: Int) throws {
-        let u = self.getUniformsBuffer(index: frame)
+        let u: UnsafeMutablePointer<PointUniforms> = self.getUniformsBuffer(index: frame)
         u[0].modelMatrix = modelMatrix
         u[0].color = color
         u[0].size = size
