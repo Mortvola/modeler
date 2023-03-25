@@ -8,7 +8,7 @@
 import Foundation
 
 class NormalsLayer: MaterialLayer {
-    var normal = Vec4(0.0, 0.0, 1.0, 1.0)
+    var normal = Vec4(0.5, 0.5, 1.0, 1.0)
     
     override init() {
         super.init()

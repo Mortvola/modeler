@@ -12,14 +12,9 @@ struct ObjectMaterialView: View {
     @ObservedObject var materialManager = Renderer.shared.materialManager
     @State var materialId: UUID?
     
-    var materialList: [PbrMaterial] {
+    var materialList: [MaterialEntry] {
         materialManager.materials.compactMap { entry in
-            switch entry.value {
-            case .pbrMaterial(let m):
-                return m
-            default:
-                return nil
-            }
+            entry.value
         }
     }
 
@@ -28,8 +23,8 @@ struct ObjectMaterialView: View {
         HStack {
             Picker("Type", selection: $materialId) {
                 Text("None").tag(nil as UUID?)
-                ForEach(materialList, id: \.id) { material in
-                    Text(material.name).tag(material.id as UUID?)
+                ForEach(materialList, id: \.material.id) { entry in
+                    Text(entry.material.name).tag(entry.material.id as UUID?)
                 }
             }
             .labelsHidden()

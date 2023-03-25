@@ -76,37 +76,7 @@ class PbrMaterial: Material, Hashable {
     func setSimpleAlbedo(_ color: Vec4) {
         self.albedo.color = color
     }
-    
-    init(device: MTLDevice, view: MTKView, descriptor: MaterialDescriptor?) async throws {
-        // Albedo
-        self.albedo.useSimple = descriptor?.albedo.useSimple ?? false
-        self.albedo.color = descriptor?.albedo.color ?? Vec4(1.0, 1.0, 1.0, 1.0)
-        self.albedo.map = descriptor?.albedo.map ?? ""
         
-        // Normals
-        self.normals.useSimple = descriptor?.normals.useSimple ?? false
-        self.normals.normal = (Vec4(0.0, 0.0, 1.0, 1.0)
-            .add(1.0)
-            .multiply(0.5))
-        self.normals.map = descriptor?.normals.map ?? ""
-
-        // Metalness
-        self.metallic.useSimple = descriptor?.metallic.useSimple ?? false
-        self.metallic.value = descriptor?.metallic.value ?? 1.0
-        self.metallic.map = descriptor?.metallic.map ?? ""
-
-        // Roughness
-        self.roughness.useSimple = descriptor?.roughness.useSimple ?? false
-        self.roughness.value = descriptor?.roughness.value ?? 1.0
-        self.roughness.map = descriptor?.roughness.map ?? ""
-
-        self.ao = nil
-        
-        super.init(name: descriptor?.name ?? "")
-        
-        await initializeTextures()
-    }
-    
     private func initializeTextures() async {
         guard let device = Renderer.shared.device else {
             return
