@@ -19,29 +19,7 @@ class PbrPipeline {
         pipeline = try PbrPipeline.buildPipeline(device: device, view: view)
         samplerState = PbrPipeline.buildSamplerState(device: device)
     }
-    
-//    func addMaterial() async throws {
-//        let materialDescriptor = MaterialDescriptor()
-//        
-//        materialDescriptor.name = "Material_0"
-//        
-//        _ = try await addMaterial(device: Renderer.shared.device!, view: Renderer.shared.view!, descriptor: materialDescriptor)
-//    }
-    
-//    func addMaterial(device: MTLDevice, view: MTKView, descriptor: MaterialDescriptor?) async throws -> PbrMaterial {
-//        let materialKey = descriptor?.id
-//
-//        if let pbrMaterial = self.materials[materialKey] {
-//            return pbrMaterial
-//        }
-//
-//        let material = try await PbrMaterial(device: device, view: view, descriptor: descriptor)
-//
-//        self.materials[materialKey] = material
-//
-//        return material
-//    }
-    
+        
     func addMaterial(pbrMaterial: PbrMaterial) {
         let materialKey = pbrMaterial.id
         

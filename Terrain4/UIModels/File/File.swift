@@ -11,7 +11,7 @@ struct File: Codable {
     var models: [TreeNode]
     var animators: [Animator]
     var camera: Camera
-    var materials: [MaterialEntry]
+    var materials: [MaterialWrapper]
     var directionalLight: DirectionalLight
     
     init(file: SceneDocument) {
@@ -59,7 +59,7 @@ struct File: Codable {
         
         AnimatorStore.shared.animators = animators
         
-        materials = try container.decode([MaterialEntry].self, forKey: .materials)
+        materials = try container.decode([MaterialWrapper].self, forKey: .materials)
         
         models = try container.decode([TreeNode].self, forKey: .models)
         

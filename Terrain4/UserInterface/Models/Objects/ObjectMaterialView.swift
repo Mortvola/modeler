@@ -12,7 +12,7 @@ struct ObjectMaterialView: View {
     @ObservedObject var materialManager = Renderer.shared.materialManager
     @State var materialId: UUID?
     
-    var materialList: [MaterialEntry] {
+    var materialList: [MaterialWrapper] {
         materialManager.materials.compactMap { entry in
             entry.value
         }

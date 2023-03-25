@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		7902F01129CF244B004C3775 /* MaterialEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7902F01029CF244B004C3775 /* MaterialEntry.swift */; };
+		7902F01129CF244B004C3775 /* MaterialWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7902F01029CF244B004C3775 /* MaterialWrapper.swift */; };
 		791C495629B94AEF00C00150 /* ModelManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791C495529B94AEF00C00150 /* ModelManager.swift */; };
 		791E788A29B937AB00FB45F3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 791E788929B937AB00FB45F3 /* Assets.xcassets */; };
 		791E788D29B937AB00FB45F3 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 791E788C29B937AB00FB45F3 /* Preview Assets.xcassets */; };
@@ -186,7 +186,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		7902F01029CF244B004C3775 /* MaterialEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MaterialEntry.swift; sourceTree = "<group>"; };
+		7902F01029CF244B004C3775 /* MaterialWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MaterialWrapper.swift; sourceTree = "<group>"; };
 		791C495429B9488300C00150 /* Terrain4.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Terrain4.entitlements; sourceTree = "<group>"; };
 		791C495529B94AEF00C00150 /* ModelManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelManager.swift; sourceTree = "<group>"; };
 		791E788229B937A900FB45F3 /* Terrain4.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Terrain4.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -531,7 +531,7 @@
 			isa = PBXGroup;
 			children = (
 				7921DFB129CE167C0013E317 /* MaterialManager.swift */,
-				7902F01029CF244B004C3775 /* MaterialEntry.swift */,
+				7902F01029CF244B004C3775 /* MaterialWrapper.swift */,
 				791E792729B93D7000FB45F3 /* TextureManager.swift */,
 				7921DFB329CE185E0013E317 /* PBR */,
 				791E792829B93D7000FB45F3 /* LineMaterial.swift */,
@@ -923,7 +923,7 @@
 				79345D3929C509E200E9F074 /* RectangleAllocator.swift in Sources */,
 				7921DFA029CCAA850013E317 /* PbrObject.swift in Sources */,
 				799B4BBD29C651AE00B6826A /* DirectionalLightView.swift in Sources */,
-				7902F01129CF244B004C3775 /* MaterialEntry.swift in Sources */,
+				7902F01129CF244B004C3775 /* MaterialWrapper.swift in Sources */,
 				791E794F29B944D000FB45F3 /* PbrLineShaders.metal in Sources */,
 				791E795329B944D000FB45F3 /* SkyboxShaders.metal in Sources */,
 				791E795129B944D000FB45F3 /* Shaders.metal in Sources */,

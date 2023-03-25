@@ -10,9 +10,9 @@ import SwiftUI
 struct MaterialsView: View {
     @ObservedObject var materialManager = Renderer.shared.materialManager
     @State var hidden = false
-    @State private var selectedMaterial: MaterialEntry?
+    @State private var selectedMaterial: MaterialWrapper?
     
-    var materialList: [MaterialEntry] {
+    var materialList: [MaterialWrapper] {
         materialManager.materials.compactMap { entry in
             entry.value
         }

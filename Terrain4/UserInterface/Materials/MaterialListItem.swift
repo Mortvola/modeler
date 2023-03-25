@@ -8,9 +8,9 @@
 import SwiftUI
 
 struct MaterialListItem: View {
-    var material: MaterialEntry
+    var material: MaterialWrapper
     @State private var name: String = ""
-    @Binding var selectedItem: MaterialEntry?
+    @Binding var selectedItem: MaterialWrapper?
     
     var body: some View {
         ListItemBase(text: $name, isSelected: selectedItem == material) {

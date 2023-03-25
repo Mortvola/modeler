@@ -9,18 +9,18 @@ import Foundation
 import MetalKit
 
 class MaterialManager: ObservableObject {
-    @Published var materials: [UUID:MaterialEntry] = [:]
-    private var defaultMaterial: MaterialEntry
+    @Published var materials: [UUID:MaterialWrapper] = [:]
+    private var defaultMaterial: MaterialWrapper
     
     init() {
-        defaultMaterial = MaterialEntry.pbrMaterial(PbrMaterial())
+        defaultMaterial = MaterialWrapper.pbrMaterial(PbrMaterial())
     }
     
     func addMaterial(pbrMaterial: PbrMaterial) {
         let entry = materials[pbrMaterial.id]
         
         if entry == nil {
-            materials[pbrMaterial.id] = MaterialEntry.pbrMaterial(pbrMaterial)
+            materials[pbrMaterial.id] = MaterialWrapper.pbrMaterial(pbrMaterial)
         }
         
         // Make sure it is added to the pipeline
@@ -31,7 +31,7 @@ class MaterialManager: ObservableObject {
         let entry = materials[simpleMaterial.id]
         
         if entry == nil {
-            materials[simpleMaterial.id] = MaterialEntry.simpleMaterial(simpleMaterial)
+            materials[simpleMaterial.id] = MaterialWrapper.simpleMaterial(simpleMaterial)
         }
         
         // Make sure it is added to the pipeline
@@ -79,7 +79,7 @@ class MaterialManager: ObservableObject {
         }
     }
     
-    func setMaterial(object: RenderObject, materialEntry: MaterialEntry) {
+    func setMaterial(object: RenderObject, materialEntry: MaterialWrapper) {
         object.material = materialEntry
 
         switch materialEntry {

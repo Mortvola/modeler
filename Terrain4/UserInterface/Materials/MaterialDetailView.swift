@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct MaterialDetailView: View {
-    var material: MaterialEntry
+    var material: MaterialWrapper
     
     var body: some View {
         switch material {

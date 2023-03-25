@@ -7,8 +7,8 @@
 
 import Foundation
 
-enum MaterialEntry: Equatable, Codable {
-    static func == (lhs: MaterialEntry, rhs: MaterialEntry) -> Bool {
+enum MaterialWrapper: Equatable, Codable {
+    static func == (lhs: MaterialWrapper, rhs: MaterialWrapper) -> Bool {
         lhs.material.id == rhs.material.id
     }
     
@@ -46,11 +46,11 @@ enum MaterialEntry: Equatable, Codable {
         switch type {
         case "PBR":
             let m = try PbrMaterial(from: decoder)
-            self = MaterialEntry.pbrMaterial(m)
+            self = MaterialWrapper.pbrMaterial(m)
             return
         case "Simple":
             let m = try SimpleMaterial(from: decoder)
-            self = MaterialEntry.simpleMaterial(m)
+            self = MaterialWrapper.simpleMaterial(m)
             return
         default:
             break
