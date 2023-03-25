@@ -1,5 +1,5 @@
 //
-//  PointPipeline.swift
+//  BillboarPipeline.swift
 //  Terrain4
 //
 //  Created by Richard Shields on 3/23/23.
@@ -9,13 +9,13 @@ import Foundation
 import MetalKit
 import Metal
 
-class PointPipeline: BaseMaterial {
+class BillboardPipeline {
     let pipeline: MTLRenderPipelineState
     
     class MaterialEntry {
-        var material: PointMaterial
+        var material: SimpleMaterial
         
-        init(material: PointMaterial) {
+        init(material: SimpleMaterial) {
             self.material = material
         }
     }
@@ -23,27 +23,35 @@ class PointPipeline: BaseMaterial {
     var materials: [UUID?:MaterialEntry] = [:]
 
     init(device: MTLDevice, view: MTKView) throws {
-        self.pipeline = try PointPipeline.buildPipeline(device: device, metalKitView: view)
+        self.pipeline = try BillboardPipeline.buildPipeline(device: device, metalKitView: view)
     }
 
     func prepare(renderEncoder: MTLRenderCommandEncoder) {
         renderEncoder.setRenderPipelineState(self.pipeline)
     }
 
-    func addMaterial(device: MTLDevice, view: MTKView, descriptor: MaterialDescriptor?) async throws -> PointMaterial {
+//    func addMaterial(device: MTLDevice, view: MTKView, descriptor: MaterialDescriptor?) async throws -> SimpleMaterial {
+//
+//        let materialKey = descriptor?.id
+//
+//        if let entry = self.materials[materialKey] {
+//            return entry.material
+//        }
+//
+//        let material = try await SimpleMaterial(device: device, view: view, descriptor: descriptor)
+//
+//        let entry = MaterialEntry(material: material)
+//        self.materials[materialKey] = entry
+//
+//        return material
+//    }
+
+    func addMaterial(material: SimpleMaterial) {
+        let materialKey = material.id
         
-        let materialKey = descriptor?.id
-        
-        if let entry = self.materials[materialKey] {
-            return entry.material
+        if materials[materialKey] == nil {
+            materials[materialKey] = MaterialEntry(material: material)
         }
-        
-        let material = PointMaterial(device: device, view: view, descriptor: descriptor)
-        
-        let entry = MaterialEntry(material: material)
-        self.materials[materialKey] = entry
-        
-        return material
     }
 
     func render(renderEncoder: MTLRenderCommandEncoder, frame: Int) throws {
@@ -53,9 +61,9 @@ class PointPipeline: BaseMaterial {
             if entry.material.objects.count > 0 {
                 entry.material.prepare(renderEncoder: renderEncoder)
                 
-                for point in entry.material.objects {
-                    if !point.disabled && !(point.model?.disabled ?? true) {
-                        try point.draw(renderEncoder: renderEncoder, modelMatrix: point.modelMatrix(), frame: frame)
+                for object in entry.material.objects {
+                    if !object.disabled && !(object.model?.disabled ?? true) {
+                        try object.draw(renderEncoder: renderEncoder, modelMatrix: object.modelMatrix(), frame: frame)
                     }
                 }
             }
@@ -80,28 +88,36 @@ class PointPipeline: BaseMaterial {
     ) throws -> MTLRenderPipelineState {
         /// Build a render state pipeline object
         
-        let vertexDescriptor = PointPipeline.buildVertexDescriptor()
+        let vertexDescriptor = BillboardPipeline.buildVertexDescriptor()
         
         let library = device.makeDefaultLibrary()
         
-        let vertexFunction = library?.makeFunction(name: "pointVertexShader")
-        let fragmentFunction = library?.makeFunction(name: "pointFragmentShader")
+        let vertexFunction = library?.makeFunction(name: "billboardVertexShader")
+        let fragmentFunction = library?.makeFunction(name: "billboardFragmentShader")
         
         if vertexFunction == nil || fragmentFunction == nil {
              throw Errors.makeFunctionError
         }
 
         let pipelineDescriptor = MTLRenderPipelineDescriptor()
-        pipelineDescriptor.label = "PointPipeline"
+        pipelineDescriptor.label = "BillboardPipeline"
         pipelineDescriptor.rasterSampleCount = metalKitView.sampleCount
         pipelineDescriptor.vertexFunction = vertexFunction
         pipelineDescriptor.fragmentFunction = fragmentFunction
         pipelineDescriptor.vertexDescriptor = vertexDescriptor
         
         pipelineDescriptor.colorAttachments[0].pixelFormat = metalKitView.colorPixelFormat
+        pipelineDescriptor.colorAttachments[0].isBlendingEnabled = true
+        
+        pipelineDescriptor.colorAttachments[0].rgbBlendOperation = .add
+        pipelineDescriptor.colorAttachments[0].alphaBlendOperation = .add
+        pipelineDescriptor.colorAttachments[0].sourceRGBBlendFactor = .sourceAlpha
+        pipelineDescriptor.colorAttachments[0].sourceAlphaBlendFactor = .sourceAlpha
+        pipelineDescriptor.colorAttachments[0].destinationRGBBlendFactor = .oneMinusSourceAlpha
+        pipelineDescriptor.colorAttachments[0].destinationAlphaBlendFactor = .oneMinusSourceAlpha
+        
         pipelineDescriptor.depthAttachmentPixelFormat = metalKitView.depthStencilPixelFormat
         
         return try device.makeRenderPipelineState(descriptor: pipelineDescriptor)
     }
 }
-

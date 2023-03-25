@@ -9,7 +9,7 @@ import Foundation
 import MetalKit
 import Metal
 
-class PbrMaterial: Item, BaseMaterial, Hashable {
+class PbrMaterial: Material, Hashable {
     static func == (lhs: PbrMaterial, rhs: PbrMaterial) -> Bool {
         lhs.id == rhs.id
     }
@@ -17,8 +17,6 @@ class PbrMaterial: Item, BaseMaterial, Hashable {
     public func hash(into hasher: inout Hasher) {
         hasher.combine(id)
     }
-
-    var id = UUID()
 
     var albedo = AlbedoLayer()
     var normals = NormalsLayer()
@@ -28,7 +26,44 @@ class PbrMaterial: Item, BaseMaterial, Hashable {
     
     var textures: [MTLTexture?] = []
 
-    var objects: [RenderObject] = []
+    init() {
+        super.init(name: "PBR Material")
+    }
+
+    enum CodingKeys: CodingKey {
+        case albedo
+        case normals
+        case metallic
+        case roughness
+    }
+    
+    required init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+
+        try super.init(from: decoder)
+
+        albedo = try container.decode(AlbedoLayer.self, forKey: .albedo)
+        normals = try container.decode(NormalsLayer.self, forKey: .normals)
+        metallic = try container.decode(MetallicLayer.self, forKey: .metallic)
+        roughness = try container.decode(RoughnessLayer.self, forKey: .roughness)
+
+        let t = Task {            
+            await initializeTextures()
+        }
+        
+        decoder.addTask(t)
+    }
+    
+    override func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        
+        try container.encode(albedo, forKey: .albedo)
+        try container.encode(normals, forKey: .normals)
+        try container.encode(metallic, forKey: .metallic)
+        try container.encode(roughness, forKey: .roughness)
+        
+        try super.encode(to: encoder)
+    }
 
     func setSimpleMetallic(_ value: Float) {
         self.metallic.value = value
@@ -43,19 +78,10 @@ class PbrMaterial: Item, BaseMaterial, Hashable {
     }
     
     init(device: MTLDevice, view: MTKView, descriptor: MaterialDescriptor?) async throws {
-        self.id = descriptor?.id ?? UUID()
-        
         // Albedo
         self.albedo.useSimple = descriptor?.albedo.useSimple ?? false
         self.albedo.color = descriptor?.albedo.color ?? Vec4(1.0, 1.0, 1.0, 1.0)
         self.albedo.map = descriptor?.albedo.map ?? ""
-        
-        if self.albedo.map.isEmpty {
-            self.textures.append(try? await TextureManager.shared.addTexture(device: device, path: self.albedo.map))
-        }
-        else {
-            self.textures.append(nil)
-        }
         
         // Normals
         self.normals.useSimple = descriptor?.normals.useSimple ?? false
@@ -64,18 +90,42 @@ class PbrMaterial: Item, BaseMaterial, Hashable {
             .multiply(0.5))
         self.normals.map = descriptor?.normals.map ?? ""
 
+        // Metalness
+        self.metallic.useSimple = descriptor?.metallic.useSimple ?? false
+        self.metallic.value = descriptor?.metallic.value ?? 1.0
+        self.metallic.map = descriptor?.metallic.map ?? ""
+
+        // Roughness
+        self.roughness.useSimple = descriptor?.roughness.useSimple ?? false
+        self.roughness.value = descriptor?.roughness.value ?? 1.0
+        self.roughness.map = descriptor?.roughness.map ?? ""
+
+        self.ao = nil
+        
+        super.init(name: descriptor?.name ?? "")
+        
+        await initializeTextures()
+    }
+    
+    private func initializeTextures() async {
+        guard let device = Renderer.shared.device else {
+            return
+        }
+        
+        if !self.albedo.map.isEmpty {
+            self.textures.append(try? await TextureManager.shared.addTexture(device: device, path: self.albedo.map))
+        }
+        else {
+            self.textures.append(nil)
+        }
+
         if !self.normals.map.isEmpty {
             self.textures.append(try? await TextureManager.shared.addTexture(device: device, path: self.normals.map))
         }
         else {
             self.textures.append(nil)
         }
-
-        // Metalness
-        self.metallic.useSimple = descriptor?.metallic.useSimple ?? false
-        self.metallic.value = descriptor?.metallic.value ?? 1.0
-        self.metallic.map = descriptor?.metallic.map ?? ""
-
+        
         if !self.metallic.map.isEmpty {
             self.textures.append(try? await TextureManager.shared.addTexture(device: device, path: self.metallic.map))
         }
@@ -83,21 +133,12 @@ class PbrMaterial: Item, BaseMaterial, Hashable {
             self.textures.append(nil)
         }
 
-        // Roughness
-        self.roughness.useSimple = descriptor?.roughness.useSimple ?? false
-        self.roughness.value = descriptor?.roughness.value ?? 1.0
-        self.roughness.map = descriptor?.roughness.map ?? ""
-
         if !self.roughness.map.isEmpty {
             self.textures.append(try? await TextureManager.shared.addTexture(device: device, path: self.roughness.map))
         }
         else {
             self.textures.append(nil)
         }
-
-        self.ao = nil
-        
-        super.init(name: descriptor?.name ?? "")
     }
     
     func getPbrProperties() -> PbrProperties? {
@@ -111,7 +152,7 @@ class PbrMaterial: Item, BaseMaterial, Hashable {
         return PbrProperties(albedo: color, normal: self.normals.normal.vec3(), metallic: self.metallic.value, roughness: self.roughness.value)
     }
     
-    func prepare(renderEncoder: MTLRenderCommandEncoder) {
+    override func prepare(renderEncoder: MTLRenderCommandEncoder) {
         renderEncoder.setFragmentTextures(self.textures, range: 0..<textures.count)
     }
 }

@@ -30,7 +30,7 @@ class MaterialDescriptor: Codable {
     init(material: PbrMaterial) {
         self.id = material.id
         self.name = material.name
-        
+
         self.albedo = AlbedoLayerDescriptor(albedoLayer: material.albedo)
         self.normals = NormalsLayerDescriptor(normalsLayer: material.normals)
         self.metallic = MetallicLayerDescriptor(metallicLayer: material.metallic)
@@ -51,6 +51,7 @@ class MaterialDescriptor: Codable {
         
         id = try container.decode(UUID.self, forKey: .id)
         name = try container.decode(String.self, forKey: .name)
+        
         albedo = try container.decode(AlbedoLayerDescriptor.self, forKey: .albedo)
         normals = try container.decode(NormalsLayerDescriptor.self, forKey: .normals)
         metallic = try container.decode(MetallicLayerDescriptor.self, forKey: .metallic)
@@ -62,6 +63,7 @@ class MaterialDescriptor: Codable {
         
         try container.encode(id, forKey: .id)
         try container.encode(name, forKey: .name)
+        
         try container.encode(albedo, forKey: .albedo)
         try container.encode(metallic, forKey: .metallic)
         try container.encode(roughness, forKey: .roughness)

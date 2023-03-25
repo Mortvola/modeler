@@ -15,11 +15,12 @@ enum ObjectType: String, CaseIterable {
     case cone
     case light
     case point
+    case billboard
     
     var name: String {rawValue}
 }
 
-class Object: Node, Identifiable, Hashable, Codable {
+class Object: Node, Identifiable, Hashable {
     static func == (lhs: Object, rhs: Object) -> Bool {
         lhs.id == rhs.id
     }
@@ -48,7 +49,8 @@ class Object: Node, Identifiable, Hashable, Codable {
     }
     
     enum CodingKeys: CodingKey {
-        case name
+        case type
+        case id
         case translation
         case rotation
         case scale
@@ -57,21 +59,42 @@ class Object: Node, Identifiable, Hashable, Codable {
     public required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
 
-        let name = try container.decode(String.self, forKey: .name)
+        id = try container.decode(UUID.self, forKey: .id)
         translation = try container.decode(Vec3.self, forKey: .translation)
         rotation = try container.decode(Vec3.self, forKey: .rotation)
         scale = try container.decode(Vec3.self, forKey: .scale)
         
-        super.init(name: name)
+        try super.init(from: decoder)
+
+        if let type = try container.decodeIfPresent(String.self, forKey: .type) {
+            let typeString = try self.typeString()
+            
+            if  type != typeString {
+                throw Errors.objectTypeMismatch
+            }
+        }
     }
 
-    func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        
-        try container.encode(name, forKey: .name)
-        try container.encode(translation, forKey: .translation)
-        try container.encode(rotation, forKey: .rotation)
-        try container.encode(scale, forKey: .scale)
+    func typeString() throws -> String {
+        throw Errors.notImplemented
+    }
+    
+    override func encode(to encoder: Encoder) throws {
+        do {
+            var container = encoder.container(keyedBy: CodingKeys.self)
+            
+            try container.encode(id, forKey: .id)
+            try container.encode(try self.typeString().self, forKey: .type)
+            try container.encode(translation, forKey: .translation)
+            try container.encode(rotation, forKey: .rotation)
+            try container.encode(scale, forKey: .scale)
+            
+            try super.encode(to: encoder)
+        }
+        catch {
+            print(error)
+            throw error
+        }
     }
 
     func modelMatrix() -> Matrix4x4 {

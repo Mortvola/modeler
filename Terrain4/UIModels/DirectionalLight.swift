@@ -10,12 +10,12 @@ import Metal
 
 let shadowMapCascades = 4
 
-class DirectionalLight: Node, Codable {
+class DirectionalLight: Node {
     static func == (lhs: DirectionalLight, rhs: DirectionalLight) -> Bool {
         lhs === rhs
     }
     
-    let id = UUID()
+    let id: UUID
     
     @Published var direction = Vec3(0, -1, 1).normalize()
     @Published var intensity = Vec3(15, 15, 15)
@@ -105,36 +105,39 @@ class DirectionalLight: Node, Codable {
     }
 
     enum CodingKeys: CodingKey {
+        case id
         case enabled
         case direction
         case intensity
         case shadowCaster
-        case name
     }
     
     init() {
+        self.id = UUID()
+
         super.init(name: "Directional Light")
     }
     
     required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         
+        id = try container.decode(UUID.self, forKey: .id)
         direction = try container.decode(Vec3.self, forKey: .direction)
         intensity = try container.decode(Vec3.self, forKey: .intensity)
         shadowCaster = try container.decode(Bool.self, forKey: .shadowCaster)
-        
-        let name = try container.decodeIfPresent(String.self, forKey: .name) ?? "Directional Light"
-        
-        super.init(name: name)
+
+        try super.init(from: decoder)
     }
     
-    func encode(to encoder: Encoder) throws {
+    override func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         
-        try container.encode(name, forKey: .name)
+        try container.encode(id, forKey: .id)
         try container.encode(direction, forKey: .direction)
         try container.encode(intensity, forKey: .intensity)
         try container.encode(shadowCaster, forKey: .shadowCaster)
+        
+        try super.encode(to: encoder)
     }
     
     func createShadowTexture(device: MTLDevice) {

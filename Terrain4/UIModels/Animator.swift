@@ -7,7 +7,7 @@
 
 import Foundation
 
-class Animator: Item, Identifiable, Hashable, Codable {
+class Animator: Item, Identifiable, Hashable {
     static func == (lhs: Animator, rhs: Animator) -> Bool {
         lhs.id == rhs.id
     }
@@ -34,26 +34,24 @@ class Animator: Item, Identifiable, Hashable, Codable {
     
     enum CodingKeys: CodingKey {
         case id
-        case name
         case delta
     }
     
     required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         
-        let name = try container.decode(String.self, forKey: .name)
-
         self.id = try container.decode(UUID.self, forKey: .id)
         self.delta = try container.decode(Vec3.self, forKey: .delta)
 
-        super.init(name: name)
+        try super.init(from: decoder)
     }
 
-    func encode(to encoder: Encoder) throws {
+    override func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         
         try container.encode(self.id, forKey: .id)
-        try container.encode(self.name, forKey: .name)
         try container.encode(self.delta, forKey: .delta)
+        
+        try super.encode(to: encoder)
     }
 }

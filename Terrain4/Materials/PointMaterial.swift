@@ -8,14 +8,36 @@
 import Foundation
 import MetalKit
 
-class PointMaterial {
-    var objects: [Point] = []
-    
+class PointMaterial: Material {
     init(device: MTLDevice, view:  MTKView, descriptor: MaterialDescriptor?) {
-        
+        super.init(name: "Point Material")
     }
 
-    func prepare(renderEncoder: MTLRenderCommandEncoder) {
-//        renderEncoder.setFragmentTextures(self.textures, range: 0..<textures.count)
+    override func prepare(renderEncoder: MTLRenderCommandEncoder) {
+        if let texture = Renderer.shared.textureStore?.texture {
+            renderEncoder.setFragmentTexture(texture, index: TextureIndex.color.rawValue)
+        }
+    }
+    
+    enum CodingKeys: CodingKey {
+        case id
+        case name
+    }
+    
+    required init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        
+        let name = try container.decode(String.self, forKey: .name)
+        
+        super.init(name: name)
+        
+        id = try container.decode(UUID.self, forKey: .id)
+    }
+    
+    override func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        
+        try container.encode(id, forKey: .id)
+        try container.encode(name, forKey: .name)
     }
 }

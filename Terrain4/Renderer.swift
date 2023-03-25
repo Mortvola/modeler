@@ -30,8 +30,8 @@ class Renderer {
     private var commandQueue: MTLCommandQueue?
     private var dynamicUniformBuffer: MTLBuffer?
     private var depthState: MTLDepthStencilState?
-    // var colorMap: MTLTexture
-    
+    private var shadowDepthState: MTLDepthStencilState?
+
     private let inFlightSemaphore = DispatchSemaphore(value: maxBuffersInFlight)
     
     private var uniformBufferOffset = 0
@@ -53,10 +53,7 @@ class Renderer {
     private var hour: Float = 10.0
     
     private var previousFrameTime: Double?
-    
-    private var depthShadowPipeline: DepthShadowMaterial?
-    private var shadowDepthState: MTLDepthStencilState?
-    
+        
     private var file: SceneDocument?
     
     private var lineMaterial: LineMaterial?
@@ -69,8 +66,14 @@ class Renderer {
 
     public var pipelineManager: PipelineManager? = nil
     
+    public let materialManager: MaterialManager
+    
+    public var textureStore: TextureStore? = nil
+    
     init() {
         self.camera = Camera(world: world)
+        
+        self.materialManager = MaterialManager()
     }
     
     func initialize(file: SceneDocument, metalKitView: MTKView) throws {
@@ -109,13 +112,13 @@ class Renderer {
         
         self.shadowDepthState = state
         
-        self.depthShadowPipeline = try DepthShadowMaterial(device: device!, view: view!)
-        
 //        file.objectStore.directionalLight.createShadowTexture(device: device!)
         
         self.lineMaterial = try LineMaterial(device: device!, view: view!)
         
         self.pipelineManager = try PipelineManager(device: self.device!, view: self.view!)
+        
+        self.textureStore = try TextureStore(device: self.device!)
     }
     
     func makeUniformsBuffer() throws {
@@ -276,6 +279,8 @@ class Renderer {
                             }
                         case .point:
                             break
+                        case .billboard:
+                            break
                         case .light:
                             break
                         case .directionalLight:
@@ -286,6 +291,8 @@ class Renderer {
                 case .mesh:
                     break
                 case .point:
+                    break
+                case .billboard:
                     break
                 case .light:
                     break
@@ -356,7 +363,7 @@ class Renderer {
                 renderEncoder.setVertexBytes(&cascadeIndex, length: MemoryLayout<Int>.size, index: BufferIndex.cascadeIndex.rawValue)
                 
                 if file!.objectStore.directionalLight.shadowCaster {
-                    depthShadowPipeline!.prepare(renderEncoder: renderEncoder)
+                    pipelineManager!.depthShadowPipeline.prepare(renderEncoder: renderEncoder)
                     
                     for node in file!.objectStore.models {
                         switch node.content {
@@ -372,6 +379,8 @@ class Renderer {
                                         }
                                     case .point:
                                         break
+                                    case .billboard:
+                                        break
                                     case .light:
                                         break
                                     case .directionalLight:
@@ -382,6 +391,8 @@ class Renderer {
                         case .mesh:
                             break
                         case .point:
+                            break
+                        case .billboard:
                             break
                         case .light:
                             break
@@ -419,8 +430,7 @@ class Renderer {
             }
             
             if self.world.terrainLoaded {
-                try pipelineManager?.pbrPipeline.render(renderEncoder: renderEncoder, frame: self.uniformBufferIndex)
-                try pipelineManager?.pointPipeline.render(renderEncoder: renderEncoder, frame: self.uniformBufferIndex)
+                try pipelineManager?.render(renderEncoder: renderEncoder, frame: self.uniformBufferIndex)
                 file!.objectStore.skybox?.draw(renderEncoder: renderEncoder)
             }
             

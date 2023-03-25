@@ -45,9 +45,15 @@ class SceneDocument: ReferenceFileDocument {
     }
     
     func encodeData() throws -> Data {
-        let file = File(file: self)
-        
-        return try JSONEncoder().encode(file)
+        do {
+            let file = File(file: self)
+            
+            return try JSONEncoder().encode(file)
+        }
+        catch {
+            print(error)
+            throw error
+        }
     }
 
 //    func getURLFromBookmark(bookmark: Data) -> URL? {
@@ -66,12 +72,20 @@ class SceneDocument: ReferenceFileDocument {
     @MainActor
     func parse(data: Data) async {
         do {
-            let file = try JSONDecoder().decode(File.self, from: data)
+            let decoder = JSONDecoder()
             
-            for materialDescriptor in file.materials {
-                _ = try await Renderer.shared.pipelineManager!.pbrPipeline.addMaterial(device: Renderer.shared.device!, view: Renderer.shared.view!, descriptor: materialDescriptor)
+            decoder.setContext(forKey: "Tasks", context: TaskHandler())
+                        
+            let file = try decoder.decode(File.self, from: data)
+            
+            for task in decoder.getTasks().tasks {
+                _ = await task.result
             }
-
+            
+            for material in file.materials {
+                Renderer.shared.materialManager.materials[material.material.id] = material
+            }
+            
             var newLights: [Light] = []
             
             for node in file.models {
@@ -81,11 +95,13 @@ class SceneDocument: ReferenceFileDocument {
                         switch object.content {
                         case .mesh(let o):
                             o.model = model
-
                             o.setMaterial(materialId: o.materialId)
                         case .point(let p):
                             p.model = model
                             p.setMaterial(materialId: p.materialId)
+                        case .billboard(let b):
+                            b.model = model
+                            b.setMaterial(materialId: b.materialId)
                         default:
                             break;
                         }
@@ -99,6 +115,8 @@ class SceneDocument: ReferenceFileDocument {
                 case .mesh:
                     break
                 case .point:
+                    break
+                case .billboard:
                     break
                 case .light:
                     break
@@ -129,4 +147,40 @@ class SceneDocument: ReferenceFileDocument {
 //            }
 //        }
 //    }
+}
+
+class TaskHandler {
+    var tasks: [Task<Void, Never>] = []
+}
+
+extension Decoder {
+    func getContext(forKey key: String) -> Any? {
+        let key = CodingUserInfoKey(rawValue: key)!
+        return userInfo[key]
+    }
+    
+    func getTasks() -> TaskHandler {
+        getContext(forKey: "Tasks") as! TaskHandler
+    }
+    
+    func addTask(_ task: Task<Void, Never>) {
+        let context = getContext(forKey: "Tasks") as! TaskHandler
+        context.tasks.append(task)
+    }
+}
+
+extension JSONDecoder {
+    func setContext(forKey key: String, context: Any?) {
+        let key = CodingUserInfoKey(rawValue: key)!
+        userInfo[key] = context
+    }
+    
+    func getContext(forKey key: String) -> Any? {
+        let key = CodingUserInfoKey(rawValue: key)!
+        return userInfo[key]
+    }
+
+    func getTasks() -> TaskHandler {
+        getContext(forKey: "Tasks") as! TaskHandler
+    }
 }

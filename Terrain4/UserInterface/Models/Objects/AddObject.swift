@@ -20,6 +20,7 @@ struct AddObject: View {
     @State var cylinderOptions = CylinderOptions()
     @State var coneOptions = ConeOptions()
     @State var pointOptions = PointOptions()
+    @State var billboardOptions = BillboardOptions()
     
     var body: some View {
         NavigationStack {
@@ -45,6 +46,8 @@ struct AddObject: View {
                         ConeOptionsView(options: $coneOptions)
                     case .point:
                         PointOptionsView(options: $pointOptions)
+                    case .billboard:
+                        BillboardOptionsView(options: $billboardOptions)
                     }
                 }
                 Spacer()
@@ -86,6 +89,10 @@ struct AddObject: View {
                             case .point:
                                 if let object = try? await model?.addPoint(options: pointOptions) {
                                     selectedItem = TreeNode(point: object)
+                                }
+                            case .billboard:
+                                if let object = try? await model?.addBillboard(options: billboardOptions) {
+                                    selectedItem = TreeNode(billboard: object)
                                 }
                             }
                             

@@ -11,23 +11,28 @@ struct File: Codable {
     var models: [TreeNode]
     var animators: [Animator]
     var camera: Camera
-    var materials: [MaterialDescriptor]
+    var materials: [MaterialEntry]
     var directionalLight: DirectionalLight
     
     init(file: SceneDocument) {
         self.models = file.objectStore.models
         self.animators = AnimatorStore.shared.animators
         self.camera = Camera(position: Renderer.shared.camera.cameraOffset, yaw: Renderer.shared.camera.yaw, pitch: Renderer.shared.camera.pitch)
-        self.materials = []
         
-        self.materials = Renderer.shared.pipelineManager!.pbrPipeline.materials.compactMap { material in
-            if material.key == nil {
-                return nil
-            }
-        
-            return MaterialDescriptor(material: material.value.material)
+        self.materials = Renderer.shared.materialManager.materials.compactMap { entry in
+            entry.value
+//            if entry.key == nil {
+//                return nil
+//            }
+//
+//            switch entry.value {
+//            case .pbrMaterial(let m):
+//                return MaterialDescriptor(material: m)
+//            default:
+//                return nil
+//            }
         }
-        
+
         self.directionalLight = file.objectStore.directionalLight
     }
 
@@ -81,7 +86,7 @@ struct File: Codable {
         
         AnimatorStore.shared.animators = animators
         
-        materials = try container.decode([MaterialDescriptor].self, forKey: .materials)
+        materials = try container.decode([MaterialEntry].self, forKey: .materials)
         
         models = try container.decode([TreeNode].self, forKey: .models)
         

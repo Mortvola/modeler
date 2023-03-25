@@ -9,16 +9,22 @@ import Foundation
 import MetalKit
 import Metal
 
-class LineMaterial: BaseMaterial {
+class LineMaterial: Material {
     let pipeline: MTLRenderPipelineState
     
     init(device: MTLDevice, view: MTKView) throws {
-        let vertexDescriptor = LineMaterial.buildVertexDescriptor()
+        self.pipeline = try LineMaterial.buildPipeline(device: device, metalKitView: view)
         
-        self.pipeline = try LineMaterial.buildPipeline(device: device, metalKitView: view, vertexDescriptor: vertexDescriptor)
+        super.init(name: "Line Material")
     }
+    
+    required init(from decoder: Decoder) throws {
+        self.pipeline = try LineMaterial.buildPipeline(device: Renderer.shared.device!, metalKitView: Renderer.shared.view!)
 
-    func prepare(renderEncoder: MTLRenderCommandEncoder) {
+        try super.init(from: decoder)
+    }
+    
+    override func prepare(renderEncoder: MTLRenderCommandEncoder) {
         renderEncoder.setRenderPipelineState(self.getPipeline())
     }
 
@@ -40,10 +46,10 @@ class LineMaterial: BaseMaterial {
     
     private static func buildPipeline(
         device: MTLDevice,
-        metalKitView: MTKView,
-        vertexDescriptor: MTLVertexDescriptor
+        metalKitView: MTKView
     ) throws -> MTLRenderPipelineState {
         /// Build a render state pipeline object
+        let vertexDescriptor = LineMaterial.buildVertexDescriptor()
         
         let library = device.makeDefaultLibrary()
         

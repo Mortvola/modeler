@@ -31,6 +31,13 @@ enum NodeContent: Equatable, Codable, Identifiable {
             default:
                 return false
             }
+        case .billboard(let b1):
+            switch rhs {
+            case .billboard(let b2):
+                return b1 == b2
+            default:
+                return false
+            }
         case .light(let l1):
             switch rhs {
             case .light(let l2):
@@ -56,6 +63,8 @@ enum NodeContent: Equatable, Codable, Identifiable {
             return o.id
         case .point(let p):
             return p.id
+        case .billboard(let b):
+            return b.id
         case .light(let l):
             return l.id
         case .directionalLight(let d):
@@ -71,6 +80,8 @@ enum NodeContent: Equatable, Codable, Identifiable {
             return o
         case .point(let p):
             return p
+        case .billboard(let b):
+            return b
         case .light(let l):
             return l
         case .directionalLight(let d):
@@ -81,8 +92,75 @@ enum NodeContent: Equatable, Codable, Identifiable {
     case model(Model)
     case mesh(Mesh)
     case point(Point)
+    case billboard(Billboard)
     case light(Light)
     case directionalLight(DirectionalLight)
+    
+    enum CodingKeys: CodingKey {
+        case type
+    }
+    
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        
+        let type = try container.decode(String.self, forKey: .type)
+        
+        switch type {
+        case "Model":
+            let model = try Model(from: decoder)
+            self = NodeContent.model(model)
+            return
+        case "Mesh":
+            let mesh = try Mesh(from: decoder)
+            self = NodeContent.mesh(mesh)
+            return
+        case "Point":
+            let point = try Point(from: decoder)
+            self = NodeContent.point(point)
+            return
+        case "Billboard":
+            let billboard = try Billboard(from: decoder)
+            self = NodeContent.billboard(billboard)
+            return
+        case "Light":
+            let light = try Light(from: decoder)
+            self = NodeContent.light(light)
+            return
+        case "DirectionalLight":
+            let directionalLight = try DirectionalLight(from: decoder)
+            self = NodeContent.directionalLight(directionalLight)
+            return
+        default:
+            break
+        }
+        
+        throw Errors.invalidObject
+    }
+    
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        
+        switch(self) {
+        case .model(let m):
+            try container.encode("Model", forKey: .type)
+            try m.encode(to: encoder)
+        case .mesh(let o):
+            try container.encode("Mesh", forKey: .type)
+            try o.encode(to: encoder)
+        case .point(let p):
+            try container.encode("Point", forKey: .type)
+            try p.encode(to: encoder)
+        case .billboard(let b):
+            try container.encode("Billboard", forKey: .type)
+            try b.encode(to: encoder)
+        case .light(let l):
+            try container.encode("Light", forKey: .type)
+            try l.encode(to: encoder)
+        case .directionalLight(let d):
+            try container.encode("DirectionalLight", forKey: .type)
+            try d.encode(to: encoder)
+        }
+    }
 }
 
 class TreeNode: ObservableObject, Equatable, Identifiable, Codable {
@@ -104,6 +182,10 @@ class TreeNode: ObservableObject, Equatable, Identifiable, Codable {
         content = NodeContent.point(point)
     }
     
+    init(billboard: Billboard) {
+        content = NodeContent.billboard(billboard)
+    }
+    
     init(light: Light) {
         content = NodeContent.light(light)
     }
@@ -112,67 +194,16 @@ class TreeNode: ObservableObject, Equatable, Identifiable, Codable {
         content = NodeContent.directionalLight(directionalLight)
     }
     
+    enum CodingKeys: CodingKey {
+        case type
+    }
+    
     required init(from decoder: Decoder) throws {
-        let container = try decoder.singleValueContainer()
-        
-        do {
-            let model = try container.decode(Model.self)
-            
-            self.content = NodeContent.model(model)
-            
-            return
-        }
-        catch {}
-        
-        do {
-            let mesh = try container.decode(Mesh.self)
-            
-            self.content = NodeContent.mesh(mesh)
-            
-            return
-        }
-        catch {}
-        
-        do {
-            let point = try container.decode(Point.self)
-            
-            self.content = NodeContent.point(point)
-            
-            return
-        }
-        catch {}
-        
-        do {
-            let light = try container.decode(Light.self)
-            
-            self.content = NodeContent.light(light)
-            
-            return
-        }
-        catch {}
-        
-        do {
-            let directedLight = try container.decode(DirectionalLight.self)
-            
-            self.content = NodeContent.directionalLight(directedLight)
-        }
+        content = try NodeContent(from: decoder)
     }
     
     func encode(to encoder: Encoder) throws {
-        var container = encoder.singleValueContainer()
-        
-        switch content {
-        case .model(let m):
-            try container.encode(m)
-        case .mesh(let o):
-            try container.encode(o)
-        case .point(let p):
-            try container.encode(p)
-        case .light(let l):
-            try container.encode(l)
-        case .directionalLight(let d):
-            try container.encode(d)
-        }
+        try content.encode(to: encoder)
     }
     
     func getNearestModel() -> Model? {
@@ -183,6 +214,8 @@ class TreeNode: ObservableObject, Equatable, Identifiable, Codable {
             return o.model
         case .point(let p):
             return p.model
+        case .billboard(let b):
+            return b.model
         case .light(let l):
             return l.model
         case .directionalLight:
@@ -199,6 +232,8 @@ class TreeNode: ObservableObject, Equatable, Identifiable, Codable {
                 return o.disabled
             case .point(let p):
                 return p.disabled
+            case .billboard(let b):
+                return b.disabled
             case .light(let l):
                 return l.disabled
             case .directionalLight(let d):
@@ -213,6 +248,8 @@ class TreeNode: ObservableObject, Equatable, Identifiable, Codable {
                 o.disabled = newValue
             case .point(let p):
                 p.disabled = newValue
+            case .billboard(let b):
+                b.disabled = newValue
             case .light(let l):
                 l.disabled = newValue
             case .directionalLight(let d):
@@ -230,6 +267,8 @@ class TreeNode: ObservableObject, Equatable, Identifiable, Codable {
                 return o.name
             case .point(let p):
                 return p.name
+            case .billboard(let b):
+                return b.name
             case .light(let l):
                 return l.name
             case .directionalLight(let d):
@@ -244,6 +283,8 @@ class TreeNode: ObservableObject, Equatable, Identifiable, Codable {
                 o.name = newValue
             case .point(let p):
                 p.name = newValue
+            case .billboard(let b):
+                b.name = newValue
             case .light(let l):
                 l.name = newValue
             case .directionalLight(let d):
@@ -261,6 +302,8 @@ class TreeNode: ObservableObject, Equatable, Identifiable, Codable {
                 return o
             case .point(let p):
                 return p
+            case .billboard(let b):
+                return b
             case .light(let l):
                 return l
             case .directionalLight(let d):

@@ -9,11 +9,11 @@ import Foundation
 import Metal
 import MetalKit
 
-class DepthShadowMaterial: BaseMaterial {
+class DepthShadowPipeline {
     let pipeline: MTLRenderPipelineState
 
     init(device: MTLDevice, view: MTKView) throws {
-        self.pipeline = try DepthShadowMaterial.buildPipeline(device: device, metalKitView: view)
+        self.pipeline = try DepthShadowPipeline.buildPipeline(device: device, metalKitView: view)
     }
 
     func prepare(renderEncoder: MTLRenderCommandEncoder) {
@@ -30,7 +30,7 @@ class DepthShadowMaterial: BaseMaterial {
 
         pipelineDescriptor.label = "DepthShadowPipeline"
         pipelineDescriptor.vertexFunction = library?.makeFunction(name: "shadowVertexShader")
-        pipelineDescriptor.vertexDescriptor = DepthShadowMaterial.buildVertexDescriptor()
+        pipelineDescriptor.vertexDescriptor = DepthShadowPipeline.buildVertexDescriptor()
         pipelineDescriptor.depthAttachmentPixelFormat = .depth32Float
         
         if pipelineDescriptor.vertexFunction == nil {

@@ -24,6 +24,8 @@ struct ModelsView: View {
                         EmptyView()
                     case .point:
                         EmptyView()
+                    case .billboard:
+                        EmptyView()
                     case .light:
                         EmptyView()
                     case .directionalLight:

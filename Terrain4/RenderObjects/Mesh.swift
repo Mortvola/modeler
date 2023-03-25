@@ -70,6 +70,7 @@ class Mesh: PbrObject {
     }
 
     enum CodingKeys: CodingKey {
+        case type
         case points
         case texcoords
         case normals
@@ -237,6 +238,10 @@ class Mesh: PbrObject {
         return normals
     }
     
+    override func typeString() -> String {
+        "Mesh"
+    }
+    
     override func encode(to encoder: Encoder) throws {
         do {
             try super.encode(to: encoder)
@@ -251,6 +256,8 @@ class Mesh: PbrObject {
             try container.encode(normals, forKey: .normals)
             
             try container.encode(mesh.submeshes, forKey: .submeshes)
+            
+            try super.encode(to: encoder)
         }
         catch {
             print(error)

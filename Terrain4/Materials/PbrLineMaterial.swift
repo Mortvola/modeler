@@ -9,28 +9,44 @@ import Foundation
 import MetalKit
 import Metal
 
-class PbrLineMaterial: BaseMaterial {
+class PbrLineMaterial: Material {
     let pipeline: MTLRenderPipelineState
     let samplerState: MTLSamplerState
     
     //    let texture: MTLTexture
-    let normals: MTLTexture
-    let metallic: MTLTexture
-    let roughness: MTLTexture
+    var normals: MTLTexture? = nil
+    var metallic: MTLTexture? = nil
+    var roughness: MTLTexture? = nil
     
     init(device: MTLDevice, view: MTKView) async throws {
-        let vertexDescriptor = PbrLineMaterial.buildVertexDescriptor()
-        
-        self.pipeline = try PbrLineMaterial.buildPipeline(device: device, metalKitView: view, vertexDescriptor: vertexDescriptor)
+        self.pipeline = try PbrLineMaterial.buildPipeline(device: device, metalKitView: view)
         
         self.normals = try await TextureManager.shared.addTexture(device: device, path: "/rustediron2_normal_1024.png")
         self.metallic = try await TextureManager.shared.addTexture(device: device, path: "/rustediron2_metallic_1024.png")
         self.roughness = try await TextureManager.shared.addTexture(device: device, path: "/rustediron2_roughness_1024.png")
         
         self.samplerState = PbrLineMaterial.buildSamplerState(device: device)
+        
+        super.init(name: "PBR Material")
     }
     
-    func prepare(renderEncoder: MTLRenderCommandEncoder) {
+    required init(from decoder: Decoder) throws {
+        self.pipeline = try PbrLineMaterial.buildPipeline(device: Renderer.shared.device!, metalKitView: Renderer.shared.view!)
+
+        self.samplerState = PbrLineMaterial.buildSamplerState(device: Renderer.shared.device!)
+        
+        try super.init(from: decoder)
+
+        let task = Task {
+            self.normals = try? await TextureManager.shared.addTexture(device: Renderer.shared.device!, path: "/rustediron2_normal_1024.png")
+            self.metallic = try? await TextureManager.shared.addTexture(device: Renderer.shared.device!, path: "/rustediron2_metallic_1024.png")
+            self.roughness = try? await TextureManager.shared.addTexture(device: Renderer.shared.device!, path: "/rustediron2_roughness_1024.png")
+        }
+
+        decoder.addTask(task)
+    }
+    
+    override func prepare(renderEncoder: MTLRenderCommandEncoder) {
         renderEncoder.setRenderPipelineState(self.getPipeline())
         
         renderEncoder.setFragmentTexture(self.normals, index: TextureIndex.normals.rawValue)
@@ -58,11 +74,11 @@ class PbrLineMaterial: BaseMaterial {
     
     private static func buildPipeline(
         device: MTLDevice,
-        metalKitView: MTKView,
-        vertexDescriptor: MTLVertexDescriptor
+        metalKitView: MTKView
     ) throws -> MTLRenderPipelineState {
         /// Build a render state pipeline object
-        
+        let vertexDescriptor = PbrLineMaterial.buildVertexDescriptor()
+
         let library = device.makeDefaultLibrary()
         
         let vertexFunction = library?.makeFunction(name: "pbrLineVertexShader")

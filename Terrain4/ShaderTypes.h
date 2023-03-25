@@ -51,6 +51,7 @@ typedef NS_ENUM(EnumBackingType, SamplerIndex) {
 };
 
 //const int MAX_CASCADES = 4;
+// static constexpr constant short MAX_CASCADES = 4;
 
 typedef struct {
     vector_float3 lightVector;
@@ -87,6 +88,12 @@ typedef struct {
     float size;
     matrix_float4x4 modelMatrix;
 } PointUniforms;
+
+typedef struct {
+    vector_float4 color;
+    vector_float2 scale;
+    matrix_float4x4 modelMatrix;
+} BillboardUniforms;
 
 //typedef struct {
 //    vector_float3 albedo;

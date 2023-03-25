@@ -41,7 +41,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     override func buildMenu(with builder: UIMenuBuilder) {
         if builder.system == .main {
-            builder.remove(menu: .edit)
+//            builder.remove(menu: .edit)
             builder.remove(menu: .format)
             builder.remove(menu: .help)
         }

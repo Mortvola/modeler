@@ -8,11 +8,20 @@
 import SwiftUI
 
 struct MaterialListItem: View {
-    @ObservedObject var material: PbrMaterial
-    @Binding var selectedItem: PbrMaterial?
+    var material: MaterialEntry
+    @State private var name: String = ""
+    @Binding var selectedItem: MaterialEntry?
     
     var body: some View {
-        ListItem(item: material, selectedItem: $selectedItem)
+        ListItemBase(text: $name, isSelected: selectedItem == material) {
+            selectedItem = material
+        }
+            .onAppear {
+                name = material.material.name
+            }
+            .onChange(of: name) { newName in
+                material.material.name = name
+            }
     }
 }
 

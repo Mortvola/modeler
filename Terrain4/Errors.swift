@@ -26,4 +26,6 @@ enum Errors: Error {
     case mallocError
     case invalidURL
     case invalidAssetWriterInput
+    case objectTypeMismatch
+    case invalidObject
 }

@@ -22,6 +22,10 @@ class Light: Object {
         Light.lightCounter += 1
     }
     
+    override func typeString() throws -> String {
+        "Light"
+    }
+
     enum CodingKeys: CodingKey {
         case position
         case intensity
