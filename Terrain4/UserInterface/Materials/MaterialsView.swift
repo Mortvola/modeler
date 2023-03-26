@@ -19,7 +19,7 @@ struct MaterialsView: View {
     }
 
     var body: some View {
-        ZStack {
+        GeometryReader { gp in
             VStack {
                 Menu("Add Material") {
                     Button("PBR Material") {
@@ -37,6 +37,9 @@ struct MaterialsView: View {
                         MaterialListItem(material: material, selectedItem: $selectedMaterial)
                     }
                 }
+                .frame(height: gp.size.height / 2)
+                .border(edge: .bottom)
+                
                 if let material = selectedMaterial, !hidden {
                     MaterialDetailView(material: material)
                         .onChange(of: selectedMaterial) { _ in

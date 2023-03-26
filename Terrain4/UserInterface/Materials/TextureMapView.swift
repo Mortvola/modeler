@@ -10,20 +10,19 @@ import SwiftUI
 struct TextureMapView: View {
     @ObservedObject var layer: MaterialLayer
     @State private var url: URL? = nil
+    @State private var map: String = ""
 
     var body: some View {
         HStack {
-            Text("Map:")
-            Text(layer.map)
-            Spacer()
-            UndoProvider($url) { $url in
-                TextureList(selection: $url)
-                    .onChange(of: url) { newUrl in
-                        Task {
-                            await layer.setTexture(file: newUrl?.lastPathComponent ?? "")
-                        }
+            TexturePicker(map: $map)
+                .onChange(of: map) { newMap in
+                    Task {
+                        await layer.setTexture(file: newMap)
                     }
-            }
+                }
+                .onAppear {
+                    map = layer.map
+                }
         }
     }
 }

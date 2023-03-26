@@ -12,10 +12,9 @@ struct TextureList: View {
     @State private var isOpen = false
     
     var body: some View {
-        Button {
+        Image(systemName: "photo")
+        .onTapGesture {
             isOpen = true
-        } label: {
-            Image(systemName: "photo")
         }
         .sheet(isPresented: $isOpen) {
             List {
@@ -25,7 +24,6 @@ struct TextureList: View {
                         isOpen  = false
                     } label: {
                         Text("\(url.lastPathComponent)")
-                        
                     }
                         .buttonStyle(.plain)
                 }

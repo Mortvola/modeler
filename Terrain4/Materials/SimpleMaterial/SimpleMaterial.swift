@@ -11,19 +11,31 @@ import MetalKit
 
 
 class SimpleMaterial: Material {
-    var layers: [LayerContent] = []
+    @Published var layers: [LayerWrapper] = []
 
     init() {
-        self.layers.append(LayerContent.color(Vec4(1, 1, 1, 1)))
-        
         super.init(name: "Simple Material")
     }
 
-//    init(device: MTLDevice, view: MTKView, descriptor: MaterialDescriptor?) async throws {
-//        super.init(name: "Simple Material")
-//    }
-
+    func deleteLayer(id: UUID) {
+        let index = layers.firstIndex {
+            $0.id == id
+        }
+        
+        if let index = index {
+            layers.remove(at: index)
+        }
+    }
+    
     override func prepare(renderEncoder: MTLRenderCommandEncoder) {
+        for layer in layers {
+            switch layer {
+            case .texture(let l):
+                renderEncoder.setFragmentTexture(l.texture, index: 0)
+            default:
+                break
+            }
+        }
     }
     
     enum CodingKeys: CodingKey {
@@ -35,7 +47,7 @@ class SimpleMaterial: Material {
         
         try super.init(from: decoder)
         
-        layers = try container.decode([LayerContent].self, forKey: .layers)
+        layers = try container.decode([LayerWrapper].self, forKey: .layers)
     }
     
     override func encode(to encoder: Encoder) throws {

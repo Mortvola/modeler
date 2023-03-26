@@ -9,11 +9,11 @@ import Foundation
 import MetalKit
 import Metal
 
-class BillboardPipeline: Pipeline {
+class GenericPipeline: Pipeline {
     let pipeline: MTLRenderPipelineState
     
     override init() throws {
-        self.pipeline = try BillboardPipeline.buildPipeline()
+        self.pipeline = try GenericPipeline.buildPipeline()
     }
 
     func prepareObject(object: RenderObject) {
@@ -78,7 +78,7 @@ class BillboardPipeline: Pipeline {
     private static func buildPipeline() throws -> MTLRenderPipelineState {
         /// Build a render state pipeline object
         
-        let vertexDescriptor = BillboardPipeline.buildVertexDescriptor()
+        let vertexDescriptor = GenericPipeline.buildVertexDescriptor()
         
         let library = MetalView.shared.device!.makeDefaultLibrary()
         

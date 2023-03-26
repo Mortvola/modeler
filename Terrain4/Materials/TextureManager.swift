@@ -15,6 +15,7 @@ class TextureManager {
     
     var textures: [String:MTLTexture] = [:]
     
+    @MainActor
     func addTexture(path: String) async throws -> MTLTexture {
         var texture = self.textures[path]
         

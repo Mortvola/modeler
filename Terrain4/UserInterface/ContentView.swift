@@ -50,22 +50,6 @@ struct ContentView: View {
             .padding()
             .toolbarRole(.automatic)
             .environmentObject(file)
-//            .toolbar {
-//                ToolbarItem(placement: .automatic) {
-//                    Button("Open") {
-//                        openPicker = true
-//                    }
-//                }
-//                ToolbarItem(placement: .automatic) {
-//                    Button("Save") {
-//                        if SceneDocument.shared.bookmark == nil {
-//                            openSave = true
-//                        } else {
-////                            ObjectStore.shared.save()
-//                        }
-//                    }
-//                }
-//            }
         } detail: {
             ZStack {
                 RenderView(file: file)
@@ -81,18 +65,6 @@ struct ContentView: View {
         }
         .toolbar(.hidden)
         .environmentObject(file)
-//        .fileImporter(isPresented: $openPicker, allowedContentTypes: [.sceneDocument]) { result in
-//            if let url = try? result.get() {
-//                Task {
-//                    try? await SceneDocument.shared.open(url: url)
-//                }
-//            }
-//        }
-//        .fileExporter(isPresented: $openSave, document: SceneDocument.shared, contentType: .sceneDocument, defaultFilename: nil) { result in
-//            if let url = try? result.get() {
-//                SceneDocument.shared.bookmark = try? url.bookmarkData(options: .withSecurityScope)
-//            }
-//        }
     }
 }
 

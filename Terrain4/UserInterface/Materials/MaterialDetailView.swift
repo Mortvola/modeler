@@ -22,6 +22,8 @@ struct MaterialDetailView: View {
                 
                 RoughnessView(roughness: m.roughness)
             }
+        case .simpleMaterial(let m):
+            GenericMaterialView(material: m)
         default:
             EmptyView()
         }
