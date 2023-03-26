@@ -279,8 +279,6 @@ class Renderer {
                             }
                         case .point:
                             break
-                        case .billboard:
-                            break
                         case .light:
                             break
                         case .directionalLight:
@@ -291,8 +289,6 @@ class Renderer {
                 case .mesh:
                     break
                 case .point:
-                    break
-                case .billboard:
                     break
                 case .light:
                     break
@@ -379,8 +375,6 @@ class Renderer {
                                         }
                                     case .point:
                                         break
-                                    case .billboard:
-                                        break
                                     case .light:
                                         break
                                     case .directionalLight:
@@ -391,8 +385,6 @@ class Renderer {
                         case .mesh:
                             break
                         case .point:
-                            break
-                        case .billboard:
                             break
                         case .light:
                             break

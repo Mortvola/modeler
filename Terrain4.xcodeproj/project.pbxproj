@@ -89,7 +89,6 @@
 		7921DFA429CCE82E0013E317 /* PointOptionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7921DFA329CCE82E0013E317 /* PointOptionsView.swift */; };
 		7921DFA629CD02BB0013E317 /* TextureStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7921DFA529CD02BB0013E317 /* TextureStore.swift */; };
 		7921DFA829CD1FFB0013E317 /* BillboardOptionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7921DFA729CD1FFB0013E317 /* BillboardOptionsView.swift */; };
-		7921DFAA29CD20EC0013E317 /* Billboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7921DFA929CD20EC0013E317 /* Billboard.swift */; };
 		7921DFAC29CD23210013E317 /* BillboardPipeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7921DFAB29CD23210013E317 /* BillboardPipeline.swift */; };
 		7921DFAE29CD24E30013E317 /* BillboardMaterial.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7921DFAD29CD24E30013E317 /* BillboardMaterial.swift */; };
 		7921DFB029CD26C10013E317 /* BillboardShaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = 7921DFAF29CD26C10013E317 /* BillboardShaders.metal */; };
@@ -277,7 +276,6 @@
 		7921DFA329CCE82E0013E317 /* PointOptionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PointOptionsView.swift; sourceTree = "<group>"; };
 		7921DFA529CD02BB0013E317 /* TextureStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextureStore.swift; sourceTree = "<group>"; };
 		7921DFA729CD1FFB0013E317 /* BillboardOptionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BillboardOptionsView.swift; sourceTree = "<group>"; };
-		7921DFA929CD20EC0013E317 /* Billboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Billboard.swift; sourceTree = "<group>"; };
 		7921DFAB29CD23210013E317 /* BillboardPipeline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BillboardPipeline.swift; sourceTree = "<group>"; };
 		7921DFAD29CD24E30013E317 /* BillboardMaterial.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BillboardMaterial.swift; sourceTree = "<group>"; };
 		7921DFAF29CD26C10013E317 /* BillboardShaders.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = BillboardShaders.metal; sourceTree = "<group>"; };
@@ -526,7 +524,6 @@
 				791E791D29B93D6000FB45F3 /* RenderObject.swift */,
 				79F6D2CD29BAA245007CA69A /* Object.swift */,
 				7921DF9529CC79940013E317 /* Point.swift */,
-				7921DFA929CD20EC0013E317 /* Billboard.swift */,
 				791E791E29B93D6000FB45F3 /* Line.swift */,
 				7921DF7429C9398A0013E317 /* WireBox.swift */,
 				791E791F29B93D6000FB45F3 /* TriangleMesh.swift */,
@@ -897,7 +894,6 @@
 				791E790529B93BB600FB45F3 /* ObjectStore.swift in Sources */,
 				7921DFAC29CD23210013E317 /* BillboardPipeline.swift in Sources */,
 				79F6D2FE29C16894007CA69A /* MaterialDetailView.swift in Sources */,
-				7921DFAA29CD20EC0013E317 /* Billboard.swift in Sources */,
 				79F6D2D929BB691E007CA69A /* ModelDetailsView.swift in Sources */,
 				79F6D30629C1E25E007CA69A /* OpenFileButton.swift in Sources */,
 				79F6D2C629BA5C80007CA69A /* AnimatorsView.swift in Sources */,

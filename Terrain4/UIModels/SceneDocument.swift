@@ -99,9 +99,6 @@ class SceneDocument: ReferenceFileDocument {
                         case .point(let p):
                             p.model = model
 //                            p.setMaterial(materialId: p.materialId)
-                        case .billboard(let b):
-                            b.model = model
-//                            b.setMaterial(materialId: b.materialId)
                         default:
                             break;
                         }
@@ -115,8 +112,6 @@ class SceneDocument: ReferenceFileDocument {
                 case .mesh:
                     break
                 case .point:
-                    break
-                case .billboard:
                     break
                 case .light:
                     break

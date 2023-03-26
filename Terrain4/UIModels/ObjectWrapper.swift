@@ -31,13 +31,6 @@ enum ObjectWrapper: Equatable, Codable, Identifiable {
             default:
                 return false
             }
-        case .billboard(let b1):
-            switch rhs {
-            case .billboard(let b2):
-                return b1 == b2
-            default:
-                return false
-            }
         case .light(let l1):
             switch rhs {
             case .light(let l2):
@@ -63,8 +56,6 @@ enum ObjectWrapper: Equatable, Codable, Identifiable {
             return o.id
         case .point(let p):
             return p.id
-        case .billboard(let b):
-            return b.id
         case .light(let l):
             return l.id
         case .directionalLight(let d):
@@ -80,8 +71,6 @@ enum ObjectWrapper: Equatable, Codable, Identifiable {
             return o
         case .point(let p):
             return p
-        case .billboard(let b):
-            return b
         case .light(let l):
             return l
         case .directionalLight(let d):
@@ -92,7 +81,6 @@ enum ObjectWrapper: Equatable, Codable, Identifiable {
     case model(Model)
     case mesh(Mesh)
     case point(Point)
-    case billboard(Billboard)
     case light(Light)
     case directionalLight(DirectionalLight)
     
@@ -117,10 +105,6 @@ enum ObjectWrapper: Equatable, Codable, Identifiable {
         case "Point":
             let point = try Point(from: decoder)
             self = ObjectWrapper.point(point)
-            return
-        case "Billboard":
-            let billboard = try Billboard(from: decoder)
-            self = ObjectWrapper.billboard(billboard)
             return
         case "Light":
             let light = try Light(from: decoder)
@@ -150,9 +134,6 @@ enum ObjectWrapper: Equatable, Codable, Identifiable {
         case .point(let p):
             try container.encode("Point", forKey: .type)
             try p.encode(to: encoder)
-        case .billboard(let b):
-            try container.encode("Billboard", forKey: .type)
-            try b.encode(to: encoder)
         case .light(let l):
             try container.encode("Light", forKey: .type)
             try l.encode(to: encoder)

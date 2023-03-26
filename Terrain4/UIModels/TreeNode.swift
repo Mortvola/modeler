@@ -26,10 +26,6 @@ class TreeNode: ObservableObject, Equatable, Identifiable, Codable {
         content = ObjectWrapper.point(point)
     }
     
-    init(billboard: Billboard) {
-        content = ObjectWrapper.billboard(billboard)
-    }
-    
     init(light: Light) {
         content = ObjectWrapper.light(light)
     }
@@ -58,8 +54,6 @@ class TreeNode: ObservableObject, Equatable, Identifiable, Codable {
             return o.model
         case .point(let p):
             return p.model
-        case .billboard(let b):
-            return b.model
         case .light(let l):
             return l.model
         case .directionalLight:
@@ -76,8 +70,6 @@ class TreeNode: ObservableObject, Equatable, Identifiable, Codable {
                 return o.disabled
             case .point(let p):
                 return p.disabled
-            case .billboard(let b):
-                return b.disabled
             case .light(let l):
                 return l.disabled
             case .directionalLight(let d):
@@ -92,8 +84,6 @@ class TreeNode: ObservableObject, Equatable, Identifiable, Codable {
                 o.disabled = newValue
             case .point(let p):
                 p.disabled = newValue
-            case .billboard(let b):
-                b.disabled = newValue
             case .light(let l):
                 l.disabled = newValue
             case .directionalLight(let d):
@@ -111,8 +101,6 @@ class TreeNode: ObservableObject, Equatable, Identifiable, Codable {
                 return o.name
             case .point(let p):
                 return p.name
-            case .billboard(let b):
-                return b.name
             case .light(let l):
                 return l.name
             case .directionalLight(let d):
@@ -127,8 +115,6 @@ class TreeNode: ObservableObject, Equatable, Identifiable, Codable {
                 o.name = newValue
             case .point(let p):
                 p.name = newValue
-            case .billboard(let b):
-                b.name = newValue
             case .light(let l):
                 l.name = newValue
             case .directionalLight(let d):
@@ -146,8 +132,6 @@ class TreeNode: ObservableObject, Equatable, Identifiable, Codable {
                 return o
             case .point(let p):
                 return p
-            case .billboard(let b):
-                return b
             case .light(let l):
                 return l
             case .directionalLight(let d):
