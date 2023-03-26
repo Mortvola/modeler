@@ -49,10 +49,6 @@ class RenderObject: Object {
         }
     }
     
-    func draw(renderEncoder: MTLRenderCommandEncoder, modelMatrix: Matrix4x4, pbrProperties: PbrProperties?, frame: Int) throws {
-        throw Errors.notImplemented
-    }
-    
     func draw(renderEncoder: MTLRenderCommandEncoder, modelMatrix: Matrix4x4, frame: Int) throws {
         throw Errors.notImplemented
     }

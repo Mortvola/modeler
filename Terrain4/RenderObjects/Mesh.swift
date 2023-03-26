@@ -31,7 +31,7 @@ class Mesh: RenderObject {
         }
         
         for submesh in mesh.submeshes {
-            renderEncoder.drawIndexedPrimitives(type: submesh.primitiveType, indexCount: submesh.indexCount, indexType: submesh.indexType, indexBuffer: submesh.indexBuffer.buffer, indexBufferOffset: submesh.indexBuffer.offset)
+            renderEncoder.drawIndexedPrimitives(type: submesh.primitiveType, indexCount: submesh.indexCount, indexType: submesh.indexType, indexBuffer: submesh.indexBuffer.buffer, indexBufferOffset: submesh.indexBuffer.offset, instanceCount: 1)
         }
     }
 
@@ -137,25 +137,8 @@ class Mesh: RenderObject {
         let texcoords = try container.decode([Float].self, forKey: .texcoords)
         let normals = try container.decode([Float].self, forKey: .normals)
         
-//        let allocator = MTKMeshBufferAllocator(device: Renderer.shared.device!)
-
-//        var vertexBuffers: [MDLMeshBuffer] = []
-
-//        let (coordBuffer, numberOfPoints) = Mesh.makeCoordBuffer(points: points, texcoords: texcoords, allocator: allocator)
-//        vertexBuffers.append(coordBuffer)
-        
-//        let normalBuffer = Mesh.makeNormalBuffer(normals: normals, allocator: allocator)
-//        vertexBuffers.append(normalBuffer)
-        
         let submeshes = try container.decode([Submesh].self, forKey: .submeshes)
         
-//        let mdlSubmeshes = try Mesh.makeSubmeshes(submeshes: submeshes, allocator: allocator)
-        
-//        let mdlMesh = MDLMesh(vertexBuffers: vertexBuffers, vertexCount: numberOfPoints, descriptor: MeshAllocator.vertexDescriptor(), submeshes: mdlSubmeshes)
-
-//        mdlMesh.addTangentBasis(forTextureCoordinateAttributeNamed: MDLVertexAttributeTextureCoordinate, normalAttributeNamed: MDLVertexAttributeNormal, tangentAttributeNamed: MDLVertexAttributeTangent)
-
-//        self.mesh = try MTKMesh(mesh: mdlMesh, device: Renderer.shared.device!)
         self.mesh = try Mesh.makeMesh(points: points, texcoords: texcoords, normals: normals, submeshes: submeshes)
 
         try super.init(from: decoder)

@@ -9,49 +9,54 @@ import Foundation
 import MetalKit
 import Metal
 
-class BillboardPipeline {
+class BillboardPipeline: Pipeline {
     let pipeline: MTLRenderPipelineState
     
-    class MaterialEntry {
-        var material: SimpleMaterial
-        
-        init(material: SimpleMaterial) {
-            self.material = material
-        }
-    }
-    
-    var materials: [UUID?:MaterialEntry] = [:]
-
     init(device: MTLDevice, view: MTKView) throws {
         self.pipeline = try BillboardPipeline.buildPipeline(device: device, metalKitView: view)
     }
 
+    func prepareObject(object: RenderObject) {
+        object.uniformsSize = alignedNodeUniformsSize
+        object.uniforms = Renderer.shared.device!.makeBuffer(length: 3 * alignedNodeUniformsSize, options: [MTLResourceOptions.storageModeShared])!
+        object.uniforms!.label = "Node Uniforms"
+    }
+    
     func prepare(renderEncoder: MTLRenderCommandEncoder) {
         renderEncoder.setRenderPipelineState(self.pipeline)
     }
 
-    func addMaterial(material: SimpleMaterial) {
-        let materialKey = material.id
-        
-        if materials[materialKey] == nil {
-            materials[materialKey] = MaterialEntry(material: material)
-        }
+    func draw(object: RenderObject, renderEncoder: MTLRenderCommandEncoder, frame: Int) throws {
+        let u: UnsafeMutablePointer<BillboardUniforms> = object.getUniformsBuffer(index: frame)
+        u[0].color = Vec4(1.0, 1.0, 1.0, 1.0)
+        u[0].scale = Vec2(1.0, 1.0)
+
+        renderEncoder.setVertexBuffer(object.uniforms, offset: 0, index: BufferIndex.nodeUniforms.rawValue)
+        renderEncoder.setFragmentBuffer(object.uniforms, offset: 0, index: BufferIndex.nodeUniforms.rawValue)
+
+        try object.simpleDraw(renderEncoder: renderEncoder, modelMatrix: object.modelMatrix(), frame: frame)
     }
 
     func render(renderEncoder: MTLRenderCommandEncoder, frame: Int) throws {
         renderEncoder.setRenderPipelineState(pipeline)
         
-//        for (_, entry) in self.materials {
-//            if entry.material.objects.count > 0 {
-//                entry.material.prepare(renderEncoder: renderEncoder)
-//                
-//                for object in entry.material.objects {
-//                    if !object.disabled && !(object.model?.disabled ?? true) {
-//                        try object.draw(renderEncoder: renderEncoder, modelMatrix: object.modelMatrix(), frame: frame)
-//                    }
-//                }
-//            }
-//        }
+        for (_, wrapper) in self.materials {
+            if wrapper.material.objects.count > 0 {
+                switch wrapper {
+                case .simpleMaterial(let material):
+                    material.prepare(renderEncoder: renderEncoder)
+                    
+                    for object in material.objects {
+                        if !object.disabled && !(object.model?.disabled ?? true) {
+                            try self.draw(object: object, renderEncoder: renderEncoder, frame: frame)
+                        }
+                    }
+
+                default:
+                    break
+                }
+            }
+        }
     }
 
     private static func buildVertexDescriptor() -> MTLVertexDescriptor {
@@ -61,8 +66,12 @@ class BillboardPipeline {
         vertexDescriptor.attributes[VertexAttribute.position.rawValue].bufferIndex = BufferIndex.meshPositions.rawValue
         vertexDescriptor.attributes[VertexAttribute.position.rawValue].offset = 0
         
-        vertexDescriptor.layouts[BufferIndex.meshPositions.rawValue].stride = MemoryLayout<simd_float3>.stride
+        vertexDescriptor.attributes[VertexAttribute.texcoord.rawValue].format = .float2
+        vertexDescriptor.attributes[VertexAttribute.texcoord.rawValue].bufferIndex = BufferIndex.meshPositions.rawValue
+        vertexDescriptor.attributes[VertexAttribute.texcoord.rawValue].offset = MemoryLayout<simd_float3>.stride
         
+        vertexDescriptor.layouts[BufferIndex.meshPositions.rawValue].stride = (MemoryLayout<simd_float3>.stride + MemoryLayout<simd_float2>.stride)
+
         return vertexDescriptor
     }
     

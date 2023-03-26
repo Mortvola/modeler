@@ -75,10 +75,11 @@ float3 computeLo(
     float3 radiance
 );
 
-float getShadowedFactor(
-             float3 worldPos,
-             const device DirectionalLight &directionalLight,
-             depth2d_array<float> shadowMap
+float getShadowedFactor
+(
+    float3 worldPos,
+    const device DirectionalLight &directionalLight,
+    depth2d_array<float> shadowMap
 ) {
     float shadowed = 0;
     
@@ -120,7 +121,8 @@ float getShadowedFactor(
     return 1 - shadowed;
 }
 
-fragment float4 pbrFragmentShader(
+fragment float4 pbrFragmentShader
+(
     VertexOut in [[stage_in]],
     const device FrameUniforms& uniforms [[ buffer(BufferIndexUniforms) ]],
     const device NodeUniforms& nodeUniforms [[ buffer(BufferIndexNodeUniforms) ]],

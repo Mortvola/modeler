@@ -10,6 +10,7 @@
 		7902F01129CF244B004C3775 /* MaterialWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7902F01029CF244B004C3775 /* MaterialWrapper.swift */; };
 		7902F01329CF458E004C3775 /* ObjectWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7902F01229CF458E004C3775 /* ObjectWrapper.swift */; };
 		7902F01529CF7160004C3775 /* BillboardAllocator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7902F01429CF7160004C3775 /* BillboardAllocator.swift */; };
+		7902F01729CFB6E9004C3775 /* Pipeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7902F01629CFB6E9004C3775 /* Pipeline.swift */; };
 		791C495629B94AEF00C00150 /* ModelManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791C495529B94AEF00C00150 /* ModelManager.swift */; };
 		791E788A29B937AB00FB45F3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 791E788929B937AB00FB45F3 /* Assets.xcassets */; };
 		791E788D29B937AB00FB45F3 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 791E788C29B937AB00FB45F3 /* Preview Assets.xcassets */; };
@@ -190,6 +191,7 @@
 		7902F01029CF244B004C3775 /* MaterialWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MaterialWrapper.swift; sourceTree = "<group>"; };
 		7902F01229CF458E004C3775 /* ObjectWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObjectWrapper.swift; sourceTree = "<group>"; };
 		7902F01429CF7160004C3775 /* BillboardAllocator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BillboardAllocator.swift; sourceTree = "<group>"; };
+		7902F01629CFB6E9004C3775 /* Pipeline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Pipeline.swift; sourceTree = "<group>"; };
 		791C495429B9488300C00150 /* Terrain4.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Terrain4.entitlements; sourceTree = "<group>"; };
 		791C495529B94AEF00C00150 /* ModelManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelManager.swift; sourceTree = "<group>"; };
 		791E788229B937A900FB45F3 /* Terrain4.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Terrain4.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -563,6 +565,7 @@
 			isa = PBXGroup;
 			children = (
 				7921DF9D29CC84860013E317 /* PipelineManager.swift */,
+				7902F01629CFB6E9004C3775 /* Pipeline.swift */,
 				7921DF9B29CC84640013E317 /* PbrPipeline.swift */,
 				7921DFAB29CD23210013E317 /* BillboardPipeline.swift */,
 				7921DF9929CC813E0013E317 /* PointPipeline.swift */,
@@ -926,6 +929,7 @@
 				799B4BBA29C6067800B6826A /* TexturesView.swift in Sources */,
 				7921DF8E29CC04660013E317 /* CylinderAllocator.swift in Sources */,
 				79345D3929C509E200E9F074 /* RectangleAllocator.swift in Sources */,
+				7902F01729CFB6E9004C3775 /* Pipeline.swift in Sources */,
 				799B4BBD29C651AE00B6826A /* DirectionalLightView.swift in Sources */,
 				7902F01129CF244B004C3775 /* MaterialWrapper.swift in Sources */,
 				791E794F29B944D000FB45F3 /* PbrLineShaders.metal in Sources */,

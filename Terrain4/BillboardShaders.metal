@@ -11,6 +11,7 @@ using namespace metal;
 
 struct VertexIn {
     float3 position [[attribute(VertexAttributePosition)]];
+    float2 texCoord [[attribute(VertexAttributeTexcoord)]];
 };
 
 struct VertexOut {
@@ -19,18 +20,25 @@ struct VertexOut {
     float4 color;
 };
 
-vertex VertexOut billboardVertexShader(
-    constant float2 *vertices [[ buffer(BufferIndexMeshPositions) ]],
+struct Vertex {
+    float3 position;
+    float2 texcoord;
+};
+
+vertex VertexOut billboardVertexShader
+(
+    VertexIn vertices [[stage_in]],
     const device FrameUniforms &uniforms [[ buffer(BufferIndexUniforms) ]],
-    const device BillboardUniforms &pointUniforms [[ buffer(BufferIndexNodeUniforms) ]],
-    uint instanceId [[ instance_id ]],
-    uint vertexId [[ vertex_id ]]
+    const device float4x4& modelMatrix [[ buffer(BufferIndexModelMatrix) ]],
+    const device BillboardUniforms &pointUniforms [[ buffer(BufferIndexNodeUniforms) ]]
+//    uint instanceId [[ instance_id ]]
+//    uint vertexId [[ vertex_id ]]
 ) {
     VertexOut out;
     
-    float2 meshVertex = vertices[vertexId];
+    float2 meshVertex = vertices.position.xy;
     
-    float4 position = uniforms.viewMatrix * pointUniforms.modelMatrix * float4(0, 0, 0, 1);
+    float4 position = uniforms.viewMatrix * modelMatrix * float4(0, 0, 0, 1);
     
     out.position = uniforms.projectionMatrix * (float4(meshVertex * pointUniforms.scale, 0, 0) + position);
     out.color = pointUniforms.color;
@@ -39,12 +47,13 @@ vertex VertexOut billboardVertexShader(
     return out;
 }
 
-fragment float4 billboardFragmentShader(
-   VertexOut in [[stage_in]],
-   texture2d<float> texture [[texture(TextureIndexColor)]],
-   sampler sampler [[sampler(SamplerIndexSampler)]]
+fragment float4 billboardFragmentShader
+(
+    VertexOut in [[stage_in]],
+    texture2d<float> texture [[texture(TextureIndexColor)]],
+    sampler sampler [[sampler(SamplerIndexSampler)]]
 ) {
-    float color = max(texture.sample(sampler, in.texcoord).r - 0.2, 0.0);
+    float color = is_null_texture(texture) ? 1.0 : max(texture.sample(sampler, in.texcoord).r - 0.2, 0.0);
 
     return float4(in.color.rgb, color);
 }

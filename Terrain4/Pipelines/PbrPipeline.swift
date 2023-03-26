@@ -9,33 +9,25 @@ import Foundation
 import Metal
 import MetalKit
 
-class PbrPipeline {
+class PbrPipeline: Pipeline {
     let pipeline: MTLRenderPipelineState
     let samplerState: MTLSamplerState
 
-    var materials: [UUID?:PbrMaterial] = [:]
-    
     init(device: MTLDevice, view: MTKView) throws {
         pipeline = try PbrPipeline.buildPipeline(device: device, view: view)
         samplerState = PbrPipeline.buildSamplerState(device: device)
     }
         
-    func addMaterial(pbrMaterial: PbrMaterial) {
-        let materialKey = pbrMaterial.id
-        
-        if materials[materialKey] == nil {
-            materials[materialKey] = pbrMaterial
-        }
-    }
-    
     func prepareObject(object: RenderObject) {
         object.uniformsSize = alignedNodeUniformsSize
         object.uniforms = Renderer.shared.device!.makeBuffer(length: 3 * alignedNodeUniformsSize, options: [MTLResourceOptions.storageModeShared])!
         object.uniforms!.label = "Node Uniforms"
     }
     
-    func draw(object: RenderObject, renderEncoder: MTLRenderCommandEncoder, modelMatrix: Matrix4x4, pbrProperties: PbrProperties?, frame: Int) throws {
+    func draw(object: RenderObject, renderEncoder: MTLRenderCommandEncoder, pbrProperties: PbrProperties?, frame: Int) throws {
         // Pass the normal matrix (derived from the model matrix) to the vertex shader
+        let modelMatrix = object.modelMatrix()
+        
         var normalMatrix = matrix_float3x3(columns: (
             vector_float3(modelMatrix[0][0], modelMatrix[0][1], modelMatrix[0][2]),
             vector_float3(modelMatrix[1][0], modelMatrix[1][1], modelMatrix[1][2]),
@@ -75,14 +67,20 @@ class PbrPipeline {
         renderEncoder.setFragmentSamplerState(samplerState, index: SamplerIndex.sampler.rawValue)
         
         for (_, material) in self.materials {
-            if material.objects.count > 0 {
-                material.prepare(renderEncoder: renderEncoder)
-                let pbrProperties = material.getPbrProperties()
-                
-                for renderObject in material.objects {
-                    if !renderObject.disabled && !(renderObject.model?.disabled ?? true) {
-                        try self.draw(object: renderObject, renderEncoder: renderEncoder, modelMatrix: renderObject.modelMatrix(), pbrProperties: pbrProperties, frame: frame)
+            if material.material.objects.count > 0 {
+                switch material {
+                case .pbrMaterial(let material):
+                    material.prepare(renderEncoder: renderEncoder)
+                    let pbrProperties = material.getPbrProperties()
+                    
+                    for renderObject in material.objects {
+                        if !renderObject.disabled && !(renderObject.model?.disabled ?? true) {
+                            try self.draw(object: renderObject, renderEncoder: renderEncoder, pbrProperties: pbrProperties, frame: frame)
+                        }
                     }
+
+                default:
+                    break
                 }
             }
         }

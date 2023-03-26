@@ -92,15 +92,7 @@ typedef struct {
 typedef struct {
     vector_float4 color;
     vector_float2 scale;
-    matrix_float4x4 modelMatrix;
 } BillboardUniforms;
-
-//typedef struct {
-//    vector_float3 albedo;
-//    float metallic;
-//    float roughness;
-//    float ao;
-//} PbrValues;
 
 #endif /* ShaderTypes_h */
 

@@ -79,7 +79,6 @@ class Billboard: RenderObject {
     
     override func simpleDraw(renderEncoder: MTLRenderCommandEncoder, modelMatrix: Matrix4x4, frame: Int) throws {
         let u: UnsafeMutablePointer<BillboardUniforms> = self.getUniformsBuffer(index: frame)
-        u[0].modelMatrix = modelMatrix
         u[0].color = color
         u[0].scale = size
 
