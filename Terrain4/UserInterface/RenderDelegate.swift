@@ -15,6 +15,9 @@ class RenderDelegate: NSObject, MTKViewDelegate {
     
     init(file: SceneDocument, metalKitView: MTKView) throws {
         do {
+            MetalView.shared.view = metalKitView
+            MetalView.shared.device = metalKitView.device
+            
             try Renderer.shared.initialize(file: file, metalKitView: metalKitView)
             Task {
                 try await Renderer.shared.load(lat: 46.514279, lng: -121.456191, dimension: 128)

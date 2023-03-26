@@ -10,6 +10,8 @@ import Foundation
 class Pipeline {
     var materials: [UUID?:MaterialWrapper] = [:]
     
+    init() throws {}
+    
     func addMaterial(material: MaterialWrapper) {
         let materialKey = material.id
         

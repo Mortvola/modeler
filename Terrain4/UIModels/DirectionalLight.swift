@@ -140,7 +140,7 @@ class DirectionalLight: Node {
         try super.encode(to: encoder)
     }
     
-    func createShadowTexture(device: MTLDevice) {
+    func createShadowTexture() {
         if shadowTexture == nil {
             let shadowMapSize = 1024
 
@@ -150,7 +150,7 @@ class DirectionalLight: Node {
             shadowTextureDescriptor.textureType = .type2DArray
             shadowTextureDescriptor.arrayLength = shadowMapCascades
             
-            shadowTexture = device.makeTexture(descriptor: shadowTextureDescriptor)
+            shadowTexture = MetalView.shared.device!.makeTexture(descriptor: shadowTextureDescriptor)
             shadowTexture?.label = "Shadow Map"
             
             let renderPassDescriptor = MTLRenderPassDescriptor()

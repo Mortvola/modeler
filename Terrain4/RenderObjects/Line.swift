@@ -45,7 +45,7 @@ class Line: RenderObject {
         }
                                     
         let dataSize = newPoints.count * MemoryLayout.size(ofValue: newPoints[0])
-        self.vertices = Renderer.shared.device!.makeBuffer(bytes: newPoints, length: dataSize, options: [])!
+        self.vertices = MetalView.shared.device!.makeBuffer(bytes: newPoints, length: dataSize, options: [])!
         self.numVertices = newPoints.count * MemoryLayout.size(ofValue: newPoints[0]) / MemoryLayout<simd_float3>.stride
 
         try super.init(from: decoder)

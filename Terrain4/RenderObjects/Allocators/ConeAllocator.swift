@@ -10,8 +10,8 @@ import Metal
 import MetalKit
 
 class ConeAllocator {
-    static func allocate(device: MTLDevice, options: ConeOptions) throws -> MTKMesh {
-        let meshBufferAllocator = MTKMeshBufferAllocator(device: device)
+    static func allocate(options: ConeOptions) throws -> MTKMesh {
+        let meshBufferAllocator = MTKMeshBufferAllocator(device: MetalView.shared.device!)
 
         let mesh = MDLMesh.newEllipticalCone(withHeight: options.height, radii: options.radii, radialSegments: options.radialSegments, verticalSegments: options.verticalSegments, geometryType: .triangles, inwardNormals: false, allocator: meshBufferAllocator)
 
@@ -19,6 +19,6 @@ class ConeAllocator {
 
         mesh.vertexDescriptor = MeshAllocator.vertexDescriptor()
         
-        return try MTKMesh(mesh: mesh, device: device)
+        return try MTKMesh(mesh: mesh, device: MetalView.shared.device!)
     }
 }

@@ -123,7 +123,7 @@ class SceneDocument: ReferenceFileDocument {
             objectStore.models = file.models
             objectStore.lights = newLights
             
-            file.directionalLight.createShadowTexture(device: Renderer.shared.device!)
+            file.directionalLight.createShadowTexture()
             
             objectStore.directionalLight = file.directionalLight
 

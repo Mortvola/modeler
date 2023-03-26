@@ -15,7 +15,7 @@ class TextureManager {
     
     var textures: [String:MTLTexture] = [:]
     
-    func addTexture(device: MTLDevice, path: String) async throws -> MTLTexture {
+    func addTexture(path: String) async throws -> MTLTexture {
         var texture = self.textures[path]
         
         if let texture = texture {
@@ -24,7 +24,7 @@ class TextureManager {
         
         // Texture was not found in the dictionary.
         // Download the texture and add it to the dictionary.
-        let loader = MTKTextureLoader(device: device)
+        let loader = MTKTextureLoader(device: MetalView.shared.device!)
 
         var data: Data? = nil
         

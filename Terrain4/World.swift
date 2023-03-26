@@ -72,7 +72,7 @@ class World {
             tileGrid[gridZ][gridX].tile = tile;
         }
         else {
-            let tile = TerrainTile(x: x, y: z, dimension: dimension, device: renderer.device!, view: renderer.view!)
+            let tile = TerrainTile(x: x, y: z, dimension: dimension)
             // tile.setScale(scale: self.scale);
             tileDict[dictionaryKey] = tile;
             

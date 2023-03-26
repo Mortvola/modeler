@@ -12,14 +12,14 @@ import Metal
 class LineMaterial: Material {
     let pipeline: MTLRenderPipelineState
     
-    init(device: MTLDevice, view: MTKView) throws {
-        self.pipeline = try LineMaterial.buildPipeline(device: device, metalKitView: view)
+    init() throws {
+        self.pipeline = try LineMaterial.buildPipeline()
         
         super.init(name: "Line Material")
     }
     
     required init(from decoder: Decoder) throws {
-        self.pipeline = try LineMaterial.buildPipeline(device: Renderer.shared.device!, metalKitView: Renderer.shared.view!)
+        self.pipeline = try LineMaterial.buildPipeline()
 
         try super.init(from: decoder)
     }
@@ -44,14 +44,11 @@ class LineMaterial: Material {
         return vertexDescriptor
     }
     
-    private static func buildPipeline(
-        device: MTLDevice,
-        metalKitView: MTKView
-    ) throws -> MTLRenderPipelineState {
+    private static func buildPipeline() throws -> MTLRenderPipelineState {
         /// Build a render state pipeline object
         let vertexDescriptor = LineMaterial.buildVertexDescriptor()
         
-        let library = device.makeDefaultLibrary()
+        let library = MetalView.shared.device!.makeDefaultLibrary()
         
         let vertexFunction = library?.makeFunction(name: "lineVertexShader")
         let fragmentFunction = library?.makeFunction(name: "simpleFragmentShader")
@@ -62,16 +59,16 @@ class LineMaterial: Material {
 
         let pipelineDescriptor = MTLRenderPipelineDescriptor()
         pipelineDescriptor.label = "LinePipeline"
-        pipelineDescriptor.rasterSampleCount = metalKitView.sampleCount
+        pipelineDescriptor.rasterSampleCount = MetalView.shared.view!.sampleCount
         pipelineDescriptor.vertexFunction = vertexFunction
         pipelineDescriptor.fragmentFunction = fragmentFunction
         pipelineDescriptor.vertexDescriptor = vertexDescriptor
         
-        pipelineDescriptor.colorAttachments[0].pixelFormat = metalKitView.colorPixelFormat
-        pipelineDescriptor.depthAttachmentPixelFormat = metalKitView.depthStencilPixelFormat
+        pipelineDescriptor.colorAttachments[0].pixelFormat = MetalView.shared.view!.colorPixelFormat
+        pipelineDescriptor.depthAttachmentPixelFormat = MetalView.shared.view!.depthStencilPixelFormat
         //        pipelineDescriptor.stencilAttachmentPixelFormat = metalKitView.depthStencilPixelFormat
         
-        return try device.makeRenderPipelineState(descriptor: pipelineDescriptor)
+        return try MetalView.shared.device!.makeRenderPipelineState(descriptor: pipelineDescriptor)
     }
 }
 

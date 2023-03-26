@@ -13,14 +13,14 @@ class PbrPipeline: Pipeline {
     let pipeline: MTLRenderPipelineState
     let samplerState: MTLSamplerState
 
-    init(device: MTLDevice, view: MTKView) throws {
-        pipeline = try PbrPipeline.buildPipeline(device: device, view: view)
-        samplerState = PbrPipeline.buildSamplerState(device: device)
+    override init() throws {
+        pipeline = try PbrPipeline.buildPipeline()
+        samplerState = PbrPipeline.buildSamplerState()
     }
         
     func prepareObject(object: RenderObject) {
         object.uniformsSize = alignedNodeUniformsSize
-        object.uniforms = Renderer.shared.device!.makeBuffer(length: 3 * alignedNodeUniformsSize, options: [MTLResourceOptions.storageModeShared])!
+        object.uniforms = MetalView.shared.device!.makeBuffer(length: 3 * alignedNodeUniformsSize, options: [MTLResourceOptions.storageModeShared])!
         object.uniforms!.label = "Node Uniforms"
     }
     
@@ -114,13 +114,10 @@ class PbrPipeline: Pipeline {
         return mtlVertexDescriptor
     }
     
-    class func buildPipeline(
-        device: MTLDevice,
-        view: MTKView
-    ) throws -> MTLRenderPipelineState {
+    class func buildPipeline() throws -> MTLRenderPipelineState {
         let vertexDescriptor = PbrPipeline.buildVertexDescriptor()
         
-        let library = device.makeDefaultLibrary()
+        let library = MetalView.shared.device!.makeDefaultLibrary()
         
         let vertexFunction = library?.makeFunction(name: "pbrVertexShader")
         let fragmentFunction = library?.makeFunction(name: "pbrFragmentShader")
@@ -131,19 +128,19 @@ class PbrPipeline: Pipeline {
         
         let pipelineDescriptor = MTLRenderPipelineDescriptor()
         pipelineDescriptor.label = "PbrPipeline"
-        pipelineDescriptor.rasterSampleCount = view.sampleCount
+        pipelineDescriptor.rasterSampleCount = MetalView.shared.view!.sampleCount
         pipelineDescriptor.vertexFunction = vertexFunction
         pipelineDescriptor.fragmentFunction = fragmentFunction
         pipelineDescriptor.vertexDescriptor = vertexDescriptor
         
-        pipelineDescriptor.colorAttachments[0].pixelFormat = view.colorPixelFormat
-        pipelineDescriptor.depthAttachmentPixelFormat = view.depthStencilPixelFormat
+        pipelineDescriptor.colorAttachments[0].pixelFormat = MetalView.shared.view!.colorPixelFormat
+        pipelineDescriptor.depthAttachmentPixelFormat = MetalView.shared.view!.depthStencilPixelFormat
         //        pipelineDescriptor.stencilAttachmentPixelFormat = metalKitView.depthStencilPixelFormat
         
-        return try device.makeRenderPipelineState(descriptor: pipelineDescriptor)
+        return try MetalView.shared.device!.makeRenderPipelineState(descriptor: pipelineDescriptor)
     }
     
-    private class func buildSamplerState(device: MTLDevice) -> MTLSamplerState {
+    private class func buildSamplerState() -> MTLSamplerState {
         let samplerDescriptor = MTLSamplerDescriptor()
         samplerDescriptor.normalizedCoordinates = true
         samplerDescriptor.sAddressMode = .repeat
@@ -151,6 +148,6 @@ class PbrPipeline: Pipeline {
         samplerDescriptor.minFilter = .linear
         samplerDescriptor.magFilter = .linear
         samplerDescriptor.mipFilter = .linear
-        return device.makeSamplerState(descriptor: samplerDescriptor)!
+        return MetalView.shared.device!.makeSamplerState(descriptor: samplerDescriptor)!
     }
 }

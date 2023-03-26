@@ -12,19 +12,16 @@ import MetalKit
 class DepthShadowPipeline {
     let pipeline: MTLRenderPipelineState
 
-    init(device: MTLDevice, view: MTKView) throws {
-        self.pipeline = try DepthShadowPipeline.buildPipeline(device: device, metalKitView: view)
+    init() throws {
+        self.pipeline = try DepthShadowPipeline.buildPipeline()
     }
 
     func prepare(renderEncoder: MTLRenderCommandEncoder) {
         renderEncoder.setRenderPipelineState(self.pipeline)
     }
     
-    private static func buildPipeline(
-        device: MTLDevice,
-        metalKitView: MTKView
-    ) throws -> MTLRenderPipelineState {
-        let library = device.makeDefaultLibrary()
+    private static func buildPipeline() throws -> MTLRenderPipelineState {
+        let library = MetalView.shared.device!.makeDefaultLibrary()
         
         let pipelineDescriptor = MTLRenderPipelineDescriptor()
 
@@ -37,7 +34,7 @@ class DepthShadowPipeline {
             throw Errors.makeFunctionError
         }
 
-        return try device.makeRenderPipelineState(descriptor: pipelineDescriptor)
+        return try MetalView.shared.device!.makeRenderPipelineState(descriptor: pipelineDescriptor)
     }
     
     class func buildVertexDescriptor() -> MTLVertexDescriptor {

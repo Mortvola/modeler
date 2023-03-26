@@ -57,7 +57,7 @@ class ObjectStore: ObservableObject {
     
     @MainActor
     func addSkybox() async throws {
-        try await self.skybox = Skybox(device: Renderer.shared.device!, view: Renderer.shared.view!)
+        try await self.skybox = Skybox()
     }
 }
 

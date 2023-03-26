@@ -24,8 +24,8 @@ class Renderer {
     static var shared = Renderer()
     let test = true
     
-    public var device: MTLDevice?
-    public var view: MTKView?
+//    public var device: MTLDevice?
+//    public var view: MTKView?
     
     private var commandQueue: MTLCommandQueue?
     private var dynamicUniformBuffer: MTLBuffer?
@@ -81,8 +81,8 @@ class Renderer {
         
         self.camera = Camera(world: world)
         
-        self.device = metalKitView.device!
-        self.view = metalKitView
+//        self.device = metalKitView.device!
+//        self.view = metalKitView
         
         guard let queue = metalKitView.device!.makeCommandQueue() else {
             throw Errors.makeCommandQueueFailed
@@ -114,17 +114,17 @@ class Renderer {
         
 //        objectStore.directionalLight.createShadowTexture(device: device!)
         
-        self.lineMaterial = try LineMaterial(device: device!, view: view!)
+        self.lineMaterial = try LineMaterial()
         
-        self.pipelineManager = try PipelineManager(device: self.device!, view: self.view!)
+        self.pipelineManager = try PipelineManager()
         
-        self.textureStore = try TextureStore(device: self.device!)
+        self.textureStore = try TextureStore()
     }
     
     func makeUniformsBuffer() throws {
         let uniformBufferSize = alignedUniformsSize * maxBuffersInFlight
         
-        guard let buffer = self.view!.device!.makeBuffer(length:uniformBufferSize, options:[MTLResourceOptions.storageModeShared]) else {
+        guard let buffer = MetalView.shared.device!.makeBuffer(length:uniformBufferSize, options:[MTLResourceOptions.storageModeShared]) else {
             throw Errors.makeBufferFailed
         }
         
@@ -530,7 +530,7 @@ class Renderer {
     }
 
     func startVideoCapture() {
-        view!.framebufferOnly = false
+        MetalView.shared.view!.framebufferOnly = false
 
         Task {
             let width = 1280

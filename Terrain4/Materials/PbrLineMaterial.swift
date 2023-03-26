@@ -19,28 +19,28 @@ class PbrLineMaterial: Material {
     var roughness: MTLTexture? = nil
     
     init(device: MTLDevice, view: MTKView) async throws {
-        self.pipeline = try PbrLineMaterial.buildPipeline(device: device, metalKitView: view)
+        self.pipeline = try PbrLineMaterial.buildPipeline()
         
-        self.normals = try await TextureManager.shared.addTexture(device: device, path: "/rustediron2_normal_1024.png")
-        self.metallic = try await TextureManager.shared.addTexture(device: device, path: "/rustediron2_metallic_1024.png")
-        self.roughness = try await TextureManager.shared.addTexture(device: device, path: "/rustediron2_roughness_1024.png")
+        self.normals = try await TextureManager.shared.addTexture(path: "/rustediron2_normal_1024.png")
+        self.metallic = try await TextureManager.shared.addTexture(path: "/rustediron2_metallic_1024.png")
+        self.roughness = try await TextureManager.shared.addTexture(path: "/rustediron2_roughness_1024.png")
         
-        self.samplerState = PbrLineMaterial.buildSamplerState(device: device)
+        self.samplerState = PbrLineMaterial.buildSamplerState()
         
         super.init(name: "PBR Material")
     }
     
     required init(from decoder: Decoder) throws {
-        self.pipeline = try PbrLineMaterial.buildPipeline(device: Renderer.shared.device!, metalKitView: Renderer.shared.view!)
+        self.pipeline = try PbrLineMaterial.buildPipeline()
 
-        self.samplerState = PbrLineMaterial.buildSamplerState(device: Renderer.shared.device!)
+        self.samplerState = PbrLineMaterial.buildSamplerState()
         
         try super.init(from: decoder)
 
         let task = Task {
-            self.normals = try? await TextureManager.shared.addTexture(device: Renderer.shared.device!, path: "/rustediron2_normal_1024.png")
-            self.metallic = try? await TextureManager.shared.addTexture(device: Renderer.shared.device!, path: "/rustediron2_metallic_1024.png")
-            self.roughness = try? await TextureManager.shared.addTexture(device: Renderer.shared.device!, path: "/rustediron2_roughness_1024.png")
+            self.normals = try? await TextureManager.shared.addTexture(path: "/rustediron2_normal_1024.png")
+            self.metallic = try? await TextureManager.shared.addTexture(path: "/rustediron2_metallic_1024.png")
+            self.roughness = try? await TextureManager.shared.addTexture(path: "/rustediron2_roughness_1024.png")
         }
 
         decoder.addTask(task)
@@ -72,14 +72,11 @@ class PbrLineMaterial: Material {
         return vertexDescriptor
     }
     
-    private static func buildPipeline(
-        device: MTLDevice,
-        metalKitView: MTKView
-    ) throws -> MTLRenderPipelineState {
+    private static func buildPipeline() throws -> MTLRenderPipelineState {
         /// Build a render state pipeline object
         let vertexDescriptor = PbrLineMaterial.buildVertexDescriptor()
 
-        let library = device.makeDefaultLibrary()
+        let library = MetalView.shared.device!.makeDefaultLibrary()
         
         let vertexFunction = library?.makeFunction(name: "pbrLineVertexShader")
         let fragmentFunction = library?.makeFunction(name: "simpleFragmentShader")
@@ -90,19 +87,19 @@ class PbrLineMaterial: Material {
         
         let pipelineDescriptor = MTLRenderPipelineDescriptor()
         pipelineDescriptor.label = "PbrLinePipeline"
-        pipelineDescriptor.rasterSampleCount = metalKitView.sampleCount
+        pipelineDescriptor.rasterSampleCount = MetalView.shared.view!.sampleCount
         pipelineDescriptor.vertexFunction = vertexFunction
         pipelineDescriptor.fragmentFunction = fragmentFunction
         pipelineDescriptor.vertexDescriptor = vertexDescriptor
         
-        pipelineDescriptor.colorAttachments[0].pixelFormat = metalKitView.colorPixelFormat
-        pipelineDescriptor.depthAttachmentPixelFormat = metalKitView.depthStencilPixelFormat
+        pipelineDescriptor.colorAttachments[0].pixelFormat = MetalView.shared.view!.colorPixelFormat
+        pipelineDescriptor.depthAttachmentPixelFormat = MetalView.shared.view!.depthStencilPixelFormat
         //        pipelineDescriptor.stencilAttachmentPixelFormat = metalKitView.depthStencilPixelFormat
         
-        return try device.makeRenderPipelineState(descriptor: pipelineDescriptor)
+        return try MetalView.shared.device!.makeRenderPipelineState(descriptor: pipelineDescriptor)
     }
     
-    private static func buildSamplerState(device: MTLDevice) -> MTLSamplerState {
+    private static func buildSamplerState() -> MTLSamplerState {
         let samplerDescriptor = MTLSamplerDescriptor()
         samplerDescriptor.normalizedCoordinates = true
         samplerDescriptor.sAddressMode = .repeat
@@ -110,7 +107,7 @@ class PbrLineMaterial: Material {
         samplerDescriptor.minFilter = .linear
         samplerDescriptor.magFilter = .linear
         samplerDescriptor.mipFilter = .linear
-        return device.makeSamplerState(descriptor: samplerDescriptor)!
+        return MetalView.shared.device!.makeSamplerState(descriptor: samplerDescriptor)!
     }
 }
 

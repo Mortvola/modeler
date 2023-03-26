@@ -22,8 +22,8 @@ class PointPipeline {
     
     var materials: [UUID?:MaterialEntry] = [:]
 
-    init(device: MTLDevice, view: MTKView) throws {
-        self.pipeline = try PointPipeline.buildPipeline(device: device, metalKitView: view)
+    init() throws {
+        self.pipeline = try PointPipeline.buildPipeline()
     }
 
     func prepare(renderEncoder: MTLRenderCommandEncoder) {
@@ -58,15 +58,12 @@ class PointPipeline {
         return vertexDescriptor
     }
     
-    private static func buildPipeline(
-        device: MTLDevice,
-        metalKitView: MTKView
-    ) throws -> MTLRenderPipelineState {
+    private static func buildPipeline() throws -> MTLRenderPipelineState {
         /// Build a render state pipeline object
         
         let vertexDescriptor = PointPipeline.buildVertexDescriptor()
         
-        let library = device.makeDefaultLibrary()
+        let library = MetalView.shared.device!.makeDefaultLibrary()
         
         let vertexFunction = library?.makeFunction(name: "pointVertexShader")
         let fragmentFunction = library?.makeFunction(name: "pointFragmentShader")
@@ -77,15 +74,15 @@ class PointPipeline {
 
         let pipelineDescriptor = MTLRenderPipelineDescriptor()
         pipelineDescriptor.label = "PointPipeline"
-        pipelineDescriptor.rasterSampleCount = metalKitView.sampleCount
+        pipelineDescriptor.rasterSampleCount = MetalView.shared.view!.sampleCount
         pipelineDescriptor.vertexFunction = vertexFunction
         pipelineDescriptor.fragmentFunction = fragmentFunction
         pipelineDescriptor.vertexDescriptor = vertexDescriptor
         
-        pipelineDescriptor.colorAttachments[0].pixelFormat = metalKitView.colorPixelFormat
-        pipelineDescriptor.depthAttachmentPixelFormat = metalKitView.depthStencilPixelFormat
+        pipelineDescriptor.colorAttachments[0].pixelFormat = MetalView.shared.view!.colorPixelFormat
+        pipelineDescriptor.depthAttachmentPixelFormat = MetalView.shared.view!.depthStencilPixelFormat
         
-        return try device.makeRenderPipelineState(descriptor: pipelineDescriptor)
+        return try MetalView.shared.device!.makeRenderPipelineState(descriptor: pipelineDescriptor)
     }
 }
 

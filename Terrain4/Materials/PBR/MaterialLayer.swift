@@ -23,7 +23,7 @@ class MaterialLayer: ObservableObject, Codable {
     
     private func loadTexture() async {
         if !map.isEmpty {
-            texture = try? await TextureManager.shared.addTexture(device: Renderer.shared.device!, path: map)
+            texture = try? await TextureManager.shared.addTexture(path: map)
         }
     }
 

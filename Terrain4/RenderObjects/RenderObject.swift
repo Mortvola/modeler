@@ -82,7 +82,7 @@ class RenderObject: Object {
     }
     
     func allocateModelMatrixUniform() {
-        modelMatrixUniform = Renderer.shared.device!.makeBuffer(length: 3 * MemoryLayout<Matrix4x4>.stride, options: [MTLResourceOptions.storageModeShared])!
+        modelMatrixUniform = MetalView.shared.device!.makeBuffer(length: 3 * MemoryLayout<Matrix4x4>.stride, options: [MTLResourceOptions.storageModeShared])!
         modelMatrixUniform!.label = "Model Matrix Uniforms"
     }
     

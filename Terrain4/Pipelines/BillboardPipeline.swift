@@ -12,13 +12,13 @@ import Metal
 class BillboardPipeline: Pipeline {
     let pipeline: MTLRenderPipelineState
     
-    init(device: MTLDevice, view: MTKView) throws {
-        self.pipeline = try BillboardPipeline.buildPipeline(device: device, metalKitView: view)
+    override init() throws {
+        self.pipeline = try BillboardPipeline.buildPipeline()
     }
 
     func prepareObject(object: RenderObject) {
         object.uniformsSize = alignedNodeUniformsSize
-        object.uniforms = Renderer.shared.device!.makeBuffer(length: 3 * alignedNodeUniformsSize, options: [MTLResourceOptions.storageModeShared])!
+        object.uniforms = MetalView.shared.device!.makeBuffer(length: 3 * alignedNodeUniformsSize, options: [MTLResourceOptions.storageModeShared])!
         object.uniforms!.label = "Node Uniforms"
     }
     
@@ -75,15 +75,12 @@ class BillboardPipeline: Pipeline {
         return vertexDescriptor
     }
     
-    private static func buildPipeline(
-        device: MTLDevice,
-        metalKitView: MTKView
-    ) throws -> MTLRenderPipelineState {
+    private static func buildPipeline() throws -> MTLRenderPipelineState {
         /// Build a render state pipeline object
         
         let vertexDescriptor = BillboardPipeline.buildVertexDescriptor()
         
-        let library = device.makeDefaultLibrary()
+        let library = MetalView.shared.device!.makeDefaultLibrary()
         
         let vertexFunction = library?.makeFunction(name: "billboardVertexShader")
         let fragmentFunction = library?.makeFunction(name: "billboardFragmentShader")
@@ -94,12 +91,12 @@ class BillboardPipeline: Pipeline {
 
         let pipelineDescriptor = MTLRenderPipelineDescriptor()
         pipelineDescriptor.label = "BillboardPipeline"
-        pipelineDescriptor.rasterSampleCount = metalKitView.sampleCount
+        pipelineDescriptor.rasterSampleCount = MetalView.shared.view!.sampleCount
         pipelineDescriptor.vertexFunction = vertexFunction
         pipelineDescriptor.fragmentFunction = fragmentFunction
         pipelineDescriptor.vertexDescriptor = vertexDescriptor
         
-        pipelineDescriptor.colorAttachments[0].pixelFormat = metalKitView.colorPixelFormat
+        pipelineDescriptor.colorAttachments[0].pixelFormat = MetalView.shared.view!.colorPixelFormat
         pipelineDescriptor.colorAttachments[0].isBlendingEnabled = true
         
         pipelineDescriptor.colorAttachments[0].rgbBlendOperation = .add
@@ -109,8 +106,8 @@ class BillboardPipeline: Pipeline {
         pipelineDescriptor.colorAttachments[0].destinationRGBBlendFactor = .oneMinusSourceAlpha
         pipelineDescriptor.colorAttachments[0].destinationAlphaBlendFactor = .oneMinusSourceAlpha
         
-        pipelineDescriptor.depthAttachmentPixelFormat = metalKitView.depthStencilPixelFormat
+        pipelineDescriptor.depthAttachmentPixelFormat = MetalView.shared.view!.depthStencilPixelFormat
         
-        return try device.makeRenderPipelineState(descriptor: pipelineDescriptor)
+        return try MetalView.shared.device!.makeRenderPipelineState(descriptor: pipelineDescriptor)
     }
 }

@@ -11,8 +11,6 @@ import Metal
 import MetalKit
 
 class TerrainTile: Model {
-    let device: MTLDevice
-    let view: MTKView
     let x: Int
     let y: Int
     let dimension: Int
@@ -21,9 +19,7 @@ class TerrainTile: Model {
     var scale = Vec3(1.0, 1.0, 1.0)
     var elevation: [[Float]] = []
     
-    init(x: Int, y: Int, dimension: Int, device: MTLDevice, view: MTKView) {
-        self.device = device
-        self.view = view
+    init(x: Int, y: Int, dimension: Int) {
         self.x = x;
         self.y = y;
         self.dimension = dimension
@@ -32,8 +28,6 @@ class TerrainTile: Model {
     }
     
     public required init(from decoder: Decoder) throws {
-        self.device = Renderer.shared.device!
-        self.view = Renderer.shared.view!
         self.x = 0
         self.y = 0
         self.dimension = 0

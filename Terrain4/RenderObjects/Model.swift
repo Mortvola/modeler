@@ -77,11 +77,7 @@ class Model: Node, Identifiable, Hashable {
     
     @MainActor
     func addSphere(options: SphereOptions) async throws -> Mesh {
-        guard let device = Renderer.shared.device else {
-            throw Errors.deviceNotSet
-        }
-        
-        let mesh = try SphereAllocator.allocate(device: device, diameter: options.diameter, radialSegments: options.radialSegments, verticalSegments: options.verticalSegments, hemisphere: options.hemisphere)
+        let mesh = try SphereAllocator.allocate(diameter: options.diameter, radialSegments: options.radialSegments, verticalSegments: options.verticalSegments, hemisphere: options.hemisphere)
         
         let object = Mesh(mesh: mesh, model: self)
         
@@ -94,11 +90,7 @@ class Model: Node, Identifiable, Hashable {
     
     @MainActor
     func addPlane(options: PlaneOptions) async throws -> Mesh {
-        guard let device = Renderer.shared.device else {
-            throw Errors.deviceNotSet
-        }
-        
-        let mesh = try RetangleAllocator.allocate(device: device, dimensions: options.dimensions, segments: options.segments)
+        let mesh = try RetangleAllocator.allocate(dimensions: options.dimensions, segments: options.segments)
         
         let object = Mesh(mesh: mesh, model: self)
         
@@ -111,11 +103,7 @@ class Model: Node, Identifiable, Hashable {
     
     @MainActor
     func addBox(options: BoxOptions) async throws -> Mesh {
-        guard let device = Renderer.shared.device else {
-            throw Errors.deviceNotSet
-        }
-        
-        let mesh = try BoxAllocator.allocate(device: device, dimensions: options.dimensions, segments: options.segments)
+        let mesh = try BoxAllocator.allocate(dimensions: options.dimensions, segments: options.segments)
         
         let object = Mesh(mesh: mesh, model: self)
         
@@ -128,11 +116,7 @@ class Model: Node, Identifiable, Hashable {
     
     @MainActor
     func addCylinder(options: CylinderOptions) async throws -> Mesh {
-        guard let device = Renderer.shared.device else {
-            throw Errors.deviceNotSet
-        }
-        
-        let mesh = try CylinderAllocator.allocate(device: device, options: options)
+        let mesh = try CylinderAllocator.allocate(options: options)
         
         let object = Mesh(mesh: mesh, model: self)
         
@@ -145,11 +129,7 @@ class Model: Node, Identifiable, Hashable {
 
     @MainActor
     func addCone(options: ConeOptions) async throws -> Mesh {
-        guard let device = Renderer.shared.device else {
-            throw Errors.deviceNotSet
-        }
-        
-        let mesh = try ConeAllocator.allocate(device: device, options: options)
+        let mesh = try ConeAllocator.allocate(options: options)
         
         let object = Mesh(mesh: mesh, model: self)
 
