@@ -8,9 +8,9 @@
 import SwiftUI
 
 struct MetallicView: View {
-    @ObservedObject var material: PbrMaterial
+    @ObservedObject var metallic: MetallicLayer
     @State private var useSimple = true
-    @State private var metallic = Float(1.0)
+    @State private var value = Float(1.0)
 
     var body: some View {
         VStack(spacing: 4) {
@@ -19,34 +19,27 @@ struct MetallicView: View {
                 Spacer()
             }
             VStack {
-                HStack {
-                    Text("Map:")
-                    Text(material.metallic.map)
-                    Spacer()
-                    OpenFileButton(image: "photo") { url in
-                        material.metallic.map = url
-                    }
-                }
+                TextureMapView(layer: metallic)
                 HStack {
                     UndoProvider($useSimple) { $value in
                         CheckBox(checked: $value, label: "Simple")
                     }
                     Spacer()
                 }
-                UndoProvider($metallic) { $value in
+                UndoProvider($value) { $value in
                     NumericField(value: $value)
                 }
             }
             .padding(.leading, 8)
         }
         .onChange(of: useSimple) { newUseSimple in
-            material.metallic.useSimple = newUseSimple
+            metallic.useSimple = newUseSimple
         }
         .onAppear {
-            useSimple = material.metallic.useSimple
+            useSimple = metallic.useSimple
         }
-        .onChange(of: metallic) { newMetallic in
-            material.setSimpleMetallic(newMetallic)
+        .onChange(of: value) { newValue in
+            metallic.value = newValue
         }
     }
 }

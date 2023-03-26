@@ -29,7 +29,7 @@ class TextureManager {
         var data: Data? = nil
         
         if !path.hasPrefix("http:") {
-            let url = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent(path)
+            let url = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("textures/\(path)")
             
             data = try Data(contentsOf: url)
         }

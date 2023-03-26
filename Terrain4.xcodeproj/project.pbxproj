@@ -113,6 +113,8 @@
 		799B4BBF29C652D200B6826A /* DirectionalLight.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799B4BBE29C652D200B6826A /* DirectionalLight.swift */; };
 		799B4BC129C6853900B6826A /* ShadowShaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = 799B4BC029C6853900B6826A /* ShadowShaders.metal */; };
 		799B4BC329C72D3100B6826A /* DepthShadowPipeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799B4BC229C72D3100B6826A /* DepthShadowPipeline.swift */; };
+		79AACDF229CFF3A1000E8936 /* TextureList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79AACDF129CFF3A1000E8936 /* TextureList.swift */; };
+		79AACDF629D074F6000E8936 /* TextureMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79AACDF529D074F6000E8936 /* TextureMapView.swift */; };
 		79DF5C5729C52D5F0005CF41 /* SceneDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79DF5C5629C52D5F0005CF41 /* SceneDocument.swift */; };
 		79F6D2C129BA58F5007CA69A /* Animator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F6D2C029BA58F5007CA69A /* Animator.swift */; };
 		79F6D2C629BA5C80007CA69A /* AnimatorsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F6D2C529BA5C80007CA69A /* AnimatorsView.swift */; };
@@ -299,6 +301,8 @@
 		799B4BBE29C652D200B6826A /* DirectionalLight.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DirectionalLight.swift; sourceTree = "<group>"; };
 		799B4BC029C6853900B6826A /* ShadowShaders.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = ShadowShaders.metal; sourceTree = "<group>"; };
 		799B4BC229C72D3100B6826A /* DepthShadowPipeline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DepthShadowPipeline.swift; sourceTree = "<group>"; };
+		79AACDF129CFF3A1000E8936 /* TextureList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextureList.swift; sourceTree = "<group>"; };
+		79AACDF529D074F6000E8936 /* TextureMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextureMapView.swift; sourceTree = "<group>"; };
 		79DF5C5629C52D5F0005CF41 /* SceneDocument.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDocument.swift; sourceTree = "<group>"; };
 		79F6D2C029BA58F5007CA69A /* Animator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Animator.swift; sourceTree = "<group>"; };
 		79F6D2C529BA5C80007CA69A /* AnimatorsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimatorsView.swift; sourceTree = "<group>"; };
@@ -639,7 +643,9 @@
 				798D3BEE29C3621900B96C5F /* RoughnessView.swift */,
 				798D3BEA29C3613700B96C5F /* NormalsView.swift */,
 				798D3BE829C35EE600B96C5F /* AlbedoView.swift */,
+				79AACDF529D074F6000E8936 /* TextureMapView.swift */,
 				79F6D30529C1E25E007CA69A /* OpenFileButton.swift */,
+				79AACDF129CFF3A1000E8936 /* TextureList.swift */,
 			);
 			path = Materials;
 			sourceTree = "<group>";
@@ -855,6 +861,7 @@
 				791E794329B9441800FB45F3 /* Utilities.swift in Sources */,
 				7902F01529CF7160004C3775 /* BillboardAllocator.swift in Sources */,
 				79F6D30929C1EDBE007CA69A /* ObjectMaterialView.swift in Sources */,
+				79AACDF629D074F6000E8936 /* TextureMapView.swift in Sources */,
 				791E793F29B9436800FB45F3 /* TerrainTile.swift in Sources */,
 				79F6D2CC29BA7EFA007CA69A /* LIght.swift in Sources */,
 				7921DF6F29C7E5EF0013E317 /* UndoProvider.swift in Sources */,
@@ -884,6 +891,7 @@
 				791E793C29B9433F00FB45F3 /* Skybox.swift in Sources */,
 				798D3BFD29C3CBF400B96C5F /* File.swift in Sources */,
 				7921DFA229CCC0E20013E317 /* PointMaterial.swift in Sources */,
+				79AACDF229CFF3A1000E8936 /* TextureList.swift in Sources */,
 				79F6D2D129BAA8DB007CA69A /* SphereAllocator.swift in Sources */,
 				798D3BF729C3C24400B96C5F /* NormalsLayer.swift in Sources */,
 				791E790529B93BB600FB45F3 /* ObjectStore.swift in Sources */,

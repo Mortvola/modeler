@@ -8,13 +8,25 @@
 import Foundation
 import Metal
 
-class MaterialLayer: Codable {
-    var map = ""
+class MaterialLayer: ObservableObject, Codable {
+    @Published var map = ""
     var texture: MTLTexture? = nil
     var useSimple = false
     
     init() {}
     
+    @MainActor
+    func setTexture(file: String?) async {
+        map = file ?? ""
+        await loadTexture()
+    }
+    
+    private func loadTexture() async {
+        if !map.isEmpty {
+            texture = try? await TextureManager.shared.addTexture(device: Renderer.shared.device!, path: map)
+        }
+    }
+
     enum CodingKeys: CodingKey {
         case map
         case useSimple
@@ -25,6 +37,12 @@ class MaterialLayer: Codable {
         
         map = try container.decode(String.self, forKey: .map)
         useSimple = try container.decode(Bool.self, forKey: .useSimple)
+        
+        let t = Task {
+            await self.loadTexture()
+        }
+        
+        decoder.addTask(t)
     }
     
     func encode(to encoder: Encoder) throws {

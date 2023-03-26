@@ -8,9 +8,9 @@
 import SwiftUI
 
 struct RoughnessView: View {
-    @ObservedObject var material: PbrMaterial
+    @ObservedObject var roughness: RoughnessLayer
     @State private var useSimple = true
-    @State private var roughness = Float(1.0)
+    @State private var value = Float(1.0)
 
     var body: some View {
         VStack(spacing: 4) {
@@ -19,34 +19,27 @@ struct RoughnessView: View {
                 Spacer()
             }
             VStack {
-                HStack {
-                    Text("Map:")
-                    Text(material.roughness.map)
-                    Spacer()
-                    OpenFileButton(image: "photo") { url in
-                        material.roughness.map = url
-                    }
-                }
+                TextureMapView(layer: roughness)
                 HStack {
                     UndoProvider($useSimple) { $value in
                         CheckBox(checked: $value, label: "Simple")
                     }
                     Spacer()
                 }
-                UndoProvider($roughness) { $value in
+                UndoProvider($value) { $value in
                     NumericField(value: $value)
                 }
             }
             .padding(.leading, 8)
         }
         .onChange(of: useSimple) { newUseSimple in
-            material.roughness.useSimple = newUseSimple
+            roughness.useSimple = newUseSimple
         }
         .onAppear {
-            useSimple = material.roughness.useSimple
+            useSimple = roughness.useSimple
         }
-        .onChange(of: roughness) { newRoughness in
-            material.setSimpleRoughness(newRoughness)
+        .onChange(of: value) { newValue in
+            roughness.value = newValue
         }
     }
 }

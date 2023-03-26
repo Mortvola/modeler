@@ -14,13 +14,13 @@ struct MaterialDetailView: View {
         switch material {
         case .pbrMaterial(let m):
             VStack(spacing: 32) {
-                AlbedoView(material: m)
+                AlbedoView(albedo: m.albedo)
                 
-                NormalsView(material: m)
+                NormalsView(normals: m.normals)
                 
-                MetallicView(material: m)
+                MetallicView(metallic: m.metallic)
                 
-                RoughnessView(material: m)
+                RoughnessView(roughness: m.roughness)
             }
         default:
             EmptyView()

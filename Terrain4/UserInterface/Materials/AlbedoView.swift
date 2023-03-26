@@ -8,9 +8,10 @@
 import SwiftUI
 
 struct AlbedoView: View {
-    @ObservedObject var material: PbrMaterial
+    @ObservedObject var albedo: AlbedoLayer
     @State private var useSimple = true
     @State private var color = Color(.white)
+    @State private var url: URL? = nil
     
     var body: some View {
         VStack(spacing: 4) {
@@ -19,14 +20,7 @@ struct AlbedoView: View {
                 Spacer()
             }
             VStack {
-                HStack {
-                    Text("Map:")
-                    Text(material.albedo.map)
-                    Spacer()
-                    OpenFileButton(image: "photo") { url in
-                        material.albedo.map = url
-                    }
-                }
+                TextureMapView(layer: albedo)
                 HStack {
                     UndoProvider($useSimple) { $value in
                         CheckBox(checked: $value, label: "Simple")
@@ -40,16 +34,16 @@ struct AlbedoView: View {
             .padding(.leading, 8)
         }
         .onChange(of: useSimple) { newUseSimple in
-            material.albedo.useSimple = newUseSimple
+            albedo.useSimple = newUseSimple
         }
         .onAppear {
-            useSimple = material.albedo.useSimple
+            useSimple = albedo.useSimple
         }
         .onChange(of: color) { newColor in
-            material.setSimpleAlbedo(color.getColor())
+            albedo.color = color.getColor()
         }
         .onAppear {
-            color = Color(red: Double(material.albedo.color[0]), green: Double(material.albedo.color[1]), blue: Double(material.albedo.color[2]))
+            color = Color(red: Double(albedo.color[0]), green: Double(albedo.color[1]), blue: Double(albedo.color[2]))
         }
     }
 }

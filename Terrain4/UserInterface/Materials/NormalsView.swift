@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct NormalsView: View {
-    @ObservedObject var material: PbrMaterial
+    @ObservedObject var normals: NormalsLayer
     @State private var useSimple = true
 
     var body: some View {
@@ -18,14 +18,7 @@ struct NormalsView: View {
                 Spacer()
             }
             VStack {
-                HStack {
-                    Text("Map:")
-                    Text(material.normals.map)
-                    Spacer()
-                    OpenFileButton(image: "photo") { url in
-                        material.normals.map = url
-                    }
-                }
+                TextureMapView(layer: normals)
                 HStack {
                     UndoProvider($useSimple) { $value in
                         CheckBox(checked: $value, label: "Simple")
@@ -36,10 +29,10 @@ struct NormalsView: View {
             .padding(.leading, 8)
         }
         .onChange(of: useSimple) { newUseSimple in
-            material.normals.useSimple = newUseSimple
+            normals.useSimple = newUseSimple
         }
         .onAppear {
-            useSimple = material.normals.useSimple
+            useSimple = normals.useSimple
         }
     }
 }
