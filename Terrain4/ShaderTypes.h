@@ -27,7 +27,8 @@ typedef NS_ENUM(EnumBackingType, BufferIndex) {
     BufferIndexUniforms = 2,
     BufferIndexModelMatrix = 3,
     BufferIndexNodeUniforms = 4,
-    BufferIndexCascadeIndex = 5
+    BufferIndexMaterialUniforms = 5,
+    BufferIndexCascadeIndex = 7
 };
 
 typedef NS_ENUM(EnumBackingType, VertexAttribute) {
@@ -75,13 +76,16 @@ typedef struct {
 typedef struct {
     vector_float4 color;
     matrix_float3x3 normalMatrix;
+    int numberOfLights;
+    Lights lights[4];
+} NodeUniforms;
+
+typedef struct {
     vector_float3 albedo;
     vector_float3 normals;
     float metallic;
     float roughness;
-    int numberOfLights;
-    Lights lights[4];
-} NodeUniforms;
+} PbrMaterialUniforms;
 
 typedef struct {
     vector_float4 color;
@@ -93,6 +97,11 @@ typedef struct {
     vector_float4 color;
     vector_float2 scale;
 } BillboardUniforms;
+
+typedef struct {
+    uint8_t argOffset[8];
+    float arg[8];
+} GraphUniforms;
 
 #endif /* ShaderTypes_h */
 

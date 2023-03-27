@@ -15,8 +15,10 @@ class RenderDelegate: NSObject, MTKViewDelegate {
     
     init(file: SceneDocument, metalKitView: MTKView) throws {
         do {
-            MetalView.shared.view = metalKitView
-            MetalView.shared.device = metalKitView.device
+//            MetalView.shared.view = metalKitView
+//            MetalView.shared.device = metalKitView.device
+            
+            Renderer.shared = Renderer()
             
             try Renderer.shared.initialize(file: file, metalKitView: metalKitView)
             Task {

@@ -24,7 +24,7 @@ class LineMaterial: Material {
         try super.init(from: decoder)
     }
     
-    override func prepare(renderEncoder: MTLRenderCommandEncoder) {
+    override func prepare(renderEncoder: MTLRenderCommandEncoder, frame: Int) {
         renderEncoder.setRenderPipelineState(self.getPipeline())
     }
 

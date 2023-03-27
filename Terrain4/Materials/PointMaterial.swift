@@ -13,7 +13,7 @@ class PointMaterial: Material {
 //        super.init(name: "Point Material")
 //    }
 
-    override func prepare(renderEncoder: MTLRenderCommandEncoder) {
+    override func prepare(renderEncoder: MTLRenderCommandEncoder, frame: Int) {
         if let texture = Renderer.shared.textureStore?.texture {
             renderEncoder.setFragmentTexture(texture, index: TextureIndex.color.rawValue)
         }

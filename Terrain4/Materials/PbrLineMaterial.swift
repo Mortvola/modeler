@@ -46,7 +46,7 @@ class PbrLineMaterial: Material {
         decoder.addTask(task)
     }
     
-    override func prepare(renderEncoder: MTLRenderCommandEncoder) {
+    override func prepare(renderEncoder: MTLRenderCommandEncoder, frame: Int) {
         renderEncoder.setRenderPipelineState(self.getPipeline())
         
         renderEncoder.setFragmentTexture(self.normals, index: TextureIndex.normals.rawValue)

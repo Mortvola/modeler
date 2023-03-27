@@ -51,13 +51,8 @@ class PbrPipeline: Pipeline {
             }
         }
 
-        u[0].albedo = pbrProperties?.albedo ?? Vec3(1.0, 1.0, 1.0)
-        u[0].normals = pbrProperties?.normal ?? Vec3(0.5, 0.5, 1.0)
-        u[0].metallic = pbrProperties?.metallic ?? 1.0
-        u[0].roughness = pbrProperties?.roughness ?? 1.0
-
-        renderEncoder.setVertexBuffer(object.uniforms, offset: 0, index: BufferIndex.nodeUniforms.rawValue)
-        renderEncoder.setFragmentBuffer(object.uniforms, offset: 0, index: BufferIndex.nodeUniforms.rawValue)
+        renderEncoder.setVertexBuffer(object.uniforms, offset: frame * object.uniformsSize, index: BufferIndex.nodeUniforms.rawValue)
+        renderEncoder.setFragmentBuffer(object.uniforms, offset: frame * object.uniformsSize, index: BufferIndex.nodeUniforms.rawValue)
 
         try object.simpleDraw(renderEncoder: renderEncoder, modelMatrix: modelMatrix, frame: frame)
     }
@@ -70,7 +65,7 @@ class PbrPipeline: Pipeline {
             if material.material.objects.count > 0 {
                 switch material {
                 case .pbrMaterial(let material):
-                    material.prepare(renderEncoder: renderEncoder)
+                    material.prepare(renderEncoder: renderEncoder, frame: frame)
                     let pbrProperties = material.getPbrProperties()
                     
                     for renderObject in material.objects {

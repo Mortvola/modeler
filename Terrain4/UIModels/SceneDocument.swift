@@ -83,7 +83,7 @@ class SceneDocument: ReferenceFileDocument {
             }
             
 //            for material in file.materials {
-//                Renderer.shared.materialManager.materials[material.material.id] = material
+//                Renderer.shared.materialManager!.materials[material.material.id] = material
 //            }
             
             var newLights: [Light] = []

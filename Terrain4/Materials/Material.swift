@@ -12,7 +12,7 @@ class Material: Item {
     var id = UUID()
     var objects: [RenderObject] = []
 
-    func prepare(renderEncoder: MTLRenderCommandEncoder) throws {
+    func prepare(renderEncoder: MTLRenderCommandEncoder, frame: Int) throws {
         throw Errors.notImplemented
     }
     

@@ -126,15 +126,16 @@ fragment float4 pbrFragmentShader
     VertexOut in [[stage_in]],
     const device FrameUniforms& uniforms [[ buffer(BufferIndexUniforms) ]],
     const device NodeUniforms& nodeUniforms [[ buffer(BufferIndexNodeUniforms) ]],
+    const device PbrMaterialUniforms& materialUniforms [[ buffer(BufferIndexMaterialUniforms) ]],
     array<texture2d<float>, 4> textures [[texture(TextureIndexColor)]],
     texture2d<float> aoMap [[texture(TextureIndexAo)]],
     sampler sampler [[sampler(SamplerIndexSampler)]],
     depth2d_array<float> shadowMap [[texture(TextureIndexDepth)]]
 ) {
-    float3 albedo = !is_null_texture(textures[0]) ? pow(textures[0].sample(sampler, in.texCoords).rgb, float3(2.2)) : pow(nodeUniforms.albedo, float3(2.2));
-    float3 normal = !is_null_texture(textures[1]) ? textures[1].sample(sampler, in.texCoords).rgb : nodeUniforms.normals;
-    float metallic = !is_null_texture(textures[2]) ? textures[2].sample(sampler, in.texCoords).r : nodeUniforms.metallic;
-    float roughness = !is_null_texture(textures[3]) ? textures[3].sample(sampler, in.texCoords).r : nodeUniforms.roughness;
+    float3 albedo = !is_null_texture(textures[0]) ? pow(textures[0].sample(sampler, in.texCoords).rgb, float3(2.2)) : pow(materialUniforms.albedo, float3(2.2));
+    float3 normal = !is_null_texture(textures[1]) ? textures[1].sample(sampler, in.texCoords).rgb : materialUniforms.normals;
+    float metallic = !is_null_texture(textures[2]) ? textures[2].sample(sampler, in.texCoords).r : materialUniforms.metallic;
+    float roughness = !is_null_texture(textures[3]) ? textures[3].sample(sampler, in.texCoords).r : materialUniforms.roughness;
     float ao = 1.0; // aoMap.sample(sampler, fragmentIn.texCoords).r;
     
     float3 N = normalize(normal * 2 - 1);

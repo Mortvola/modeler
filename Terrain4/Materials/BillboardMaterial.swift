@@ -17,7 +17,7 @@ class BillboardMaterial: Material {
         try super.init(from: decoder)
     }
     
-    override func prepare(renderEncoder: MTLRenderCommandEncoder) {
+    override func prepare(renderEncoder: MTLRenderCommandEncoder, frame: Int) {
         if let texture = Renderer.shared.textureStore?.texture {
             renderEncoder.setFragmentTexture(texture, index: TextureIndex.color.rawValue)
         }

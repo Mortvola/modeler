@@ -20,10 +20,11 @@ struct GenericMaterialView: View {
                     case .color:
                         EmptyView()
                     case .texture(let l):
-                        TextureLayerView(layer: l)
-                    case .monoColor:
-                        EmptyView()
+                        TextureNodeView(node: l)
+                    case .add(let n):
+                        AddNodeView(node: n)
                     }
+                    Spacer()
                     Button {
                         material.deleteLayer(id: layer.id)
                         undoManager?.registerUndo(withTarget: file) { _ in
@@ -37,14 +38,19 @@ struct GenericMaterialView: View {
             VStack {
                 Menu("Add Layer") {
                     Button {
-                        material.layers.append(LayerWrapper.texture(Texture()))
+                        material.layers.append(GraphNodeWrapper.texture(GraphNodeTexture()))
                     } label: {
                         Text("Texture")
                     }
                     Button {
-                        material.layers.append(LayerWrapper.color(Vec4(1, 1, 1, 1)))
+                        material.layers.append(GraphNodeWrapper.color(GraphNodeColor()))
                     } label: {
                         Text("Color")
+                    }
+                    Button {
+                        material.layers.append(GraphNodeWrapper.add(GraphNodeAdd()))
+                    } label: {
+                        Text("Add")
                     }
                 }
                 Spacer()

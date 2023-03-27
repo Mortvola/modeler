@@ -7,18 +7,18 @@
 
 import SwiftUI
 
-struct TextureLayerView: View {
-    @ObservedObject var layer: Texture
+struct TextureNodeView: View {
+    @ObservedObject var node: GraphNodeTexture
     @State var texture: String = ""
     
     var body: some View {
         TexturePicker(map: $texture)
             .onAppear {
-                texture = layer.filename
+                texture =  node.filename
             }
             .onChange(of: texture) { newTexture in
                 Task {
-                    await layer.setTexture(file: newTexture)
+                    await  node.setTexture(file: newTexture)
                 }
             }
     }

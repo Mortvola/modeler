@@ -21,7 +21,7 @@ enum RendererError: Error {
 }
 
 class Renderer {
-    static var shared = Renderer()
+    static var shared: Renderer = Renderer()
     let test = true
     
 //    public var device: MTLDevice?
@@ -71,6 +71,10 @@ class Renderer {
     public var textureStore: TextureStore? = nil
     
     init() {
+        let defaultDevice = MTLCreateSystemDefaultDevice()
+
+        MetalView.shared.device = defaultDevice
+        
         self.camera = Camera(world: world)
         
         self.materialManager = MaterialManager()

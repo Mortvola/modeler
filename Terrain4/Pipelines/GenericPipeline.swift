@@ -44,7 +44,7 @@ class GenericPipeline: Pipeline {
             if wrapper.material.objects.count > 0 {
                 switch wrapper {
                 case .simpleMaterial(let material):
-                    material.prepare(renderEncoder: renderEncoder)
+                    material.prepare(renderEncoder: renderEncoder, frame: frame)
                     
                     for object in material.objects {
                         if !object.disabled && !(object.model?.disabled ?? true) {
@@ -82,18 +82,21 @@ class GenericPipeline: Pipeline {
         
         let library = MetalView.shared.device!.makeDefaultLibrary()
         
-        let vertexFunction = library?.makeFunction(name: "billboardVertexShader")
-        let fragmentFunction = library?.makeFunction(name: "billboardFragmentShader")
+        let vertexFunction = library?.makeFunction(name: "graphVertexShader")
+        let fragmentFunction = library?.makeFunction(name: "graphFragmentShader")
         
         if vertexFunction == nil || fragmentFunction == nil {
              throw Errors.makeFunctionError
         }
 
+        let linkedFunctions = try buildStitchedFunction()!
+        
         let pipelineDescriptor = MTLRenderPipelineDescriptor()
         pipelineDescriptor.label = "BillboardPipeline"
         pipelineDescriptor.rasterSampleCount = MetalView.shared.view!.sampleCount
         pipelineDescriptor.vertexFunction = vertexFunction
         pipelineDescriptor.fragmentFunction = fragmentFunction
+        pipelineDescriptor.fragmentLinkedFunctions = linkedFunctions
         pipelineDescriptor.vertexDescriptor = vertexDescriptor
         
         pipelineDescriptor.colorAttachments[0].pixelFormat = MetalView.shared.view!.colorPixelFormat
@@ -109,5 +112,58 @@ class GenericPipeline: Pipeline {
         pipelineDescriptor.depthAttachmentPixelFormat = MetalView.shared.view!.depthStencilPixelFormat
         
         return try MetalView.shared.device!.makeRenderPipelineState(descriptor: pipelineDescriptor)
+    }
+    
+    private static func buildStitchedFunction() throws -> MTLLinkedFunctions? {
+        guard let library = MetalView.shared.device!.makeDefaultLibrary() else {
+            return nil
+        }
+
+        let functions = [
+            library.makeFunction(name: "readTextureRed")!,
+            library.makeFunction(name: "subtract")!,
+            library.makeFunction(name: "maxValue")!,
+            library.makeFunction(name: "assignAlpha")!
+        ]
+
+        let texture = MTLFunctionStitchingInputNode(argumentIndex: 0)
+        let sampler = MTLFunctionStitchingInputNode(argumentIndex: 1)
+        let texcoord = MTLFunctionStitchingInputNode(argumentIndex: 2)
+        let color = MTLFunctionStitchingInputNode(argumentIndex: 3)
+        let subValue = MTLFunctionStitchingInputNode(argumentIndex: 4)
+        let minValue = MTLFunctionStitchingInputNode(argumentIndex: 5)
+        
+        let dummy = MTLFunctionStitchingInputNode(argumentIndex: 6)
+
+        let readTextureRedNode = MTLFunctionStitchingFunctionNode(name: "readTextureRed", arguments: [texture, sampler, texcoord], controlDependencies: [])
+        let subtractNode = MTLFunctionStitchingFunctionNode(name: "subtract", arguments: [readTextureRedNode, subValue], controlDependencies: [])
+        let maxValueNode = MTLFunctionStitchingFunctionNode(name: "maxValue", arguments: [subtractNode, minValue], controlDependencies: [])
+        let assignAlphaNode = MTLFunctionStitchingFunctionNode(name: "assignAlpha", arguments: [dummy, maxValueNode, color], controlDependencies: [])
+        
+        let nodes: [MTLFunctionStitchingFunctionNode] = [
+            readTextureRedNode,
+            subtractNode,
+            maxValueNode
+        ]
+        
+        let graph = MTLFunctionStitchingGraph(functionName: "processTexel", nodes: nodes, outputNode: assignAlphaNode, attributes: [MTLFunctionStitchingAttributeAlwaysInline()])
+
+        let descriptor = MTLStitchedLibraryDescriptor()
+        
+        descriptor.functions = functions
+        descriptor.functionGraphs = [graph]
+        
+        let stitchedLib = try MetalView.shared.device!.makeLibrary(stitchedDescriptor: descriptor)
+    
+        let funcDesc = MTLFunctionDescriptor()
+        funcDesc.name = "processTexel"
+
+        let function = try stitchedLib.makeFunction(descriptor: funcDesc)
+        
+        let linkedFunctions = MTLLinkedFunctions()
+        
+        linkedFunctions.privateFunctions = [function]
+        
+        return linkedFunctions
     }
 }
