@@ -44,14 +44,14 @@ class PbrPipeline: Pipeline {
             u[0].normalMatrix = normalMatrix
             
             // Pass the light information
-            u[0].numberOfLights = Int32(Renderer.shared.objectStore!.lights.count)
+            u[0].numberOfLights = Int32(Renderer.shared.objectStore!.currentScene!.lights.count)
             
             withUnsafeMutableBytes(of: &u[0].lights) { rawPtr in
                 let light = rawPtr.baseAddress!.assumingMemoryBound(to: Lights.self)
                 
-                for i in 0..<Renderer.shared.objectStore!.lights.count {
-                    light[i].position = Renderer.shared.objectStore!.lights[i].position
-                    light[i].intensity = Renderer.shared.objectStore!.lights[i].intensity
+                for i in 0..<Renderer.shared.objectStore!.currentScene!.lights.count {
+                    light[i].position = Renderer.shared.objectStore!.currentScene!.lights[i].position
+                    light[i].intensity = Renderer.shared.objectStore!.currentScene!.lights[i].intensity
                     
                     print("i: \(light[i])")
                 }

@@ -111,8 +111,6 @@ class Renderer {
         
         self.shadowDepthState = state
         
-//        objectStore.directionalLight.createShadowTexture(device: device!)
-        
         self.lineMaterial = try LineMaterial()
         
         try self.pipelineManager.initialize()
@@ -261,7 +259,7 @@ class Renderer {
             case .mesh(let o):
                 o.lights = []
                 
-                objectStore!.lights.forEach { light in
+                objectStore!.currentScene!.lights.forEach { light in
                     if !light.disabled && !(light.model?.disabled ?? true) {
                         o.lights.append(light)
                     }
@@ -276,7 +274,7 @@ class Renderer {
                 let newLight = Light(model: nil)
                 newLight.position = model.modelMatrix.multiply(light.position.vec4()).vec3()
                 newLight.intensity = light.intensity
-                objectStore!.lights.append(newLight)
+                objectStore!.currentScene!.lights.append(newLight)
                 break
             case .directionalLight:
                 break
@@ -330,7 +328,7 @@ class Renderer {
             }
 
             clearInstanceData()
-            objectStore!.lights = []
+            objectStore!.currentScene!.lights = []
             
             // Update the model matrix for each model
             switch currentViewMode {
@@ -376,7 +374,7 @@ class Renderer {
     }
     
     func renderShadowPass(commandBuffer: MTLCommandBuffer) throws {
-        if let renderPassDescriptor = objectStore!.directionalLight.renderPassDescriptor {
+        if let renderPassDescriptor = objectStore!.currentScene!.directionalLight?.renderPassDescriptor {
             
             for cascade in 0..<shadowMapCascades {
                 renderPassDescriptor.depthAttachment.slice = cascade
@@ -404,7 +402,7 @@ class Renderer {
                 var cascadeIndex = Int32(cascade)
                 renderEncoder.setVertexBytes(&cascadeIndex, length: MemoryLayout<Int>.size, index: BufferIndex.cascadeIndex.rawValue)
                 
-                if objectStore!.directionalLight.shadowCaster {
+                if objectStore!.currentScene?.directionalLight?.shadowCaster ?? false {
                     pipelineManager.depthShadowPipeline.prepare(renderEncoder: renderEncoder)
                     
                     switch currentViewMode {
@@ -455,8 +453,8 @@ class Renderer {
             
             renderEncoder.setFragmentBuffer(self.dynamicUniformBuffer, offset: self.uniformBufferOffset, index: BufferIndex.uniforms.rawValue)
             
-            if objectStore!.directionalLight.shadowTexture != nil {
-                renderEncoder.setFragmentTexture(objectStore!.directionalLight.shadowTexture!, index: TextureIndex.depth.rawValue)
+            if let shadowTexture = objectStore!.currentScene?.directionalLight?.shadowTexture {
+                renderEncoder.setFragmentTexture(shadowTexture, index: TextureIndex.depth.rawValue)
             }
             
             try pipelineManager.render(renderEncoder: renderEncoder, frame: self.uniformBufferIndex)
@@ -486,6 +484,12 @@ class Renderer {
     func setSelectedModel(model: Model?) {
         if (model !== selectedModel) {
             selectedModel = model
+            
+            objectStore?.modelingScene.models = []
+            if let model = model {
+                objectStore?.modelingScene.models =
+                [SceneModel(model: model)]
+            }
             
             switch currentViewMode {
             case .scene:
@@ -528,22 +532,8 @@ class Renderer {
                         }
                     }
                 }
-//                if let objectStore = objectStore {
-//                    switch objectStore.models[0].content {
-//                    case .model(let m):
-//                        for object in m.objects {
-//                            switch object.content {
-//                            case .mesh (let m):
-//                                m.material?.material.addObject(object: m)
-//                            default:
-//                                break
-//                            }
-//                        }
-//                        break
-//                    default:
-//                        break;
-//                    }
-//                }
+                
+                objectStore?.currentScene = objectStore?.scene
             }
             break
             
@@ -563,6 +553,8 @@ class Renderer {
                     }
                 }
                 
+                objectStore?.currentScene = objectStore?.modelingScene
+
             case .model:
                 break
             }
@@ -590,7 +582,7 @@ class Renderer {
                 semaphore.signal()
             }
             
-            if self.objectStore?.loaded ?? false && self.initialized {
+            if self.objectStore?.loaded ?? false && self.initialized && objectStore?.currentScene != nil {
                 
                 self.updateDynamicBufferState()
                 
@@ -599,16 +591,18 @@ class Renderer {
                 uniforms[0].projectionMatrix = self.camera.projectionMatrix
                 uniforms[0].viewMatrix = self.camera.getViewMatrix()
                 uniforms[0].cameraPos = self.camera.cameraOffset
-                uniforms[0].directionalLight.lightVector = objectStore!.directionalLight.direction
+                uniforms[0].directionalLight.lightVector = objectStore!.currentScene?.directionalLight?.direction ?? Vec3(0, 0, 0)
                 uniforms[0].directionalLight.lightColor = objectStore!.directionalLight.disabled ? Vec3(0, 0, 0) : objectStore!.directionalLight.intensity
                 
-                let fustrumSegments: [Float] = [1, 70, 170, 400, 1600]
-                withUnsafeMutableBytes(of: &uniforms[0].directionalLight.viewProjectionMatrix) { rawPtr in
-                    let matrix = rawPtr.baseAddress!.assumingMemoryBound(to: Matrix4x4.self)
-                    
-                    for i in 0..<shadowMapCascades {
-                        let cameraFustrum = camera.getFustrumCorners(nearZ: fustrumSegments[i], farZ: fustrumSegments[i + 1])
-                        matrix[i] = objectStore!.directionalLight.calculateProjectionViewMatrix(cameraFustrum: cameraFustrum)
+                if let directionalLight = objectStore!.currentScene?.directionalLight {
+                    let fustrumSegments: [Float] = [1, 70, 170, 400, 1600]
+                    withUnsafeMutableBytes(of: &uniforms[0].directionalLight.viewProjectionMatrix) { rawPtr in
+                        let matrix = rawPtr.baseAddress!.assumingMemoryBound(to: Matrix4x4.self)
+                        
+                        for i in 0..<shadowMapCascades {
+                            let cameraFustrum = camera.getFustrumCorners(nearZ: fustrumSegments[i], farZ: fustrumSegments[i + 1])
+                            matrix[i] = directionalLight.calculateProjectionViewMatrix(cameraFustrum: cameraFustrum)
+                        }
                     }
                 }
                 

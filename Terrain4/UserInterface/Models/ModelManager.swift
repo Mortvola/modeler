@@ -72,7 +72,7 @@ struct ModelManager: View {
                                 let light = model.addLight()
                                 
                                 selectedItem = TreeNode(light: light)
-                                objectStore.lights.append(light)
+                                objectStore.scene.lights.append(light)
                             }
                         } label: {
                             Text("Add Light")

@@ -11,14 +11,21 @@ class ObjectStore: ObservableObject {
     var loaded = false
     
     @Published var models: [TreeNode] = []
+    let modelingScene = TheScene()
     let scene = TheScene()
     
-    var lights: [Light] = []
+    var currentScene: TheScene? = nil
+    
     var directionalLight = DirectionalLight()
     
     var animators: [Animator] = []
     
     @Published  var skybox: Skybox?
+    
+    init() {
+        modelingScene.directionalLight = directionalLight
+        currentScene = modelingScene
+    }
     
     @MainActor
     func addModel() -> TreeNode {
