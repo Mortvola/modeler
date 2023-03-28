@@ -16,7 +16,7 @@ class WireBox: RenderObject {
     let color: Vec4
     
     init(points: [Vec4], color: Vec4) {
-        self.vertices = MetalView.shared.device!.makeBuffer(length: 24 * MemoryLayout<Vec4>.size, options: [MTLResourceOptions.storageModeShared])!
+        self.vertices = MetalView.shared.device.makeBuffer(length: 24 * MemoryLayout<Vec4>.size, options: [MTLResourceOptions.storageModeShared])!
         self.vertices.label = "WireBox Vertices"
         self.numVertices = 24
         
@@ -64,7 +64,7 @@ class WireBox: RenderObject {
         }
                                     
         let dataSize = newPoints.count * MemoryLayout.size(ofValue: newPoints[0])
-        self.vertices = MetalView.shared.device!.makeBuffer(bytes: newPoints, length: dataSize, options: [])!
+        self.vertices = MetalView.shared.device.makeBuffer(bytes: newPoints, length: dataSize, options: [])!
         self.numVertices = newPoints.count * MemoryLayout.size(ofValue: newPoints[0]) / MemoryLayout<simd_float3>.stride
         
         self.color = Vec4(1, 1, 1, 1)

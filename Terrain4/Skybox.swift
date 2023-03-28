@@ -26,10 +26,10 @@ class Skybox {
         self.samplerState = Skybox.buildSamplerState()
 
         let dataSize = skyboxVertices.count * MemoryLayout.size(ofValue: skyboxVertices[0])
-        self.vertices = MetalView.shared.device!.makeBuffer(bytes: skyboxVertices, length: dataSize, options: [])!
+        self.vertices = MetalView.shared.device.makeBuffer(bytes: skyboxVertices, length: dataSize, options: [])!
         self.numVertices = skyboxVertices.count / 3
         
-        let loader = MTKTextureLoader(device: MetalView.shared.device!)
+        let loader = MTKTextureLoader(device: MetalView.shared.device)
         
         let url = getDocumentsDirectory().appendingPathComponent("skybox-clouds.png")
         let data = try Data(contentsOf: url)
@@ -40,7 +40,7 @@ class Skybox {
         depthStateDescriptor.depthCompareFunction = .lessEqual
         depthStateDescriptor.isDepthWriteEnabled = true
         
-        guard let state = MetalView.shared.device!.makeDepthStencilState(descriptor:depthStateDescriptor) else {
+        guard let state = MetalView.shared.device.makeDepthStencilState(descriptor:depthStateDescriptor) else {
             throw Errors.depthStateCreationFailed
         }
 
@@ -53,7 +53,7 @@ class Skybox {
         samplerDescriptor.minFilter = .linear
         samplerDescriptor.magFilter = .linear
         samplerDescriptor.mipFilter = .linear
-        return MetalView.shared.device!.makeSamplerState(descriptor: samplerDescriptor)!
+        return MetalView.shared.device.makeSamplerState(descriptor: samplerDescriptor)!
     }
     
     private static func buildVertexDescriptor() -> MTLVertexDescriptor {
@@ -73,7 +73,7 @@ class Skybox {
     ) throws -> MTLRenderPipelineState {
         /// Build a render state pipeline object
         
-        let library = MetalView.shared.device!.makeDefaultLibrary()
+        let library = MetalView.shared.device.makeDefaultLibrary()
         
         let vertexFunction = library?.makeFunction(name: "skyboxVertexShader")
         let fragmentFunction = library?.makeFunction(name: "skyboxFragmentShader")
@@ -88,7 +88,7 @@ class Skybox {
         pipelineDescriptor.colorAttachments[0].pixelFormat = MetalView.shared.view!.colorPixelFormat
         pipelineDescriptor.depthAttachmentPixelFormat = MetalView.shared.view!.depthStencilPixelFormat
 
-        return try MetalView.shared.device!.makeRenderPipelineState(descriptor: pipelineDescriptor)
+        return try MetalView.shared.device.makeRenderPipelineState(descriptor: pipelineDescriptor)
     }
     
     func draw(renderEncoder: MTLRenderCommandEncoder) {

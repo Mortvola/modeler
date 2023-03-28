@@ -25,7 +25,7 @@ class TextureManager {
         
         // Texture was not found in the dictionary.
         // Download the texture and add it to the dictionary.
-        let loader = MTKTextureLoader(device: MetalView.shared.device!)
+        let loader = MTKTextureLoader(device: MetalView.shared.device)
 
         var data: Data? = nil
         
@@ -72,7 +72,7 @@ class TextureManager {
         let descriptor = MTLTextureDescriptor.texture2DDescriptor(pixelFormat: .r8Unorm, width: 1, height: 1, mipmapped: false)
         descriptor.storageMode = .shared
         
-        if let texture = MetalView.shared.device!.makeTexture(descriptor: descriptor) {
+        if let texture = MetalView.shared.device.makeTexture(descriptor: descriptor) {
             TextureManager.setTextureValue(texture: texture, value: color)
             return texture
         }
@@ -126,7 +126,7 @@ class TextureManager {
         let descriptor = MTLTextureDescriptor.texture2DDescriptor(pixelFormat: pixelFormat, width: 1, height: 1, mipmapped: false)
         descriptor.storageMode = .shared
 
-        if let texture = MetalView.shared.device!.makeTexture(descriptor: descriptor) {
+        if let texture = MetalView.shared.device.makeTexture(descriptor: descriptor) {
             TextureManager.setTextureValue(texture: texture, color: color)
             return texture
         }

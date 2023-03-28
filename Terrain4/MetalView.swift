@@ -11,6 +11,12 @@ import MetalKit
 class MetalView {
     static let shared = MetalView()
     
-    var device: MTLDevice?
+    let device: MTLDevice
     var view: MTKView?
+
+    init() {
+        let defaultDevice = MTLCreateSystemDefaultDevice()
+
+        self.device = defaultDevice!
+    }
 }

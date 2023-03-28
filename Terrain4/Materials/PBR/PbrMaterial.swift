@@ -96,7 +96,7 @@ class PbrMaterial: Material, Hashable {
     }
     
     func allocateUniforms() {
-        uniforms = MetalView.shared.device!.makeBuffer(length: 3 * MemoryLayout<PbrMaterialUniforms>.stride, options: [MTLResourceOptions.storageModeShared])!
+        uniforms = MetalView.shared.device.makeBuffer(length: 3 * MemoryLayout<PbrMaterialUniforms>.stride, options: [MTLResourceOptions.storageModeShared])!
         uniforms!.label = "Material Uniforms"
     }
     

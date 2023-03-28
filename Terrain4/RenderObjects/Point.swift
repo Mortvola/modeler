@@ -33,11 +33,11 @@ class Point: RenderObject {
         var v = Vec3(0, 0, 0)
         let length = MemoryLayout<Vec3>.size
         
-        self.vertex = MetalView.shared.device!.makeBuffer(bytes: &v, length: length, options: [])!
+        self.vertex = MetalView.shared.device.makeBuffer(bytes: &v, length: length, options: [])!
     }
     
 //    func allocateUniformsBuffer() {
-//        self.uniforms = Renderer.shared.device!.makeBuffer(length: 3 * alignedNodeUniformsSize, options: [MTLResourceOptions.storageModeShared])!
+//        self.uniforms = Renderer.shared.device.makeBuffer(length: 3 * alignedNodeUniformsSize, options: [MTLResourceOptions.storageModeShared])!
 //        self.uniforms!.label = "Point Uniforms"
 //    }
 

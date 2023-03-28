@@ -11,7 +11,7 @@ import MetalKit
 
 class CylinderAllocator {
     static func allocate(options: CylinderOptions) throws -> MTKMesh {
-        let meshBufferAllocator = MTKMeshBufferAllocator(device: MetalView.shared.device!)
+        let meshBufferAllocator = MTKMeshBufferAllocator(device: MetalView.shared.device)
 
         let mesh = MDLMesh.newCylinder(withHeight: options.height, radii: options.radii, radialSegments: options.radialSegments, verticalSegments: options.verticalSegments, geometryType: .triangles, inwardNormals: false, allocator: meshBufferAllocator)
 
@@ -19,6 +19,6 @@ class CylinderAllocator {
 
         mesh.vertexDescriptor = MeshAllocator.vertexDescriptor()
         
-        return try MTKMesh(mesh: mesh, device: MetalView.shared.device!)
+        return try MTKMesh(mesh: mesh, device: MetalView.shared.device)
     }
 }

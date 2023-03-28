@@ -76,7 +76,7 @@ class PbrLineMaterial: Material {
         /// Build a render state pipeline object
         let vertexDescriptor = PbrLineMaterial.buildVertexDescriptor()
 
-        let library = MetalView.shared.device!.makeDefaultLibrary()
+        let library = MetalView.shared.device.makeDefaultLibrary()
         
         let vertexFunction = library?.makeFunction(name: "pbrLineVertexShader")
         let fragmentFunction = library?.makeFunction(name: "simpleFragmentShader")
@@ -96,7 +96,7 @@ class PbrLineMaterial: Material {
         pipelineDescriptor.depthAttachmentPixelFormat = MetalView.shared.view!.depthStencilPixelFormat
         //        pipelineDescriptor.stencilAttachmentPixelFormat = metalKitView.depthStencilPixelFormat
         
-        return try MetalView.shared.device!.makeRenderPipelineState(descriptor: pipelineDescriptor)
+        return try MetalView.shared.device.makeRenderPipelineState(descriptor: pipelineDescriptor)
     }
     
     private static func buildSamplerState() -> MTLSamplerState {
@@ -107,7 +107,7 @@ class PbrLineMaterial: Material {
         samplerDescriptor.minFilter = .linear
         samplerDescriptor.magFilter = .linear
         samplerDescriptor.mipFilter = .linear
-        return MetalView.shared.device!.makeSamplerState(descriptor: samplerDescriptor)!
+        return MetalView.shared.device.makeSamplerState(descriptor: samplerDescriptor)!
     }
 }
 

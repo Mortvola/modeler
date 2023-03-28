@@ -21,7 +21,7 @@ class DepthShadowPipeline {
     }
     
     private static func buildPipeline() throws -> MTLRenderPipelineState {
-        let library = MetalView.shared.device!.makeDefaultLibrary()
+        let library = MetalView.shared.device.makeDefaultLibrary()
         
         let pipelineDescriptor = MTLRenderPipelineDescriptor()
 
@@ -34,7 +34,7 @@ class DepthShadowPipeline {
             throw Errors.makeFunctionError
         }
 
-        return try MetalView.shared.device!.makeRenderPipelineState(descriptor: pipelineDescriptor)
+        return try MetalView.shared.device.makeRenderPipelineState(descriptor: pipelineDescriptor)
     }
     
     class func buildVertexDescriptor() -> MTLVertexDescriptor {

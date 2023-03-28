@@ -80,7 +80,7 @@ class SimpleMaterial: Material {
     }
     
     func allocateUniforms() {
-        uniforms = MetalView.shared.device!.makeBuffer(length: 3 * MemoryLayout<GraphUniforms>.stride, options: [MTLResourceOptions.storageModeShared])!
+        uniforms = MetalView.shared.device.makeBuffer(length: 3 * MemoryLayout<GraphUniforms>.stride, options: [MTLResourceOptions.storageModeShared])!
         uniforms!.label = "Material Uniforms"
     }
     

@@ -150,7 +150,7 @@ class DirectionalLight: Node {
             shadowTextureDescriptor.textureType = .type2DArray
             shadowTextureDescriptor.arrayLength = shadowMapCascades
             
-            shadowTexture = MetalView.shared.device!.makeTexture(descriptor: shadowTextureDescriptor)
+            shadowTexture = MetalView.shared.device.makeTexture(descriptor: shadowTextureDescriptor)
             shadowTexture?.label = "Shadow Map"
             
             let renderPassDescriptor = MTLRenderPassDescriptor()

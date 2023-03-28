@@ -63,7 +63,7 @@ class PointPipeline {
         
         let vertexDescriptor = PointPipeline.buildVertexDescriptor()
         
-        let library = MetalView.shared.device!.makeDefaultLibrary()
+        let library = MetalView.shared.device.makeDefaultLibrary()
         
         let vertexFunction = library?.makeFunction(name: "pointVertexShader")
         let fragmentFunction = library?.makeFunction(name: "pointFragmentShader")
@@ -82,7 +82,7 @@ class PointPipeline {
         pipelineDescriptor.colorAttachments[0].pixelFormat = MetalView.shared.view!.colorPixelFormat
         pipelineDescriptor.depthAttachmentPixelFormat = MetalView.shared.view!.depthStencilPixelFormat
         
-        return try MetalView.shared.device!.makeRenderPipelineState(descriptor: pipelineDescriptor)
+        return try MetalView.shared.device.makeRenderPipelineState(descriptor: pipelineDescriptor)
     }
 }
 

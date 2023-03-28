@@ -18,7 +18,7 @@ class GraphPipeline: Pipeline {
 
     func prepareObject(object: RenderObject) {
         object.uniformsSize = alignedNodeUniformsSize
-        object.uniforms = MetalView.shared.device!.makeBuffer(length: 3 * alignedNodeUniformsSize, options: [MTLResourceOptions.storageModeShared])!
+        object.uniforms = MetalView.shared.device.makeBuffer(length: 3 * alignedNodeUniformsSize, options: [MTLResourceOptions.storageModeShared])!
         object.uniforms!.label = "Node Uniforms"
     }
     
@@ -80,7 +80,7 @@ class GraphPipeline: Pipeline {
         
         let vertexDescriptor = GraphPipeline.buildVertexDescriptor()
         
-        let library = MetalView.shared.device!.makeDefaultLibrary()
+        let library = MetalView.shared.device.makeDefaultLibrary()
         
         let vertexFunction = library?.makeFunction(name: "graphVertexShader")
         let fragmentFunction = library?.makeFunction(name: "graphFragmentShader")
@@ -111,11 +111,11 @@ class GraphPipeline: Pipeline {
         
         pipelineDescriptor.depthAttachmentPixelFormat = MetalView.shared.view!.depthStencilPixelFormat
         
-        return try MetalView.shared.device!.makeRenderPipelineState(descriptor: pipelineDescriptor)
+        return try MetalView.shared.device.makeRenderPipelineState(descriptor: pipelineDescriptor)
     }
     
     private static func buildStitchedFunction() throws -> MTLLinkedFunctions? {
-        guard let library = MetalView.shared.device!.makeDefaultLibrary() else {
+        guard let library = MetalView.shared.device.makeDefaultLibrary() else {
             return nil
         }
 
@@ -153,7 +153,7 @@ class GraphPipeline: Pipeline {
         descriptor.functions = functions
         descriptor.functionGraphs = [graph]
         
-        let stitchedLib = try MetalView.shared.device!.makeLibrary(stitchedDescriptor: descriptor)
+        let stitchedLib = try MetalView.shared.device.makeLibrary(stitchedDescriptor: descriptor)
     
         let funcDesc = MTLFunctionDescriptor()
         funcDesc.name = "processTexel"

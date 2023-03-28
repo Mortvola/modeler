@@ -11,7 +11,7 @@ import MetalKit
 
 class BoxAllocator {
     static func allocate(dimensions: Vec3, segments: VecUInt3) throws -> MTKMesh {
-        let meshBufferAllocator = MTKMeshBufferAllocator(device: MetalView.shared.device!)
+        let meshBufferAllocator = MTKMeshBufferAllocator(device: MetalView.shared.device)
 
         let mesh = MDLMesh.newBox(withDimensions: dimensions, segments: segments, geometryType: .triangles, inwardNormals: false, allocator: meshBufferAllocator)
 
@@ -19,6 +19,6 @@ class BoxAllocator {
 
         mesh.vertexDescriptor = MeshAllocator.vertexDescriptor()
         
-        return try MTKMesh(mesh: mesh, device: MetalView.shared.device!)
+        return try MTKMesh(mesh: mesh, device: MetalView.shared.device)
     }
 }

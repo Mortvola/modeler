@@ -48,7 +48,7 @@ class LineMaterial: Material {
         /// Build a render state pipeline object
         let vertexDescriptor = LineMaterial.buildVertexDescriptor()
         
-        let library = MetalView.shared.device!.makeDefaultLibrary()
+        let library = MetalView.shared.device.makeDefaultLibrary()
         
         let vertexFunction = library?.makeFunction(name: "lineVertexShader")
         let fragmentFunction = library?.makeFunction(name: "simpleFragmentShader")
@@ -68,7 +68,7 @@ class LineMaterial: Material {
         pipelineDescriptor.depthAttachmentPixelFormat = MetalView.shared.view!.depthStencilPixelFormat
         //        pipelineDescriptor.stencilAttachmentPixelFormat = metalKitView.depthStencilPixelFormat
         
-        return try MetalView.shared.device!.makeRenderPipelineState(descriptor: pipelineDescriptor)
+        return try MetalView.shared.device.makeRenderPipelineState(descriptor: pipelineDescriptor)
     }
 }
 

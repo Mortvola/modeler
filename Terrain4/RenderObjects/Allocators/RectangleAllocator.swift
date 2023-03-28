@@ -11,7 +11,7 @@ import MetalKit
 
 class RetangleAllocator {
     static func allocate(dimensions: Vec2, segments: VecUInt2) throws -> MTKMesh {
-        let meshBufferAllocator = MTKMeshBufferAllocator(device: MetalView.shared.device!)
+        let meshBufferAllocator = MTKMeshBufferAllocator(device: MetalView.shared.device)
 
         let mesh = MDLMesh.newPlane(withDimensions: dimensions, segments: segments, geometryType: .triangles, allocator: meshBufferAllocator)
 
@@ -19,6 +19,6 @@ class RetangleAllocator {
 
         mesh.vertexDescriptor = MeshAllocator.vertexDescriptor()
         
-        return try MTKMesh(mesh: mesh, device: MetalView.shared.device!)
+        return try MTKMesh(mesh: mesh, device: MetalView.shared.device)
     }
 }

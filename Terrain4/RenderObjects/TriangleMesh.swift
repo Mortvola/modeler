@@ -152,9 +152,9 @@ class TriangleMesh: RenderObject {
         let (points, normals) = self.formatData(normals: normals, points: points, indices: indices)
         
         var dataSize = points.count * MemoryLayout.size(ofValue: points[0]) * 6
-        self.vertices = MetalView.shared.device!.makeBuffer(bytes: points, length: dataSize, options: [])!
+        self.vertices = MetalView.shared.device.makeBuffer(bytes: points, length: dataSize, options: [])!
 
         dataSize = normals.count * MemoryLayout.size(ofValue: normals[0]) * 8
-        self.normals = MetalView.shared.device!.makeBuffer(bytes: normals, length: dataSize, options: [])!
+        self.normals = MetalView.shared.device.makeBuffer(bytes: normals, length: dataSize, options: [])!
     }
 }

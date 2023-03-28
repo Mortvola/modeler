@@ -73,10 +73,6 @@ class Renderer {
     public var textureStore: TextureStore? = nil
     
     init() {
-        let defaultDevice = MTLCreateSystemDefaultDevice()
-
-        MetalView.shared.device = defaultDevice
-        
         self.camera = Camera(world: world)
         
         self.materialManager = MaterialManager()
@@ -87,7 +83,7 @@ class Renderer {
         
         self.camera = Camera(world: world)
         
-        guard let queue = MetalView.shared.device!.makeCommandQueue() else {
+        guard let queue = MetalView.shared.device.makeCommandQueue() else {
             throw Errors.makeCommandQueueFailed
         }
         
@@ -99,13 +95,13 @@ class Renderer {
         depthStateDescriptor.depthCompareFunction = .less
         depthStateDescriptor.isDepthWriteEnabled = true
         
-        guard let state = MetalView.shared.device!.makeDepthStencilState(descriptor:depthStateDescriptor) else {
+        guard let state = MetalView.shared.device.makeDepthStencilState(descriptor:depthStateDescriptor) else {
             throw Errors.makeDepthStencilStateFailed
         }
         
         self.depthState = state
 
-        guard let state = MetalView.shared.device!.makeDepthStencilState(descriptor:depthStateDescriptor) else {
+        guard let state = MetalView.shared.device.makeDepthStencilState(descriptor:depthStateDescriptor) else {
             throw Errors.makeDepthStencilStateFailed
         }
         
@@ -123,7 +119,7 @@ class Renderer {
     func makeUniformsBuffer() throws {
         let uniformBufferSize = alignedUniformsSize * maxBuffersInFlight
         
-        guard let buffer = MetalView.shared.device!.makeBuffer(length:uniformBufferSize, options:[MTLResourceOptions.storageModeShared]) else {
+        guard let buffer = MetalView.shared.device.makeBuffer(length:uniformBufferSize, options:[MTLResourceOptions.storageModeShared]) else {
             throw Errors.makeBufferFailed
         }
         

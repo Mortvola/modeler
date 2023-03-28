@@ -158,7 +158,7 @@ class Mesh: RenderObject {
     }
 
     private static func makeMesh(points: [Float], texcoords: [Float], normals: [Float], submeshes: [Submesh]) throws -> MTKMesh {
-        let allocator = MTKMeshBufferAllocator(device: MetalView.shared.device!)
+        let allocator = MTKMeshBufferAllocator(device: MetalView.shared.device)
 
         var vertexBuffers: [MDLMeshBuffer] = []
 
@@ -174,7 +174,7 @@ class Mesh: RenderObject {
 
         mdlMesh.addTangentBasis(forTextureCoordinateAttributeNamed: MDLVertexAttributeTextureCoordinate, normalAttributeNamed: MDLVertexAttributeNormal, tangentAttributeNamed: MDLVertexAttributeTangent)
 
-        return try MTKMesh(mesh: mdlMesh, device: MetalView.shared.device!)
+        return try MTKMesh(mesh: mdlMesh, device: MetalView.shared.device)
     }
     
     private func getCoordsFromBuffer() -> ([Float], [Float]) {
