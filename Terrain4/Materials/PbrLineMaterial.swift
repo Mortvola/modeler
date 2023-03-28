@@ -18,7 +18,7 @@ class PbrLineMaterial: Material {
     var metallic: MTLTexture? = nil
     var roughness: MTLTexture? = nil
     
-    init(device: MTLDevice, view: MTKView) async throws {
+    init() async throws {
         self.pipeline = try PbrLineMaterial.buildPipeline()
         
         self.normals = try await TextureManager.shared.addTexture(path: "/rustediron2_normal_1024.png")

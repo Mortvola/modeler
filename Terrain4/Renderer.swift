@@ -29,9 +29,6 @@ class Renderer {
     static var shared: Renderer = Renderer()
     let test = true
     
-//    public var device: MTLDevice?
-//    public var view: MTKView?
-    
     private var commandQueue: MTLCommandQueue?
     private var dynamicUniformBuffer: MTLBuffer?
     private var depthState: MTLDepthStencilState?

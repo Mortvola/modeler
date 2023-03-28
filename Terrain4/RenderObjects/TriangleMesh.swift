@@ -16,7 +16,6 @@ class TriangleMesh: RenderObject {
     var numVertices: Int = 0
     
     init(
-      device: MTLDevice,
       points: [Float],
       normals: [Float],
       indices: [Int],
@@ -25,7 +24,7 @@ class TriangleMesh: RenderObject {
     ) {
         super.init(model: model)
 
-        self.createBuffer(device: device, normals: normals, points: points, indices: indices);
+        self.createBuffer(normals: normals, points: points, indices: indices);
     }
 
     public required init(from decoder: Decoder) throws {
@@ -145,7 +144,6 @@ class TriangleMesh: RenderObject {
     }
 
     func createBuffer(
-      device: MTLDevice,
       normals: [Float],
       points: [Float],
       indices: [Int]
@@ -154,9 +152,9 @@ class TriangleMesh: RenderObject {
         let (points, normals) = self.formatData(normals: normals, points: points, indices: indices)
         
         var dataSize = points.count * MemoryLayout.size(ofValue: points[0]) * 6
-        self.vertices = device.makeBuffer(bytes: points, length: dataSize, options: [])!
+        self.vertices = MetalView.shared.device!.makeBuffer(bytes: points, length: dataSize, options: [])!
 
         dataSize = normals.count * MemoryLayout.size(ofValue: normals[0]) * 8
-        self.normals = device.makeBuffer(bytes: normals, length: dataSize, options: [])!
+        self.normals = MetalView.shared.device!.makeBuffer(bytes: normals, length: dataSize, options: [])!
     }
 }

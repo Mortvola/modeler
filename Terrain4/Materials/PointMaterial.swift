@@ -9,10 +9,6 @@ import Foundation
 import MetalKit
 
 class PointMaterial: Material {
-//    init(device: MTLDevice, view:  MTKView, descriptor: MaterialDescriptor?) {
-//        super.init(name: "Point Material")
-//    }
-
     override func prepare(renderEncoder: MTLRenderCommandEncoder, frame: Int) {
         if let texture = Renderer.shared.textureStore?.texture {
             renderEncoder.setFragmentTexture(texture, index: TextureIndex.color.rawValue)

@@ -53,7 +53,7 @@ class TextureManager {
         return texture
     }
     
-    func addTexture(device: MTLDevice, color: Float) throws -> MTLTexture {
+    func addTexture(color: Float) throws -> MTLTexture {
         let textureName = String(color)
         var texture = self.textures[textureName]
         
@@ -61,18 +61,18 @@ class TextureManager {
             return texture
         }
 
-        texture = try createTexture(device: device, color: color)
+        texture = try createTexture(color: color)
 
         textures[textureName] = texture
 
         return texture!
     }
     
-    func createTexture(device: MTLDevice, color: Float) throws -> MTLTexture {
+    func createTexture(color: Float) throws -> MTLTexture {
         let descriptor = MTLTextureDescriptor.texture2DDescriptor(pixelFormat: .r8Unorm, width: 1, height: 1, mipmapped: false)
         descriptor.storageMode = .shared
         
-        if let texture = device.makeTexture(descriptor: descriptor) {
+        if let texture = MetalView.shared.device!.makeTexture(descriptor: descriptor) {
             TextureManager.setTextureValue(texture: texture, value: color)
             return texture
         }
@@ -107,7 +107,7 @@ class TextureManager {
         texture.replace(region: region, mipmapLevel: 0, withBytes: unsafeMutablePointer, bytesPerRow: 4)
     }
     
-    func addTexture(device: MTLDevice, color: Vec4, pixelFormat: MTLPixelFormat) throws -> MTLTexture {
+    func addTexture(color: Vec4, pixelFormat: MTLPixelFormat) throws -> MTLTexture {
         let textureName = "\(color[0]), \(color[1]), \(color[2]), \(color[3])"
         var texture = self.textures[textureName]
         
@@ -115,18 +115,18 @@ class TextureManager {
             return texture
         }
 
-        texture = try createTexture(device: device, color: color, pixelFormat: pixelFormat)
+        texture = try createTexture(color: color, pixelFormat: pixelFormat)
 
         textures[textureName] = texture
 
         return texture!
     }
     
-    func createTexture(device: MTLDevice, color: Vec4, pixelFormat: MTLPixelFormat) throws -> MTLTexture {
+    func createTexture(color: Vec4, pixelFormat: MTLPixelFormat) throws -> MTLTexture {
         let descriptor = MTLTextureDescriptor.texture2DDescriptor(pixelFormat: pixelFormat, width: 1, height: 1, mipmapped: false)
         descriptor.storageMode = .shared
 
-        if let texture = device.makeTexture(descriptor: descriptor) {
+        if let texture = MetalView.shared.device!.makeTexture(descriptor: descriptor) {
             TextureManager.setTextureValue(texture: texture, color: color)
             return texture
         }

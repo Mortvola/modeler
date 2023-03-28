@@ -10,8 +10,8 @@ import Metal
 import MetalKit
 
 class TestRectAllocator {
-    static func allocate(device: MTLDevice, model: Model) throws -> RenderObject {
-        TriangleMesh(device: device, points: points, normals: normals, indices: indices, model: model)
+    static func allocate(model: Model) throws -> RenderObject {
+        TriangleMesh(points: points, normals: normals, indices: indices, model: model)
     }
 }
 
