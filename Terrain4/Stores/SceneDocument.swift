@@ -85,51 +85,6 @@ class SceneDocument: ReferenceFileDocument {
                 _ = await task.result
             }
             
-            var newLights: [Light] = []
-            
-            for node in objectStore.models {
-                switch node.content {
-                case .model(let model):
-                    for object in model.objects {
-                        switch object.content {
-                        case .mesh(let o):
-                            o.model = model
-                        case .point(let p):
-                            p.model = model
-                        default:
-                            break;
-                        }
-                    }
-
-                    model.lights.forEach { light in
-                        light.model = model
-                        newLights.append(light)
-                    }
-
-                case .mesh:
-                    break
-                case .point:
-                    break
-                case .light:
-                    break
-                case .directionalLight:
-                    break
-                }
-            }
-            
-            objectStore.lights = newLights
-            
-            for sceneModel in objectStore.scene.models {
-                for node in sceneModel.model!.objects {
-                    switch node.content {
-                    case .light(let l):
-                        objectStore.scene.lights.append(l)
-                    default:
-                        break
-                    }
-                }
-            }            
-
         } catch {
             print("Error: Can't decode contents \(error)")
         }

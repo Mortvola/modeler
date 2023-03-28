@@ -53,6 +53,23 @@ class Model: Node, Identifiable, Hashable {
 
         lights = try container.decode([Light].self, forKey: .lights)
         transforms = try container.decode([Transform].self, forKey: .transforms)
+        
+        // Assign all of the child objects to this model
+        for object in objects {
+            switch object.content {
+            case .mesh(let o):
+                o.model = self
+            case .point(let p):
+                p.model = self
+            default:
+                break;
+            }
+        }
+
+        // Assign all of the child lights to this model
+        lights.forEach { light in
+            light.model = self
+        }
     }
     
     override func encode(to encoder: Encoder) throws {

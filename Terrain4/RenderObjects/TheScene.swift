@@ -9,7 +9,4 @@ import Foundation
 
 class TheScene: ObservableObject {
     @Published var models: [SceneModel] = []
-    
-    var lights: [Light] = []
-
 }
