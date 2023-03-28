@@ -8,23 +8,10 @@
 import Foundation
 
 struct File: Codable {
-    var models: [TreeNode]
     var camera: Camera
-    var materials: [MaterialWrapper]
-    var directionalLight: DirectionalLight
-    var scene: [SceneModel]
     
     init(file: SceneDocument) {
-        self.models = file.objectStore.models
         self.camera = Camera(position: Renderer.shared.camera.cameraOffset, yaw: Renderer.shared.camera.yaw, pitch: Renderer.shared.camera.pitch)
-        
-        self.materials = Renderer.shared.materialManager.materials.compactMap { entry in
-            entry.value
-        }
-        
-        self.directionalLight = file.objectStore.directionalLight
-        
-        self.scene = file.objectStore.scene.models
     }
 
     enum CodingKeys: CodingKey {
@@ -39,12 +26,18 @@ struct File: Codable {
     func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
 
-        try container.encode(self.models, forKey: .models)
+        try container.encode(Renderer.shared.objectStore!.models, forKey: .models)
         try container.encode(self.camera, forKey: .camera)
-        try container.encode(self.materials, forKey: .materials)
-        try container.encode(self.directionalLight, forKey: .directionalLight)
         
-        try container.encode(self.scene, forKey: .scene)
+        let materials = Renderer.shared.materialManager.materials.compactMap { entry in
+            entry.value
+        }
+
+        try container.encode(materials, forKey: .materials)
+        
+        try container.encode(Renderer.shared.objectStore!.directionalLight, forKey: .directionalLight)
+        
+        try container.encode(Renderer.shared.objectStore!.scene.models, forKey: .scene)
         
         try container.encode(Renderer.shared.objectStore!.animators, forKey: .animators)
     }
@@ -57,24 +50,25 @@ struct File: Codable {
         Renderer.shared.camera.cameraOffset = camera.position
         Renderer.shared.camera.yaw = camera.yaw
         Renderer.shared.camera.pitch = camera.pitch
-        
         Renderer.shared.camera.updateLookAt(yawChange: 0, pitchChange: 0)
         
         let objectStore = decoder.getObjectStore()
         
         objectStore.animators = try container.decodeIfPresent([Animator].self, forKey: .animators) ?? []
         
-        materials = try container.decode([MaterialWrapper].self, forKey: .materials)
+        let materials = try container.decode([MaterialWrapper].self, forKey: .materials)
         
         for material in materials {
             Renderer.shared.materialManager.materials[material.material.id] = material
         }
 
-        models = try container.decode([TreeNode].self, forKey: .models)
+        objectStore.models = try container.decode([TreeNode].self, forKey: .models)
         
-        scene = try container.decodeIfPresent([SceneModel].self, forKey: .scene) ?? []
+        objectStore.scene.models = try container.decodeIfPresent([SceneModel].self, forKey: .scene) ?? []
         
-        directionalLight = try container.decodeIfPresent(DirectionalLight.self, forKey: .directionalLight) ?? DirectionalLight()
+        objectStore.directionalLight = try container.decodeIfPresent(DirectionalLight.self, forKey: .directionalLight) ?? DirectionalLight()
+        
+        objectStore.directionalLight.createShadowTexture()
     }
 }
 

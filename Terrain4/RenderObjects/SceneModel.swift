@@ -68,7 +68,6 @@ class SceneModel: ObservableObject, Identifiable, Equatable, Codable {
     @Published var name = ""
     
     var model: Model? = nil
-    var modelId: UUID
 
     @Published var animators: [Animator] = []
 
@@ -80,7 +79,6 @@ class SceneModel: ObservableObject, Identifiable, Equatable, Codable {
     
     init(model: Model) {
         self.model = model
-        self.modelId = model.id
     }
     
     enum CodingKeys: CodingKey {
@@ -96,15 +94,29 @@ class SceneModel: ObservableObject, Identifiable, Equatable, Codable {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         
         name = try container.decodeIfPresent(String.self, forKey: .name) ?? ""
-        modelId = try container.decode(UUID.self, forKey: .model)
         translation = try container.decode(Vec3.self, forKey: .translation)
         rotation = try container.decode(Vec3.self, forKey: .rotation)
         scale = try container.decode(Vec3.self, forKey: .scale)
+
+        let objectStore = decoder.getObjectStore()
+
+        let modelId = try container.decode(UUID.self, forKey: .model)
+
+        let node = objectStore.models.first {
+            $0.content.id == modelId
+        }
+        
+        if let node = node {
+            switch node.content {
+            case .model(let m):
+                model = m
+            default:
+                break
+            }
+        }
         
         let animatorIds = try container.decode([UUID].self, forKey: .animators)
         
-        let objectStore = decoder.getObjectStore()
-
         for id in animatorIds {
             let animator = objectStore.animators.first {
                 $0.id == id
