@@ -14,21 +14,21 @@ func latLngToTerrainTile(
     let x = Int(floor(((lng + 180.0) * 3600.0) / Double(dimension)))
     let y = Int(floor(((lat + 180.0) * 3600.0) / Double(dimension)))
 
-  return (x, y);
+  return (x, y)
 }
 
 func terrainTileToLatLng(_ x: Double, _ y: Double, _ dimension: Int) -> LatLng {
-    let lng = (x * Double(dimension)) / 3600.0 - 180.0;
-    let lat = (y * Double(dimension)) / 3600.0 - 180.0;
+    let lng = (x * Double(dimension)) / 3600.0 - 180.0
+    let lat = (y * Double(dimension)) / 3600.0 - 180.0
 
-  return LatLng(lat, lng);
+  return LatLng(lat, lng)
 }
 
 func latLngToMercator(lat: Double, lng: Double) -> (Double, Double) {
-  let latRad = degreesToRadians(lat);
-  let lngRad = degreesToRadians(lng);
+  let latRad = degreesToRadians(lat)
+  let lngRad = degreesToRadians(lng)
 
-  let equatorialRadius = 6378137.0;
+  let equatorialRadius = 6378137.0
   let a = equatorialRadius;
   let f = 1 / 298.257223563;
   let b = a * (1 - f); // WGS84 semi-minor axis
@@ -39,7 +39,7 @@ func latLngToMercator(lat: Double, lng: Double) -> (Double, Double) {
   let c = ((1 - e * sinLatRad) / (1 + e * sinLatRad));
 
   let x = lngRad * a;
-  let y = log(((1 + sinLatRad) / (1 - sinLatRad)) * pow(c, e)) * (a / 2);
+  let y = log(((1 + sinLatRad) / (1 - sinLatRad)) * pow(c, e)) * (a / 2)
 
   return (x, y)
 }

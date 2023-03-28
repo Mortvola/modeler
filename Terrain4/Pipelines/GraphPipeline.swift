@@ -9,11 +9,11 @@ import Foundation
 import MetalKit
 import Metal
 
-class GenericPipeline: Pipeline {
+class GraphPipeline: Pipeline {
     let pipeline: MTLRenderPipelineState
     
     override init() throws {
-        self.pipeline = try GenericPipeline.buildPipeline()
+        self.pipeline = try GraphPipeline.buildPipeline()
     }
 
     func prepareObject(object: RenderObject) {
@@ -34,7 +34,7 @@ class GenericPipeline: Pipeline {
         renderEncoder.setVertexBuffer(object.uniforms, offset: 0, index: BufferIndex.nodeUniforms.rawValue)
         renderEncoder.setFragmentBuffer(object.uniforms, offset: 0, index: BufferIndex.nodeUniforms.rawValue)
 
-        try object.simpleDraw(renderEncoder: renderEncoder, modelMatrix: object.modelMatrix(), frame: frame)
+        try object.draw(renderEncoder: renderEncoder, frame: frame)
     }
 
     func render(renderEncoder: MTLRenderCommandEncoder, frame: Int) throws {
@@ -78,7 +78,7 @@ class GenericPipeline: Pipeline {
     private static func buildPipeline() throws -> MTLRenderPipelineState {
         /// Build a render state pipeline object
         
-        let vertexDescriptor = GenericPipeline.buildVertexDescriptor()
+        let vertexDescriptor = GraphPipeline.buildVertexDescriptor()
         
         let library = MetalView.shared.device!.makeDefaultLibrary()
         

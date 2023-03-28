@@ -10,6 +10,10 @@ import Metal
 
 let alignedNodeUniformsSize = MemoryLayout<NodeUniforms>.size // (MemoryLayout<NodeUniforms>.size + 0xFF) & -0x100
 
+struct InstanceData {
+    let transformation: Matrix4x4
+}
+
 class RenderObject: Object {
     // lights that may affect this object.
     var lights: [Light] = []
@@ -17,6 +21,7 @@ class RenderObject: Object {
     var uniforms: MTLBuffer?
     var uniformsSize = 0
     var modelMatrixUniform: MTLBuffer?
+    var instanceData: [InstanceData] = []
     
     override init(model: Model?) {
         super.init(model: model)
@@ -49,17 +54,12 @@ class RenderObject: Object {
         }
     }
     
-    func draw(renderEncoder: MTLRenderCommandEncoder, modelMatrix: Matrix4x4, frame: Int) throws {
+    func draw(renderEncoder: MTLRenderCommandEncoder, frame: Int) throws {
         throw Errors.notImplemented
     }
     
-    func simpleDraw(renderEncoder: MTLRenderCommandEncoder, modelMatrix: Matrix4x4, frame: Int) throws {
-        let matrix: UnsafeMutablePointer<Matrix4x4> = self.getModelMatrixUniform(index: frame)
-        matrix[0] = modelMatrix
-        
-        renderEncoder.setVertexBuffer(self.modelMatrixUniform, offset: 0, index: BufferIndex.modelMatrix.rawValue)
-
-        try self.draw(renderEncoder: renderEncoder)
+    func simpleDraw(renderEncoder: MTLRenderCommandEncoder, frame: Int) throws {
+        throw Errors.notImplemented
     }
     
     func draw(renderEncoder: MTLRenderCommandEncoder) throws {
@@ -82,13 +82,15 @@ class RenderObject: Object {
     }
     
     func allocateModelMatrixUniform() {
-        modelMatrixUniform = MetalView.shared.device!.makeBuffer(length: 3 * MemoryLayout<Matrix4x4>.stride, options: [MTLResourceOptions.storageModeShared])!
+        let numInstances = 3
+        modelMatrixUniform = MetalView.shared.device!.makeBuffer(length: 3 * MemoryLayout<Matrix4x4>.stride * numInstances, options: [MTLResourceOptions.storageModeShared])!
         modelMatrixUniform!.label = "Model Matrix Uniforms"
     }
     
-    func getModelMatrixUniform(index: Int) -> UnsafeMutablePointer<Matrix4x4> {
-        UnsafeMutableRawPointer(self.modelMatrixUniform!.contents())
-            .advanced(by: index * MemoryLayout<Matrix4x4>.stride)
+    func getModelMatrixUniform(index: Int, instances: Int) -> UnsafeMutablePointer<Matrix4x4> {
+        let numInstances = 3
+        return UnsafeMutableRawPointer(self.modelMatrixUniform!.contents())
+            .advanced(by: index * MemoryLayout<Matrix4x4>.stride * numInstances)
             .bindMemory(to: Matrix4x4.self, capacity: 1)
     }
 }

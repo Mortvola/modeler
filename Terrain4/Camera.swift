@@ -22,7 +22,7 @@ class Camera {
     
     var moveDirection = Vec3(0.0, 0.0, 0.0)
     
-    let velocity: Float = 1.1176 * 10; // meters per second
+    let velocity: Float = 1.1176 * 10 // meters per second
     
     var projectionMatrix = Matrix4x4()
     
@@ -45,7 +45,7 @@ class Camera {
         self.yaw += yawChange
         self.pitch += pitchChange
         
-        self.pitch = max(min(self.pitch, 89), -89);
+        self.pitch = max(min(self.pitch, 89), -89)
         
         let cameraFront = defaultCameraFront
             .rotateX(degreesToRadians(self.pitch))
@@ -63,7 +63,7 @@ class Camera {
         
         let viewMatrix = Matrix4x4.lookAt(offset: cameraOffset, target: cameraTarget, up: cameraUp)
         
-        return viewMatrix;
+        return viewMatrix
         
         //        return simd_mul(
         //            matrix4x4_scale(self.scale, 1.0, self.scale),

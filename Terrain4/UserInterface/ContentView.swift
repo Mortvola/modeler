@@ -12,6 +12,7 @@ enum TabSelection {
     case animators
     case materials
     case textures
+    case scene
 }
 
 struct ContentView: View {
@@ -40,12 +41,17 @@ struct ContentView: View {
                         Label("Matrials", systemImage: "line.3.crossed.swirl.circle.fill")
                     }
                     .tag(TabSelection.materials)
-
                 TexturesView()
                     .tabItem {
                         Label("Textures", systemImage: "line.3.crossed.swirl.circle.fill")
                     }
                     .tag(TabSelection.textures)
+
+                SceneView(objectStore: file.objectStore)
+                    .tabItem {
+                        Label("Scene", systemImage: "video")
+                    }
+                    .tag(TabSelection.scene)
             }
             .padding()
             .toolbarRole(.automatic)
@@ -64,6 +70,18 @@ struct ContentView: View {
             }
         }
         .toolbar(.hidden)
+        .onChange(of: tabSelection) { newTabSelection in
+            switch Renderer.shared.currentViewMode {
+            case .scene:
+                if newTabSelection == .objects {
+                    Renderer.shared.setViewMode(viewMode: .model(nil))
+                }
+            case .model:
+                if newTabSelection == .scene {
+                    Renderer.shared.setViewMode(viewMode: .scene)
+                }
+            }
+        }
         .environmentObject(file)
     }
 }

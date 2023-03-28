@@ -19,4 +19,10 @@ class Pipeline {
             materials[materialKey] = material
         }
     }
+    
+    func clearDrawables() {
+        for material in materials {
+            material.value.material.clearDrawables()
+        }
+    }
 }

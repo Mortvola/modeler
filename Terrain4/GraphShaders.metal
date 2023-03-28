@@ -28,16 +28,15 @@ vertex VertexOut graphVertexShader
 (
     VertexIn vertices [[stage_in]],
     const device FrameUniforms &uniforms [[ buffer(BufferIndexUniforms) ]],
-    const device float4x4& modelMatrix [[ buffer(BufferIndexModelMatrix) ]]
-//    const device BillboardUniforms &pointUniforms [[ buffer(BufferIndexNodeUniforms) ]]
-//    uint instanceId [[ instance_id ]]
-//    uint vertexId [[ vertex_id ]]
+    const device float4x4 *modelMatrix [[ buffer(BufferIndexModelMatrix) ]],
+    uint instanceId [[ instance_id ]],
+    uint vertexId [[ vertex_id ]]
 ) {
     VertexOut out;
     
     float2 meshVertex = vertices.position.xy;
     
-    float4 position = (uniforms.viewMatrix * modelMatrix)[3];
+    float4 position = (uniforms.viewMatrix * modelMatrix[instanceId])[3];
     
     out.position = uniforms.projectionMatrix * (position + float4(meshVertex, 0, 0));
     out.texcoord = vertices.texCoord;

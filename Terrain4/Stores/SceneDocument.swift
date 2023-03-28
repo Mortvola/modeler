@@ -75,7 +75,8 @@ class SceneDocument: ReferenceFileDocument {
             let decoder = JSONDecoder()
             
             decoder.setContext(forKey: "Tasks", context: TaskHandler())
-                        
+            decoder.setContext(forKey: "Store", context: objectStore)
+            
             let file = try decoder.decode(File.self, from: data)
             
             for task in decoder.getTasks().tasks {
@@ -122,6 +123,29 @@ class SceneDocument: ReferenceFileDocument {
             
             objectStore.models = file.models
             objectStore.lights = newLights
+            objectStore.scene.models = file.scene
+            
+            for sceneModel in objectStore.scene.models {
+                for node in objectStore.models {
+                    switch node.content {
+                    case .model(let m):
+                        if m.id == sceneModel.modelId {
+                            sceneModel.model = m
+                        }
+                    default:
+                        break
+                    }
+                }
+                
+                for node in sceneModel.model!.objects {
+                    switch node.content {
+                    case .light(let l):
+                        objectStore.scene.lights.append(l)
+                    default:
+                        break
+                    }
+                }
+            }
             
             file.directionalLight.createShadowTexture()
             
@@ -156,6 +180,10 @@ extension Decoder {
     
     func getTasks() -> TaskHandler {
         getContext(forKey: "Tasks") as! TaskHandler
+    }
+    
+    func getObjectStore() -> ObjectStore {
+        getContext(forKey: "Store") as! ObjectStore
     }
     
     func addTask(_ task: Task<Void, Never>) {

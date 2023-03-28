@@ -97,13 +97,12 @@ class Object: Node, Identifiable, Hashable {
         }
     }
 
-    func modelMatrix() -> Matrix4x4 {
-        self.model?.modelMatrix
+    func transformation() -> Matrix4x4 {
+        Matrix4x4.identity()
             .translate(translation.x, translation.y, translation.z)
             .rotate(radians: degreesToRadians(rotation.x), axis: Vec3(1, 0, 0))
             .rotate(radians: degreesToRadians(rotation.y), axis: Vec3(0, 1, 0))
             .rotate(radians: degreesToRadians(rotation.z), axis: Vec3(0, 0, 1))
             .scale(scale.x, scale.y, scale.z)
-        ?? Matrix4x4.identity()
     }
 }

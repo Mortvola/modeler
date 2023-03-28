@@ -20,6 +20,11 @@ enum RendererError: Error {
     case badVertexDescriptor
 }
 
+enum ViewMode {
+    case model(Model?)
+    case scene
+}
+
 class Renderer {
     static var shared: Renderer = Renderer()
     let test = true
@@ -54,7 +59,7 @@ class Renderer {
     
     private var previousFrameTime: Double?
         
-    private var objectStore: ObjectStore?
+    public var objectStore: ObjectStore?
     
     private var lineMaterial: LineMaterial?
     
@@ -148,16 +153,16 @@ class Renderer {
             self.initializeLightVector(latitude: lat)
             
             let latLng = LatLng(lat, lng)
-            let (x, z) = latLngToTerrainTile(latLng.lat, latLng.lng, dimension);
+            let (x, z) = latLngToTerrainTile(latLng.lat, latLng.lng, dimension)
             
-            let swLatLng = terrainTileToLatLng(Double(x), Double(z), dimension);
-            let neLatLng = terrainTileToLatLng(Double(x + 1), Double(z + 1), dimension);
+            let swLatLng = terrainTileToLatLng(Double(x), Double(z), dimension)
+            let neLatLng = terrainTileToLatLng(Double(x + 1), Double(z + 1), dimension)
             let latLngCenter = LatLng(
                 swLatLng.lat + (neLatLng.lat - swLatLng.lat) / 2,
                 swLatLng.lng + (neLatLng.lng - swLatLng.lng) / 2
             )
             
-            self.camera.scale = cos(degreesToRadians(Float(latLngCenter.lat)));
+            self.camera.scale = cos(degreesToRadians(Float(latLngCenter.lat)))
             
             try await self.world.loadTiles(x: x, z: z, dimension: dimension, renderer: self)
             
@@ -228,6 +233,125 @@ class Renderer {
         return nil
     }
     
+    func computeAnimationTransform(sceneModel: SceneModel) -> Matrix4x4 {
+        let transform = sceneModel.animations.reduce(Matrix4x4.identity()) { accum, animation in
+//        var accum = Matrix4x4.identity()
+//        for animation in sceneModel.animations {
+            var t = animation.value
+            
+//            if let animator = transform.animator {
+                t = t + animation.accum
+//            }
+            
+            switch(animation.type) {
+//            case .translate:
+//                return accum.translate(t.x, t.y, t.z)
+                
+            case .rotateX:
+                return accum
+                    .rotate(radians: degreesToRadians(t), axis: Vec3(1, 0, 0))
+                
+            case .rotateY:
+                return accum
+                    .rotate(radians: degreesToRadians(t), axis: Vec3(0, 1, 0))
+                
+            case .rotateZ:
+                return accum
+                    .rotate(radians: degreesToRadians(t), axis: Vec3(0, 0, 1))
+                
+//            case .scale:
+//                return accum.scale(t.x, t.y, t.z)
+            }
+        }
+
+        return transform
+    }
+    
+    private func updateModel(model: Model, matrix: Matrix4x4) {
+        // Compute the transformation matrix at the model level by
+        // travering the list
+        let transform = model.transforms.reduce(Matrix4x4.identity()) { accum, transform in
+            var t = transform.values
+            
+            if let animator = transform.animator {
+                t = t.add(animator.accum)
+            }
+            
+            switch(transform.transform) {
+            case .translate:
+                return accum.translate(t.x, t.y, t.z)
+                
+            case .rotate:
+                return accum
+                    .rotate(radians: degreesToRadians(t.x), axis: Vec3(1, 0, 0))
+                    .rotate(radians: degreesToRadians(t.y), axis: Vec3(0, 1, 0))
+                    .rotate(radians: degreesToRadians(t.z), axis: Vec3(0, 0, 1))
+                
+            case .scale:
+                return accum.scale(t.x, t.y, t.z)
+            }
+        }
+        
+        model.modelMatrix = matrix * transform
+        
+        for object in model.objects {
+            switch object.content {
+            case .model:
+                break
+            case .mesh(let o):
+                o.lights = []
+                
+                objectStore!.lights.forEach { light in
+                    if !light.disabled && !(light.model?.disabled ?? true) {
+                        o.lights.append(light)
+                    }
+                }
+                
+                let transformation = model.modelMatrix * o.transformation()
+                
+                o.instanceData.append(InstanceData(transformation: transformation))
+            case .point:
+                break
+            case .light:
+//                l.worldPosition = model.modelMatrix.multiply(l.position.vec4())
+                break
+            case .directionalLight:
+                break
+            }
+        }
+        
+        for light in model.lights {
+            let newLight = Light(model: nil)
+            newLight.position = model.modelMatrix.multiply(light.position.vec4()).vec3()
+            newLight.intensity = light.intensity
+            objectStore!.lights.append(newLight)
+        }
+    }
+
+    func clearInstanceData() {
+        for node in objectStore!.models {
+            switch node.content {
+            case .model(let model):
+                model.objects.forEach { object in
+                    switch object.content {
+                    case .model:
+                        break
+                    case .mesh(let o):
+                        o.instanceData = []
+                    case .point:
+                        break
+                    case .light:
+                        break
+                    case .directionalLight:
+                        break
+                    }
+                }
+            default:
+                break
+            }
+        }
+    }
+    
     private func updateState() {
         /// Update any game state before rendering
         
@@ -240,97 +364,55 @@ class Renderer {
             AnimatorStore.shared.animators.forEach { animator in
                 animator.accum = animator.accum.add(animator.delta.multiply(Float(elapsedTime)))
             }
+
+            for animation in objectStore!.animations {
+                animation.accum = animation.accum + (animation.value * Float(elapsedTime))
+            }
+
+            clearInstanceData()
+            objectStore!.lights = []
             
             // Update the model matrix for each model
-            for node in objectStore!.models {
-                switch node.content {
-                case .model(let model):
-                    let transform = model.transforms.reversed().reduce(Matrix4x4.identity()) { accum, transform in
-                        var t = transform.values
-                        
-                        if let animator = transform.animator {
-                            t = t.add(animator.accum)
-                        }
-                        
-                        switch(transform.transform) {
-                        case .translate:
-                            return accum.translate(t.x, t.y, t.z)
-                            
-                        case .rotate:
-                            return accum
-                                .rotate(radians: degreesToRadians(t.x), axis: Vec3(1, 0, 0))
-                                .rotate(radians: degreesToRadians(t.y), axis: Vec3(0, 1, 0))
-                                .rotate(radians: degreesToRadians(t.z), axis: Vec3(0, 0, 1))
-                            
-                        case .scale:
-                            return accum.scale(t.x, t.y, t.z)
-                        }
+            switch currentViewMode {
+            case .scene:
+                if let scene = objectStore?.scene {
+                    for sceneModel in scene.models {
+                        let transform = computeAnimationTransform(sceneModel: sceneModel)
+                        updateModel(model: sceneModel.model!, matrix: transform * sceneModel.transformation())
                     }
-                    
-                    model.modelMatrix = transform
-                    
-                    model.objects.forEach { object in
-                        switch object.content {
-                        case .model:
-                            break
-                        case .mesh(let o):
-                            o.lights = []
-                            
-                            objectStore!.lights.forEach { light in
-                                if !light.disabled && !(light.model?.disabled ?? true) {
-                                    o.lights.append(light)
-                                }
-                            }
-                        case .point:
-                            break
-                        case .light:
-                            break
-                        case .directionalLight:
-                            break
-                        }
+                }
+            case .model:
+                for node in objectStore!.models {
+                    switch node.content {
+                    case .model(let m):
+                        updateModel(model: m, matrix: Matrix4x4.identity())
+                    default:
+                        break
                     }
-
-                case .mesh:
-                    break
-                case .point:
-                    break
-                case .light:
-                    break
-                case .directionalLight:
-                    break
                 }
             }
-            
-            //            if Lights.shared.rotateObject {
-            //                if let testModel = self.testModel {
-            //                    let r = Float((2 * .pi) / 4 * elapsedTime)
-            //                    testModel.rotation += r
-            //
-            //                    if testModel.rotation > 2 * .pi {
-            //                        testModel.rotation = (2 * .pi).remainder(dividingBy: 2 * .pi)
-            //                    }
-            //
-            //                    testModel.setRotationY(radians: testModel.rotation, axis: Vec3(0, 1, 0))
-            //                }
-            //            }
-            
-            //            if Lights.shared.rotateLight {
-            //                let r = Float((2 * .pi) / 4 * elapsedTime)
-            //                Lights.shared.rotation += r
-            //
-            //                if Lights.shared.rotation > 2 * .pi {
-            //                    Lights.shared.rotation = (2 * .pi).remainder(dividingBy: 2 * .pi)
-            //                }
-            //
-            //                let translation = matrix4x4_translation(0, 0, -11)
-            //                let rotation = Matrix4x4.rotation(radians: Lights.shared.rotation, axis: Vec3(0, 1, 0))
-            //
-            //                var position = translation.multiply(Vec4(0, 0, 0, 1))
-            //                position = rotation.multiply(position)
-            //
-            //                Lights.shared.position = Vec3(position.x, position.y, position.z)
-            //            }
         }
+    }
+    
+    private func shadowRenderModel(model: Model, renderEncoder: MTLRenderCommandEncoder) throws {
+            if !model.disabled {
+                for object in model.objects {
+                    switch object.content {
+                    case .model:
+                        break
+                    case .mesh(let o):
+                        if !o.disabled {
+                            try o.draw(renderEncoder: renderEncoder, frame: self.uniformBufferIndex)
+                        }
+                    case .point:
+                        break
+                    case .light:
+                        break
+                    case .directionalLight:
+                        break
+                    }
+                }
+            }
     }
     
     func renderShadowPass(commandBuffer: MTLCommandBuffer) throws {
@@ -365,35 +447,27 @@ class Renderer {
                 if objectStore!.directionalLight.shadowCaster {
                     pipelineManager!.depthShadowPipeline.prepare(renderEncoder: renderEncoder)
                     
-                    for node in objectStore!.models {
-                        switch node.content {
-                        case .model(let model):
-                            if !model.disabled {
-                                for object in model.objects {
-                                    switch object.content {
-                                    case .model:
-                                        break
-                                    case .mesh(let o):
-                                        if !o.disabled {
-                                            try o.simpleDraw(renderEncoder: renderEncoder, modelMatrix: o.modelMatrix(), frame: self.uniformBufferIndex)
-                                        }
-                                    case .point:
-                                        break
-                                    case .light:
-                                        break
-                                    case .directionalLight:
-                                        break
-                                    }
-                                }
+                    switch currentViewMode {
+                    case .scene:
+                        if let scene = objectStore?.scene {
+                            for sceneModel in scene.models {
+                                try shadowRenderModel(model: sceneModel.model!, renderEncoder: renderEncoder)
                             }
-                        case .mesh:
-                            break
-                        case .point:
-                            break
-                        case .light:
-                            break
-                        case .directionalLight:
-                            break
+                        }
+                    case .model:
+                        for node in objectStore!.models {
+                            switch node.content {
+                            case .model(let model):
+                                try shadowRenderModel(model: model, renderEncoder: renderEncoder)
+                            case .mesh:
+                                break
+                            case .point:
+                                break
+                            case .light:
+                                break
+                            case .directionalLight:
+                                break
+                            }
                         }
                     }
                 }
@@ -446,6 +520,79 @@ class Renderer {
             
             renderEncoder.endEncoding()
         }
+    }
+
+    var currentViewMode = ViewMode.model(nil)
+    
+    func setViewMode(viewMode: ViewMode) {
+        switch viewMode {
+        case .scene:
+            switch currentViewMode {
+            case .scene:
+                pipelineManager?.clearDrawables()
+                break
+            case .model:
+                pipelineManager?.clearDrawables()
+
+                if let scene = objectStore?.scene.models {
+                    for model in scene {
+                        for object in model.model!.objects {
+                            switch object.content {
+                            case .mesh(let m):
+                                m.material?.material.addObject(object: m)
+                            default:
+                                break
+                            }
+                        }
+                    }
+                }
+//                if let objectStore = objectStore {
+//                    switch objectStore.models[0].content {
+//                    case .model(let m):
+//                        for object in m.objects {
+//                            switch object.content {
+//                            case .mesh (let m):
+//                                m.material?.material.addObject(object: m)
+//                            default:
+//                                break
+//                            }
+//                        }
+//                        break
+//                    default:
+//                        break;
+//                    }
+//                }
+            }
+            break
+            
+        case .model:
+            switch currentViewMode {
+            case .scene:
+                pipelineManager?.clearDrawables()
+
+                if let objectStore = objectStore {
+                    switch objectStore.models[0].content {
+                    case .model(let m):
+                        for object in m.objects {
+                            switch object.content {
+                            case .mesh (let m):
+                                m.material?.material.addObject(object: m)
+                            default:
+                                break
+                            }
+                        }
+                        break
+                    default:
+                        break;
+                    }
+                }
+                
+            case .model:
+                break
+            }
+        }
+        
+        currentViewMode = viewMode
     }
     
     func render(in view: MTKView) throws {

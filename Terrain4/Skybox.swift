@@ -152,4 +152,4 @@ private let skyboxVertices: [simd_float1] = [
    1.0, -1.0, -1.0,
    -1.0, -1.0,  1.0,
    1.0, -1.0,  1.0
-];
+]

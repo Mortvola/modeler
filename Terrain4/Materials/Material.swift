@@ -20,6 +20,10 @@ class Material: Item {
         super.init(name: name)
     }
 
+    func clearDrawables() {
+        objects = []
+    }
+    
     func addObject(object: RenderObject) {
         let index = objects.firstIndex {
             $0.id == object.id

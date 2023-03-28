@@ -42,6 +42,6 @@ func getSunLightVector (day: Int, hour: Double, latitude: Double) -> Vec3 {
         .rotateX(Float(-elevationAngle))
         .rotateY(Float(azimuth)))
     
-//    return normalize(Vec3(0, -1, 1));
+//    return normalize(Vec3(0, -1, 1))
 }
 

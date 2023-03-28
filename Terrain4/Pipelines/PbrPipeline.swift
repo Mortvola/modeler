@@ -26,7 +26,7 @@ class PbrPipeline: Pipeline {
     
     func draw(object: RenderObject, renderEncoder: MTLRenderCommandEncoder, pbrProperties: PbrProperties?, frame: Int) throws {
         // Pass the normal matrix (derived from the model matrix) to the vertex shader
-        let modelMatrix = object.modelMatrix()
+        let modelMatrix = object.instanceData[0].transformation
         
         var normalMatrix = matrix_float3x3(columns: (
             vector_float3(modelMatrix[0][0], modelMatrix[0][1], modelMatrix[0][2]),
@@ -40,21 +40,23 @@ class PbrPipeline: Pipeline {
         u[0].normalMatrix = normalMatrix
 
         // Pass the light information
-        u[0].numberOfLights = Int32(object.lights.count)
+        u[0].numberOfLights = Int32(Renderer.shared.objectStore!.lights.count)
         
         withUnsafeMutableBytes(of: &u[0].lights) { rawPtr in
             let light = rawPtr.baseAddress!.assumingMemoryBound(to: Lights.self)
 
-            for i in 0..<object.lights.count {
-                light[i].position = object.lights[i].position
-                light[i].intensity = object.lights[i].intensity
+            for i in 0..<Renderer.shared.objectStore!.lights.count {
+                light[i].position = Renderer.shared.objectStore!.lights[i].position
+                light[i].intensity = Renderer.shared.objectStore!.lights[i].intensity
+                
+                print("i: \(light[i])")
             }
         }
 
         renderEncoder.setVertexBuffer(object.uniforms, offset: frame * object.uniformsSize, index: BufferIndex.nodeUniforms.rawValue)
         renderEncoder.setFragmentBuffer(object.uniforms, offset: frame * object.uniformsSize, index: BufferIndex.nodeUniforms.rawValue)
 
-        try object.simpleDraw(renderEncoder: renderEncoder, modelMatrix: modelMatrix, frame: frame)
+        try object.draw(renderEncoder: renderEncoder, frame: frame)
     }
     
     func render(renderEncoder: MTLRenderCommandEncoder, frame: Int) throws {

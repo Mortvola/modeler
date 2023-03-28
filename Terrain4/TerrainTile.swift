@@ -20,8 +20,8 @@ class TerrainTile: Model {
     var elevation: [[Float]] = []
     
     init(x: Int, y: Int, dimension: Int) {
-        self.x = x;
-        self.y = y;
+        self.x = x
+        self.y = y
         self.dimension = dimension
         
         super.init()
@@ -50,7 +50,7 @@ class TerrainTile: Model {
 //
 //                        material.objects.append(object)
 //                        self.objects.append(object)
-//                        break;
+//                        break
 //
 //                    case "line":
 //                        let material = try await MaterialManager.shared.addMaterial(device: self.device, view: self.view, material: Material())
@@ -60,9 +60,9 @@ class TerrainTile: Model {
 //                        material.objects.append(object)
 //                        self.objects.append(object)
 //
-//                        break;
+//                        break
 //                    default:
-//                        break;
+//                        break
 //                    }
 //                }
 //            }
@@ -70,9 +70,9 @@ class TerrainTile: Model {
     }
     
     func setScale(scale: Float) {
-//        self.scale = Vec3(scale, 1.0, scale);
+//        self.scale = Vec3(scale, 1.0, scale)
 //        // if (this.photo) {
-//        //   this.photo.setScale(scale);
+//        //   this.photo.setScale(scale)
 //        // }
 //        self.makeModelMatrix();
     }

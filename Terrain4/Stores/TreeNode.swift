@@ -7,6 +7,10 @@
 
 import Foundation
 
+class Node: Item {
+    @Published var disabled = false
+}
+
 class TreeNode: ObservableObject, Equatable, Identifiable, Codable {
     static func == (lhs: TreeNode, rhs: TreeNode) -> Bool {
         lhs.content == rhs.content

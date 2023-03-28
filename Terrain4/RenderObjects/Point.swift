@@ -76,13 +76,13 @@ class Point: RenderObject {
 //        material = materialId != nil ? materialEntry?.material : nil
 //    }
 
-    override func draw(renderEncoder: MTLRenderCommandEncoder, modelMatrix: Matrix4x4, frame: Int) throws {
-        try self.simpleDraw(renderEncoder: renderEncoder, modelMatrix: modelMatrix, frame: frame)
+    override func draw(renderEncoder: MTLRenderCommandEncoder, frame: Int) throws {
+        try self.simpleDraw(renderEncoder: renderEncoder, frame: frame)
     }
     
-    override func simpleDraw(renderEncoder: MTLRenderCommandEncoder, modelMatrix: Matrix4x4, frame: Int) throws {
+    override func simpleDraw(renderEncoder: MTLRenderCommandEncoder, frame: Int) throws {
         let u: UnsafeMutablePointer<PointUniforms> = self.getUniformsBuffer(index: frame)
-        u[0].modelMatrix = modelMatrix
+        u[0].modelMatrix = instanceData[0].transformation
         u[0].color = color
         u[0].size = size
 

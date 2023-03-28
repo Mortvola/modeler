@@ -75,8 +75,8 @@ class MaterialManager: ObservableObject {
         case .pointMaterial:
             break //m.objects.append(self)
         case .simpleMaterial:
-            Renderer.shared.pipelineManager?.genericPipeline.addMaterial(material: object.material!)
-            Renderer.shared.pipelineManager?.genericPipeline.prepareObject(object: object)
+            Renderer.shared.pipelineManager?.graphPipeline.addMaterial(material: object.material!)
+            Renderer.shared.pipelineManager?.graphPipeline.prepareObject(object: object)
         }
     }
 }
