@@ -49,7 +49,6 @@ class Object: Node, Identifiable, Hashable {
     }
     
     enum CodingKeys: CodingKey {
-        case type
         case id
         case translation
         case rotation
@@ -65,26 +64,13 @@ class Object: Node, Identifiable, Hashable {
         scale = try container.decode(Vec3.self, forKey: .scale)
         
         try super.init(from: decoder)
-
-        if let type = try container.decodeIfPresent(String.self, forKey: .type) {
-            let typeString = try self.typeString()
-            
-            if  type != typeString {
-                throw Errors.objectTypeMismatch
-            }
-        }
     }
 
-    func typeString() throws -> String {
-        throw Errors.notImplemented
-    }
-    
     override func encode(to encoder: Encoder) throws {
         do {
             var container = encoder.container(keyedBy: CodingKeys.self)
             
             try container.encode(id, forKey: .id)
-            try container.encode(try self.typeString().self, forKey: .type)
             try container.encode(translation, forKey: .translation)
             try container.encode(rotation, forKey: .rotation)
             try container.encode(scale, forKey: .scale)

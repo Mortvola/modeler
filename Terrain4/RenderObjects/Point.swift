@@ -29,10 +29,6 @@ class Point: RenderObject {
 //        allocateUniformsBuffer()
     }
 
-    override func typeString() -> String {
-        "Point"
-    }
-    
     func allocateVertexBuffer() {
         var v = Vec3(0, 0, 0)
         let length = MemoryLayout<Vec3>.size

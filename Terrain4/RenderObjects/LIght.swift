@@ -22,10 +22,6 @@ class Light: Object {
         Light.lightCounter += 1
     }
     
-    override func typeString() throws -> String {
-        "Light"
-    }
-
     enum CodingKeys: CodingKey {
         case position
         case intensity
@@ -37,7 +33,7 @@ class Light: Object {
         position = try container.decode(Vec3.self, forKey: .position)
         intensity = try container.decode(Vec3.self, forKey: .intensity)
     
-        try super.init(from: decoder)        
+        try super.init(from: decoder)
     }
     
     public override func encode(to encoder: Encoder) throws {

@@ -221,10 +221,6 @@ class Mesh: RenderObject {
         return normals
     }
     
-    override func typeString() -> String {
-        "Mesh"
-    }
-    
     override func encode(to encoder: Encoder) throws {
         do {
             try super.encode(to: encoder)
