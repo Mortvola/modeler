@@ -10,9 +10,9 @@ import MetalKit
 import Metal
 
 class GraphPipeline: Pipeline {
-    let pipeline: MTLRenderPipelineState
+    var pipeline: MTLRenderPipelineState? = nil
     
-    override init() throws {
+    func initialize() throws {
         self.pipeline = try GraphPipeline.buildPipeline()
     }
 
@@ -22,9 +22,9 @@ class GraphPipeline: Pipeline {
         object.uniforms!.label = "Node Uniforms"
     }
     
-    func prepare(renderEncoder: MTLRenderCommandEncoder) {
-        renderEncoder.setRenderPipelineState(self.pipeline)
-    }
+//    func prepare(renderEncoder: MTLRenderCommandEncoder) {
+//        renderEncoder.setRenderPipelineState(self.pipeline!)
+//    }
 
     func draw(object: RenderObject, renderEncoder: MTLRenderCommandEncoder, frame: Int) throws {
         let u: UnsafeMutablePointer<BillboardUniforms> = object.getUniformsBuffer(index: frame)
@@ -38,7 +38,7 @@ class GraphPipeline: Pipeline {
     }
 
     func render(renderEncoder: MTLRenderCommandEncoder, frame: Int) throws {
-        renderEncoder.setRenderPipelineState(pipeline)
+        renderEncoder.setRenderPipelineState(pipeline!)
         
         for (_, wrapper) in self.materials {
             if wrapper.material.objects.count > 0 {

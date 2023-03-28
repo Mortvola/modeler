@@ -42,7 +42,7 @@ class Renderer {
     
     private var uniforms: UnsafeMutablePointer<FrameUniforms>?
     
-    private let world = World()
+    public let world = World()
     
     public var camera: Camera
     
@@ -66,16 +66,20 @@ class Renderer {
     
     public var freezeFustrum = false
 
-    public var pipelineManager: PipelineManager? = nil
+    public let pipelineManager: PipelineManager
     
     public let materialManager: MaterialManager
     
     public var textureStore: TextureStore? = nil
     
+    private var initialized = false
+    
     init() {
         self.camera = Camera(world: world)
         
         self.materialManager = MaterialManager()
+        
+        self.pipelineManager = PipelineManager()
     }
     
     func initialize(file: SceneDocument) throws {
@@ -111,9 +115,11 @@ class Renderer {
         
         self.lineMaterial = try LineMaterial()
         
-        self.pipelineManager = try PipelineManager()
+        try self.pipelineManager.initialize()
         
         self.textureStore = try TextureStore()
+        
+        self.initialized = true
     }
     
     func makeUniformsBuffer() throws {
@@ -129,31 +135,31 @@ class Renderer {
         self.uniforms = UnsafeMutableRawPointer(buffer.contents()).bindMemory(to: FrameUniforms.self, capacity: 1)
     }
     
-    public func load(lat: Double, lng: Double, dimension: Int) async throws {
-        if self.test {
-            self.world.terrainLoaded = true
-        }
-        else {
-            self.initializeLightVector(latitude: lat)
-            
-            let latLng = LatLng(lat, lng)
-            let (x, z) = latLngToTerrainTile(latLng.lat, latLng.lng, dimension)
-            
-            let swLatLng = terrainTileToLatLng(Double(x), Double(z), dimension)
-            let neLatLng = terrainTileToLatLng(Double(x + 1), Double(z + 1), dimension)
-            let latLngCenter = LatLng(
-                swLatLng.lat + (neLatLng.lat - swLatLng.lat) / 2,
-                swLatLng.lng + (neLatLng.lng - swLatLng.lng) / 2
-            )
-            
-            self.camera.scale = cos(degreesToRadians(Float(latLngCenter.lat)))
-            
-            try await self.world.loadTiles(x: x, z: z, dimension: dimension, renderer: self)
-            
-            let cameraOffset = self.getCameraOffset(latLng: latLng, latLngCenter: latLngCenter)
-            self.camera.cameraOffset = Vec3(cameraOffset.0, self.camera.cameraOffset.y, cameraOffset.1)
-        }
-    }
+//    public func load(lat: Double, lng: Double, dimension: Int) async throws {
+//        if self.test {
+////            self.world.terrainLoaded = true
+//        }
+//        else {
+//            self.initializeLightVector(latitude: lat)
+//
+//            let latLng = LatLng(lat, lng)
+//            let (x, z) = latLngToTerrainTile(latLng.lat, latLng.lng, dimension)
+//
+//            let swLatLng = terrainTileToLatLng(Double(x), Double(z), dimension)
+//            let neLatLng = terrainTileToLatLng(Double(x + 1), Double(z + 1), dimension)
+//            let latLngCenter = LatLng(
+//                swLatLng.lat + (neLatLng.lat - swLatLng.lat) / 2,
+//                swLatLng.lng + (neLatLng.lng - swLatLng.lng) / 2
+//            )
+//
+//            self.camera.scale = cos(degreesToRadians(Float(latLngCenter.lat)))
+//
+//            try await self.world.loadTiles(x: x, z: z, dimension: dimension, renderer: self)
+//
+//            let cameraOffset = self.getCameraOffset(latLng: latLng, latLngCenter: latLngCenter)
+//            self.camera.cameraOffset = Vec3(cameraOffset.0, self.camera.cameraOffset.y, cameraOffset.1)
+//        }
+//    }
     
     private func initializeLightVector(latitude: Double) {
         let calendar = Calendar(identifier: Calendar.Identifier.gregorian)
@@ -396,7 +402,7 @@ class Renderer {
                 renderEncoder.setVertexBytes(&cascadeIndex, length: MemoryLayout<Int>.size, index: BufferIndex.cascadeIndex.rawValue)
                 
                 if objectStore!.directionalLight.shadowCaster {
-                    pipelineManager!.depthShadowPipeline.prepare(renderEncoder: renderEncoder)
+                    pipelineManager.depthShadowPipeline.prepare(renderEncoder: renderEncoder)
                     
                     switch currentViewMode {
                     case .scene:
@@ -450,10 +456,8 @@ class Renderer {
                 renderEncoder.setFragmentTexture(objectStore!.directionalLight.shadowTexture!, index: TextureIndex.depth.rawValue)
             }
             
-            if self.world.terrainLoaded {
-                try pipelineManager?.render(renderEncoder: renderEncoder, frame: self.uniformBufferIndex)
-                objectStore!.skybox?.draw(renderEncoder: renderEncoder)
-            }
+            try pipelineManager.render(renderEncoder: renderEncoder, frame: self.uniformBufferIndex)
+            objectStore!.skybox?.draw(renderEncoder: renderEncoder)
             
             // Render fustrum
             
@@ -480,10 +484,10 @@ class Renderer {
         case .scene:
             switch currentViewMode {
             case .scene:
-                pipelineManager?.clearDrawables()
+                pipelineManager.clearDrawables()
                 break
             case .model:
-                pipelineManager?.clearDrawables()
+                pipelineManager.clearDrawables()
 
                 if let scene = objectStore?.scene.models {
                     for model in scene {
@@ -519,7 +523,7 @@ class Renderer {
         case .model:
             switch currentViewMode {
             case .scene:
-                pipelineManager?.clearDrawables()
+                pipelineManager.clearDrawables()
 
                 if let objectStore = objectStore {
                     switch objectStore.models[0].content {
@@ -564,62 +568,65 @@ class Renderer {
             commandBuffer.addCompletedHandler { (_ commandBuffer)-> Swift.Void in
                 semaphore.signal()
             }
-                        
-            self.updateDynamicBufferState()
             
-            self.updateState()
-                        
-            uniforms[0].projectionMatrix = self.camera.projectionMatrix
-            uniforms[0].viewMatrix = self.camera.getViewMatrix()
-            uniforms[0].cameraPos = self.camera.cameraOffset
-            uniforms[0].directionalLight.lightVector = objectStore!.directionalLight.direction
-            uniforms[0].directionalLight.lightColor = objectStore!.directionalLight.disabled ? Vec3(0, 0, 0) : objectStore!.directionalLight.intensity
-            
-            let fustrumSegments: [Float] = [1, 70, 170, 400, 1600]
-            withUnsafeMutableBytes(of: &uniforms[0].directionalLight.viewProjectionMatrix) { rawPtr in
-                let matrix = rawPtr.baseAddress!.assumingMemoryBound(to: Matrix4x4.self)
-
-                for i in 0..<shadowMapCascades {
-                    let cameraFustrum = camera.getFustrumCorners(nearZ: fustrumSegments[i], farZ: fustrumSegments[i + 1])
-                    matrix[i] = objectStore!.directionalLight.calculateProjectionViewMatrix(cameraFustrum: cameraFustrum)
-                }
-            }
-
-//            if self.fustrums.count == 0 {
-//                self.fustrums.append(WireBox(device: device!, points: objectStore!.directionalLight.cameraFustrum, color: Vec4(1, 0, 0, 1)))
-//                self.fustrums.append(WireBox(device: device!, points: objectStore!.directionalLight.cameraFustrum, color: Vec4(1, 0, 0, 1)))
-//                self.fustrums.append(WireBox(device: device!, points: objectStore!.directionalLight.cameraFustrum, color: Vec4(1, 0, 0, 1)))
-//            }
-//
-//            if self.lightFustrums.count == 0 {
-//                self.lightFustrums.append(WireBox(device: device!, points: objectStore!.directionalLight.cameraFustrum, color: Vec4(0, 1, 0, 1)))
-//                self.lightFustrums.append(WireBox(device: device!, points: objectStore!.directionalLight.cameraFustrum, color: Vec4(0, 1, 0, 1)))
-//                self.lightFustrums.append(WireBox(device: device!, points: objectStore!.directionalLight.cameraFustrum, color: Vec4(1, 1, 0, 1)))
-//            }
-
-            try renderShadowPass(commandBuffer: commandBuffer)
-            
-            /// Delay getting the currentRenderPassDescriptor until we absolutely need it to avoid
-            ///   holding onto the drawable and blocking the display pipeline any longer than necessary
-            if let renderPassDescriptor = view.currentRenderPassDescriptor {
+            if self.world.terrainLoaded && self.initialized {
                 
-                try renderMainPass(renderPassDescriptor: renderPassDescriptor, commandBuffer: commandBuffer)
+                self.updateDynamicBufferState()
                 
-                if let drawable = view.currentDrawable {
-                    commandBuffer.present(drawable)
-                }
-            }
-            
-            commandBuffer.commit()
-            
-            if MovieManager.shared.recording {
-                if let texture = view.currentDrawable?.texture, !texture.isFramebufferOnly {
-                    commandBuffer.waitUntilCompleted()
+                self.updateState()
+                
+                uniforms[0].projectionMatrix = self.camera.projectionMatrix
+                uniforms[0].viewMatrix = self.camera.getViewMatrix()
+                uniforms[0].cameraPos = self.camera.cameraOffset
+                uniforms[0].directionalLight.lightVector = objectStore!.directionalLight.direction
+                uniforms[0].directionalLight.lightColor = objectStore!.directionalLight.disabled ? Vec3(0, 0, 0) : objectStore!.directionalLight.intensity
+                
+                let fustrumSegments: [Float] = [1, 70, 170, 400, 1600]
+                withUnsafeMutableBytes(of: &uniforms[0].directionalLight.viewProjectionMatrix) { rawPtr in
+                    let matrix = rawPtr.baseAddress!.assumingMemoryBound(to: Matrix4x4.self)
                     
-                    if let image = try? texture.toImage() {
-//                        print("captured image \(image.width)x\(image.height)")
-                        MovieManager.shared.addFrame(image: image) {
-                            view.framebufferOnly = true
+                    for i in 0..<shadowMapCascades {
+                        let cameraFustrum = camera.getFustrumCorners(nearZ: fustrumSegments[i], farZ: fustrumSegments[i + 1])
+                        matrix[i] = objectStore!.directionalLight.calculateProjectionViewMatrix(cameraFustrum: cameraFustrum)
+                    }
+                }
+                
+                //            if self.fustrums.count == 0 {
+                //                self.fustrums.append(WireBox(device: device!, points: objectStore!.directionalLight.cameraFustrum, color: Vec4(1, 0, 0, 1)))
+                //                self.fustrums.append(WireBox(device: device!, points: objectStore!.directionalLight.cameraFustrum, color: Vec4(1, 0, 0, 1)))
+                //                self.fustrums.append(WireBox(device: device!, points: objectStore!.directionalLight.cameraFustrum, color: Vec4(1, 0, 0, 1)))
+                //            }
+                //
+                //            if self.lightFustrums.count == 0 {
+                //                self.lightFustrums.append(WireBox(device: device!, points: objectStore!.directionalLight.cameraFustrum, color: Vec4(0, 1, 0, 1)))
+                //                self.lightFustrums.append(WireBox(device: device!, points: objectStore!.directionalLight.cameraFustrum, color: Vec4(0, 1, 0, 1)))
+                //                self.lightFustrums.append(WireBox(device: device!, points: objectStore!.directionalLight.cameraFustrum, color: Vec4(1, 1, 0, 1)))
+                //            }
+                
+                try renderShadowPass(commandBuffer: commandBuffer)
+                
+                /// Delay getting the currentRenderPassDescriptor until we absolutely need it to avoid
+                ///   holding onto the drawable and blocking the display pipeline any longer than necessary
+                if let renderPassDescriptor = view.currentRenderPassDescriptor {
+                    
+                    try renderMainPass(renderPassDescriptor: renderPassDescriptor, commandBuffer: commandBuffer)
+                    
+                    if let drawable = view.currentDrawable {
+                        commandBuffer.present(drawable)
+                    }
+                }
+                
+                commandBuffer.commit()
+                
+                if MovieManager.shared.recording {
+                    if let texture = view.currentDrawable?.texture, !texture.isFramebufferOnly {
+                        commandBuffer.waitUntilCompleted()
+                        
+                        if let image = try? texture.toImage() {
+                            //                        print("captured image \(image.width)x\(image.height)")
+                            MovieManager.shared.addFrame(image: image) {
+                                view.framebufferOnly = true
+                            }
                         }
                     }
                 }

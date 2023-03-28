@@ -31,8 +31,6 @@ class SceneDocument: ReferenceFileDocument {
     static var readableContentTypes: [UTType] { [UTType.sceneDocument] }
     static var writableContenttypes: [UTType] { [UTType.sceneDocument] }
     
-    var data: Data?
-    
     @Published var objectStore = ObjectStore()
     
     init() {
@@ -40,8 +38,14 @@ class SceneDocument: ReferenceFileDocument {
     }
     
     required init(configuration: ReadConfiguration) throws {
-        // Do not open the file here. Need to have the metal view/device instantiated first
-        self.data = configuration.file.regularFileContents
+        let data = configuration.file.regularFileContents
+        
+        Task {
+            if let data = data {
+                await self.parse(data: data)
+                Renderer.shared.world.terrainLoaded = true
+            }
+        }
     }
     
     func encodeData() throws -> Data {
@@ -55,19 +59,6 @@ class SceneDocument: ReferenceFileDocument {
             throw error
         }
     }
-
-//    func getURLFromBookmark(bookmark: Data) -> URL? {
-//        var bookmarkIsStale = false
-//        let url = try? URL(resolvingBookmarkData: bookmark, options: [.withSecurityScope], relativeTo: nil, bookmarkDataIsStale: &bookmarkIsStale)
-//
-//        if let url = url, bookmarkIsStale {
-//            let bookmark = try? url.bookmarkData(options: .withSecurityScope)
-//
-//            self.bookmark = bookmark
-//        }
-//
-//        return url
-//    }
     
     @MainActor
     func parse(data: Data) async {
@@ -84,22 +75,12 @@ class SceneDocument: ReferenceFileDocument {
             for task in decoder.getTasks().tasks {
                 _ = await task.result
             }
-            
+
+            Renderer.shared.world.terrainLoaded = true
         } catch {
             print("Error: Can't decode contents \(error)")
         }
     }
-    
-//    @MainActor
-//    func open(url: URL) async throws {
-//        self.bookmark = try? url.bookmarkData(options: .withSecurityScope)
-//
-//        if let bookmark = self.bookmark, let url = getURLFromBookmark(bookmark: bookmark) {
-//            if let data = try? Data(contentsOf: url) {
-//                await parse(data: data)
-//            }
-//        }
-//    }
 }
 
 class TaskHandler {

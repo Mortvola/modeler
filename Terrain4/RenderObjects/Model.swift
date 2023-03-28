@@ -170,7 +170,7 @@ class Model: Node, Identifiable, Hashable {
         let object = Point(model: self)
         object.size = options.size
         
-//        let material = try await Renderer.shared.pipelineManager?.pointPipeline.addMaterial(device: device, view: view, descriptor: nil)
+//        let material = try await Renderer.shared.pipelineManager.pointPipeline.addMaterial(device: device, view: view, descriptor: nil)
 //
 //        material?.objects.append(object)
 //

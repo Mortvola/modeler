@@ -66,7 +66,7 @@ class Point: RenderObject {
 
 //    @MainActor
 //    func setMaterial(materialId: UUID?) {
-//        let materialEntry = Renderer.shared.pipelineManager?.pointPipeline.materials[materialId]
+//        let materialEntry = Renderer.shared.pipelineManager.pointPipeline.materials[materialId]
 //
 //        materialEntry?.material.objects.append(self)
 //        material = materialId != nil ? materialEntry?.material : nil

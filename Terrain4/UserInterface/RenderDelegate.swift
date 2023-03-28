@@ -15,17 +15,7 @@ class RenderDelegate: NSObject, MTKViewDelegate {
     
     init(file: SceneDocument) throws {
         do {
-            Renderer.shared = Renderer()
-            
             try Renderer.shared.initialize(file: file)
-            Task {
-                try await Renderer.shared.load(lat: 46.514279, lng: -121.456191, dimension: 128)
-                
-                if let data = file.data {
-                    await file.parse(data: data)
-                    file.data = nil
-                }
-            }
         }
         catch {
             print(error)

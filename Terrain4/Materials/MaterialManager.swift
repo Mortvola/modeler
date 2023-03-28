@@ -68,15 +68,15 @@ class MaterialManager: ObservableObject {
     private func updatePipeline(object: RenderObject) {
         switch object.material! {
         case .pbrMaterial:
-            Renderer.shared.pipelineManager?.pbrPipeline.addMaterial(material: object.material!)
-            Renderer.shared.pipelineManager?.pbrPipeline.prepareObject(object: object)
+            Renderer.shared.pipelineManager.pbrPipeline.addMaterial(material: object.material!)
+            Renderer.shared.pipelineManager.pbrPipeline.prepareObject(object: object)
         case .billboardMaterial:
             break //m.objects.append(self)
         case .pointMaterial:
             break //m.objects.append(self)
         case .simpleMaterial:
-            Renderer.shared.pipelineManager?.graphPipeline.addMaterial(material: object.material!)
-            Renderer.shared.pipelineManager?.graphPipeline.prepareObject(object: object)
+            Renderer.shared.pipelineManager.graphPipeline.addMaterial(material: object.material!)
+            Renderer.shared.pipelineManager.graphPipeline.prepareObject(object: object)
         }
     }
 }

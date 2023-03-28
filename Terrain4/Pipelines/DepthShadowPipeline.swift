@@ -10,14 +10,14 @@ import Metal
 import MetalKit
 
 class DepthShadowPipeline {
-    let pipeline: MTLRenderPipelineState
+    var pipeline: MTLRenderPipelineState? = nil
 
-    init() throws {
+    func initialize() throws {
         self.pipeline = try DepthShadowPipeline.buildPipeline()
     }
 
     func prepare(renderEncoder: MTLRenderCommandEncoder) {
-        renderEncoder.setRenderPipelineState(self.pipeline)
+        renderEncoder.setRenderPipelineState(self.pipeline!)
     }
     
     private static func buildPipeline() throws -> MTLRenderPipelineState {

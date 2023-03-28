@@ -25,26 +25,28 @@ class Mesh: RenderObject {
     }
     
     override func draw(renderEncoder: MTLRenderCommandEncoder, frame: Int) throws {
-        let matrix: UnsafeMutablePointer<Matrix4x4> = self.getModelMatrixUniform(index: frame, instances: instanceData.count)
-        matrix[0] = instanceData[0].transformation
-        
-        withUnsafeMutableBytes(of: &matrix[0]) { rawPtr in
-            let matrix = rawPtr.baseAddress!.assumingMemoryBound(to: Matrix4x4.self)
-
-            for i in 0..<instanceData.count {
-                matrix[i] = instanceData[i].transformation
+        if instanceData.count > 0 {
+            let matrix: UnsafeMutablePointer<Matrix4x4> = self.getModelMatrixUniform(index: frame, instances: instanceData.count)
+            matrix[0] = instanceData[0].transformation
+            
+            withUnsafeMutableBytes(of: &matrix[0]) { rawPtr in
+                let matrix = rawPtr.baseAddress!.assumingMemoryBound(to: Matrix4x4.self)
+                
+                for i in 0..<instanceData.count {
+                    matrix[i] = instanceData[i].transformation
+                }
             }
-        }
-
-        renderEncoder.setVertexBuffer(self.modelMatrixUniform, offset: 0, index: BufferIndex.modelMatrix.rawValue)
-
-        // Pass the vertex and index information to the vertex shader
-        for (i, buffer) in self.mesh.vertexBuffers.enumerated() {
-            renderEncoder.setVertexBuffer(buffer.buffer, offset: buffer.offset, index: i)
-        }
-        
-        for submesh in mesh.submeshes {
-            renderEncoder.drawIndexedPrimitives(type: submesh.primitiveType, indexCount: submesh.indexCount, indexType: submesh.indexType, indexBuffer: submesh.indexBuffer.buffer, indexBufferOffset: submesh.indexBuffer.offset, instanceCount: instanceData.count)
+            
+            renderEncoder.setVertexBuffer(self.modelMatrixUniform, offset: 0, index: BufferIndex.modelMatrix.rawValue)
+            
+            // Pass the vertex and index information to the vertex shader
+            for (i, buffer) in self.mesh.vertexBuffers.enumerated() {
+                renderEncoder.setVertexBuffer(buffer.buffer, offset: buffer.offset, index: i)
+            }
+            
+            for submesh in mesh.submeshes {
+                renderEncoder.drawIndexedPrimitives(type: submesh.primitiveType, indexCount: submesh.indexCount, indexType: submesh.indexType, indexBuffer: submesh.indexBuffer.buffer, indexBufferOffset: submesh.indexBuffer.offset, instanceCount: instanceData.count)
+            }
         }
     }
 

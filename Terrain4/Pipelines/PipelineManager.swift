@@ -10,20 +10,26 @@ import MetalKit
 
 class PipelineManager {
     public let pbrPipeline: PbrPipeline
-    public let pointPipeline: PointPipeline
+//    public let pointPipeline: PointPipeline
     public let graphPipeline: GraphPipeline
     public var depthShadowPipeline: DepthShadowPipeline
     
-    init() throws {
-        pbrPipeline = try PbrPipeline()
-        pointPipeline = try PointPipeline()
-        graphPipeline = try GraphPipeline()
-        depthShadowPipeline = try DepthShadowPipeline()
+    init() {
+        pbrPipeline = PbrPipeline()
+//        pointPipeline = try PointPipeline()
+        graphPipeline = GraphPipeline()
+        depthShadowPipeline = DepthShadowPipeline()
+    }
+    
+    func initialize() throws {
+        try pbrPipeline.initialize()
+        try graphPipeline.initialize()
+        try depthShadowPipeline.initialize()
     }
     
     func render(renderEncoder: MTLRenderCommandEncoder, frame: Int) throws {
         try pbrPipeline.render(renderEncoder: renderEncoder, frame: frame)
-        try pointPipeline.render(renderEncoder: renderEncoder, frame: frame)
+//        try pointPipeline.render(renderEncoder: renderEncoder, frame: frame)
         try graphPipeline.render(renderEncoder: renderEncoder, frame: frame)
     }
     
