@@ -20,7 +20,7 @@ struct ModelSceneDetails: View {
         VStack {
             Picker(selection: $tabState, label: Text("Type")) {
                 Text("Transformations").tag(Tab.transformations)
-                Text("Animations").tag(Tab.material)
+                Text("Animators").tag(Tab.material)
             }
             .pickerStyle(SegmentedPickerStyle())
             .padding()
@@ -52,7 +52,7 @@ struct ModelSceneDetails: View {
                 }
             }
             else {
-                ModelAnimationView(model: model)
+                ModelAnimatorView(model: model)
                 Spacer()
             }
         }

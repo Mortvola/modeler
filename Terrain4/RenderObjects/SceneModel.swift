@@ -7,15 +7,15 @@
 
 import Foundation
 
-class Animation: Codable {
-    enum AnimationType: Codable {
+class Animator: Codable {
+    enum AnimatorType: Codable {
     case rotateX
     case rotateY
     case rotateZ
     }
     
     var id: UUID
-    var type: AnimationType
+    var type: AnimatorType
     var value: Float = 0.0
     var accum: Float = 0.0
     
@@ -30,7 +30,7 @@ class Animation: Codable {
         }
     }
     
-    init(type: AnimationType) {
+    init(type: AnimatorType) {
         id = UUID()
         self.type = type
     }
@@ -45,7 +45,7 @@ class Animation: Codable {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         
         id = try container.decode(UUID.self, forKey: .id)
-        type = try container.decode(AnimationType.self, forKey: .type)
+        type = try container.decode(AnimatorType.self, forKey: .type)
         value = try container.decode(Float.self, forKey: .value)
     }
     
@@ -70,7 +70,7 @@ class SceneModel: ObservableObject, Identifiable, Equatable, Codable {
     var model: Model? = nil
     var modelId: UUID
 
-    @Published var animations: [Animation] = []
+    @Published var animators: [Animator] = []
 
     @Published var translation = Vec3(0, 0, 0)
     
@@ -89,7 +89,7 @@ class SceneModel: ObservableObject, Identifiable, Equatable, Codable {
         case rotation
         case scale
         case model
-        case animations
+        case animators
     }
     
     required init(from decoder: Decoder) throws {
@@ -101,17 +101,17 @@ class SceneModel: ObservableObject, Identifiable, Equatable, Codable {
         rotation = try container.decode(Vec3.self, forKey: .rotation)
         scale = try container.decode(Vec3.self, forKey: .scale)
         
-        let animationIds = try container.decode([UUID].self, forKey: .animations)
+        let animatorIds = try container.decode([UUID].self, forKey: .animators)
         
         let objectStore = decoder.getObjectStore()
 
-        for id in animationIds {
-            let animation = objectStore.animations.first {
+        for id in animatorIds {
+            let animator = objectStore.animators.first {
                 $0.id == id
             }
             
-            if let animation = animation {
-                animations.append(animation)
+            if let animator = animator {
+                animators.append(animator)
             }
         }
     }
@@ -125,11 +125,11 @@ class SceneModel: ObservableObject, Identifiable, Equatable, Codable {
         try container.encode(rotation, forKey: .rotation)
         try container.encode(scale, forKey: .scale)
         
-        let animationIds = animations.map {
+        let animatorIds = animators.map {
             $0.id
         }
         
-        try container.encode(animationIds, forKey: .animations)
+        try container.encode(animatorIds, forKey: .animators)
     }
 
     func transformation() -> Matrix4x4 {
@@ -141,8 +141,8 @@ class SceneModel: ObservableObject, Identifiable, Equatable, Codable {
             .scale(scale.x, scale.y, scale.z)
     }
     
-    func addAnimation(animation: Animation) {
-        Renderer.shared.objectStore!.animations.append(animation)
-        animations.append(animation)
+    func addAnimator(animator: Animator) {
+        Renderer.shared.objectStore!.animators.append(animator)
+        animators.append(animator)
     }
 }

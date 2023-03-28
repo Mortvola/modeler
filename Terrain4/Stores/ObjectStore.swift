@@ -14,7 +14,7 @@ class ObjectStore: ObservableObject {
     var lights: [Light] = []
     var directionalLight = DirectionalLight()
     
-    var animations: [Animation] = []
+    var animators: [Animator] = []
     
     @Published  var skybox: Skybox?
     

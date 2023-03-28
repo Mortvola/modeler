@@ -233,11 +233,11 @@ class Renderer {
         return nil
     }
     
-    func computeAnimationTransform(sceneModel: SceneModel) -> Matrix4x4 {
-        let transform = sceneModel.animations.reduce(Matrix4x4.identity()) { accum, animation in
-            let t = animation.value + animation.accum
+    func computeAnimatorTransform(sceneModel: SceneModel) -> Matrix4x4 {
+        let transform = sceneModel.animators.reduce(Matrix4x4.identity()) { accum, animator in
+            let t = animator.value + animator.accum
             
-            switch(animation.type) {
+            switch(animator.type) {
 //            case .translate:
 //                return accum.translate(t.x, t.y, t.z)
                 
@@ -331,8 +331,9 @@ class Renderer {
             
             self.updateTimeOfDay(elapsedTime: elapsedTime)
             
-            for animation in objectStore!.animations {
-                animation.accum = animation.accum + (animation.value * Float(elapsedTime))
+            // Update all of the animators
+            for animator in objectStore!.animators {
+                animator.accum = animator.accum + (animator.value * Float(elapsedTime))
             }
 
             clearInstanceData()
@@ -343,7 +344,7 @@ class Renderer {
             case .scene:
                 if let scene = objectStore?.scene {
                     for sceneModel in scene.models {
-                        let transform = computeAnimationTransform(sceneModel: sceneModel)
+                        let transform = computeAnimatorTransform(sceneModel: sceneModel)
                         updateModel(model: sceneModel.model!, matrix: transform * sceneModel.transformation())
                     }
                 }

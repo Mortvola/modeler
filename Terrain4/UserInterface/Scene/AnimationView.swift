@@ -7,21 +7,21 @@
 
 import SwiftUI
 
-struct AnimationView: View {
-    @Binding var animation: Animation
+struct AnimatorView: View {
+    @Binding var animator: Animator
     
     var body: some View {
         HStack {
-            Text(animation.name)
-            UndoProvider($animation.value) { $value in
+            Text(animator.name)
+            UndoProvider($animator.value) { $value in
                 NumericField(value: $value)
             }
         }
     }
 }
 
-//struct AnimationView_Previews: PreviewProvider {
+//struct AnimatorView_Previews: PreviewProvider {
 //    static var previews: some View {
-//        AnimationView()
+//        AnimatorView()
 //    }
 //}

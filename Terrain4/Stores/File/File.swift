@@ -29,7 +29,7 @@ struct File: Codable {
 
     enum CodingKeys: CodingKey {
         case models
-        case animations
+        case animators
         case camera
         case materials
         case directionalLight
@@ -46,7 +46,7 @@ struct File: Codable {
         
         try container.encode(self.scene, forKey: .scene)
         
-        try container.encode(Renderer.shared.objectStore!.animations, forKey: .animations)
+        try container.encode(Renderer.shared.objectStore!.animators, forKey: .animators)
     }
 
     init(from decoder: Decoder) throws {
@@ -62,7 +62,7 @@ struct File: Codable {
         
         let objectStore = decoder.getObjectStore()
         
-        objectStore.animations = try container.decodeIfPresent([Animation].self, forKey: .animations) ?? []
+        objectStore.animators = try container.decodeIfPresent([Animator].self, forKey: .animators) ?? []
         
         materials = try container.decode([MaterialWrapper].self, forKey: .materials)
         
