@@ -43,7 +43,7 @@ class SceneDocument: ReferenceFileDocument {
         Task {
             if let data = data {
                 await self.parse(data: data)
-                Renderer.shared.world.terrainLoaded = true
+                objectStore.loaded = true
             }
         }
     }
@@ -75,8 +75,6 @@ class SceneDocument: ReferenceFileDocument {
             for task in decoder.getTasks().tasks {
                 _ = await task.result
             }
-
-            Renderer.shared.world.terrainLoaded = true
         } catch {
             print("Error: Can't decode contents \(error)")
         }

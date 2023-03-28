@@ -569,7 +569,7 @@ class Renderer {
                 semaphore.signal()
             }
             
-            if self.world.terrainLoaded && self.initialized {
+            if self.objectStore?.loaded ?? false && self.initialized {
                 
                 self.updateDynamicBufferState()
                 

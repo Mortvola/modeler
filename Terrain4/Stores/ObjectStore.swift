@@ -8,6 +8,8 @@
 import Foundation
 
 class ObjectStore: ObservableObject {
+    var loaded = false
+    
     @Published var models: [TreeNode] = []
     let scene = TheScene()
     
