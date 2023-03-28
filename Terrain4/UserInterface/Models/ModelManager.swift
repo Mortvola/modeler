@@ -14,8 +14,19 @@ struct ModelManager: View {
     @State private var addObject = false
     @State private var selectedItem: TreeNode? = nil
     @State private var addObjectTo: Model? = nil
-    @State var hidden = false
+    @State private var hidden = false
+    @Binding var selectedModel: Model?
 
+    var modelList: [Model] {
+        objectStore.models.compactMap { node in
+            switch node.content {
+            case .model(let m):
+                return m
+            default:
+                return nil
+            }
+        }
+    }
     var body: some View {
         GeometryReader { gp in
             VStack {
@@ -29,7 +40,7 @@ struct ModelManager: View {
                                 print("undo")
                             }
                         } label: {
-                            Text("Add Model")
+                            Text("New Model")
                         }
                         .buttonStyle(.bordered)
                         
@@ -71,7 +82,17 @@ struct ModelManager: View {
                         
                         Spacer()
                     }
-                    ModelsView(objectStore: objectStore, selectedItem: $selectedItem)
+                    Picker("Model", selection: $selectedModel) {
+                        Text("None").tag(nil as Model?)
+                        ForEach(modelList) { model in
+                            Text(model.name).tag(model as Model?)
+                        }
+                    }
+                    .padding()
+                    if let model = selectedModel {
+                        ModelsView(objectStore: objectStore, model: model, selectedItem: $selectedItem)
+                    }
+                    Spacer()
                 }
                 .frame(height: gp.size.height / 2)
                 .border(edge: .bottom)
@@ -125,8 +146,8 @@ struct ModelManager: View {
     }
 }
 
-struct ModelManager_Previews: PreviewProvider {
-    static var previews: some View {
-        ModelManager(objectStore: ObjectStore())
-    }
-}
+//struct ModelManager_Previews: PreviewProvider {
+//    static var previews: some View {
+//        ModelManager(objectStore: ObjectStore())
+//    }
+//}

@@ -478,13 +478,37 @@ class Renderer {
     }
 
     var currentViewMode = ViewMode.model(nil)
+    var selectedModel: Model? = nil
+    
+    func setSelectedModel(model: Model?) {
+        if (model !== selectedModel) {
+            selectedModel = model
+            
+            switch currentViewMode {
+            case .scene:
+                break
+            case .model:
+                pipelineManager.clearDrawables()
+
+                if let model = selectedModel {
+                    for object in model.objects {
+                        switch object.content {
+                        case .mesh (let mesh):
+                            mesh.material?.material.addObject(object: mesh)
+                        default:
+                            break
+                        }
+                    }
+                }
+            }
+        }
+    }
     
     func setViewMode(viewMode: ViewMode) {
         switch viewMode {
         case .scene:
             switch currentViewMode {
             case .scene:
-                pipelineManager.clearDrawables()
                 break
             case .model:
                 pipelineManager.clearDrawables()
@@ -525,20 +549,14 @@ class Renderer {
             case .scene:
                 pipelineManager.clearDrawables()
 
-                if let objectStore = objectStore {
-                    switch objectStore.models[0].content {
-                    case .model(let m):
-                        for object in m.objects {
-                            switch object.content {
-                            case .mesh (let m):
-                                m.material?.material.addObject(object: m)
-                            default:
-                                break
-                            }
+                if let model = selectedModel {
+                    for object in model.objects {
+                        switch object.content {
+                        case .mesh (let mesh):
+                            mesh.material?.material.addObject(object: mesh)
+                        default:
+                            break
                         }
-                        break
-                    default:
-                        break;
                     }
                 }
                 

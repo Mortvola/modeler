@@ -19,11 +19,12 @@ struct ContentView: View {
     @State private var tabSelection: TabSelection = .objects
     @State var openPicker = false
     @State var openSave = false
+    @State var selectedModel: Model? = nil
     
     var body: some View {
         NavigationSplitView {
             TabView(selection: $tabSelection) {
-                ModelManager(objectStore: file.objectStore)
+                ModelManager(objectStore: file.objectStore, selectedModel: $selectedModel)
                     .tabItem {
                         Label("Objects", systemImage: "circle.grid.2x2")
                     }
@@ -74,6 +75,9 @@ struct ContentView: View {
                     Renderer.shared.setViewMode(viewMode: .scene)
                 }
             }
+        }
+        .onChange(of: selectedModel) { newModel in
+            Renderer.shared.setSelectedModel(model: newModel)
         }
         .environmentObject(file)
     }

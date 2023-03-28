@@ -39,7 +39,7 @@ class RenderObject: Object {
         
         try super.init(from: decoder)
 
-        setMaterial(materialId: materialId)
+        material = Renderer.shared.materialManager.getMaterial(materialId: materialId)
         
         allocateModelMatrixUniform()
     }

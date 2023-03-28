@@ -32,6 +32,14 @@ class MaterialManager: ObservableObject {
         }
     }
     
+    func getMaterial(materialId: UUID?) -> MaterialWrapper? {
+        if let materialId = materialId {
+            return materials[materialId]
+        }
+        
+        return defaultMaterial
+    }
+    
     func setMaterial(object: RenderObject, materialId: UUID?) {
         if let materialId = materialId {
             let materialWrapper = materials[materialId]
@@ -60,23 +68,6 @@ class MaterialManager: ObservableObject {
                 defaultMaterial.material.addObject(object: object)
                 object.material = defaultMaterial
             }
-
-            updatePipeline(object: object)
-        }
-    }
-
-    private func updatePipeline(object: RenderObject) {
-        switch object.material! {
-        case .pbrMaterial:
-            Renderer.shared.pipelineManager.pbrPipeline.addMaterial(material: object.material!)
-            Renderer.shared.pipelineManager.pbrPipeline.prepareObject(object: object)
-        case .billboardMaterial:
-            break //m.objects.append(self)
-        case .pointMaterial:
-            break //m.objects.append(self)
-        case .simpleMaterial:
-            Renderer.shared.pipelineManager.graphPipeline.addMaterial(material: object.material!)
-            Renderer.shared.pipelineManager.graphPipeline.prepareObject(object: object)
         }
     }
 }
