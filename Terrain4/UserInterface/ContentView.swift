@@ -9,7 +9,6 @@ import SwiftUI
 
 enum TabSelection {
     case objects
-    case animators
     case materials
     case textures
     case scene
@@ -29,12 +28,6 @@ struct ContentView: View {
                         Label("Objects", systemImage: "circle.grid.2x2")
                     }
                     .tag(TabSelection.objects)
-
-                AnimatorsView()
-                    .tabItem {
-                        Label("Animators", systemImage: "arrow.clockwise.circle")
-                    }
-                    .tag(TabSelection.animators)
 
                 MaterialsView()
                     .tabItem {

@@ -18,7 +18,6 @@ class Transform: ObservableObject, Identifiable, Codable {
     
     @Published var transform: TransformType = .translate
     @Published var values: Vec3 = Vec3(0, 0, 0)
-    @Published var animator: Animator? = nil
     
     init() {
         self.id = UUID()
@@ -28,7 +27,6 @@ class Transform: ObservableObject, Identifiable, Codable {
         case id
         case transform
         case values
-        case animator
     }
     
     required init(from decoder: Decoder) throws {
@@ -37,11 +35,6 @@ class Transform: ObservableObject, Identifiable, Codable {
         id = UUID()
         transform = try container.decode(TransformType.self, forKey: .transform)
         values = try container.decode(Vec3.self, forKey: .values)
-        let animatorID = try container.decodeIfPresent(UUID.self, forKey: .animator)
-        
-        animator = AnimatorStore.shared.animators.first { anim in
-            anim.id == animatorID
-        }
     }
 
     func encode(to encoder: Encoder) throws {
@@ -50,6 +43,5 @@ class Transform: ObservableObject, Identifiable, Codable {
         try container.encode(id, forKey: .id)
         try container.encode(transform, forKey: .transform)
         try container.encode(values, forKey: .values)
-        try container.encode(animator?.id, forKey: .animator)
     }
 }

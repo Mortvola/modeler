@@ -9,7 +9,6 @@ import SwiftUI
 
 struct TransformView: View {
     @ObservedObject var transform: Transform
-    @ObservedObject var animatorStore = AnimatorStore.shared
     
     var body: some View {
         VStack {
@@ -23,16 +22,6 @@ struct TransformView: View {
                 Spacer()
             }
             VectorFieldView(vector: $transform.values)
-            HStack {
-                Picker("Animator", selection: $transform.animator) {
-                    Text("None").tag(nil as Animator?)
-                    ForEach(animatorStore.animators, id: \.self) { animator in
-                        AnimatorPickerItem(animator: animator)
-                    }
-                }
-                .labelsHidden()
-                Spacer()
-            }
         }
     }
 }

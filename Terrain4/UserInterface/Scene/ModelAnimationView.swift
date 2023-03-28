@@ -26,7 +26,7 @@ struct ModelAnimationView: View {
             
             Menu("Add Animation") {
                 Button {
-                    var animation = Animation(type: .rotateX)
+                    let animation = Animation(type: .rotateX)
                     animation.value = 20
                     model.addAnimation(animation: animation)
                     undoManager?.registerUndo(withTarget: file) { _ in
@@ -37,7 +37,7 @@ struct ModelAnimationView: View {
                 }
                 
                 Button {
-                    var animation = Animation(type: .rotateY)
+                    let animation = Animation(type: .rotateY)
                     animation.value = 20
                     model.addAnimation(animation: animation)
                     undoManager?.registerUndo(withTarget: file) { _ in
@@ -48,7 +48,7 @@ struct ModelAnimationView: View {
                 }
                 
                 Button {
-                    var animation = Animation(type: .rotateZ)
+                    let animation = Animation(type: .rotateZ)
                     animation.value = 20
                     model.addAnimation(animation: animation)
                     undoManager?.registerUndo(withTarget: file) { _ in

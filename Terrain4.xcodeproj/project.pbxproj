@@ -132,8 +132,6 @@
 		79AEFEF029D2767C0054A6EB /* ModelAnimationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79AEFEEF29D2767C0054A6EB /* ModelAnimationView.swift */; };
 		79AEFEF229D285ED0054A6EB /* AnimationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79AEFEF129D285ED0054A6EB /* AnimationView.swift */; };
 		79DF5C5729C52D5F0005CF41 /* SceneDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79DF5C5629C52D5F0005CF41 /* SceneDocument.swift */; };
-		79F6D2C129BA58F5007CA69A /* Animator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F6D2C029BA58F5007CA69A /* Animator.swift */; };
-		79F6D2C629BA5C80007CA69A /* AnimatorsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F6D2C529BA5C80007CA69A /* AnimatorsView.swift */; };
 		79F6D2C829BA5F10007CA69A /* MaterialsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F6D2C729BA5F10007CA69A /* MaterialsView.swift */; };
 		79F6D2CA29BA6C34007CA69A /* Border.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F6D2C929BA6C34007CA69A /* Border.swift */; };
 		79F6D2CC29BA7EFA007CA69A /* LIght.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F6D2CB29BA7EFA007CA69A /* LIght.swift */; };
@@ -141,11 +139,7 @@
 		79F6D2D129BAA8DB007CA69A /* SphereAllocator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F6D2D029BAA8DB007CA69A /* SphereAllocator.swift */; };
 		79F6D2D329BAC193007CA69A /* TestRectAllocator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F6D2D229BAC193007CA69A /* TestRectAllocator.swift */; };
 		79F6D2D529BB6236007CA69A /* ObjectsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F6D2D429BB6236007CA69A /* ObjectsView.swift */; };
-		79F6D2D729BB6642007CA69A /* AnimatorStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F6D2D629BB6642007CA69A /* AnimatorStore.swift */; };
 		79F6D2D929BB691E007CA69A /* ModelDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F6D2D829BB691E007CA69A /* ModelDetailsView.swift */; };
-		79F6D2DB29BB6A08007CA69A /* AnimatorDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F6D2DA29BB6A07007CA69A /* AnimatorDetailsView.swift */; };
-		79F6D2DD29BB92C7007CA69A /* AnimatorListItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F6D2DC29BB92C7007CA69A /* AnimatorListItem.swift */; };
-		79F6D2DF29BB941F007CA69A /* AnimatorPickerItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F6D2DE29BB941E007CA69A /* AnimatorPickerItem.swift */; };
 		79F6D2E129BBA375007CA69A /* ObjectDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F6D2E029BBA375007CA69A /* ObjectDetailsView.swift */; };
 		79F6D2E529BC2C6A007CA69A /* LightDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F6D2E429BC2C6A007CA69A /* LightDetailsView.swift */; };
 		79F6D2EB29BCBD83007CA69A /* NumericField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F6D2E829BCBD83007CA69A /* NumericField.swift */; };
@@ -336,8 +330,6 @@
 		79AEFEEF29D2767C0054A6EB /* ModelAnimationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelAnimationView.swift; sourceTree = "<group>"; };
 		79AEFEF129D285ED0054A6EB /* AnimationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimationView.swift; sourceTree = "<group>"; };
 		79DF5C5629C52D5F0005CF41 /* SceneDocument.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDocument.swift; sourceTree = "<group>"; };
-		79F6D2C029BA58F5007CA69A /* Animator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Animator.swift; sourceTree = "<group>"; };
-		79F6D2C529BA5C80007CA69A /* AnimatorsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimatorsView.swift; sourceTree = "<group>"; };
 		79F6D2C729BA5F10007CA69A /* MaterialsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MaterialsView.swift; sourceTree = "<group>"; };
 		79F6D2C929BA6C34007CA69A /* Border.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Border.swift; sourceTree = "<group>"; };
 		79F6D2CB29BA7EFA007CA69A /* LIght.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LIght.swift; sourceTree = "<group>"; };
@@ -345,11 +337,7 @@
 		79F6D2D029BAA8DB007CA69A /* SphereAllocator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SphereAllocator.swift; sourceTree = "<group>"; };
 		79F6D2D229BAC193007CA69A /* TestRectAllocator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestRectAllocator.swift; sourceTree = "<group>"; };
 		79F6D2D429BB6236007CA69A /* ObjectsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObjectsView.swift; sourceTree = "<group>"; };
-		79F6D2D629BB6642007CA69A /* AnimatorStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimatorStore.swift; sourceTree = "<group>"; };
 		79F6D2D829BB691E007CA69A /* ModelDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelDetailsView.swift; sourceTree = "<group>"; };
-		79F6D2DA29BB6A07007CA69A /* AnimatorDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimatorDetailsView.swift; sourceTree = "<group>"; };
-		79F6D2DC29BB92C7007CA69A /* AnimatorListItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimatorListItem.swift; sourceTree = "<group>"; };
-		79F6D2DE29BB941E007CA69A /* AnimatorPickerItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimatorPickerItem.swift; sourceTree = "<group>"; };
 		79F6D2E029BBA375007CA69A /* ObjectDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObjectDetailsView.swift; sourceTree = "<group>"; };
 		79F6D2E429BC2C6A007CA69A /* LightDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightDetailsView.swift; sourceTree = "<group>"; };
 		79F6D2E829BCBD83007CA69A /* NumericField.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NumericField.swift; sourceTree = "<group>"; };
@@ -486,7 +474,6 @@
 				791E793329B9430E00FB45F3 /* RenderViewController.swift */,
 				791E78CF29B93A2B00FB45F3 /* ContentView.swift */,
 				79AEFEE129D1F03D0054A6EB /* Scene */,
-				79F6D2F829C15D1E007CA69A /* Animators */,
 				79F6D2F729C15D13007CA69A /* Materials */,
 				79F6D2F529C15CF9007CA69A /* Models */,
 				799B4BB629C6066700B6826A /* Textures */,
@@ -534,8 +521,6 @@
 				7921DFA529CD02BB0013E317 /* TextureStore.swift */,
 				798D3BFB29C3CBD100B96C5F /* File */,
 				791E790429B93BB600FB45F3 /* Transform.swift */,
-				79F6D2C029BA58F5007CA69A /* Animator.swift */,
-				79F6D2D629BB6642007CA69A /* AnimatorStore.swift */,
 			);
 			path = Stores;
 			sourceTree = "<group>";
@@ -689,7 +674,6 @@
 				791E78CA29B93A2B00FB45F3 /* ModelsView.swift */,
 				791E78CC29B93A2B00FB45F3 /* TransformsView.swift */,
 				791E78CB29B93A2B00FB45F3 /* TransformView.swift */,
-				79F6D2DE29BB941E007CA69A /* AnimatorPickerItem.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -712,16 +696,6 @@
 				79AACDF129CFF3A1000E8936 /* TextureList.swift */,
 			);
 			path = Materials;
-			sourceTree = "<group>";
-		};
-		79F6D2F829C15D1E007CA69A /* Animators */ = {
-			isa = PBXGroup;
-			children = (
-				79F6D2C529BA5C80007CA69A /* AnimatorsView.swift */,
-				79F6D2DC29BB92C7007CA69A /* AnimatorListItem.swift */,
-				79F6D2DA29BB6A07007CA69A /* AnimatorDetailsView.swift */,
-			);
-			path = Animators;
 			sourceTree = "<group>";
 		};
 		79F6D30729C1ED09007CA69A /* Objects */ = {
@@ -915,7 +889,6 @@
 				7921DFB029CD26C10013E317 /* GraphShaders.metal in Sources */,
 				7921DF9C29CC84650013E317 /* PbrPipeline.swift in Sources */,
 				791E794529B9443F00FB45F3 /* Sun.swift in Sources */,
-				79F6D2D729BB6642007CA69A /* AnimatorStore.swift in Sources */,
 				7921DF9629CC79940013E317 /* Point.swift in Sources */,
 				791E791129B93BDC00FB45F3 /* Vec2.swift in Sources */,
 				791E793729B9430E00FB45F3 /* RenderDelegate.swift in Sources */,
@@ -937,8 +910,6 @@
 				791E793B29B9433F00FB45F3 /* Camera.swift in Sources */,
 				791E78D529B93A2B00FB45F3 /* CheckBox.swift in Sources */,
 				79AEFEE329D1F05A0054A6EB /* SceneView.swift in Sources */,
-				79F6D2DF29BB941F007CA69A /* AnimatorPickerItem.swift in Sources */,
-				79F6D2DD29BB92C7007CA69A /* AnimatorListItem.swift in Sources */,
 				79F6D2C829BA5F10007CA69A /* MaterialsView.swift in Sources */,
 				7921DFBA29CE52CF0013E317 /* GraphNodeTexture.swift in Sources */,
 				7902F01329CF458E004C3775 /* ObjectWrapper.swift in Sources */,
@@ -951,14 +922,12 @@
 				791E792329B93D6000FB45F3 /* TriangleMesh.swift in Sources */,
 				791E790F29B93BDC00FB45F3 /* Vec3.swift in Sources */,
 				799B4BC129C6853900B6826A /* ShadowShaders.metal in Sources */,
-				79F6D2C129BA58F5007CA69A /* Animator.swift in Sources */,
 				791E792C29B93D7000FB45F3 /* PbrMaterial.swift in Sources */,
 				791E793629B9430E00FB45F3 /* RenderViewController.swift in Sources */,
 				791E78C329B9390700FB45F3 /* Configuration.swift in Sources */,
 				791E78D629B93A2B00FB45F3 /* ContentView.swift in Sources */,
 				79AEFEE529D1F3860054A6EB /* Item.swift in Sources */,
 				7921DFA829CD1FFB0013E317 /* BillboardOptionsView.swift in Sources */,
-				79F6D2DB29BB6A08007CA69A /* AnimatorDetailsView.swift in Sources */,
 				798D3BFF29C3CC4300B96C5F /* FileCamera.swift in Sources */,
 				791E793C29B9433F00FB45F3 /* Skybox.swift in Sources */,
 				798D3BFD29C3CBF400B96C5F /* File.swift in Sources */,
@@ -971,7 +940,6 @@
 				79F6D2FE29C16894007CA69A /* MaterialDetailView.swift in Sources */,
 				79F6D2D929BB691E007CA69A /* ModelDetailsView.swift in Sources */,
 				79F6D30629C1E25E007CA69A /* OpenFileButton.swift in Sources */,
-				79F6D2C629BA5C80007CA69A /* AnimatorsView.swift in Sources */,
 				7921DF8C29CC031E0013E317 /* CylinderOptionsView.swift in Sources */,
 				79F6D2EB29BCBD83007CA69A /* NumericField.swift in Sources */,
 				7921DF8229CBF7730013E317 /* PlaneOptionsView.swift in Sources */,

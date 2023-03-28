@@ -235,13 +235,7 @@ class Renderer {
     
     func computeAnimationTransform(sceneModel: SceneModel) -> Matrix4x4 {
         let transform = sceneModel.animations.reduce(Matrix4x4.identity()) { accum, animation in
-//        var accum = Matrix4x4.identity()
-//        for animation in sceneModel.animations {
-            var t = animation.value
-            
-//            if let animator = transform.animator {
-                t = t + animation.accum
-//            }
+            let t = animation.value + animation.accum
             
             switch(animation.type) {
 //            case .translate:
@@ -268,31 +262,7 @@ class Renderer {
     }
     
     private func updateModel(model: Model, matrix: Matrix4x4) {
-        // Compute the transformation matrix at the model level by
-        // travering the list
-        let transform = model.transforms.reduce(Matrix4x4.identity()) { accum, transform in
-            var t = transform.values
-            
-            if let animator = transform.animator {
-                t = t.add(animator.accum)
-            }
-            
-            switch(transform.transform) {
-            case .translate:
-                return accum.translate(t.x, t.y, t.z)
-                
-            case .rotate:
-                return accum
-                    .rotate(radians: degreesToRadians(t.x), axis: Vec3(1, 0, 0))
-                    .rotate(radians: degreesToRadians(t.y), axis: Vec3(0, 1, 0))
-                    .rotate(radians: degreesToRadians(t.z), axis: Vec3(0, 0, 1))
-                
-            case .scale:
-                return accum.scale(t.x, t.y, t.z)
-            }
-        }
-        
-        model.modelMatrix = matrix * transform
+        model.modelMatrix = matrix
         
         for object in model.objects {
             switch object.content {
@@ -320,6 +290,7 @@ class Renderer {
             }
         }
         
+        // Add any lights attached to the model to the global list of lights.
         for light in model.lights {
             let newLight = Light(model: nil)
             newLight.position = model.modelMatrix.multiply(light.position.vec4()).vec3()
@@ -360,11 +331,6 @@ class Renderer {
             
             self.updateTimeOfDay(elapsedTime: elapsedTime)
             
-            // Update the animators
-            AnimatorStore.shared.animators.forEach { animator in
-                animator.accum = animator.accum.add(animator.delta.multiply(Float(elapsedTime)))
-            }
-
             for animation in objectStore!.animations {
                 animation.accum = animation.accum + (animation.value * Float(elapsedTime))
             }

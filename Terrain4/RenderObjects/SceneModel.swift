@@ -103,7 +103,7 @@ class SceneModel: ObservableObject, Identifiable, Equatable, Codable {
         
         let animationIds = try container.decode([UUID].self, forKey: .animations)
         
-        var objectStore = decoder.getObjectStore()
+        let objectStore = decoder.getObjectStore()
 
         for id in animationIds {
             let animation = objectStore.animations.first {

@@ -9,7 +9,6 @@ import Foundation
 
 struct File: Codable {
     var models: [TreeNode]
-    var animators: [Animator]
     var camera: Camera
     var materials: [MaterialWrapper]
     var directionalLight: DirectionalLight
@@ -17,7 +16,6 @@ struct File: Codable {
     
     init(file: SceneDocument) {
         self.models = file.objectStore.models
-        self.animators = AnimatorStore.shared.animators
         self.camera = Camera(position: Renderer.shared.camera.cameraOffset, yaw: Renderer.shared.camera.yaw, pitch: Renderer.shared.camera.pitch)
         
         self.materials = Renderer.shared.materialManager.materials.compactMap { entry in
@@ -31,7 +29,6 @@ struct File: Codable {
 
     enum CodingKeys: CodingKey {
         case models
-        case animators
         case animations
         case camera
         case materials
@@ -44,7 +41,6 @@ struct File: Codable {
 
         try container.encode(self.models, forKey: .models)
         try container.encode(self.camera, forKey: .camera)
-        try container.encode(self.animators, forKey: .animators)
         try container.encode(self.materials, forKey: .materials)
         try container.encode(self.directionalLight, forKey: .directionalLight)
         
@@ -63,14 +59,10 @@ struct File: Codable {
         Renderer.shared.camera.pitch = camera.pitch
         
         Renderer.shared.camera.updateLookAt(yawChange: 0, pitchChange: 0)
-
-        animators = try container.decode([Animator].self, forKey: .animators)
         
-        var objectStore = decoder.getObjectStore()
+        let objectStore = decoder.getObjectStore()
         
         objectStore.animations = try container.decodeIfPresent([Animation].self, forKey: .animations) ?? []
-        
-        AnimatorStore.shared.animators = animators
         
         materials = try container.decode([MaterialWrapper].self, forKey: .materials)
         
