@@ -15,10 +15,6 @@ struct ObjectsView: View {
         ForEach($model.objects, id: \.id) { $object in
             ModelTreeListItem(node: object, selectedItem: $selectedItem)
         }
-
-        ForEach($model.lights, id: \.id) { $light in
-            ModelTreeListItem(node: TreeNode(light: light), selectedItem: $selectedItem)
-        }
     }
 }
 

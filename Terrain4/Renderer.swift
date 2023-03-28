@@ -21,7 +21,7 @@ enum RendererError: Error {
 }
 
 enum ViewMode {
-    case model(Model?)
+    case model
     case scene
 }
 
@@ -272,21 +272,24 @@ class Renderer {
                 o.instanceData.append(InstanceData(transformation: transformation))
             case .point:
                 break
-            case .light:
-//                l.worldPosition = model.modelMatrix.multiply(l.position.vec4())
+            case .light(let light):
+                let newLight = Light(model: nil)
+                newLight.position = model.modelMatrix.multiply(light.position.vec4()).vec3()
+                newLight.intensity = light.intensity
+                objectStore!.lights.append(newLight)
                 break
             case .directionalLight:
                 break
             }
         }
         
-        // Add any lights attached to the model to the global list of lights.
-        for light in model.lights {
-            let newLight = Light(model: nil)
-            newLight.position = model.modelMatrix.multiply(light.position.vec4()).vec3()
-            newLight.intensity = light.intensity
-            objectStore!.lights.append(newLight)
-        }
+//        // Add any lights attached to the model to the global list of lights.
+//        for light in model.lights {
+//            let newLight = Light(model: nil)
+//            newLight.position = model.modelMatrix.multiply(light.position.vec4()).vec3()
+//            newLight.intensity = light.intensity
+//            objectStore!.lights.append(newLight)
+//        }
     }
 
     func clearInstanceData() {
@@ -477,7 +480,7 @@ class Renderer {
         }
     }
 
-    var currentViewMode = ViewMode.model(nil)
+    var currentViewMode = ViewMode.model
     var selectedModel: Model? = nil
     
     func setSelectedModel(model: Model?) {

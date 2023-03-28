@@ -68,7 +68,7 @@ struct ContentView: View {
             switch Renderer.shared.currentViewMode {
             case .scene:
                 if newTabSelection == .objects {
-                    Renderer.shared.setViewMode(viewMode: .model(nil))
+                    Renderer.shared.setViewMode(viewMode: .model)
                 }
             case .model:
                 if newTabSelection == .scene {

@@ -23,8 +23,6 @@ class Model: Node, Identifiable, Hashable {
     
     @Published var objects: [TreeNode] = []
     
-    @Published var lights: [Light] = []
-    
     @Published var transforms: [Transform] = []
     
     var modelMatrix = Matrix4x4.identity()
@@ -51,7 +49,12 @@ class Model: Node, Identifiable, Hashable {
         id = try container.decode(UUID.self, forKey: .id)
         objects = try container.decode([TreeNode].self, forKey: .objects)
 
-        lights = try container.decode([Light].self, forKey: .lights)
+        let lights = try container.decodeIfPresent([Light].self, forKey: .lights) ?? []
+        
+        for light in lights {
+            objects.append(TreeNode(light: light))
+        }
+
         transforms = try container.decode([Transform].self, forKey: .transforms)
         
         // Assign all of the child objects to this model
@@ -77,7 +80,6 @@ class Model: Node, Identifiable, Hashable {
         
         try container.encode(id, forKey: .id)
         try container.encode(objects, forKey: .objects)
-        try container.encode(lights, forKey: .lights)
         try container.encode(transforms, forKey: .transforms)
         
         try super.encode(to: encoder)
@@ -87,7 +89,7 @@ class Model: Node, Identifiable, Hashable {
         let light = Light(model: self)
         light.intensity  = Vec3(50, 50, 50)
         
-        self.lights.append(light)
+        self.objects.append(TreeNode(light: light))
         
         return light
     }
