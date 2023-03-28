@@ -85,15 +85,12 @@ class Renderer {
         self.materialManager = MaterialManager()
     }
     
-    func initialize(file: SceneDocument, metalKitView: MTKView) throws {
+    func initialize(file: SceneDocument) throws {
         self.objectStore = file.objectStore
         
         self.camera = Camera(world: world)
         
-//        self.device = metalKitView.device!
-//        self.view = metalKitView
-        
-        guard let queue = metalKitView.device!.makeCommandQueue() else {
+        guard let queue = MetalView.shared.device!.makeCommandQueue() else {
             throw Errors.makeCommandQueueFailed
         }
         
@@ -101,21 +98,17 @@ class Renderer {
 
         try makeUniformsBuffer()
         
-        metalKitView.depthStencilPixelFormat = MTLPixelFormat.depth32Float
-        metalKitView.colorPixelFormat = .bgra8Unorm_srgb
-        metalKitView.sampleCount = 1
-        
         let depthStateDescriptor = MTLDepthStencilDescriptor()
         depthStateDescriptor.depthCompareFunction = .less
         depthStateDescriptor.isDepthWriteEnabled = true
         
-        guard let state = metalKitView.device!.makeDepthStencilState(descriptor:depthStateDescriptor) else {
+        guard let state = MetalView.shared.device!.makeDepthStencilState(descriptor:depthStateDescriptor) else {
             throw Errors.makeDepthStencilStateFailed
         }
         
         self.depthState = state
 
-        guard let state = metalKitView.device!.makeDepthStencilState(descriptor:depthStateDescriptor) else {
+        guard let state = MetalView.shared.device!.makeDepthStencilState(descriptor:depthStateDescriptor) else {
             throw Errors.makeDepthStencilStateFailed
         }
         
@@ -145,8 +138,6 @@ class Renderer {
     
     public func load(lat: Double, lng: Double, dimension: Int) async throws {
         if self.test {
-            //            try await TestMesh(device: self.device, view: self.view)
-            
             self.world.terrainLoaded = true
         }
         else {

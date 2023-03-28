@@ -41,15 +41,11 @@ class RenderViewController: UIViewController {
         MetalView.shared.view = mtkView
         mtkView.device = MetalView.shared.device
         
-        // Select the device to render with.  We choose the default device
-//        guard let defaultDevice = MTLCreateSystemDefaultDevice() else {
-//            print("Metal is not supported")
-//            return
-//        }
+        mtkView.depthStencilPixelFormat = MTLPixelFormat.depth32Float
+        mtkView.colorPixelFormat = .bgra8Unorm_srgb
+        mtkView.sampleCount = 1
         
-//        mtkView.device = defaultDevice
-        
-        guard let renderer = try? RenderDelegate(file: file!, metalKitView: mtkView) else {
+        guard let renderer = try? RenderDelegate(file: file!) else {
             print("Renderer cannot be initialized")
             return
         }

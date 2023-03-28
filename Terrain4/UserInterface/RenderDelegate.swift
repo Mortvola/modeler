@@ -13,14 +13,11 @@ class RenderDelegate: NSObject, MTKViewDelegate {
         Renderer.shared.mtkView(view, drawableSizeWillChange: size)
     }
     
-    init(file: SceneDocument, metalKitView: MTKView) throws {
+    init(file: SceneDocument) throws {
         do {
-//            MetalView.shared.view = metalKitView
-//            MetalView.shared.device = metalKitView.device
-            
             Renderer.shared = Renderer()
             
-            try Renderer.shared.initialize(file: file, metalKitView: metalKitView)
+            try Renderer.shared.initialize(file: file)
             Task {
                 try await Renderer.shared.load(lat: 46.514279, lng: -121.456191, dimension: 128)
                 
