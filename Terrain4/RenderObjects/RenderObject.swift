@@ -82,13 +82,13 @@ class RenderObject: Object {
     }
     
     func allocateModelMatrixUniform() {
-        let numInstances = 3
+        let numInstances = 4
         modelMatrixUniform = MetalView.shared.device.makeBuffer(length: 3 * MemoryLayout<Matrix4x4>.stride * numInstances, options: [MTLResourceOptions.storageModeShared])!
         modelMatrixUniform!.label = "Model Matrix Uniforms"
     }
     
     func getModelMatrixUniform(index: Int, instances: Int) -> UnsafeMutablePointer<Matrix4x4> {
-        let numInstances = 3
+        let numInstances = 4
         return UnsafeMutableRawPointer(self.modelMatrixUniform!.contents())
             .advanced(by: index * MemoryLayout<Matrix4x4>.stride * numInstances)
             .bindMemory(to: Matrix4x4.self, capacity: 1)

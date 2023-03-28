@@ -95,6 +95,29 @@ class Model: Node, Identifiable, Hashable {
     }
     
     @MainActor
+    func importObj(url: URL) throws {
+        let meshBufferAllocator = MTKMeshBufferAllocator(device: MetalView.shared.device)
+
+        let asset = MDLAsset(url: url, vertexDescriptor: MeshAllocator.vertexDescriptor(), bufferAllocator: meshBufferAllocator)
+        
+        let meshes = asset.childObjects(of: MDLMesh.self) as! [MDLMesh]
+        
+        print("\(meshes.count)")
+        
+        for mdlMesh in meshes {
+            mdlMesh.addTangentBasis(forTextureCoordinateAttributeNamed: MDLVertexAttributeTextureCoordinate, normalAttributeNamed: MDLVertexAttributeNormal, tangentAttributeNamed: MDLVertexAttributeTangent)
+
+            let mesh = try MTKMesh(mesh: mdlMesh, device: MetalView.shared.device)
+
+            let object = Mesh(mesh: mesh, model: self)
+
+            object.material = Renderer.shared.materialManager.getMaterial(materialId: nil)
+
+            self.objects.append(TreeNode(mesh: object))
+        }
+    }
+
+    @MainActor
     func addSphere(options: SphereOptions) async throws -> Mesh {
         let mesh = try SphereAllocator.allocate(diameter: options.diameter, radialSegments: options.radialSegments, verticalSegments: options.verticalSegments, hemisphere: options.hemisphere)
         

@@ -6,6 +6,8 @@
 //
 
 import SwiftUI
+import ModelIO
+import MetalKit
 
 enum TabSelection {
     case objects
@@ -20,6 +22,7 @@ struct ContentView: View {
     @State var openPicker = false
     @State var openSave = false
     @State var selectedModel: Model? = nil
+    @State var importObj = false
     
     var body: some View {
         NavigationSplitView {
@@ -63,7 +66,23 @@ struct ContentView: View {
                 .padding()
             }
         }
-        .toolbar(.hidden)
+        .toolbar {
+            ToolbarItem(placement: .destructiveAction) {
+                ImportObj { url in
+                    if let url = url {
+                        let node = file.objectStore.addModel()
+                        
+                        switch node.content {
+                        case .model(let model):
+                            selectedModel = model
+                            _ = try? model.importObj(url: url)
+                        default:
+                            break
+                        }
+                    }
+                }
+            }
+        }
         .onChange(of: tabSelection) { newTabSelection in
             switch Renderer.shared.currentViewMode {
             case .scene:
@@ -76,6 +95,8 @@ struct ContentView: View {
                 }
             }
         }
+        .navigationBarBackButtonHidden()
+        .navigationBarTitleDisplayMode(.inline)
         .onChange(of: selectedModel) { newModel in
             Renderer.shared.setSelectedModel(model: newModel)
         }

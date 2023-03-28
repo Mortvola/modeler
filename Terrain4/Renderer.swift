@@ -402,6 +402,8 @@ class Renderer {
                 var cascadeIndex = Int32(cascade)
                 renderEncoder.setVertexBytes(&cascadeIndex, length: MemoryLayout<Int>.size, index: BufferIndex.cascadeIndex.rawValue)
                 
+//                renderEncoder.setTriangleFillMode(.lines)
+                
                 if objectStore!.currentScene?.directionalLight?.shadowCaster ?? false {
                     pipelineManager.depthShadowPipeline.prepare(renderEncoder: renderEncoder)
                     

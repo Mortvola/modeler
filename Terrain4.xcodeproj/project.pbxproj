@@ -112,6 +112,7 @@
 		799B4BBF29C652D200B6826A /* DirectionalLight.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799B4BBE29C652D200B6826A /* DirectionalLight.swift */; };
 		799B4BC129C6853900B6826A /* ShadowShaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = 799B4BC029C6853900B6826A /* ShadowShaders.metal */; };
 		799B4BC329C72D3100B6826A /* DepthShadowPipeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799B4BC229C72D3100B6826A /* DepthShadowPipeline.swift */; };
+		79AA09A029D37E59001164B7 /* ImportObj.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79AA099F29D37E59001164B7 /* ImportObj.swift */; };
 		79AACDF229CFF3A1000E8936 /* TextureList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79AACDF129CFF3A1000E8936 /* TextureList.swift */; };
 		79AACDF629D074F6000E8936 /* TextureMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79AACDF529D074F6000E8936 /* TextureMapView.swift */; };
 		79AACDF829D08905000E8936 /* MetalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79AACDF729D08905000E8936 /* MetalView.swift */; };
@@ -310,6 +311,7 @@
 		799B4BBE29C652D200B6826A /* DirectionalLight.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DirectionalLight.swift; sourceTree = "<group>"; };
 		799B4BC029C6853900B6826A /* ShadowShaders.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = ShadowShaders.metal; sourceTree = "<group>"; };
 		799B4BC229C72D3100B6826A /* DepthShadowPipeline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DepthShadowPipeline.swift; sourceTree = "<group>"; };
+		79AA099F29D37E59001164B7 /* ImportObj.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImportObj.swift; sourceTree = "<group>"; };
 		79AACDF129CFF3A1000E8936 /* TextureList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextureList.swift; sourceTree = "<group>"; };
 		79AACDF529D074F6000E8936 /* TextureMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextureMapView.swift; sourceTree = "<group>"; };
 		79AACDF729D08905000E8936 /* MetalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetalView.swift; sourceTree = "<group>"; };
@@ -473,6 +475,7 @@
 				791E793429B9430E00FB45F3 /* RenderDelegate.swift */,
 				791E793329B9430E00FB45F3 /* RenderViewController.swift */,
 				791E78CF29B93A2B00FB45F3 /* ContentView.swift */,
+				79AA099F29D37E59001164B7 /* ImportObj.swift */,
 				79AEFEE129D1F03D0054A6EB /* Scene */,
 				79F6D2F729C15D13007CA69A /* Materials */,
 				79F6D2F529C15CF9007CA69A /* Models */,
@@ -991,6 +994,7 @@
 				791C495629B94AEF00C00150 /* ModelManager.swift in Sources */,
 				791E792129B93D6000FB45F3 /* RenderObject.swift in Sources */,
 				791E792029B93D6000FB45F3 /* Mesh.swift in Sources */,
+				79AA09A029D37E59001164B7 /* ImportObj.swift in Sources */,
 				7921DF8829CBFF140013E317 /* MeshAllocator.swift in Sources */,
 				798D3BE929C35EE600B96C5F /* AlbedoView.swift in Sources */,
 				7921DF7A29CB8DED0013E317 /* VisibleButton.swift in Sources */,

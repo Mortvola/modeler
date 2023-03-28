@@ -79,6 +79,7 @@ class SceneModel: ObservableObject, Identifiable, Equatable, Codable {
     
     init(model: Model) {
         self.model = model
+        self.name = model.name
     }
     
     enum CodingKeys: CodingKey {

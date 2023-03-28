@@ -33,12 +33,14 @@ vertex VertexOut pbrVertexShader
 (
     VertexIn in [[stage_in]],
     const device FrameUniforms& uniforms [[ buffer(BufferIndexUniforms) ]],
-    const device float4x4& modelMatrix [[ buffer(BufferIndexModelMatrix) ]],
-    const device NodeUniforms& nodeUniforms [[ buffer(BufferIndexNodeUniforms) ]]
+    const device float4x4 *modelMatrix [[ buffer(BufferIndexModelMatrix) ]],
+    const device NodeUniforms& nodeUniforms [[ buffer(BufferIndexNodeUniforms) ]],
+    uint instanceId [[ instance_id ]],
+    uint vertexId [[ vertex_id ]]
 ) {
     VertexOut vertexOut;
     
-    vertexOut.worldFragPos = float3(modelMatrix * float4(in.position, 1.0));
+    vertexOut.worldFragPos = float3(modelMatrix[instanceId] * float4(in.position, 1.0));
     
     vertexOut.position =  uniforms.projectionMatrix * uniforms.viewMatrix * float4(vertexOut.worldFragPos, 1.0);
 
