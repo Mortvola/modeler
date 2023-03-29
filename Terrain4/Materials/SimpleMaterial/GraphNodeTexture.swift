@@ -1,5 +1,5 @@
 //
-//  SimpleMaterialLayer.swift
+//  GraphNodeTexture.swift
 //  Terrain4
 //
 //  Created by Richard Shields on 3/24/23.

@@ -48,6 +48,10 @@ enum MaterialWrapper: Equatable, Codable {
             let m = try PbrMaterial(from: decoder)
             self = MaterialWrapper.pbrMaterial(m)
             return
+        case "Graph":
+            let m = try GraphMaterial(from: decoder)
+            self = MaterialWrapper.graphMaterial(m)
+            return
         case "Simple":
             let m = try GraphMaterial(from: decoder)
             self = MaterialWrapper.graphMaterial(m)
@@ -67,7 +71,7 @@ enum MaterialWrapper: Equatable, Codable {
             try container.encode("PBR", forKey: .type)
             try m.encode(to: encoder)
         case .graphMaterial(let m):
-            try container.encode("Simple", forKey: .type)
+            try container.encode("Graph", forKey: .type)
             try m.encode(to: encoder)
         case .pointMaterial:
             throw Errors.invalidTexture
