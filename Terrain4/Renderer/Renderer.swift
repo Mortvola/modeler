@@ -27,18 +27,17 @@ enum ViewMode {
 
 class Renderer {
     static var shared: Renderer = Renderer()
-    let test = true
     
     private var commandQueue: MTLCommandQueue?
-    private var dynamicUniformBuffer: MTLBuffer?
-    private var depthState: MTLDepthStencilState?
-    private var shadowDepthState: MTLDepthStencilState?
+    public var dynamicUniformBuffer: MTLBuffer?
+    public var depthState: MTLDepthStencilState?
+    public var shadowDepthState: MTLDepthStencilState?
 
     private let inFlightSemaphore = DispatchSemaphore(value: maxBuffersInFlight)
     
-    private var uniformBufferOffset = 0
+    public var uniformBufferOffset = 0
     
-    private var uniformBufferIndex = 0
+    public var uniformBufferIndex = 0
     
     private var uniforms: UnsafeMutablePointer<FrameUniforms>?
     
@@ -352,134 +351,6 @@ class Renderer {
         }
     }
     
-    private func shadowRenderModel(model: Model, renderEncoder: MTLRenderCommandEncoder) throws {
-            if !model.disabled {
-                for object in model.objects {
-                    switch object.content {
-                    case .model:
-                        break
-                    case .mesh(let o):
-                        if !o.disabled {
-                            try o.draw(renderEncoder: renderEncoder, frame: self.uniformBufferIndex)
-                        }
-                    case .point:
-                        break
-                    case .light:
-                        break
-                    case .directionalLight:
-                        break
-                    }
-                }
-            }
-    }
-    
-    func renderShadowPass(commandBuffer: MTLCommandBuffer) throws {
-        if let renderPassDescriptor = objectStore!.currentScene!.directionalLight?.renderPassDescriptor {
-            
-            for cascade in 0..<shadowMapCascades {
-                renderPassDescriptor.depthAttachment.slice = cascade
-                
-                guard let renderEncoder = commandBuffer.makeRenderCommandEncoder(descriptor: renderPassDescriptor) else {
-                    return
-                }
-                
-                renderEncoder.label = "Shadow Pass \(cascade)"
-                
-                //        renderEncoder.pushDebugGroup("Shadow Pass")
-                
-                renderEncoder.setFrontFacing(.clockwise)
-                renderEncoder.setCullMode(.front)
-                renderEncoder.setDepthClipMode(.clamp) // Pancaking??
-                renderEncoder.setDepthStencilState(self.shadowDepthState)
-                renderEncoder.setDepthBias(0.015, slopeScale: 7, clamp: 0.02)
-                
-                //            let viewport = MTLViewport(originX: 0, originY: 0, width: Double(objectStore!.directionalLight.shadowTexture!.width), height: Double(objectStore!.directionalLight.shadowTexture!.height), znear: 0.0, zfar: 1.0)
-                //            renderEncoder.setViewport(viewport)
-                //        renderEncoder.setDepthBias(0.015, slopeScale: 7, clamp: 0.02)
-                
-                renderEncoder.setVertexBuffer(self.dynamicUniformBuffer, offset: self.uniformBufferOffset, index: BufferIndex.uniforms.rawValue)
-                
-                var cascadeIndex = Int32(cascade)
-                renderEncoder.setVertexBytes(&cascadeIndex, length: MemoryLayout<Int>.size, index: BufferIndex.cascadeIndex.rawValue)
-                
-//                renderEncoder.setTriangleFillMode(.lines)
-                
-                if objectStore!.currentScene?.directionalLight?.shadowCaster ?? false {
-                    pipelineManager.depthShadowPipeline.prepare(renderEncoder: renderEncoder)
-                    
-                    switch currentViewMode {
-                    case .scene:
-                        if let scene = objectStore?.scene {
-                            for sceneModel in scene.models {
-                                try shadowRenderModel(model: sceneModel.model!, renderEncoder: renderEncoder)
-                            }
-                        }
-                    case .model:
-                        for node in objectStore!.models {
-                            switch node.content {
-                            case .model(let model):
-                                try shadowRenderModel(model: model, renderEncoder: renderEncoder)
-                            case .mesh:
-                                break
-                            case .point:
-                                break
-                            case .light:
-                                break
-                            case .directionalLight:
-                                break
-                            }
-                        }
-                    }
-                }
-                
-                //        renderEncoder.popDebugGroup()
-                
-                renderEncoder.endEncoding()
-            }
-        }
-    }
-    
-    func renderMainPass(renderPassDescriptor: MTLRenderPassDescriptor, commandBuffer: MTLCommandBuffer) throws {
-        if let renderEncoder = commandBuffer.makeRenderCommandEncoder(descriptor: renderPassDescriptor) {
-            
-            /// Final pass rendering code here
-            renderEncoder.label = "Primary Render Encoder"
-            
-//            renderEncoder.pushDebugGroup("Main Pass")
-            
-            renderEncoder.setFrontFacing(.clockwise)
-            renderEncoder.setCullMode(.back)
-            renderEncoder.setDepthStencilState(self.depthState)
-            
-            renderEncoder.setVertexBuffer(self.dynamicUniformBuffer, offset: self.uniformBufferOffset, index: BufferIndex.uniforms.rawValue)
-            
-            renderEncoder.setFragmentBuffer(self.dynamicUniformBuffer, offset: self.uniformBufferOffset, index: BufferIndex.uniforms.rawValue)
-            
-            if let shadowTexture = objectStore!.currentScene?.directionalLight?.shadowTexture {
-                renderEncoder.setFragmentTexture(shadowTexture, index: TextureIndex.depth.rawValue)
-            }
-            
-            try pipelineManager.render(renderEncoder: renderEncoder, frame: self.uniformBufferIndex)
-            objectStore!.skybox?.draw(renderEncoder: renderEncoder)
-            
-            // Render fustrum
-            
-//            if self.freezeFustrum {
-//                self.lineMaterial?.prepare(renderEncoder: renderEncoder)
-//                
-//                self.fustrums[self.uniformBufferIndex].updateVertices(points: objectStore!.directionalLight.cameraFustrum)
-//                self.fustrums[self.uniformBufferIndex].draw(renderEncoder: renderEncoder, modelMatrix: Matrix4x4.identity(), pbrProperties: nil, frame: self.uniformBufferIndex)
-//
-//                self.lightFustrums[self.uniformBufferIndex].updateVertices(points: objectStore!.directionalLight.lightFustrum)
-//                self.lightFustrums[self.uniformBufferIndex].draw(renderEncoder: renderEncoder, modelMatrix: Matrix4x4.identity(), pbrProperties: nil, frame: self.uniformBufferIndex)
-//            }
-
-//            renderEncoder.popDebugGroup()
-            
-            renderEncoder.endEncoding()
-        }
-    }
-
     var currentViewMode = ViewMode.model
     var selectedModel: Model? = nil
     
@@ -579,11 +450,6 @@ class Renderer {
         if let commandBuffer = commandQueue.makeCommandBuffer() {
             commandBuffer.label = "\(self.uniformBufferIndex)"
             
-            let semaphore = inFlightSemaphore
-            commandBuffer.addCompletedHandler { (_ commandBuffer)-> Swift.Void in
-                semaphore.signal()
-            }
-            
             if self.objectStore?.loaded ?? false && self.initialized && objectStore?.currentScene != nil {
                 
                 self.updateDynamicBufferState()
@@ -622,18 +488,29 @@ class Renderer {
                 
                 try renderShadowPass(commandBuffer: commandBuffer)
                 
-                /// Delay getting the currentRenderPassDescriptor until we absolutely need it to avoid
-                ///   holding onto the drawable and blocking the display pipeline any longer than necessary
-                if let renderPassDescriptor = view.currentRenderPassDescriptor {
-                    
-                    try renderMainPass(renderPassDescriptor: renderPassDescriptor, commandBuffer: commandBuffer)
-                    
-                    if let drawable = view.currentDrawable {
-                        commandBuffer.present(drawable)
-                    }
-                }
-                
                 commandBuffer.commit()
+                
+                if let commandBuffer = commandQueue.makeCommandBuffer() {
+                    commandBuffer.label = "\(self.uniformBufferIndex)"
+                    
+                    let semaphore = inFlightSemaphore
+                    commandBuffer.addCompletedHandler { (_ commandBuffer)-> Swift.Void in
+                        semaphore.signal()
+                    }
+                    
+                    /// Delay getting the currentRenderPassDescriptor until we absolutely need it to avoid
+                    ///   holding onto the drawable and blocking the display pipeline any longer than necessary
+                    if let renderPassDescriptor = view.currentRenderPassDescriptor {
+                        
+                        try renderMainPass(renderPassDescriptor: renderPassDescriptor, commandBuffer: commandBuffer)
+                        
+                        if let drawable = view.currentDrawable {
+                            commandBuffer.present(drawable)
+                        }
+                    }
+                    
+                    commandBuffer.commit()
+                }
                 
                 if MovieManager.shared.recording {
                     if let texture = view.currentDrawable?.texture, !texture.isFramebufferOnly {

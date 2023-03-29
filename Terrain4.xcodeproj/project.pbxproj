@@ -113,6 +113,8 @@
 		799B4BC129C6853900B6826A /* ShadowShaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = 799B4BC029C6853900B6826A /* ShadowShaders.metal */; };
 		799B4BC329C72D3100B6826A /* DepthShadowPipeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799B4BC229C72D3100B6826A /* DepthShadowPipeline.swift */; };
 		79AA09A029D37E59001164B7 /* ImportObj.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79AA099F29D37E59001164B7 /* ImportObj.swift */; };
+		79AA09A529D3ADF9001164B7 /* MainPass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79AA09A429D3ADF9001164B7 /* MainPass.swift */; };
+		79AA09A729D3AF27001164B7 /* ShadowPass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79AA09A629D3AF27001164B7 /* ShadowPass.swift */; };
 		79AACDF229CFF3A1000E8936 /* TextureList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79AACDF129CFF3A1000E8936 /* TextureList.swift */; };
 		79AACDF629D074F6000E8936 /* TextureMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79AACDF529D074F6000E8936 /* TextureMapView.swift */; };
 		79AACDF829D08905000E8936 /* MetalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79AACDF729D08905000E8936 /* MetalView.swift */; };
@@ -312,6 +314,8 @@
 		799B4BC029C6853900B6826A /* ShadowShaders.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = ShadowShaders.metal; sourceTree = "<group>"; };
 		799B4BC229C72D3100B6826A /* DepthShadowPipeline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DepthShadowPipeline.swift; sourceTree = "<group>"; };
 		79AA099F29D37E59001164B7 /* ImportObj.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImportObj.swift; sourceTree = "<group>"; };
+		79AA09A429D3ADF9001164B7 /* MainPass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainPass.swift; sourceTree = "<group>"; };
+		79AA09A629D3AF27001164B7 /* ShadowPass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShadowPass.swift; sourceTree = "<group>"; };
 		79AACDF129CFF3A1000E8936 /* TextureList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextureList.swift; sourceTree = "<group>"; };
 		79AACDF529D074F6000E8936 /* TextureMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextureMapView.swift; sourceTree = "<group>"; };
 		79AACDF729D08905000E8936 /* MetalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetalView.swift; sourceTree = "<group>"; };
@@ -420,7 +424,7 @@
 				791E793829B9433F00FB45F3 /* Camera.swift */,
 				791E78C029B9390700FB45F3 /* Configuration.swift */,
 				791E791829B93C7D00FB45F3 /* Errors.swift */,
-				791E793229B9430E00FB45F3 /* Renderer.swift */,
+				79AA09A329D3ADE4001164B7 /* Renderer */,
 				79AACDF729D08905000E8936 /* MetalView.swift */,
 				7921DF7229C8A58D0013E317 /* MovieManager.swift */,
 				791E793929B9433F00FB45F3 /* Skybox.swift */,
@@ -630,6 +634,16 @@
 				799B4BB929C6067800B6826A /* TexturesView.swift */,
 			);
 			path = Textures;
+			sourceTree = "<group>";
+		};
+		79AA09A329D3ADE4001164B7 /* Renderer */ = {
+			isa = PBXGroup;
+			children = (
+				791E793229B9430E00FB45F3 /* Renderer.swift */,
+				79AA09A629D3AF27001164B7 /* ShadowPass.swift */,
+				79AA09A429D3ADF9001164B7 /* MainPass.swift */,
+			);
+			path = Renderer;
 			sourceTree = "<group>";
 		};
 		79AEFEDC29D109810054A6EB /* Nodes */ = {
@@ -950,6 +964,7 @@
 				791E791029B93BDC00FB45F3 /* Vec4.swift in Sources */,
 				79F6D2ED29BCC53E007CA69A /* LabeledNumericField.swift in Sources */,
 				791E790829B93BB600FB45F3 /* Transform.swift in Sources */,
+				79AA09A529D3ADF9001164B7 /* MainPass.swift in Sources */,
 				7921DF8629CBFE7B0013E317 /* BoxOptionsView.swift in Sources */,
 				798D3BF329C3C1B200B96C5F /* AlbedoLayer.swift in Sources */,
 				7921DFA429CCE82E0013E317 /* PointOptionsView.swift in Sources */,
@@ -1011,6 +1026,7 @@
 				798D3BF529C3C1FB00B96C5F /* MetallicLayer.swift in Sources */,
 				79AEFEF029D2767C0054A6EB /* ModelAnimationView.swift in Sources */,
 				79F6D30029C16FC5007CA69A /* Selected.swift in Sources */,
+				79AA09A729D3AF27001164B7 /* ShadowPass.swift in Sources */,
 				799B4BC329C72D3100B6826A /* DepthShadowPipeline.swift in Sources */,
 				7921DFB229CE167C0013E317 /* MaterialManager.swift in Sources */,
 				7921DF7129C888310013E317 /* ModelTreeListItem.swift in Sources */,
