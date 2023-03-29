@@ -258,6 +258,71 @@ class Mesh: RenderObject {
             throw error
         }
     }
+
+    func getCenter() -> Vec3 {
+        var center = Vec3(0, 0, 0)
+        
+        let buffer = mesh.vertexBuffers[0]
+        let points = buffer.buffer.contents().bindMemory(to: Float.self, capacity: buffer.length)
+        
+        let bytesPerPoint = MemoryLayout<Vec3>.size + MemoryLayout<Vec2>.size
+        let floatsPerPoint = bytesPerPoint / MemoryLayout<Float>.size
+        
+        let count = buffer.length / MemoryLayout<Float>.size
+        
+        for i in stride(from: 0, to: count, by: floatsPerPoint) {
+            center += Vec3(
+                points[i + 0],
+                points[i + 1],
+                points[i + 2]
+            )
+        }
+        
+        center /= (Float(count) / Float(floatsPerPoint))
+        
+        return center
+    }
+
+    func getExtents() -> (Vec3, Vec3) {
+        let buffer = mesh.vertexBuffers[0]
+        let points = buffer.buffer.contents().bindMemory(to: Float.self, capacity: buffer.length)
+        
+        let bytesPerPoint = MemoryLayout<Vec3>.size + MemoryLayout<Vec2>.size
+        let floatsPerPoint = bytesPerPoint / MemoryLayout<Float>.size
+        
+        let count = buffer.length / MemoryLayout<Float>.size
+        
+        var minimum = Vec3(Float.greatestFiniteMagnitude, Float.greatestFiniteMagnitude, Float.greatestFiniteMagnitude)
+        var maximum = Vec3(-Float.greatestFiniteMagnitude, -Float.greatestFiniteMagnitude, -Float.greatestFiniteMagnitude)
+
+        for i in stride(from: 0, to: count, by: floatsPerPoint) {
+            minimum.x = min(minimum.x, points[i + 0])
+            minimum.y = min(minimum.y, points[i + 1])
+            minimum.z = min(minimum.z, points[i + 2])
+
+            maximum.x = max(maximum.x, points[i + 0])
+            maximum.y = max(maximum.y, points[i + 1])
+            maximum.z = max(maximum.z, points[i + 2])
+        }
+        
+        return (minimum, maximum)
+    }
+    
+    func offset(_ offset: Vec3) {
+        let buffer = mesh.vertexBuffers[0]
+        let points = buffer.buffer.contents().bindMemory(to: Float.self, capacity: buffer.length)
+        
+        let bytesPerPoint = MemoryLayout<Vec3>.size + MemoryLayout<Vec2>.size
+        let floatsPerPoint = bytesPerPoint / MemoryLayout<Float>.size
+        
+        let count = buffer.length / MemoryLayout<Float>.size
+        
+        for i in stride(from: 0, to: count, by: floatsPerPoint) {
+            points[i + 0] += offset.x
+            points[i + 1] += offset.y
+            points[i + 2] += offset.z
+        }
+    }
 }
 
 extension MTKSubmesh: Encodable {

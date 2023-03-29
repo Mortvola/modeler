@@ -18,14 +18,17 @@ class RenderObject: Object {
     // lights that may affect this object.
     var lights: [Light] = []
     @Published var material: MaterialWrapper?
+
     var uniforms: MTLBuffer?
     var uniformsSize = 0
+    
     var modelMatrixUniform: MTLBuffer?
+    var modelMatrixUniformSize = 0
+    
     var instanceData: [InstanceData] = []
     
     override init(model: Model?) {
         super.init(model: model)
-        allocateModelMatrixUniform()
     }
     
     enum CodingKeys: CodingKey {
@@ -40,8 +43,6 @@ class RenderObject: Object {
         try super.init(from: decoder)
 
         material = Renderer.shared.materialManager.getMaterial(materialId: materialId)
-        
-        allocateModelMatrixUniform()
     }
     
     override func encode(to encoder: Encoder) throws {
@@ -81,15 +82,20 @@ class RenderObject: Object {
         return (nil, 0)
     }
     
-    func allocateModelMatrixUniform() {
-        let numInstances = 4
-        modelMatrixUniform = MetalView.shared.device.makeBuffer(length: 3 * MemoryLayout<ModelMatrixUniforms>.stride * numInstances, options: [MTLResourceOptions.storageModeShared])!
+    func allocateModelMatrixUniform(size: Int) {
+        modelMatrixUniform = MetalView.shared.device.makeBuffer(length: size, options: [MTLResourceOptions.storageModeShared])!
         modelMatrixUniform!.label = "Model Matrix Uniforms"
     }
     
     func getModelMatrixUniform(index: Int, instances: Int) -> (UnsafeMutablePointer<ModelMatrixUniforms>, Int) {
-        let numInstances = 4
-        let offset = index * MemoryLayout<ModelMatrixUniforms>.stride * numInstances
+        let size = instances * MemoryLayout<ModelMatrixUniforms>.stride * 3
+        
+        if modelMatrixUniformSize < size {
+            allocateModelMatrixUniform(size: size)
+            modelMatrixUniformSize = size
+        }
+        
+        let offset = index * MemoryLayout<ModelMatrixUniforms>.stride * instances
         
         return (
             UnsafeMutableRawPointer(self.modelMatrixUniform!.contents())

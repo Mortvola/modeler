@@ -16,7 +16,7 @@ extension Renderer {
                     case .model:
                         break
                     case .mesh(let mesh):
-                        if !mesh.disabled {
+                        if !mesh.disabled && mesh.instanceData.count > 0 {
                             let (buffer, offset) = mesh.getInstanceData(frame: self.uniformBufferIndex)
                             renderEncoder.setVertexBuffer(buffer, offset: offset, index: BufferIndex.modelMatrix.rawValue)
 

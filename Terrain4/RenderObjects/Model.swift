@@ -215,6 +215,19 @@ class Model: Node, Identifiable, Hashable {
 
         return object
     }
+    
+    func center() {
+        for object in objects {
+            switch object.content {
+            case .mesh(let mesh):
+                let center = mesh.getCenter()
+                
+                mesh.offset(-center)
+            default:
+                break
+            }
+        }
+    }
 }
 
 

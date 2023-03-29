@@ -87,10 +87,12 @@ struct ModelManager: View {
                     HStack {
                         if rename {
                             Spacer()
-                            TextField("", text: $renameValue)
-                                .onChange(of: renameValue) { newValue in
-                                    selectedModel?.name = newValue
-                                }
+                            UndoProvider($renameValue) { $renameValue in
+                                TextField("", text: $renameValue)
+                                    .onChange(of: renameValue) { newValue in
+                                        selectedModel?.name = newValue
+                                    }
+                            }
                             Button {
                                 rename = false
                             } label: {
@@ -114,6 +116,16 @@ struct ModelManager: View {
                             } label: {
                                 Image(systemName: "pencil")
                             }
+                            .disabled(selectedModel == nil)
+                            Button {
+                                selectedModel?.center()
+                                undoManager?.registerUndo(withTarget: file) { _ in
+                                    print("undo")
+                                }
+                            } label: {
+                                Image(systemName: "align.horizontal.center")
+                            }
+                            .disabled(selectedModel == nil)
                         }
                     }
                     .padding(.top, 8)
