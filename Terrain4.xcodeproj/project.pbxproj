@@ -118,6 +118,7 @@
 		79AA09A929D4593E001164B7 /* BillboardShaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = 79AA09A829D4593E001164B7 /* BillboardShaders.metal */; };
 		79AA09AB29D45A9A001164B7 /* BillboardPipeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79AA09AA29D45A9A001164B7 /* BillboardPipeline.swift */; };
 		79AA09AD29D481C2001164B7 /* BillboardMaterialView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79AA09AC29D481C2001164B7 /* BillboardMaterialView.swift */; };
+		79AA09B229D4C287001164B7 /* TransparentPass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79AA09B129D4C287001164B7 /* TransparentPass.swift */; };
 		79AACDF229CFF3A1000E8936 /* TextureList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79AACDF129CFF3A1000E8936 /* TextureList.swift */; };
 		79AACDF629D074F6000E8936 /* TextureMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79AACDF529D074F6000E8936 /* TextureMapView.swift */; };
 		79AACDF829D08905000E8936 /* MetalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79AACDF729D08905000E8936 /* MetalView.swift */; };
@@ -322,6 +323,7 @@
 		79AA09A829D4593E001164B7 /* BillboardShaders.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = BillboardShaders.metal; sourceTree = "<group>"; };
 		79AA09AA29D45A9A001164B7 /* BillboardPipeline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BillboardPipeline.swift; sourceTree = "<group>"; };
 		79AA09AC29D481C2001164B7 /* BillboardMaterialView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BillboardMaterialView.swift; sourceTree = "<group>"; };
+		79AA09B129D4C287001164B7 /* TransparentPass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransparentPass.swift; sourceTree = "<group>"; };
 		79AACDF129CFF3A1000E8936 /* TextureList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextureList.swift; sourceTree = "<group>"; };
 		79AACDF529D074F6000E8936 /* TextureMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextureMapView.swift; sourceTree = "<group>"; };
 		79AACDF729D08905000E8936 /* MetalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetalView.swift; sourceTree = "<group>"; };
@@ -647,6 +649,7 @@
 				791E793229B9430E00FB45F3 /* Renderer.swift */,
 				79AA09A629D3AF27001164B7 /* ShadowPass.swift */,
 				79AA09A429D3ADF9001164B7 /* MainPass.swift */,
+				79AA09B129D4C287001164B7 /* TransparentPass.swift */,
 			);
 			path = Renderer;
 			sourceTree = "<group>";
@@ -963,6 +966,7 @@
 				79AEFEE329D1F05A0054A6EB /* SceneView.swift in Sources */,
 				79F6D2C829BA5F10007CA69A /* MaterialsView.swift in Sources */,
 				7921DFBA29CE52CF0013E317 /* GraphNodeTexture.swift in Sources */,
+				79AA09B229D4C287001164B7 /* TransparentPass.swift in Sources */,
 				7902F01329CF458E004C3775 /* ObjectWrapper.swift in Sources */,
 				79AEFEE829D215010054A6EB /* ModelTransformView.swift in Sources */,
 				79AA09AB29D45A9A001164B7 /* BillboardPipeline.swift in Sources */,

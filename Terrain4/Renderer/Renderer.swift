@@ -32,7 +32,8 @@ class Renderer {
     public var dynamicUniformBuffer: MTLBuffer?
     public var depthState: MTLDepthStencilState?
     public var shadowDepthState: MTLDepthStencilState?
-
+    public var transparentDepthState: MTLDepthStencilState?
+    
     private let inFlightSemaphore = DispatchSemaphore(value: maxBuffersInFlight)
     
     public var uniformBufferOffset = 0
@@ -109,6 +110,14 @@ class Renderer {
         }
         
         self.shadowDepthState = state
+        
+        depthStateDescriptor.isDepthWriteEnabled = false
+
+        guard let state = MetalView.shared.device.makeDepthStencilState(descriptor:depthStateDescriptor) else {
+            throw Errors.makeDepthStencilStateFailed
+        }
+        
+        self.transparentDepthState = state
         
         self.lineMaterial = try LineMaterial()
         
@@ -502,8 +511,15 @@ class Renderer {
                     ///   holding onto the drawable and blocking the display pipeline any longer than necessary
                     if let renderPassDescriptor = view.currentRenderPassDescriptor {
                         
-                        try renderMainPass(renderPassDescriptor: renderPassDescriptor, commandBuffer: commandBuffer)
-                        
+                        if let renderEncoder = commandBuffer.makeRenderCommandEncoder(descriptor: renderPassDescriptor) {
+                            
+                            try renderMainPass(renderEncoder: renderEncoder, commandBuffer: commandBuffer)
+                            
+                            try renderTransparentPass(renderEncoder: renderEncoder, commandBuffer: commandBuffer)
+                            
+                            renderEncoder.endEncoding()
+                        }
+
                         if let drawable = view.currentDrawable {
                             commandBuffer.present(drawable)
                         }

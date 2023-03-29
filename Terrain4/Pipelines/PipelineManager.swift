@@ -39,8 +39,11 @@ class PipelineManager {
 
         try pbrPipeline.render(renderEncoder: renderEncoder, frame: frame)
 //        try pointPipeline.render(renderEncoder: renderEncoder, frame: frame)
+//        try graphPipeline.render(renderEncoder: renderEncoder, frame: frame)
+    }
+    
+    func transparentRender(renderEncoder: MTLRenderCommandEncoder, frame: Int) throws {
         try billboardPipeline.render(renderEncoder: renderEncoder, frame: frame)
-        try graphPipeline.render(renderEncoder: renderEncoder, frame: frame)
     }
     
     func clearDrawables() {
