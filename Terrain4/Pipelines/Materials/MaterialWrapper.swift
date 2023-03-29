@@ -56,6 +56,11 @@ enum MaterialWrapper: Equatable, Codable {
             let m = try GraphMaterial(from: decoder)
             self = MaterialWrapper.graphMaterial(m)
             return
+        case "Billboard":
+            let m = try BillboardMaterial(from: decoder)
+            self = MaterialWrapper.billboardMaterial(m)
+            return
+
         default:
             break
         }
@@ -75,8 +80,9 @@ enum MaterialWrapper: Equatable, Codable {
             try m.encode(to: encoder)
         case .pointMaterial:
             throw Errors.invalidTexture
-        case .billboardMaterial:
-            throw Errors.invalidTexture
+        case .billboardMaterial(let m):
+            try container.encode("Billboard", forKey: .type)
+            try m.encode(to: encoder)
         }
     }
 }

@@ -44,16 +44,16 @@ vertex VertexOut graphVertexShader
     return out;
 }
 
-[[visible]]
-float4 processTexel
-(
- texture2d<float> texture,
- sampler sampler,
- float2 texcoord,
- const device float *arg0,
- const device float *arg1,
- const device float *arg2
-);
+//[[visible]]
+//float4 processTexel
+//(
+// texture2d<float> texture,
+// sampler sampler,
+// float2 texcoord,
+// const device float *arg0,
+// const device float *arg1,
+// const device float *arg2
+//);
 
 //[[visible]]
 //float4 processTexel(float4 color, float alpha);
@@ -67,13 +67,13 @@ fragment float4 graphFragmentShader
 ) {
 //    float color = is_null_texture(texture) ? 1.0 : max(texture.sample(sampler, in.texcoord).r - 0.2, 0.0);
 
-    return processTexel(texture, sampler, in.texcoord,
-                        &graphUniforms.arg[graphUniforms.argOffset[0]],
-                        &graphUniforms.arg[graphUniforms.argOffset[1]],
-                        &graphUniforms.arg[graphUniforms.argOffset[2]]);
+//    return processTexel(texture, sampler, in.texcoord,
+//                        &graphUniforms.arg[graphUniforms.argOffset[0]],
+//                        &graphUniforms.arg[graphUniforms.argOffset[1]],
+//                        &graphUniforms.arg[graphUniforms.argOffset[2]]);
 //    return processTexel(texture, sampler, in.texcoord, float4(1, 1, 1, 1), 0.2, 0.0);
 
-//    return graphUniforms->arg[0]; // float4(1, 1, 1, 1);
+    return float4(1, 1, 1, 1);
 //    return float4(pointUniforms.color.rgb, color);
 //    return processTexel(pointUniforms.color, color);
 }

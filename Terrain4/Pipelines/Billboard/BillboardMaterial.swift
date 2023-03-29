@@ -13,7 +13,7 @@ class BillboardMaterial: Material {
     var texture: MTLTexture? = nil
     
     var uniforms: MTLBuffer?
-
+    
     init() {
         super.init(name: "Billboard Material")
         allocateUniforms()
@@ -31,53 +31,26 @@ class BillboardMaterial: Material {
         }
     }
 
-//    func deleteLayer(id: UUID) {
-//        let index = layers.firstIndex {
-//            $0.id == id
-//        }
-//
-//        if let index = index {
-//            layers.remove(at: index)
-//        }
-//    }
-    
     override func prepare(renderEncoder: MTLRenderCommandEncoder, frame: Int) {
-//        let u: UnsafeMutablePointer<GraphUniforms> = getUniformsBuffer(index: frame)
-//
-//        u[0].argOffset.0 = 0
-//        u[0].argOffset.1 = 4
-//        u[0].argOffset.2 = 5
-//
-//        u[0].arg.0 = Float(1.0)
-//        u[0].arg.1 = Float(1.0)
-//        u[0].arg.2 = Float(1.0)
-//        u[0].arg.3 = Float(1.0)
-//
-//        u[0].arg.4 = Float(0.2)
-//        u[0].arg.5 = Float(0.0)
-//
-//        renderEncoder.setFragmentBuffer(uniforms, offset: frame * MemoryLayout<GraphUniforms>.stride, index: BufferIndex.materialUniforms.rawValue)
-
-//        for layer in layers {
-//            switch layer {
-//            case .texture(let l):
-//                renderEncoder.setFragmentTexture(l.texture, index: 0)
-//            default:
-//                break
-//            }
-//        }
+        renderEncoder.setFragmentTexture(texture, index: 0)
     }
     
-//    enum CodingKeys: CodingKey {
-//        case layers
-//    }
+    enum CodingKeys: CodingKey {
+        case filename
+    }
     
     required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         
         try super.init(from: decoder)
         
-//        layers = try container.decode([GraphNodeWrapper].self, forKey: .layers)
+        filename = try container.decode(String.self, forKey: .filename)
+        
+        let t = Task {
+            await loadTexture()
+        }
+        
+        decoder.addTask(t)
         
         allocateUniforms()
     }
@@ -85,7 +58,7 @@ class BillboardMaterial: Material {
     override func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         
-//        try container.encode(layers, forKey: .layers)
+        try container.encode(filename, forKey: .filename)
         
         try super.encode(to: encoder)
     }
@@ -99,5 +72,10 @@ class BillboardMaterial: Material {
         UnsafeMutableRawPointer(self.uniforms!.contents())
             .advanced(by: index * MemoryLayout<GraphUniforms>.stride)
             .bindMemory(to: GraphUniforms.self, capacity: 1)
+    }
+
+    override func updatePipeline(object: RenderObject) {
+        Renderer.shared.pipelineManager.billboardPipeline.addMaterial(material: object.material!)
+        Renderer.shared.pipelineManager.billboardPipeline.prepareObject(object: object)
     }
 }

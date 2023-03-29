@@ -22,8 +22,8 @@ class GraphPipeline: Pipeline {
             descr.colorAttachments[0].destinationRGBBlendFactor = .oneMinusSourceAlpha
             descr.colorAttachments[0].destinationAlphaBlendFactor = .oneMinusSourceAlpha
             
-            let linkedFunctions = try self.buildStitchedFunction()!
-            descr.fragmentLinkedFunctions = linkedFunctions
+//            let linkedFunctions = try self.buildStitchedFunction()!
+//            descr.fragmentLinkedFunctions = linkedFunctions
         }
     }
 

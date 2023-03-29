@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct MaterialsView: View {
+    @Environment(\.undoManager) var undoManager
+    @EnvironmentObject private var file: SceneDocument
     @ObservedObject var materialManager = Renderer.shared.materialManager
     @State var hidden = false
     @State private var selectedMaterial: MaterialWrapper?
@@ -24,12 +26,21 @@ struct MaterialsView: View {
                 Menu("Add Material") {
                     Button("PBR Pipeline") {
                         materialManager.addMaterial(PbrMaterial())
+                        undoManager?.registerUndo(withTarget: file) { _ in
+                            print("undo")
+                        }
                     }
                     Button("Graph Pipeline") {
                         materialManager.addMaterial(GraphMaterial())
+                        undoManager?.registerUndo(withTarget: file) { _ in
+                            print("undo")
+                        }
                     }
                     Button("Billboard Pipeline") {
                         materialManager.addMaterial(BillboardMaterial())
+                        undoManager?.registerUndo(withTarget: file) { _ in
+                            print("undo")
+                        }
                     }
                 }
                 .buttonStyle(.bordered)

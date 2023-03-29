@@ -18,6 +18,9 @@ struct BillboardMaterialView: View {
                     await material.setTexture(file: newMap)
                 }
             }
+            .onAppear {
+                map = material.filename
+            }
     }
 }
 
