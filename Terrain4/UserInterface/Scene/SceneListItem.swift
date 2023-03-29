@@ -16,12 +16,12 @@ struct SceneListItem: View {
         ListItemBase(text: $name, isSelected: selectedItem == sceneModel) {
             selectedItem = sceneModel
         }
-            .onAppear {
-                name = sceneModel.name
-            }
-            .onChange(of: name) { newName in
-                sceneModel.name = name
-            }
+        .onAppear {
+            name = sceneModel.name
+        }
+        .onChange(of: name) { newName in
+            sceneModel.name = name
+        }
     }
 }
 

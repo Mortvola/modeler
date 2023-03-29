@@ -12,34 +12,43 @@ struct SceneView: View {
     @EnvironmentObject private var file: SceneDocument
     @ObservedObject var objectStore: ObjectStore
     @State private var selectedItem: SceneModel? = nil
-    @State var hidden = false
+    @State private var hidden = false
+    @State private var isEditMode: EditMode = .inactive
 
     var body: some View {
         GeometryReader { gp in
             VStack {
                 VStack {
-                    Menu("Add Model Instance") {
-                        ForEach(objectStore.models) { modelWrapper in
-                            switch modelWrapper.content {
-                            case .model(let m):
-                                Button {
-                                    objectStore.scene.models.append(SceneModel(model: m))
-                                    undoManager?.registerUndo(withTarget: file) { _ in
-                                        print("undo")
+                    HStack {
+                        Menu("Add Model Instance") {
+                            ForEach(objectStore.models) { modelWrapper in
+                                switch modelWrapper.content {
+                                case .model(let m):
+                                    Button {
+                                        objectStore.scene.models.append(SceneModel(model: m))
+                                        undoManager?.registerUndo(withTarget: file) { _ in
+                                            print("undo")
+                                        }
+                                    } label: {
+                                        Text(m.name)
                                     }
-                                } label: {
-                                    Text(m.name)
+                                default:
+                                    EmptyView()
                                 }
-                            default:
-                                EmptyView()
                             }
                         }
-                    }
-                    List {
-                        ForEach(objectStore.scene.models) { model in
-                            SceneListItem(sceneModel: model, selectedItem: $selectedItem)
+                        Button {
+                            if isEditMode == .active {
+                                isEditMode = .inactive
+                            }
+                            else {
+                                isEditMode = .active
+                            }
+                        } label: {
+                            Image(systemName: "pencil")
                         }
                     }
+                    SceneModelList(scene: objectStore.scene, selectedItem: $selectedItem, isEditMode: $isEditMode)
                     Spacer()
                 }
                 .frame(height: gp.size.height / 2)

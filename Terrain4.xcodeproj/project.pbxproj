@@ -119,6 +119,7 @@
 		79AA09AB29D45A9A001164B7 /* BillboardPipeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79AA09AA29D45A9A001164B7 /* BillboardPipeline.swift */; };
 		79AA09AD29D481C2001164B7 /* BillboardMaterialView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79AA09AC29D481C2001164B7 /* BillboardMaterialView.swift */; };
 		79AA09B229D4C287001164B7 /* TransparentPass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79AA09B129D4C287001164B7 /* TransparentPass.swift */; };
+		79AA09B429D4FF7B001164B7 /* SceneModelList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79AA09B329D4FF7B001164B7 /* SceneModelList.swift */; };
 		79AACDF229CFF3A1000E8936 /* TextureList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79AACDF129CFF3A1000E8936 /* TextureList.swift */; };
 		79AACDF629D074F6000E8936 /* TextureMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79AACDF529D074F6000E8936 /* TextureMapView.swift */; };
 		79AACDF829D08905000E8936 /* MetalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79AACDF729D08905000E8936 /* MetalView.swift */; };
@@ -324,6 +325,7 @@
 		79AA09AA29D45A9A001164B7 /* BillboardPipeline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BillboardPipeline.swift; sourceTree = "<group>"; };
 		79AA09AC29D481C2001164B7 /* BillboardMaterialView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BillboardMaterialView.swift; sourceTree = "<group>"; };
 		79AA09B129D4C287001164B7 /* TransparentPass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransparentPass.swift; sourceTree = "<group>"; };
+		79AA09B329D4FF7B001164B7 /* SceneModelList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneModelList.swift; sourceTree = "<group>"; };
 		79AACDF129CFF3A1000E8936 /* TextureList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextureList.swift; sourceTree = "<group>"; };
 		79AACDF529D074F6000E8936 /* TextureMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextureMapView.swift; sourceTree = "<group>"; };
 		79AACDF729D08905000E8936 /* MetalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetalView.swift; sourceTree = "<group>"; };
@@ -692,6 +694,7 @@
 			isa = PBXGroup;
 			children = (
 				79AEFEE229D1F05A0054A6EB /* SceneView.swift */,
+				79AA09B329D4FF7B001164B7 /* SceneModelList.swift */,
 				79AEFEE729D215010054A6EB /* ModelTransformView.swift */,
 				79AEFEEF29D2767C0054A6EB /* ModelAnimationView.swift */,
 				79AEFEF129D285ED0054A6EB /* AnimationView.swift */,
@@ -979,6 +982,7 @@
 				791E790F29B93BDC00FB45F3 /* Vec3.swift in Sources */,
 				799B4BC129C6853900B6826A /* ShadowShaders.metal in Sources */,
 				791E792C29B93D7000FB45F3 /* PbrMaterial.swift in Sources */,
+				79AA09B429D4FF7B001164B7 /* SceneModelList.swift in Sources */,
 				791E793629B9430E00FB45F3 /* RenderViewController.swift in Sources */,
 				791E78C329B9390700FB45F3 /* Configuration.swift in Sources */,
 				791E78D629B93A2B00FB45F3 /* ContentView.swift in Sources */,
