@@ -89,4 +89,9 @@ class GraphMaterial: Material {
             .advanced(by: index * MemoryLayout<GraphUniforms>.stride)
             .bindMemory(to: GraphUniforms.self, capacity: 1)
     }
+    
+    override func updatePipeline(object: RenderObject) {
+        Renderer.shared.pipelineManager.graphPipeline.addMaterial(material: object.material!)
+        Renderer.shared.pipelineManager.graphPipeline.prepareObject(object: object)
+    }
 }

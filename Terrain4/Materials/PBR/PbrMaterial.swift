@@ -105,6 +105,11 @@ class PbrMaterial: Material, Hashable {
             .advanced(by: index * MemoryLayout<PbrMaterialUniforms>.stride)
             .bindMemory(to: PbrMaterialUniforms.self, capacity: 1)
     }
+    
+    override func updatePipeline(object: RenderObject) {
+        Renderer.shared.pipelineManager.pbrPipeline.addMaterial(material: object.material!)
+        Renderer.shared.pipelineManager.pbrPipeline.prepareObject(object: object)
+    }
 }
 
 struct PbrProperties {
