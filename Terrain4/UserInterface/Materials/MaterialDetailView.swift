@@ -23,7 +23,9 @@ struct MaterialDetailView: View {
                 RoughnessView(roughness: m.roughness)
             }
         case .graphMaterial(let m):
-            GenericMaterialView(material: m)
+            GraphMaterialView(material: m)
+        case .billboardMaterial(let m):
+            BillboardMaterialView(material: m)
         default:
             EmptyView()
         }

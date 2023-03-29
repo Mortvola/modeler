@@ -9,8 +9,9 @@ import Foundation
 import MetalKit
 
 class BillboardMaterial: Material {
-//    @Published var layers: [GraphNodeWrapper] = []
-//
+    var filename: String = ""
+    var texture: MTLTexture? = nil
+    
     var uniforms: MTLBuffer?
 
     init() {
@@ -18,6 +19,18 @@ class BillboardMaterial: Material {
         allocateUniforms()
     }
     
+    @MainActor
+    func setTexture(file: String?) async {
+        filename = file ?? ""
+        await loadTexture()
+    }
+    
+    private func loadTexture() async {
+        if !filename.isEmpty {
+            texture = try? await TextureManager.shared.addTexture(path: filename)
+        }
+    }
+
 //    func deleteLayer(id: UUID) {
 //        let index = layers.firstIndex {
 //            $0.id == id
