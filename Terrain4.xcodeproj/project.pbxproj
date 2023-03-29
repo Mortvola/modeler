@@ -500,8 +500,6 @@
 				7921DF6E29C7E5EF0013E317 /* UndoProvider.swift */,
 				79F6D30329C1DD7F007CA69A /* ListItem.swift */,
 				7921DF7B29CBB2610013E317 /* ListItemBase.swift */,
-				7921DF7029C888310013E317 /* ModelTreeListItem.swift */,
-				7921DF7929CB8DED0013E317 /* VisibleButton.swift */,
 				79F6D2E829BCBD83007CA69A /* NumericField.swift */,
 				79F6D2EE29BCC983007CA69A /* VectorFieldView.swift */,
 			);
@@ -726,6 +724,8 @@
 				791E78CA29B93A2B00FB45F3 /* ModelsView.swift */,
 				791E78CC29B93A2B00FB45F3 /* TransformsView.swift */,
 				791E78CB29B93A2B00FB45F3 /* TransformView.swift */,
+				7921DF7029C888310013E317 /* ModelTreeListItem.swift */,
+				7921DF7929CB8DED0013E317 /* VisibleButton.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";

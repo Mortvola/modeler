@@ -11,6 +11,7 @@ import MetalKit
 class BillboardMaterial: Material {
     var filename: String = ""
     var texture: MTLTexture? = nil
+    var color = Vec4(1, 1, 1, 1)
     
     var uniforms: MTLBuffer?
     
@@ -32,11 +33,18 @@ class BillboardMaterial: Material {
     }
 
     override func prepare(renderEncoder: MTLRenderCommandEncoder, frame: Int) {
+        let u = getUniformsBuffer(index: frame)
+
+        u[0].color = color
+        
+        renderEncoder.setFragmentBuffer(uniforms, offset: frame * MemoryLayout<BillboardUniforms>.stride, index: BufferIndex.materialUniforms.rawValue)
+
         renderEncoder.setFragmentTexture(texture, index: 0)
     }
     
     enum CodingKeys: CodingKey {
         case filename
+        case color
     }
     
     required init(from decoder: Decoder) throws {
@@ -45,6 +53,7 @@ class BillboardMaterial: Material {
         try super.init(from: decoder)
         
         filename = try container.decode(String.self, forKey: .filename)
+        color = try container.decodeIfPresent(Vec4.self, forKey: .color) ?? Vec4(1, 1, 1, 1)
         
         let t = Task {
             await loadTexture()
@@ -59,19 +68,20 @@ class BillboardMaterial: Material {
         var container = encoder.container(keyedBy: CodingKeys.self)
         
         try container.encode(filename, forKey: .filename)
+        try container.encode(color, forKey: .color)
         
         try super.encode(to: encoder)
     }
     
     func allocateUniforms() {
-        uniforms = MetalView.shared.device.makeBuffer(length: 3 * MemoryLayout<GraphUniforms>.stride, options: [MTLResourceOptions.storageModeShared])!
+        uniforms = MetalView.shared.device.makeBuffer(length: 3 * MemoryLayout<BillboardUniforms>.stride, options: [MTLResourceOptions.storageModeShared])!
         uniforms!.label = "Material Uniforms"
     }
     
-    func getUniformsBuffer(index: Int) -> UnsafeMutablePointer<GraphUniforms> {
+    func getUniformsBuffer(index: Int) -> UnsafeMutablePointer<BillboardUniforms> {
         UnsafeMutableRawPointer(self.uniforms!.contents())
-            .advanced(by: index * MemoryLayout<GraphUniforms>.stride)
-            .bindMemory(to: GraphUniforms.self, capacity: 1)
+            .advanced(by: index * MemoryLayout<BillboardUniforms>.stride)
+            .bindMemory(to: BillboardUniforms.self, capacity: 1)
     }
 
     override func updatePipeline(object: RenderObject) {

@@ -16,6 +16,8 @@ struct ModelManager: View {
     @State private var addObjectTo: Model? = nil
     @State private var hidden = false
     @Binding var selectedModel: Model?
+    @State private var rename = false
+    @State private var renameValue = ""
 
     var modelList: [Model] {
         objectStore.models.compactMap { node in
@@ -47,13 +49,13 @@ struct ModelManager: View {
                         Spacer()
                         
                         Button {
-                            addObjectTo = selectedItem?.getNearestModel()
+                            addObjectTo = selectedModel
                             addObject = true
                         } label: {
                             Text("Add Object")
                         }
                         .buttonStyle(.bordered)
-                        .disabled(selectedItem == nil)
+                        .disabled(selectedModel == nil)
                         
                         Button {
                             Task {
@@ -82,13 +84,39 @@ struct ModelManager: View {
                         
                         Spacer()
                     }
-                    Picker("Model", selection: $selectedModel) {
-                        Text("None").tag(nil as Model?)
-                        ForEach(modelList) { model in
-                            Text(model.name).tag(model as Model?)
+                    HStack {
+                        if rename {
+                            Spacer()
+                            TextField("", text: $renameValue)
+                                .onChange(of: renameValue) { newValue in
+                                    selectedModel?.name = newValue
+                                }
+                            Button {
+                                rename = false
+                            } label: {
+                                Image(systemName: "x.square")
+                            }
+                            Spacer()
+                        }
+                        else {
+                            Picker("Model", selection: $selectedModel) {
+                                Text("None").tag(nil as Model?)
+                                ForEach(modelList) { model in
+                                    Text(model.name).tag(model as Model?)
+                                }
+                            }
+                            .background {
+                                Rectangle().stroke(.black)
+                            }
+                            Button {
+                                rename = true
+                                renameValue = selectedModel?.name ?? ""
+                            } label: {
+                                Image(systemName: "pencil")
+                            }
                         }
                     }
-                    .padding()
+                    .padding(.top, 8)
                     if let model = selectedModel {
                         ModelsView(objectStore: objectStore, model: model, selectedItem: $selectedItem)
                     }
@@ -139,7 +167,7 @@ struct ModelManager: View {
                 Spacer();
             }
             .sheet(isPresented: $addObject) {
-                AddObject(undoManager: undoManager, isOpen: $addObject, selectedItem: $selectedItem, model: $addObjectTo)
+                AddObject(undoManager: undoManager, isOpen: $addObject, selectedItem: $selectedItem, model: $selectedModel)
             }
             .environmentObject(objectStore)
         }

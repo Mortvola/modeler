@@ -94,8 +94,8 @@ class MaterialManager: ObservableObject {
             }
             
             if let material = material {
-                material.material.addObject(object: object)
                 object.material = material
+                material.material.addObject(object: object)
             }
             else {
                 defaultMaterial.material.addObject(object: object)
