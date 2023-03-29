@@ -22,13 +22,14 @@ struct MaterialsView: View {
         GeometryReader { gp in
             VStack {
                 Menu("Add Material") {
-                    Button("PBR Material") {
-                        let material = PbrMaterial()
-                        materialManager.addMaterial(pbrMaterial: material)
+                    Button("PBR Pipeline") {
+                        materialManager.addMaterial(PbrMaterial())
                     }
-                    Button("Simple Material") {
-                        let material = SimpleMaterial()
-                        materialManager.addMaterial(simpleMaterial: material)
+                    Button("Graph Pipeline") {
+                        materialManager.addMaterial(GraphMaterial())
+                    }
+                    Button("Billboard Pipeline") {
+                        materialManager.addMaterial(BillboardMaterial())
                     }
                 }
                 .buttonStyle(.bordered)

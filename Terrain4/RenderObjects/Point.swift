@@ -59,7 +59,7 @@ class Point: RenderObject {
 //            break //m.objects.append(self)
 //        case .pointMaterial:
 //            break //m.objects.append(self)
-//        case .simpleMaterial:
+//        case .graphMaterial:
 //            break
 //        }
 //    }

@@ -10,7 +10,7 @@ import SwiftUI
 struct GenericMaterialView: View {
     @Environment(\.undoManager) var undoManager
     @EnvironmentObject private var file: SceneDocument
-    @ObservedObject var material: SimpleMaterial
+    @ObservedObject var material: GraphMaterial
     
     var body: some View {
         List {

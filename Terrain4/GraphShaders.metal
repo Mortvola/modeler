@@ -1,5 +1,5 @@
 //
-//  BillboardShaders.metal
+//  GraphShaders.metal
 //  Terrain4
 //
 //  Created by Richard Shields on 3/23/23.

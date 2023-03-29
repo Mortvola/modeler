@@ -16,22 +16,55 @@ class MaterialManager: ObservableObject {
         defaultMaterial = MaterialWrapper.pbrMaterial(PbrMaterial())
     }
     
-    func addMaterial(pbrMaterial: PbrMaterial) {
-        let entry = materials[pbrMaterial.id]
+    private func wrapMaterial(_ material: Material) throws -> MaterialWrapper {
+        if type(of: material) == PbrMaterial.self {
+            return MaterialWrapper.pbrMaterial(material as! PbrMaterial)
+        }
         
-        if entry == nil {
-            materials[pbrMaterial.id] = MaterialWrapper.pbrMaterial(pbrMaterial)
+        if type(of: material) == GraphMaterial.self {
+            return MaterialWrapper.graphMaterial(material as! GraphMaterial)
+        }
+
+        if type(of: material) == BillboardMaterial.self {
+            return MaterialWrapper.billboardMaterial(material as! BillboardMaterial)
+        }
+        
+        throw Errors.invalidMaterial
+    }
+    
+    func addMaterial(_ material: Material) {
+        if let wrappedMaterial = try? wrapMaterial(material) {
+            let entry = materials[wrappedMaterial.id]
+            
+            if entry == nil {
+                materials[wrappedMaterial.id] = wrappedMaterial
+            }
         }
     }
     
-    func addMaterial(simpleMaterial: SimpleMaterial) {
-        let entry = materials[simpleMaterial.id]
-        
-        if entry == nil {
-            materials[simpleMaterial.id] = MaterialWrapper.simpleMaterial(simpleMaterial)
-        }
-    }
-    
+//    func addMaterial(_ material: PbrMaterial) {
+//        
+//        addMaterial()
+//    }
+//    
+//    func addMaterial(_ material: GraphMaterial) {
+//        let entry = materials[material.id]
+//        
+//        wrapMaterial(material)
+//
+//        if entry == nil {
+//            materials[material.id] = MaterialWrapper.graphMaterial(material)
+//        }
+//    }
+//
+//    func addMaterial(_ material: BillboardMaterial) {
+//        let entry = materials[material.id]
+//        
+//        if entry == nil {
+//            materials[material.id] = MaterialWrapper.billboardMaterial(material)
+//        }
+//    }
+
     func getMaterial(materialId: UUID?) -> MaterialWrapper? {
         if let materialId = materialId {
             return materials[materialId]

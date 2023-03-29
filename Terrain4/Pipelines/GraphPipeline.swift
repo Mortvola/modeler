@@ -13,7 +13,18 @@ class GraphPipeline: Pipeline {
     var pipeline: MTLRenderPipelineState? = nil
     
     func initialize() throws {
-        self.pipeline = try GraphPipeline.buildPipeline()
+        self.pipeline = try buildPipeline(name: "GraphPipeline", vertexShader: "graphVertexShader", fragmentShader: "graphFragmentShader") { descr in
+            descr.colorAttachments[0].isBlendingEnabled = true
+            descr.colorAttachments[0].rgbBlendOperation = .add
+            descr.colorAttachments[0].alphaBlendOperation = .add
+            descr.colorAttachments[0].sourceRGBBlendFactor = .sourceAlpha
+            descr.colorAttachments[0].sourceAlphaBlendFactor = .sourceAlpha
+            descr.colorAttachments[0].destinationRGBBlendFactor = .oneMinusSourceAlpha
+            descr.colorAttachments[0].destinationAlphaBlendFactor = .oneMinusSourceAlpha
+            
+            let linkedFunctions = try self.buildStitchedFunction()!
+            descr.fragmentLinkedFunctions = linkedFunctions
+        }
     }
 
     func prepareObject(object: RenderObject) {
@@ -43,7 +54,7 @@ class GraphPipeline: Pipeline {
         for (_, wrapper) in self.materials {
             if wrapper.material.objects.count > 0 {
                 switch wrapper {
-                case .simpleMaterial(let material):
+                case .graphMaterial(let material):
                     material.prepare(renderEncoder: renderEncoder, frame: frame)
                     
                     for object in material.objects {
@@ -59,7 +70,7 @@ class GraphPipeline: Pipeline {
         }
     }
 
-    private static func buildVertexDescriptor() -> MTLVertexDescriptor {
+    override func buildVertexDescriptor() -> MTLVertexDescriptor {
         let vertexDescriptor = MTLVertexDescriptor()
         
         vertexDescriptor.attributes[VertexAttribute.position.rawValue].format = .float3
@@ -75,46 +86,46 @@ class GraphPipeline: Pipeline {
         return vertexDescriptor
     }
     
-    private static func buildPipeline() throws -> MTLRenderPipelineState {
-        /// Build a render state pipeline object
-        
-        let vertexDescriptor = GraphPipeline.buildVertexDescriptor()
-        
-        let library = MetalView.shared.device.makeDefaultLibrary()
-        
-        let vertexFunction = library?.makeFunction(name: "graphVertexShader")
-        let fragmentFunction = library?.makeFunction(name: "graphFragmentShader")
-        
-        if vertexFunction == nil || fragmentFunction == nil {
-             throw Errors.makeFunctionError
-        }
-
-        let linkedFunctions = try buildStitchedFunction()!
-        
-        let pipelineDescriptor = MTLRenderPipelineDescriptor()
-        pipelineDescriptor.label = "BillboardPipeline"
-        pipelineDescriptor.rasterSampleCount = MetalView.shared.view!.sampleCount
-        pipelineDescriptor.vertexFunction = vertexFunction
-        pipelineDescriptor.fragmentFunction = fragmentFunction
-        pipelineDescriptor.fragmentLinkedFunctions = linkedFunctions
-        pipelineDescriptor.vertexDescriptor = vertexDescriptor
-        
-        pipelineDescriptor.colorAttachments[0].pixelFormat = MetalView.shared.view!.colorPixelFormat
-        pipelineDescriptor.colorAttachments[0].isBlendingEnabled = true
-        
-        pipelineDescriptor.colorAttachments[0].rgbBlendOperation = .add
-        pipelineDescriptor.colorAttachments[0].alphaBlendOperation = .add
-        pipelineDescriptor.colorAttachments[0].sourceRGBBlendFactor = .sourceAlpha
-        pipelineDescriptor.colorAttachments[0].sourceAlphaBlendFactor = .sourceAlpha
-        pipelineDescriptor.colorAttachments[0].destinationRGBBlendFactor = .oneMinusSourceAlpha
-        pipelineDescriptor.colorAttachments[0].destinationAlphaBlendFactor = .oneMinusSourceAlpha
-        
-        pipelineDescriptor.depthAttachmentPixelFormat = MetalView.shared.view!.depthStencilPixelFormat
-        
-        return try MetalView.shared.device.makeRenderPipelineState(descriptor: pipelineDescriptor)
-    }
+//    private static func buildPipeline() throws -> MTLRenderPipelineState {
+//        /// Build a render state pipeline object
+//
+//        let vertexDescriptor = GraphPipeline.buildVertexDescriptor()
+//
+//        let library = MetalView.shared.device.makeDefaultLibrary()
+//
+//        let vertexFunction = library?.makeFunction(name: "graphVertexShader")
+//        let fragmentFunction = library?.makeFunction(name: "graphFragmentShader")
+//
+//        if vertexFunction == nil || fragmentFunction == nil {
+//             throw Errors.makeFunctionError
+//        }
+//
+//        let linkedFunctions = try buildStitchedFunction()!
+//
+//        let pipelineDescriptor = MTLRenderPipelineDescriptor()
+//        pipelineDescriptor.label = "GraphPipeline"
+//        pipelineDescriptor.rasterSampleCount = MetalView.shared.view!.sampleCount
+//        pipelineDescriptor.vertexFunction = vertexFunction
+//        pipelineDescriptor.fragmentFunction = fragmentFunction
+//        pipelineDescriptor.fragmentLinkedFunctions = linkedFunctions
+//        pipelineDescriptor.vertexDescriptor = vertexDescriptor
+//
+//        pipelineDescriptor.colorAttachments[0].pixelFormat = MetalView.shared.view!.colorPixelFormat
+//
+//        pipelineDescriptor.colorAttachments[0].isBlendingEnabled = true
+//        pipelineDescriptor.colorAttachments[0].rgbBlendOperation = .add
+//        pipelineDescriptor.colorAttachments[0].alphaBlendOperation = .add
+//        pipelineDescriptor.colorAttachments[0].sourceRGBBlendFactor = .sourceAlpha
+//        pipelineDescriptor.colorAttachments[0].sourceAlphaBlendFactor = .sourceAlpha
+//        pipelineDescriptor.colorAttachments[0].destinationRGBBlendFactor = .oneMinusSourceAlpha
+//        pipelineDescriptor.colorAttachments[0].destinationAlphaBlendFactor = .oneMinusSourceAlpha
+//
+//        pipelineDescriptor.depthAttachmentPixelFormat = MetalView.shared.view!.depthStencilPixelFormat
+//
+//        return try MetalView.shared.device.makeRenderPipelineState(descriptor: pipelineDescriptor)
+//    }
     
-    private static func buildStitchedFunction() throws -> MTLLinkedFunctions? {
+    private func buildStitchedFunction() throws -> MTLLinkedFunctions? {
         guard let library = MetalView.shared.device.makeDefaultLibrary() else {
             return nil
         }

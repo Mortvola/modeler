@@ -44,7 +44,7 @@ class Material: Item {
             break //m.objects.append(self)
         case .pointMaterial:
             break //m.objects.append(self)
-        case .simpleMaterial:
+        case .graphMaterial:
             Renderer.shared.pipelineManager.graphPipeline.addMaterial(material: object.material!)
             Renderer.shared.pipelineManager.graphPipeline.prepareObject(object: object)
         }

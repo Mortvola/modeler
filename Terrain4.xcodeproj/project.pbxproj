@@ -93,7 +93,7 @@
 		7921DFAE29CD24E30013E317 /* BillboardMaterial.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7921DFAD29CD24E30013E317 /* BillboardMaterial.swift */; };
 		7921DFB029CD26C10013E317 /* GraphShaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = 7921DFAF29CD26C10013E317 /* GraphShaders.metal */; };
 		7921DFB229CE167C0013E317 /* MaterialManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7921DFB129CE167C0013E317 /* MaterialManager.swift */; };
-		7921DFB629CE50CE0013E317 /* SimpleMaterial.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7921DFB529CE50CE0013E317 /* SimpleMaterial.swift */; };
+		7921DFB629CE50CE0013E317 /* GraphMaterial.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7921DFB529CE50CE0013E317 /* GraphMaterial.swift */; };
 		7921DFBA29CE52CF0013E317 /* GraphNodeTexture.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7921DFB929CE52CF0013E317 /* GraphNodeTexture.swift */; };
 		79345D3929C509E200E9F074 /* RectangleAllocator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79345D3629C509E200E9F074 /* RectangleAllocator.swift */; };
 		798D3BE929C35EE600B96C5F /* AlbedoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 798D3BE829C35EE600B96C5F /* AlbedoView.swift */; };
@@ -115,6 +115,8 @@
 		79AA09A029D37E59001164B7 /* ImportObj.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79AA099F29D37E59001164B7 /* ImportObj.swift */; };
 		79AA09A529D3ADF9001164B7 /* MainPass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79AA09A429D3ADF9001164B7 /* MainPass.swift */; };
 		79AA09A729D3AF27001164B7 /* ShadowPass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79AA09A629D3AF27001164B7 /* ShadowPass.swift */; };
+		79AA09A929D4593E001164B7 /* BillboardShaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = 79AA09A829D4593E001164B7 /* BillboardShaders.metal */; };
+		79AA09AB29D45A9A001164B7 /* BillboardPipeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79AA09AA29D45A9A001164B7 /* BillboardPipeline.swift */; };
 		79AACDF229CFF3A1000E8936 /* TextureList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79AACDF129CFF3A1000E8936 /* TextureList.swift */; };
 		79AACDF629D074F6000E8936 /* TextureMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79AACDF529D074F6000E8936 /* TextureMapView.swift */; };
 		79AACDF829D08905000E8936 /* MetalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79AACDF729D08905000E8936 /* MetalView.swift */; };
@@ -294,7 +296,7 @@
 		7921DFAD29CD24E30013E317 /* BillboardMaterial.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BillboardMaterial.swift; sourceTree = "<group>"; };
 		7921DFAF29CD26C10013E317 /* GraphShaders.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = GraphShaders.metal; sourceTree = "<group>"; };
 		7921DFB129CE167C0013E317 /* MaterialManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MaterialManager.swift; sourceTree = "<group>"; };
-		7921DFB529CE50CE0013E317 /* SimpleMaterial.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimpleMaterial.swift; sourceTree = "<group>"; };
+		7921DFB529CE50CE0013E317 /* GraphMaterial.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GraphMaterial.swift; sourceTree = "<group>"; };
 		7921DFB929CE52CF0013E317 /* GraphNodeTexture.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GraphNodeTexture.swift; sourceTree = "<group>"; };
 		79345D3629C509E200E9F074 /* RectangleAllocator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RectangleAllocator.swift; sourceTree = "<group>"; };
 		798D3BE829C35EE600B96C5F /* AlbedoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlbedoView.swift; sourceTree = "<group>"; };
@@ -316,6 +318,8 @@
 		79AA099F29D37E59001164B7 /* ImportObj.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImportObj.swift; sourceTree = "<group>"; };
 		79AA09A429D3ADF9001164B7 /* MainPass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainPass.swift; sourceTree = "<group>"; };
 		79AA09A629D3AF27001164B7 /* ShadowPass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShadowPass.swift; sourceTree = "<group>"; };
+		79AA09A829D4593E001164B7 /* BillboardShaders.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = BillboardShaders.metal; sourceTree = "<group>"; };
+		79AA09AA29D45A9A001164B7 /* BillboardPipeline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BillboardPipeline.swift; sourceTree = "<group>"; };
 		79AACDF129CFF3A1000E8936 /* TextureList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextureList.swift; sourceTree = "<group>"; };
 		79AACDF529D074F6000E8936 /* TextureMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextureMapView.swift; sourceTree = "<group>"; };
 		79AACDF729D08905000E8936 /* MetalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetalView.swift; sourceTree = "<group>"; };
@@ -420,6 +424,7 @@
 				799B4BC029C6853900B6826A /* ShadowShaders.metal */,
 				7921DF9729CC7D750013E317 /* PointShaders.metal */,
 				7921DFAF29CD26C10013E317 /* GraphShaders.metal */,
+				79AA09A829D4593E001164B7 /* BillboardShaders.metal */,
 				791E795429B9457700FB45F3 /* Info.plist */,
 				791E793829B9433F00FB45F3 /* Camera.swift */,
 				791E78C029B9390700FB45F3 /* Configuration.swift */,
@@ -600,6 +605,7 @@
 				7921DF9D29CC84860013E317 /* PipelineManager.swift */,
 				7921DF9B29CC84640013E317 /* PbrPipeline.swift */,
 				7921DFAB29CD23210013E317 /* GraphPipeline.swift */,
+				79AA09AA29D45A9A001164B7 /* BillboardPipeline.swift */,
 				7921DF9929CC813E0013E317 /* PointPipeline.swift */,
 				799B4BC229C72D3100B6826A /* DepthShadowPipeline.swift */,
 			);
@@ -609,7 +615,7 @@
 		7921DFB729CE52780013E317 /* SimpleMaterial */ = {
 			isa = PBXGroup;
 			children = (
-				7921DFB529CE50CE0013E317 /* SimpleMaterial.swift */,
+				7921DFB529CE50CE0013E317 /* GraphMaterial.swift */,
 				79AEFED229D104930054A6EB /* GraphNodeWrapper.swift */,
 				79AEFEDA29D107080054A6EB /* GraphNodeColor.swift */,
 				79AEFED629D104C30054A6EB /* GraphNodeAdd.swift */,
@@ -902,7 +908,7 @@
 				7921DFAE29CD24E30013E317 /* BillboardMaterial.swift in Sources */,
 				791E78D129B93A2B00FB45F3 /* ModelsView.swift in Sources */,
 				7921DF7C29CBB2610013E317 /* ListItemBase.swift in Sources */,
-				7921DFB629CE50CE0013E317 /* SimpleMaterial.swift in Sources */,
+				7921DFB629CE50CE0013E317 /* GraphMaterial.swift in Sources */,
 				7921DFB029CD26C10013E317 /* GraphShaders.metal in Sources */,
 				7921DF9C29CC84650013E317 /* PbrPipeline.swift in Sources */,
 				791E794529B9443F00FB45F3 /* Sun.swift in Sources */,
@@ -931,6 +937,7 @@
 				7921DFBA29CE52CF0013E317 /* GraphNodeTexture.swift in Sources */,
 				7902F01329CF458E004C3775 /* ObjectWrapper.swift in Sources */,
 				79AEFEE829D215010054A6EB /* ModelTransformView.swift in Sources */,
+				79AA09AB29D45A9A001164B7 /* BillboardPipeline.swift in Sources */,
 				791E78D429B93A2B00FB45F3 /* AddObject.swift in Sources */,
 				7921DF9429CC76C10013E317 /* TreeNode.swift in Sources */,
 				791E78B529B9388400FB45F3 /* AppDelegate.swift in Sources */,
@@ -1021,6 +1028,7 @@
 				798D3BEB29C3613700B96C5F /* NormalsView.swift in Sources */,
 				791E78D329B93A2B00FB45F3 /* TransformsView.swift in Sources */,
 				798D3BF929C3C27400B96C5F /* RoughnessLayer.swift in Sources */,
+				79AA09A929D4593E001164B7 /* BillboardShaders.metal in Sources */,
 				79AACDF829D08905000E8936 /* MetalView.swift in Sources */,
 				791E794129B943E800FB45F3 /* RenderView.swift in Sources */,
 				798D3BF529C3C1FB00B96C5F /* MetallicLayer.swift in Sources */,

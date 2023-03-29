@@ -13,7 +13,7 @@ enum MaterialWrapper: Equatable, Codable {
     }
     
     case pbrMaterial(PbrMaterial)
-    case simpleMaterial(SimpleMaterial)
+    case graphMaterial(GraphMaterial)
     case pointMaterial(PointMaterial)
     case billboardMaterial(BillboardMaterial)
     
@@ -25,7 +25,7 @@ enum MaterialWrapper: Equatable, Codable {
         switch(self) {
         case .pbrMaterial(let m):
             return m
-        case .simpleMaterial(let m):
+        case .graphMaterial(let m):
             return m
         case .pointMaterial(let m):
             return m
@@ -49,8 +49,8 @@ enum MaterialWrapper: Equatable, Codable {
             self = MaterialWrapper.pbrMaterial(m)
             return
         case "Simple":
-            let m = try SimpleMaterial(from: decoder)
-            self = MaterialWrapper.simpleMaterial(m)
+            let m = try GraphMaterial(from: decoder)
+            self = MaterialWrapper.graphMaterial(m)
             return
         default:
             break
@@ -66,7 +66,7 @@ enum MaterialWrapper: Equatable, Codable {
         case .pbrMaterial(let m):
             try container.encode("PBR", forKey: .type)
             try m.encode(to: encoder)
-        case .simpleMaterial(let m):
+        case .graphMaterial(let m):
             try container.encode("Simple", forKey: .type)
             try m.encode(to: encoder)
         case .pointMaterial:

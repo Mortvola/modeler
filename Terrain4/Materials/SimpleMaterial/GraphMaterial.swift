@@ -1,5 +1,5 @@
 //
-//  SimpleMaterial.swift
+//  GraphMaterial.swift
 //  Terrain4
 //
 //  Created by Richard Shields on 3/24/23.
@@ -10,13 +10,13 @@ import Metal
 import MetalKit
 
 
-class SimpleMaterial: Material {
+class GraphMaterial: Material {
     @Published var layers: [GraphNodeWrapper] = []
     
     var uniforms: MTLBuffer?
 
     init() {
-        super.init(name: "Simple Material")
+        super.init(name: "Graph Material")
         allocateUniforms()
     }
     
