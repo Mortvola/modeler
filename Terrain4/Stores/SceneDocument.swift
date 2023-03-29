@@ -43,9 +43,10 @@ class SceneDocument: ReferenceFileDocument {
         Task {
             if let data = data {
                 await self.parse(data: data)
+                objectStore.modelingScene.directionalLight = objectStore.directionalLight
                 objectStore.loaded = true
             }
-        }
+        }   
     }
     
     func encodeData() throws -> Data {

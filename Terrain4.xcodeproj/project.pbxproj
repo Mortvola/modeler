@@ -529,7 +529,6 @@
 				79AEFEE429D1F3860054A6EB /* Item.swift */,
 				7921DF9329CC76C10013E317 /* TreeNode.swift */,
 				7902F01229CF458E004C3775 /* ObjectWrapper.swift */,
-				799B4BBE29C652D200B6826A /* DirectionalLight.swift */,
 				79DF5C5629C52D5F0005CF41 /* SceneDocument.swift */,
 				7921DFA529CD02BB0013E317 /* TextureStore.swift */,
 				798D3BFB29C3CBD100B96C5F /* File */,
@@ -565,6 +564,7 @@
 				7921DF7429C9398A0013E317 /* WireBox.swift */,
 				791E791F29B93D6000FB45F3 /* TriangleMesh.swift */,
 				79F6D2CB29BA7EFA007CA69A /* LIght.swift */,
+				799B4BBE29C652D200B6826A /* DirectionalLight.swift */,
 			);
 			path = RenderObjects;
 			sourceTree = "<group>";

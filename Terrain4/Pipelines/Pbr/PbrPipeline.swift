@@ -22,21 +22,9 @@ class PbrPipeline: Pipeline {
         object.uniforms!.label = "Node Uniforms"
     }
     
-    func draw(object: RenderObject, renderEncoder: MTLRenderCommandEncoder, pbrProperties: PbrProperties?, frame: Int) throws {
+    func draw(object: RenderObject, renderEncoder: MTLRenderCommandEncoder, frame: Int) throws {
         if object.instanceData.count > 0 {
-            // Pass the normal matrix (derived from the model matrix) to the vertex shader
-            let modelMatrix = object.instanceData[0].transformation
-            
-            var normalMatrix = matrix_float3x3(columns: (
-                vector_float3(modelMatrix[0][0], modelMatrix[0][1], modelMatrix[0][2]),
-                vector_float3(modelMatrix[1][0], modelMatrix[1][1], modelMatrix[1][2]),
-                vector_float3(modelMatrix[2][0], modelMatrix[2][1], modelMatrix[2][2])
-            ));
-            
-            normalMatrix = normalMatrix.inverse.transpose;
-            
             let u: UnsafeMutablePointer<NodeUniforms> = object.getUniformsBuffer(index: frame)
-            u[0].normalMatrix = normalMatrix
             
             // Pass the light information
             u[0].numberOfLights = Int32(Renderer.shared.objectStore!.currentScene!.lights.count)
@@ -50,10 +38,13 @@ class PbrPipeline: Pipeline {
                 }
             }
             
+            let (buffer, offset) = object.getInstanceData(frame: frame)
+            renderEncoder.setVertexBuffer(buffer, offset: offset, index: BufferIndex.modelMatrix.rawValue)
+            
             renderEncoder.setVertexBuffer(object.uniforms, offset: frame * object.uniformsSize, index: BufferIndex.nodeUniforms.rawValue)
             renderEncoder.setFragmentBuffer(object.uniforms, offset: frame * object.uniformsSize, index: BufferIndex.nodeUniforms.rawValue)
             
-            try object.draw(renderEncoder: renderEncoder, frame: frame)
+            try object.draw(renderEncoder: renderEncoder)
         }
     }
     
@@ -65,11 +56,10 @@ class PbrPipeline: Pipeline {
                 switch material {
                 case .pbrMaterial(let material):
                     material.prepare(renderEncoder: renderEncoder, frame: frame)
-                    let pbrProperties = material.getPbrProperties()
                     
                     for renderObject in material.objects {
                         if !renderObject.disabled && !(renderObject.model?.disabled ?? true) {
-                            try self.draw(object: renderObject, renderEncoder: renderEncoder, pbrProperties: pbrProperties, frame: frame)
+                            try self.draw(object: renderObject, renderEncoder: renderEncoder, frame: frame)
                         }
                     }
 

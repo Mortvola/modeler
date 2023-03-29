@@ -54,15 +54,11 @@ class RenderObject: Object {
         }
     }
     
-    func draw(renderEncoder: MTLRenderCommandEncoder, frame: Int) throws {
+    func draw(renderEncoder: MTLRenderCommandEncoder) throws {
         throw Errors.notImplemented
     }
     
     func simpleDraw(renderEncoder: MTLRenderCommandEncoder, frame: Int) throws {
-        throw Errors.notImplemented
-    }
-    
-    func draw(renderEncoder: MTLRenderCommandEncoder) throws {
         throw Errors.notImplemented
     }
     
@@ -81,16 +77,25 @@ class RenderObject: Object {
             .bindMemory(to: T.self, capacity: 1)
     }
     
+    func getInstanceData(frame: Int) -> (MTLBuffer?, Int) {
+        return (nil, 0)
+    }
+    
     func allocateModelMatrixUniform() {
         let numInstances = 4
-        modelMatrixUniform = MetalView.shared.device.makeBuffer(length: 3 * MemoryLayout<Matrix4x4>.stride * numInstances, options: [MTLResourceOptions.storageModeShared])!
+        modelMatrixUniform = MetalView.shared.device.makeBuffer(length: 3 * MemoryLayout<ModelMatrixUniforms>.stride * numInstances, options: [MTLResourceOptions.storageModeShared])!
         modelMatrixUniform!.label = "Model Matrix Uniforms"
     }
     
-    func getModelMatrixUniform(index: Int, instances: Int) -> UnsafeMutablePointer<Matrix4x4> {
+    func getModelMatrixUniform(index: Int, instances: Int) -> (UnsafeMutablePointer<ModelMatrixUniforms>, Int) {
         let numInstances = 4
-        return UnsafeMutableRawPointer(self.modelMatrixUniform!.contents())
-            .advanced(by: index * MemoryLayout<Matrix4x4>.stride * numInstances)
-            .bindMemory(to: Matrix4x4.self, capacity: 1)
+        let offset = index * MemoryLayout<ModelMatrixUniforms>.stride * numInstances
+        
+        return (
+            UnsafeMutableRawPointer(self.modelMatrixUniform!.contents())
+            .advanced(by: offset)
+            .bindMemory(to: ModelMatrixUniforms.self, capacity: 1),
+            offset
+        )
     }
 }

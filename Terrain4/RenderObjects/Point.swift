@@ -72,8 +72,8 @@ class Point: RenderObject {
 //        material = materialId != nil ? materialEntry?.material : nil
 //    }
 
-    override func draw(renderEncoder: MTLRenderCommandEncoder, frame: Int) throws {
-        try self.simpleDraw(renderEncoder: renderEncoder, frame: frame)
+    override func draw(renderEncoder: MTLRenderCommandEncoder) throws {
+        try self.simpleDraw(renderEncoder: renderEncoder, frame: 0)
     }
     
     override func simpleDraw(renderEncoder: MTLRenderCommandEncoder, frame: Int) throws {

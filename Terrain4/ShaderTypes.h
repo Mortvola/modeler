@@ -75,7 +75,6 @@ typedef struct {
 
 typedef struct {
     vector_float4 color;
-    matrix_float3x3 normalMatrix;
     int numberOfLights;
     Lights lights[4];
 } NodeUniforms;
@@ -102,6 +101,11 @@ typedef struct {
     uint8_t argOffset[8];
     float arg[8];
 } GraphUniforms;
+
+typedef struct {
+    matrix_float4x4 modelMatrix;
+    matrix_float3x3 normalMatrix;
+} ModelMatrixUniforms;
 
 #endif /* ShaderTypes_h */
 

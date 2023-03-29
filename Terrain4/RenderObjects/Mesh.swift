@@ -24,21 +24,34 @@ class Mesh: RenderObject {
         super.init(model: model)
     }
     
-    override func draw(renderEncoder: MTLRenderCommandEncoder, frame: Int) throws {
-        if instanceData.count > 0 {
-            let matrix: UnsafeMutablePointer<Matrix4x4> = self.getModelMatrixUniform(index: frame, instances: instanceData.count)
-            matrix[0] = instanceData[0].transformation
+    override func getInstanceData(frame: Int) -> (MTLBuffer?, Int) {
+        let (u, offset) = self.getModelMatrixUniform(index: frame, instances: instanceData.count)
+        
+        withUnsafeMutableBytes(of: &u[0]) { rawPtr in
+            let instData = rawPtr.baseAddress!.assumingMemoryBound(to: ModelMatrixUniforms.self)
             
-            withUnsafeMutableBytes(of: &matrix[0]) { rawPtr in
-                let matrix = rawPtr.baseAddress!.assumingMemoryBound(to: Matrix4x4.self)
+            for i in 0..<instanceData.count {
+                // Pass the normal matrix (derived from the model matrix) to the vertex shader
+                let modelMatrix = instanceData[i].transformation
                 
-                for i in 0..<instanceData.count {
-                    matrix[i] = instanceData[i].transformation
-                }
+                var normalMatrix = matrix_float3x3(columns: (
+                    vector_float3(modelMatrix[0][0], modelMatrix[0][1], modelMatrix[0][2]),
+                    vector_float3(modelMatrix[1][0], modelMatrix[1][1], modelMatrix[1][2]),
+                    vector_float3(modelMatrix[2][0], modelMatrix[2][1], modelMatrix[2][2])
+                ));
+                
+                normalMatrix = normalMatrix.inverse.transpose;
+                
+                instData[i].normalMatrix = normalMatrix
+                instData[i].modelMatrix = instanceData[i].transformation
             }
-            
-            renderEncoder.setVertexBuffer(self.modelMatrixUniform, offset: 0, index: BufferIndex.modelMatrix.rawValue)
-            
+        }
+        
+        return (modelMatrixUniform, offset)
+    }
+    
+    override func draw(renderEncoder: MTLRenderCommandEncoder) throws {
+        if instanceData.count > 0 {
             // Pass the vertex and index information to the vertex shader
             for (i, buffer) in self.mesh.vertexBuffers.enumerated() {
                 renderEncoder.setVertexBuffer(buffer.buffer, offset: buffer.offset, index: i)

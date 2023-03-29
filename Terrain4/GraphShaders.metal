@@ -28,7 +28,7 @@ vertex VertexOut graphVertexShader
 (
     VertexIn vertices [[stage_in]],
     const device FrameUniforms &uniforms [[ buffer(BufferIndexUniforms) ]],
-    const device float4x4 *modelMatrix [[ buffer(BufferIndexModelMatrix) ]],
+    const device ModelMatrixUniforms *instanceData [[ buffer(BufferIndexModelMatrix) ]],
     uint instanceId [[ instance_id ]],
     uint vertexId [[ vertex_id ]]
 ) {
@@ -36,7 +36,7 @@ vertex VertexOut graphVertexShader
     
     float2 meshVertex = vertices.position.xy;
     
-    float4 position = (uniforms.viewMatrix * modelMatrix[instanceId])[3];
+    float4 position = (uniforms.viewMatrix * instanceData[instanceId].modelMatrix)[3];
     
     out.position = uniforms.projectionMatrix * (position + float4(meshVertex, 0, 0));
     out.texcoord = vertices.texCoord;

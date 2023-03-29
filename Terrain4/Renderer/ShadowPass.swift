@@ -15,9 +15,12 @@ extension Renderer {
                     switch object.content {
                     case .model:
                         break
-                    case .mesh(let o):
-                        if !o.disabled {
-                            try o.draw(renderEncoder: renderEncoder, frame: self.uniformBufferIndex)
+                    case .mesh(let mesh):
+                        if !mesh.disabled {
+                            let (buffer, offset) = mesh.getInstanceData(frame: self.uniformBufferIndex)
+                            renderEncoder.setVertexBuffer(buffer, offset: offset, index: BufferIndex.modelMatrix.rawValue)
+
+                            try mesh.draw(renderEncoder: renderEncoder)
                         }
                     case .point:
                         break

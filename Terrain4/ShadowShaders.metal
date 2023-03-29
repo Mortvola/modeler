@@ -13,11 +13,15 @@ struct VertexIn {
     float3 position [[attribute(VertexAttributePosition)]];
 };
 
-vertex float4 shadowVertexShader(
+vertex float4 shadowVertexShader
+(
     VertexIn in [[stage_in]],
     const device FrameUniforms& uniforms [[ buffer(BufferIndexUniforms) ]],
-    const device float4x4& modelMatrix [[ buffer(BufferIndexModelMatrix) ]],
-    const device int32_t &cascadeIndex [[ buffer(BufferIndexCascadeIndex) ]]
+    const device ModelMatrixUniforms *modelMatrix [[ buffer(BufferIndexModelMatrix) ]],
+    const device int32_t &cascadeIndex [[ buffer(BufferIndexCascadeIndex) ]],
+    uint instanceId [[ instance_id ]]
 ) {
-    return uniforms.directionalLight.viewProjectionMatrix[cascadeIndex] * modelMatrix * float4(in.position, 1.0);
+    return uniforms.directionalLight.viewProjectionMatrix[cascadeIndex]
+        * modelMatrix[instanceId].modelMatrix
+        * float4(in.position, 1.0);
 }

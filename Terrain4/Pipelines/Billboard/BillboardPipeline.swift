@@ -39,10 +39,13 @@ class BillboardPipeline: Pipeline {
         u[0].color = Vec4(1.0, 1.0, 1.0, 1.0)
         u[0].scale = Vec2(1.0, 1.0)
         
+        let (buffer, offset) = object.getInstanceData(frame: frame)
+        renderEncoder.setVertexBuffer(buffer, offset: offset, index: BufferIndex.modelMatrix.rawValue)
+
         renderEncoder.setVertexBuffer(object.uniforms, offset: 0, index: BufferIndex.nodeUniforms.rawValue)
         renderEncoder.setFragmentBuffer(object.uniforms, offset: 0, index: BufferIndex.nodeUniforms.rawValue)
         
-        try object.draw(renderEncoder: renderEncoder, frame: frame)
+        try object.draw(renderEncoder: renderEncoder)
     }
     
     func render(renderEncoder: MTLRenderCommandEncoder, frame: Int) throws {
