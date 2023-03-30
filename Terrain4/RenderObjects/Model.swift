@@ -113,6 +113,10 @@ class Model: Node, Identifiable, Hashable {
                 for sm in submeshes {
                     let submesh: MDLSubmesh = sm as! MDLSubmesh
 
+                    guard submesh.indexType == .uInt32 else {
+                        throw Errors.invalidIndexType
+                    }
+                    
                     let indexes = submesh.indexBuffer.map().bytes.bindMemory(to: Int32.self, capacity: mdlMesh.vertexCount)
                     var points: [Float] = []
                     var normals: [Float] = []

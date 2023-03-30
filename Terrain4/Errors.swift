@@ -28,4 +28,5 @@ enum Errors: Error {
     case invalidAssetWriterInput
     case objectTypeMismatch
     case invalidObject
+    case invalidIndexType
 }
