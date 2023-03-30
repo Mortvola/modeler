@@ -102,18 +102,62 @@ class Model: Node, Identifiable, Hashable {
         
         let meshes = asset.childObjects(of: MDLMesh.self) as! [MDLMesh]
         
-        print("\(meshes.count)")
-        
         for mdlMesh in meshes {
+            
             mdlMesh.addTangentBasis(forTextureCoordinateAttributeNamed: MDLVertexAttributeTextureCoordinate, normalAttributeNamed: MDLVertexAttributeNormal, tangentAttributeNamed: MDLVertexAttributeTangent)
 
-            let mesh = try MTKMesh(mesh: mdlMesh, device: MetalView.shared.device)
+            let meshCoords = mdlMesh.vertexBuffers[0].map().bytes.bindMemory(to: Float.self, capacity: mdlMesh.vertexCount * 6)
+            let meshNormals = mdlMesh.vertexBuffers[1].map().bytes.bindMemory(to: Float.self, capacity: mdlMesh.vertexCount * 8)
 
-            let object = Mesh(mesh: mesh, model: self)
+            if let submeshes = mdlMesh.submeshes {
+                for sm in submeshes {
+                    let submesh: MDLSubmesh = sm as! MDLSubmesh
 
-            object.material = Renderer.shared.materialManager.getMaterial(materialId: nil)
+                    let indexes = submesh.indexBuffer.map().bytes.bindMemory(to: Int32.self, capacity: mdlMesh.vertexCount)
+                    var points: [Float] = []
+                    var normals: [Float] = []
+                    var remappedIndexes: [Int] = []
 
-            self.objects.append(TreeNode(mesh: object))
+                    var indexMap: [Int:Int] = [:]
+
+                    for i in 0..<submesh.indexCount {
+                        let index = Int(indexes[i])
+
+                        if let mappedIndex = indexMap[index] {
+                            remappedIndexes.append(mappedIndex)
+                        }
+                        else {
+                            let newPointIndex = points.count / 6
+                            indexMap[index] = newPointIndex
+                            remappedIndexes.append(newPointIndex)
+
+                            points.append(meshCoords[index * 6 + 0])
+                            points.append(meshCoords[index * 6 + 1])
+                            points.append(meshCoords[index * 6 + 2])
+                            points.append(0)
+
+                            points.append(meshCoords[index * 6 + 4])
+                            points.append(meshCoords[index * 6 + 5])
+
+                            normals.append(meshNormals[index * 8 + 0])
+                            normals.append(meshNormals[index * 8 + 1])
+                            normals.append(meshNormals[index * 8 + 2])
+                            normals.append(0)
+                        }
+                    }
+
+                    let newSubmesh = Mesh.Submesh(primitiveType: try Mesh.getPrimitiveType(type: submesh.geometryType).rawValue, indexes: remappedIndexes)
+
+                    let newMesh = try Mesh.makeMesh(points: points, normals: normals, submeshes: [newSubmesh])
+
+                    let object = Mesh(mesh: newMesh, model: self)
+                    object.name = submesh.name
+
+                    object.material = Renderer.shared.materialManager.getMaterial(materialId: nil)
+
+                    self.objects.append(TreeNode(mesh: object))
+                }
+            }
         }
     }
 

@@ -76,6 +76,23 @@ class Mesh: RenderObject {
         var indexes: [Int]
     }
     
+    static func getPrimitiveType(type: MDLGeometryType) throws -> MTLPrimitiveType {
+        switch type {
+        case .points:
+            return .point
+        case .lines:
+            return .line
+        case .quads:
+            throw Errors.unknownGeometryType
+        case .triangleStrips:
+            return .triangleStrip
+        case .triangles:
+            return .triangle
+        default:
+            throw Errors.unknownGeometryType
+        }
+    }
+
     static func getGeometryType(type: UInt) throws -> MDLGeometryType {
         switch (type) {
         case MTLPrimitiveType.point.rawValue:
@@ -114,6 +131,26 @@ class Mesh: RenderObject {
             unsafeMutablePointer[i * 6 + 5] = texcoords[i * 2 + 1]
         }
         
+        let bufferPointer = UnsafeBufferPointer(start: unsafeMutablePointer, count: numberOfPoints * 6)
+        let data = Data(buffer: bufferPointer)
+        
+        return (allocator.newBuffer(with: data, type: .vertex), numberOfPoints)
+    }
+
+    static func makeCoordBuffer(points: [Float], allocator: MTKMeshBufferAllocator) -> (MDLMeshBuffer, Int) {
+        let numberOfPoints = points.count / 6
+        
+        let unsafeMutablePointer = UnsafeMutablePointer<Float>.allocate(capacity: numberOfPoints * 6)
+
+        for i in 0..<numberOfPoints {
+            unsafeMutablePointer[i * 6 + 0] = points[i * 6 + 0]
+            unsafeMutablePointer[i * 6 + 1] = points[i * 6 + 1]
+            unsafeMutablePointer[i * 6 + 2] = points[i * 6 + 2]
+            unsafeMutablePointer[i * 6 + 3] = points[i * 6 + 3]
+            unsafeMutablePointer[i * 6 + 4] = points[i * 6 + 4]
+            unsafeMutablePointer[i * 6 + 5] = points[i * 6 + 5]
+        }
+
         let bufferPointer = UnsafeBufferPointer(start: unsafeMutablePointer, count: numberOfPoints * 6)
         let data = Data(buffer: bufferPointer)
         
@@ -192,48 +229,24 @@ class Mesh: RenderObject {
         return try MTKMesh(mesh: mdlMesh, device: MetalView.shared.device)
     }
     
-    private func getCoordsFromBuffer() -> ([Float], [Float]) {
-        let buffer = mesh.vertexBuffers[0]
-        let points = buffer.buffer.contents().bindMemory(to: Float.self, capacity: buffer.length)
+    static func makeMesh(points: [Float], normals: [Float], submeshes: [Submesh]) throws -> MTKMesh {
+        let allocator = MTKMeshBufferAllocator(device: MetalView.shared.device)
 
-        var vertices: [Float] = []
-        var texcoords: [Float] = []
-        
-        let bytesPerPoint = MemoryLayout<Vec3>.size + MemoryLayout<Vec2>.size
-        let floatsPerPoint = bytesPerPoint / MemoryLayout<Float>.size
-        
-        let count = buffer.length / MemoryLayout<Float>.size
-        
-        for i in stride(from: 0, to: count, by: floatsPerPoint) {
-            vertices.append(points[i + 0])
-            vertices.append(points[i + 1])
-            vertices.append(points[i + 2])
-            
-            texcoords.append(points[i + 4])
-            texcoords.append(points[i + 5])
-        }
-        
-        return (vertices, texcoords)
-    }
-    
-    private func getNormalsFrombuffer() -> [Float] {
-        let buffer = mesh.vertexBuffers[1]
-        let values = buffer.buffer.contents().bindMemory(to: Float.self, capacity: buffer.length)
+        var vertexBuffers: [MDLMeshBuffer] = []
 
-        var normals: [Float] = []
-        
-        let bytesPerPoint = MemoryLayout<Vec3>.size * 2
-        let floatsPerPoint = bytesPerPoint / MemoryLayout<Float>.size
-        
-        let count = buffer.length / MemoryLayout<Float>.size
-        
-        for i in stride(from: 0, to: count, by: floatsPerPoint) {
-            normals.append(values[i + 0])
-            normals.append(values[i + 1])
-            normals.append(values[i + 2])
-        }
-        
-        return normals
+        let (coordBuffer, numberOfPoints) = Mesh.makeCoordBuffer(points: points, allocator: allocator)
+        vertexBuffers.append(coordBuffer)
+
+        let normalBuffer = Mesh.makeNormalBuffer(normals: normals, allocator: allocator)
+        vertexBuffers.append(normalBuffer)
+
+        let mdlSubmeshes = try Mesh.makeSubmeshes(submeshes: submeshes, allocator: allocator)
+
+        let mdlMesh = MDLMesh(vertexBuffers: vertexBuffers, vertexCount: numberOfPoints, descriptor: MeshAllocator.vertexDescriptor(), submeshes: mdlSubmeshes)
+
+        mdlMesh.addTangentBasis(forTextureCoordinateAttributeNamed: MDLVertexAttributeTextureCoordinate, normalAttributeNamed: MDLVertexAttributeNormal, tangentAttributeNamed: MDLVertexAttributeTangent)
+
+        return try MTKMesh(mesh: mdlMesh, device: MetalView.shared.device)
     }
     
     override func encode(to encoder: Encoder) throws {
@@ -242,8 +255,8 @@ class Mesh: RenderObject {
             
             var container = encoder.container(keyedBy: CodingKeys.self)
             
-            let (vertices, texcoords) = getCoordsFromBuffer()
-            let normals = self.getNormalsFrombuffer()
+            let (vertices, texcoords) = mesh.getCoordsFromBuffer()
+            let (normals, _) = mesh.getNormalsFrombuffer()
             
             try container.encode(vertices, forKey: .points)
             try container.encode(texcoords, forKey: .texcoords)
@@ -335,18 +348,27 @@ extension MTKSubmesh: Encodable {
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
 
-//        try container.encode(self.indexCount, forKey: .indexCount)
         try container.encode(self.primitiveType.rawValue, forKey: .primitiveType)
     
+        let indexes: [Int] = readIndexes()
+        
+        try container.encode(indexes, forKey: .indexes)
+    }
+    
+    func readIndexes() -> [Int] {
         if self.indexType == .uint32 {
             let indexes: [Int32] = readIndexes()
             
-            try container.encode(indexes, forKey: .indexes)
+            return indexes.map {
+                Int($0)
+            }
         }
-        else {
-            let indexes: [Int16] = readIndexes()
-            
-            try container.encode(indexes, forKey: .indexes)
+        
+        
+        let indexes: [Int16] = readIndexes()
+        
+        return indexes.map {
+            Int($0)
         }
     }
     
@@ -362,5 +384,56 @@ extension MTKSubmesh: Encodable {
         }
         
         return indexes
+    }
+}
+
+extension MTKMesh {
+    func getCoordsFromBuffer() -> ([Float], [Float]) {
+        let buffer = self.vertexBuffers[0]
+        let points = buffer.buffer.contents().bindMemory(to: Float.self, capacity: buffer.length)
+
+        var vertices: [Float] = []
+        var texcoords: [Float] = []
+        
+        let bytesPerPoint = MemoryLayout<Vec3>.size + MemoryLayout<Vec2>.size
+        let floatsPerPoint = bytesPerPoint / MemoryLayout<Float>.size
+        
+        let count = buffer.length / MemoryLayout<Float>.size
+        
+        for i in stride(from: 0, to: count, by: floatsPerPoint) {
+            vertices.append(points[i + 0])
+            vertices.append(points[i + 1])
+            vertices.append(points[i + 2])
+            
+            texcoords.append(points[i + 4])
+            texcoords.append(points[i + 5])
+        }
+        
+        return (vertices, texcoords)
+    }
+
+    func getNormalsFrombuffer() -> ([Float], [Float]) {
+        let buffer = self.vertexBuffers[1]
+        let values = buffer.buffer.contents().bindMemory(to: Float.self, capacity: buffer.length)
+
+        var normals: [Float] = []
+        var tangents: [Float] = []
+        
+        let bytesPerPoint = MemoryLayout<Vec3>.size * 2
+        let floatsPerPoint = bytesPerPoint / MemoryLayout<Float>.size
+        
+        let count = buffer.length / MemoryLayout<Float>.size
+        
+        for i in stride(from: 0, to: count, by: floatsPerPoint) {
+            normals.append(values[i + 0])
+            normals.append(values[i + 1])
+            normals.append(values[i + 2])
+            
+            tangents.append(values[i + 4])
+            tangents.append(values[i + 5])
+            tangents.append(values[i + 6])
+        }
+        
+        return (normals, tangents)
     }
 }
