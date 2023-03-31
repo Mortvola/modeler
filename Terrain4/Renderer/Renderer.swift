@@ -454,13 +454,13 @@ class Renderer {
             return
         }
         
-        _ = inFlightSemaphore.wait(timeout: DispatchTime.distantFuture)
-        
-        if let commandBuffer = commandQueue.makeCommandBuffer() {
-            commandBuffer.label = "\(self.uniformBufferIndex)"
+        if self.objectStore?.loaded ?? false && self.initialized && objectStore?.currentScene != nil {
             
-            if self.objectStore?.loaded ?? false && self.initialized && objectStore?.currentScene != nil {
-                
+            _ = inFlightSemaphore.wait(timeout: DispatchTime.distantFuture)
+        
+            if let commandBuffer = commandQueue.makeCommandBuffer() {
+                commandBuffer.label = "\(self.uniformBufferIndex)"
+            
                 self.updateDynamicBufferState()
                 
                 self.updateState()
@@ -516,16 +516,19 @@ class Renderer {
                         }
 
                         if let drawable = view.currentDrawable {
-                            let semaphore = inFlightSemaphore
-                            commandBuffer.addCompletedHandler { (_ commandBuffer)-> Swift.Void in
-                                semaphore.signal()
-                            }
-                            
                             commandBuffer.present(drawable)
                         }
                     }
                     
+                    let semaphore = inFlightSemaphore
+                    commandBuffer.addCompletedHandler { (_ commandBuffer)-> Swift.Void in
+                        semaphore.signal()
+                    }
+                    
                     commandBuffer.commit()
+                }
+                else {
+                    inFlightSemaphore.signal()
                 }
                 
                 if MovieManager.shared.recording {
@@ -541,6 +544,9 @@ class Renderer {
                     }
                 }
             }
+        }
+        else {
+            inFlightSemaphore.signal()
         }
     }
     

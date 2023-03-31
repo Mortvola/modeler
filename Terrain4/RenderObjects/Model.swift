@@ -273,11 +273,42 @@ class Model: Node, Identifiable, Hashable {
     }
     
     func center() {
+        var center = Vec3(0, 0, 0)
+        var totalCount = 0
+        
+        let bytesPerPoint = MemoryLayout<Vec3>.size + MemoryLayout<Vec2>.size
+        let floatsPerPoint = bytesPerPoint / MemoryLayout<Float>.size
+        
         for object in objects {
             switch object.content {
             case .mesh(let mesh):
-                let center = mesh.getCenter()
+                let buffer = mesh.mesh.vertexBuffers[0]
+                let points = buffer.buffer.contents().bindMemory(to: Float.self, capacity: buffer.length)
                 
+                let count = buffer.length / MemoryLayout<Float>.size
+                
+                for i in stride(from: 0, to: count, by: floatsPerPoint) {
+                    center += Vec3(
+                        points[i + 0],
+                        points[i + 1],
+                        points[i + 2]
+                    )
+                }
+                
+                totalCount += count / floatsPerPoint
+
+            default:
+                break
+            }
+        }
+                
+        center /= Float(totalCount)
+
+        print(center)
+        
+        for object in objects {
+            switch object.content {
+            case .mesh(let mesh):
                 mesh.offset(-center)
             default:
                 break
@@ -317,6 +348,7 @@ class Model: Node, Identifiable, Hashable {
                     if let c = color.components {
                         let v4 = Vec4(Float(c[0]), Float(c[1]), Float(c[2]), Float(c[3]))
                         pbrMaterial.albedo.color = v4
+                        pbrMaterial.albedo.useSimple = true
                     }
                 }
             }
@@ -328,9 +360,11 @@ class Model: Node, Identifiable, Hashable {
         if let normals = material.property(with: .tangentSpaceNormal) {
             if normals.type == .float3 {
                 pbrMaterial.normals.normal = normals.float3Value.vec4()
+                pbrMaterial.normals.useSimple = true
             }
             else if normals.type == .float4 {
                 pbrMaterial.normals.normal = normals.float4Value
+                pbrMaterial.normals.useSimple = true
             }
             else {
                 try await loadTexture(property: normals, layer: pbrMaterial.normals, from: path)
@@ -340,6 +374,7 @@ class Model: Node, Identifiable, Hashable {
         if let metallic = material.property(with: .metallic) {
             if metallic.type == .float {
                 pbrMaterial.metallic.value = metallic.floatValue
+                pbrMaterial.metallic.useSimple = true
             }
             else {
                 try await loadTexture(property: metallic, layer: pbrMaterial.metallic, from: path)
@@ -349,6 +384,7 @@ class Model: Node, Identifiable, Hashable {
         if let roughness = material.property(with: .roughness) {
             if roughness.type == .float {
                 pbrMaterial.roughness.value = roughness.floatValue
+                pbrMaterial.roughness.useSimple = true
             }
             else {
                 try await loadTexture(property: roughness, layer: pbrMaterial.roughness, from: path)
