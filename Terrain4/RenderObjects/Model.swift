@@ -341,6 +341,7 @@ class Model: Node, Identifiable, Hashable {
     
     func importMaterial(material: MDLMaterial, in path: String) async throws -> UUID {
         let pbrMaterial = PbrMaterial()
+        pbrMaterial.name = material.name
         
         if let baseColor = material.property(with: .baseColor) {
             if baseColor.type == .color {

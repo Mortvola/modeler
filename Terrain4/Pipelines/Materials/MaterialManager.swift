@@ -42,6 +42,10 @@ class MaterialManager: ObservableObject {
         }
     }
     
+    func deleteMaterial(_ materialWrapper: MaterialWrapper) {
+        materials.removeValue(forKey: materialWrapper.id)
+    }
+    
 //    func addMaterial(_ material: PbrMaterial) {
 //        
 //        addMaterial()
