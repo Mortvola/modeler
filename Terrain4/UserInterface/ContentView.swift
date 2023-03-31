@@ -74,8 +74,10 @@ struct ContentView: View {
                         
                         switch node.content {
                         case .model(let model):
-                            selectedModel = model
-                            _ = try? model.importObj(url: url)
+                            Task {
+                                selectedModel = model
+                                _ = try? await model.importObj(url: url)
+                            }
                         default:
                             break
                         }

@@ -502,11 +502,6 @@ class Renderer {
                 if let commandBuffer = commandQueue.makeCommandBuffer() {
                     commandBuffer.label = "\(self.uniformBufferIndex)"
                     
-                    let semaphore = inFlightSemaphore
-                    commandBuffer.addCompletedHandler { (_ commandBuffer)-> Swift.Void in
-                        semaphore.signal()
-                    }
-                    
                     /// Delay getting the currentRenderPassDescriptor until we absolutely need it to avoid
                     ///   holding onto the drawable and blocking the display pipeline any longer than necessary
                     if let renderPassDescriptor = view.currentRenderPassDescriptor {
@@ -521,6 +516,11 @@ class Renderer {
                         }
 
                         if let drawable = view.currentDrawable {
+                            let semaphore = inFlightSemaphore
+                            commandBuffer.addCompletedHandler { (_ commandBuffer)-> Swift.Void in
+                                semaphore.signal()
+                            }
+                            
                             commandBuffer.present(drawable)
                         }
                     }

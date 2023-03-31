@@ -95,7 +95,7 @@ class Model: Node, Identifiable, Hashable {
     }
     
     @MainActor
-    func importObj(url: URL) throws {
+    func importObj(url: URL) async throws {
         let meshBufferAllocator = MTKMeshBufferAllocator(device: MetalView.shared.device)
 
         let asset = MDLAsset(url: url, vertexDescriptor: MeshAllocator.vertexDescriptor(), bufferAllocator: meshBufferAllocator)
@@ -115,6 +115,14 @@ class Model: Node, Identifiable, Hashable {
 
                     guard submesh.indexType == .uInt32 else {
                         throw Errors.invalidIndexType
+                    }
+                    
+                    var objectMaterial: UUID? = nil
+                    
+                    if let material = submesh.material {
+                        let path = url.deletingLastPathComponent().absoluteString
+                        print(path)
+                        objectMaterial = try await importMaterial(material: material, in: path)
                     }
                     
                     let indexes = submesh.indexBuffer.map().bytes.bindMemory(to: Int32.self, capacity: mdlMesh.vertexCount)
@@ -157,7 +165,7 @@ class Model: Node, Identifiable, Hashable {
                     let object = Mesh(mesh: newMesh, model: self)
                     object.name = submesh.name
 
-                    object.material = Renderer.shared.materialManager.getMaterial(materialId: nil)
+                    object.material = Renderer.shared.materialManager.getMaterial(materialId: objectMaterial)
 
                     self.objects.append(TreeNode(mesh: object))
                 }
@@ -276,26 +284,79 @@ class Model: Node, Identifiable, Hashable {
             }
         }
     }
-}
-
-
-class TemporaryObject: Decodable {
-    var mesh: Mesh? = nil
-    var point: Point? = nil
     
-    required init(from decoder: Decoder) throws {
-        let container = try decoder.singleValueContainer()
-        
+    func loadTexture(property: MDLMaterialProperty, layer: MaterialLayer, from path: String) async throws {
         do {
-            mesh = try container.decode(Mesh.self)
+            switch property.type {
+            case .URL:
+                if let url = property.urlValue {
+                    layer.texture = try await TextureManager.shared.addTexture(path: url.absoluteString)
+                    layer.map = url.absoluteString
+                }
+            case .string:
+                if let filename = property.stringValue {
+                    layer.texture = try await TextureManager.shared.addTexture(path: "\(path)/\(filename)")
+                    layer.map = filename
+                }
+            default:
+                break
+            }
         }
         catch {
-            do {
-                point = try container.decode(Point.self)
+            print(error)
+            throw error
+        }
+    }
+    
+    func importMaterial(material: MDLMaterial, in path: String) async throws -> UUID {
+        let pbrMaterial = PbrMaterial()
+        
+        if let baseColor = material.property(with: .baseColor) {
+            if baseColor.type == .color {
+                if let color = baseColor.color {
+                    if let c = color.components {
+                        let v4 = Vec4(Float(c[0]), Float(c[1]), Float(c[2]), Float(c[3]))
+                        pbrMaterial.albedo.color = v4
+                    }
+                }
             }
-            catch {
-                print("Unkonwn object")
+            else {
+                try await loadTexture(property: baseColor, layer: pbrMaterial.albedo, from: path)
             }
         }
+        
+        if let normals = material.property(with: .tangentSpaceNormal) {
+            if normals.type == .float3 {
+                pbrMaterial.normals.normal = normals.float3Value.vec4()
+            }
+            else if normals.type == .float4 {
+                pbrMaterial.normals.normal = normals.float4Value
+            }
+            else {
+                try await loadTexture(property: normals, layer: pbrMaterial.normals, from: path)
+            }
+        }
+        
+        if let metallic = material.property(with: .metallic) {
+            if metallic.type == .float {
+                pbrMaterial.metallic.value = metallic.floatValue
+            }
+            else {
+                try await loadTexture(property: metallic, layer: pbrMaterial.metallic, from: path)
+            }
+        }
+        
+        if let roughness = material.property(with: .roughness) {
+            if roughness.type == .float {
+                pbrMaterial.roughness.value = roughness.floatValue
+            }
+            else {
+                try await loadTexture(property: roughness, layer: pbrMaterial.roughness, from: path)
+            }
+        }
+        
+        Renderer.shared.materialManager.addMaterial(pbrMaterial)
+        
+        return pbrMaterial.id
     }
 }

@@ -30,9 +30,18 @@ class TextureManager {
         var data: Data? = nil
         
         if !path.hasPrefix("http:") {
-            let url = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("textures/\(path)")
+            var url: URL? = nil
             
-            data = try Data(contentsOf: url)
+            if path.hasPrefix("file:") {
+                url = URL(string: path)
+            }
+            else {
+                url = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("textures/\(path)")
+            }
+            
+            if let url = url {
+                data = try Data(contentsOf: url)
+            }
         }
         else {
             data = await Http.downloadFile(path: path, mimeType: "image/jpg")
