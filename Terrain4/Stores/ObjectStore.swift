@@ -36,6 +36,22 @@ class ObjectStore: ObservableObject {
     }
     
     @MainActor
+    func deleteModel(model: Model) {
+        let index = models.firstIndex {
+            switch $0.content {
+            case .model(let m):
+                return m == model
+            default:
+                return false
+            }
+        }
+        
+        if let index = index {
+            models.remove(at: index)
+        }
+    }
+
+    @MainActor
     func addSkybox() async throws {
         try await self.skybox = Skybox()
     }

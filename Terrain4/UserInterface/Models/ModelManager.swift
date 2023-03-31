@@ -126,6 +126,19 @@ struct ModelManager: View {
                                 Image(systemName: "align.horizontal.center")
                             }
                             .disabled(selectedModel == nil)
+                            Button {
+                                if let model = selectedModel {
+                                    objectStore.deleteModel(model: model)
+                                    selectedModel = nil
+                                    undoManager?.registerUndo(withTarget: file) { _ in
+                                        print("undo")
+                                    }
+                                }
+                            } label: {
+                                Image(systemName: "minus.circle.fill")
+                                    .foregroundColor(.red)
+                            }
+                            .disabled(selectedModel == nil)
                         }
                     }
                     .padding(.top, 8)

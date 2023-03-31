@@ -131,7 +131,7 @@ struct TexturesView: View {
         do {
             let data = try Data(contentsOf: url)
             if let image = UIImage(data: data), let cgImage = image.cgImage {
-                var ciImage = CIImage(cgImage: cgImage)
+                let ciImage = CIImage(cgImage: cgImage)
                     .transformed(by: CGAffineTransform(scaleX: 1.0, y: -1.0))
                 let t2 = UIImage(ciImage: ciImage)
                     
