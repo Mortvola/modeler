@@ -42,7 +42,7 @@ class TextureManager {
             throw Errors.downloadFailed
         }
         
-        texture = try await loader.newTexture(data: data, options: [.generateMipmaps: true])
+        texture = try await loader.newTexture(data: data, options: [.generateMipmaps: true, .origin: true])
         
         guard let texture = texture else {
             throw Errors.invalidTexture
