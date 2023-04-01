@@ -11,23 +11,25 @@ struct MaterialDetailView: View {
     var material: MaterialWrapper
     
     var body: some View {
-        switch material {
-        case .pbrMaterial(let m):
-            VStack(spacing: 32) {
-                AlbedoView(albedo: m.albedo)
-                
-                NormalsView(normals: m.normals)
-                
-                MetallicView(metallic: m.metallic)
-                
-                RoughnessView(roughness: m.roughness)
+        ScrollView {
+            switch material {
+            case .pbrMaterial(let m):
+                VStack(spacing: 32) {
+                    AlbedoView(albedo: m.albedo)
+                    
+                    NormalsView(normals: m.normals)
+                    
+                    MetallicView(metallic: m.metallic)
+                    
+                    RoughnessView(roughness: m.roughness)
+                }
+            case .graphMaterial(let m):
+                GraphMaterialView(material: m)
+            case .billboardMaterial(let m):
+                BillboardMaterialView(material: m)
+            default:
+                EmptyView()
             }
-        case .graphMaterial(let m):
-            GraphMaterialView(material: m)
-        case .billboardMaterial(let m):
-            BillboardMaterialView(material: m)
-        default:
-            EmptyView()
         }
     }
 }

@@ -36,6 +36,7 @@ struct MetallicView: View {
             metallic.useSimple = newUseSimple
         }
         .onAppear {
+            value = metallic.value
             useSimple = metallic.useSimple
         }
         .onChange(of: value) { newValue in

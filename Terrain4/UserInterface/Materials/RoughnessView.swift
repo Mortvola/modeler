@@ -36,6 +36,7 @@ struct RoughnessView: View {
             roughness.useSimple = newUseSimple
         }
         .onAppear {
+            value = roughness.value
             useSimple = roughness.useSimple
         }
         .onChange(of: value) { newValue in
