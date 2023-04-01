@@ -110,6 +110,7 @@ struct ModelManager: View {
                             .background {
                                 Rectangle().stroke(.black)
                             }
+                            
                             Button {
                                 rename = true
                                 renameValue = selectedModel?.name ?? ""
@@ -117,6 +118,7 @@ struct ModelManager: View {
                                 Image(systemName: "pencil")
                             }
                             .disabled(selectedModel == nil)
+                            
                             Button {
                                 selectedModel?.center()
                                 undoManager?.registerUndo(withTarget: file) { _ in
@@ -126,6 +128,7 @@ struct ModelManager: View {
                                 Image(systemName: "align.horizontal.center")
                             }
                             .disabled(selectedModel == nil)
+                            
                             Button {
                                 if let model = selectedModel {
                                     objectStore.deleteModel(model: model)
