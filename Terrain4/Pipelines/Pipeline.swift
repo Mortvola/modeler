@@ -66,7 +66,7 @@ class Pipeline {
         }
         
         let descr = MTLRenderPipelineDescriptor()
-        descr.label = name
+        descr.label = transparent ? "\(name) transparent" : name
         descr.rasterSampleCount = MetalView.shared.view!.sampleCount
         descr.vertexFunction = vertexFunction
         descr.fragmentFunction = fragmentFunction
