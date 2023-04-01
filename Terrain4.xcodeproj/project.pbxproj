@@ -133,7 +133,7 @@
 		79AEFEE029D10AF60054A6EB /* AddNodeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79AEFEDF29D10AF60054A6EB /* AddNodeView.swift */; };
 		79AEFEE329D1F05A0054A6EB /* SceneView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79AEFEE229D1F05A0054A6EB /* SceneView.swift */; };
 		79AEFEE529D1F3860054A6EB /* Item.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79AEFEE429D1F3860054A6EB /* Item.swift */; };
-		79AEFEE829D215010054A6EB /* ModelTransformView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79AEFEE729D215010054A6EB /* ModelTransformView.swift */; };
+		79AEFEE829D215010054A6EB /* ModelSceneDetails.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79AEFEE729D215010054A6EB /* ModelSceneDetails.swift */; };
 		79AEFEEA29D216D30054A6EB /* SceneModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79AEFEE929D216D30054A6EB /* SceneModel.swift */; };
 		79AEFEEC29D220660054A6EB /* SceneListItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79AEFEEB29D220660054A6EB /* SceneListItem.swift */; };
 		79AEFEEE29D24F1F0054A6EB /* TheScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79AEFEED29D24F1F0054A6EB /* TheScene.swift */; };
@@ -339,7 +339,7 @@
 		79AEFEDF29D10AF60054A6EB /* AddNodeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddNodeView.swift; sourceTree = "<group>"; };
 		79AEFEE229D1F05A0054A6EB /* SceneView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneView.swift; sourceTree = "<group>"; };
 		79AEFEE429D1F3860054A6EB /* Item.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Item.swift; sourceTree = "<group>"; };
-		79AEFEE729D215010054A6EB /* ModelTransformView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelTransformView.swift; sourceTree = "<group>"; };
+		79AEFEE729D215010054A6EB /* ModelSceneDetails.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelSceneDetails.swift; sourceTree = "<group>"; };
 		79AEFEE929D216D30054A6EB /* SceneModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneModel.swift; sourceTree = "<group>"; };
 		79AEFEEB29D220660054A6EB /* SceneListItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneListItem.swift; sourceTree = "<group>"; };
 		79AEFEED29D24F1F0054A6EB /* TheScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TheScene.swift; sourceTree = "<group>"; };
@@ -695,7 +695,7 @@
 			children = (
 				79AEFEE229D1F05A0054A6EB /* SceneView.swift */,
 				79AA09B329D4FF7B001164B7 /* SceneModelList.swift */,
-				79AEFEE729D215010054A6EB /* ModelTransformView.swift */,
+				79AEFEE729D215010054A6EB /* ModelSceneDetails.swift */,
 				79AEFEEF29D2767C0054A6EB /* ModelAnimationView.swift */,
 				79AEFEF129D285ED0054A6EB /* AnimationView.swift */,
 				79AEFEEB29D220660054A6EB /* SceneListItem.swift */,
@@ -971,7 +971,7 @@
 				7921DFBA29CE52CF0013E317 /* GraphNodeTexture.swift in Sources */,
 				79AA09B229D4C287001164B7 /* TransparentPass.swift in Sources */,
 				7902F01329CF458E004C3775 /* ObjectWrapper.swift in Sources */,
-				79AEFEE829D215010054A6EB /* ModelTransformView.swift in Sources */,
+				79AEFEE829D215010054A6EB /* ModelSceneDetails.swift in Sources */,
 				79AA09AB29D45A9A001164B7 /* BillboardPipeline.swift in Sources */,
 				791E78D429B93A2B00FB45F3 /* AddObject.swift in Sources */,
 				7921DF9429CC76C10013E317 /* TreeNode.swift in Sources */,
