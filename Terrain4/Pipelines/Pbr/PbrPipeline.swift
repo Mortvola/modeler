@@ -12,11 +12,15 @@ import MetalKit
 class PbrPipeline: Pipeline {
     var pipeline: MTLRenderPipelineState? = nil
 
-    func initialize() throws {
-        pipeline = try buildPipeline(name: "PbrPipeline", vertexShader: "pbrVertexShader", fragmentShader: "pbrFragmentShader")
+    init() {
+        super.init(type: .pbrPipeline)
+    }
+    
+    override func initialize(transparent: Bool) throws {
+        pipeline = try buildPipeline(name: "PbrPipeline", vertexShader: "pbrVertexShader", fragmentShader: "pbrFragmentShader", transparent: transparent)
     }
         
-    func prepareObject(object: RenderObject) {
+    override func prepareObject(object: RenderObject) {
         object.uniformsSize = alignedNodeUniformsSize
         object.uniforms = MetalView.shared.device.makeBuffer(length: 3 * alignedNodeUniformsSize, options: [MTLResourceOptions.storageModeShared])!
         object.uniforms!.label = "Node Uniforms"
@@ -48,7 +52,7 @@ class PbrPipeline: Pipeline {
         }
     }
     
-    func render(renderEncoder: MTLRenderCommandEncoder, frame: Int) throws {
+    override func render(renderEncoder: MTLRenderCommandEncoder, frame: Int) throws {
         renderEncoder.setRenderPipelineState(pipeline!)
         
         for (_, material) in self.materials {

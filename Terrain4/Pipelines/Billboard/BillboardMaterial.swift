@@ -20,6 +20,10 @@ class BillboardMaterial: Material {
         allocateUniforms()
     }
     
+    override func pipelineType() -> PipelineType {
+        .billboardPipeline
+    }
+
     @MainActor
     func setTexture(file: String?) async {
         filename = file ?? ""
@@ -82,10 +86,5 @@ class BillboardMaterial: Material {
         UnsafeMutableRawPointer(self.uniforms!.contents())
             .advanced(by: index * MemoryLayout<BillboardUniforms>.stride)
             .bindMemory(to: BillboardUniforms.self, capacity: 1)
-    }
-
-    override func updatePipeline(object: RenderObject) {
-        Renderer.shared.pipelineManager.billboardPipeline.addMaterial(material: object.material!)
-        Renderer.shared.pipelineManager.billboardPipeline.prepareObject(object: object)
     }
 }

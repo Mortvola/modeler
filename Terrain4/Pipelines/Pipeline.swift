@@ -8,8 +8,23 @@
 import Foundation
 import Metal
 
+enum PipelineType {
+    case pbrPipeline
+    case graphPipeline
+    case billboardPipeline
+}
+
+
 class Pipeline {
     var materials: [UUID?:MaterialWrapper] = [:]
+    
+    var type: PipelineType
+    
+    init(type: PipelineType) {
+        self.type = type
+    }
+    
+    func initialize(transparent: Bool) throws {}
     
     func addMaterial(material: MaterialWrapper) {
         let materialKey = material.id
@@ -25,10 +40,18 @@ class Pipeline {
         }
     }
     
+    func prepareObject(object: RenderObject) {
+    }
+    
+    func render(renderEncoder: MTLRenderCommandEncoder, frame: Int) throws {
+        throw Errors.notImplemented
+    }
+
     func buildPipeline(
         name: String,
         vertexShader: String,
         fragmentShader: String,
+        transparent: Bool,
         override: ((MTLRenderPipelineDescriptor) throws -> Void)? = nil
     ) throws -> MTLRenderPipelineState {
         let vertexDescriptor = buildVertexDescriptor()
@@ -42,19 +65,29 @@ class Pipeline {
             throw Errors.makeFunctionError
         }
         
-        let pipelineDescriptor = MTLRenderPipelineDescriptor()
-        pipelineDescriptor.label = name
-        pipelineDescriptor.rasterSampleCount = MetalView.shared.view!.sampleCount
-        pipelineDescriptor.vertexFunction = vertexFunction
-        pipelineDescriptor.fragmentFunction = fragmentFunction
-        pipelineDescriptor.vertexDescriptor = vertexDescriptor
+        let descr = MTLRenderPipelineDescriptor()
+        descr.label = name
+        descr.rasterSampleCount = MetalView.shared.view!.sampleCount
+        descr.vertexFunction = vertexFunction
+        descr.fragmentFunction = fragmentFunction
+        descr.vertexDescriptor = vertexDescriptor
         
-        pipelineDescriptor.colorAttachments[0].pixelFormat = MetalView.shared.view!.colorPixelFormat
-        pipelineDescriptor.depthAttachmentPixelFormat = MetalView.shared.view!.depthStencilPixelFormat
+        descr.colorAttachments[0].pixelFormat = MetalView.shared.view!.colorPixelFormat
+        descr.depthAttachmentPixelFormat = MetalView.shared.view!.depthStencilPixelFormat
         
-        try override?(pipelineDescriptor)
+        if transparent {
+            descr.colorAttachments[0].isBlendingEnabled = true
+            descr.colorAttachments[0].rgbBlendOperation = .add
+            descr.colorAttachments[0].alphaBlendOperation = .add
+            descr.colorAttachments[0].sourceRGBBlendFactor = .sourceAlpha
+            descr.colorAttachments[0].sourceAlphaBlendFactor = .sourceAlpha
+            descr.colorAttachments[0].destinationRGBBlendFactor = .oneMinusSourceAlpha
+            descr.colorAttachments[0].destinationAlphaBlendFactor = .oneMinusSourceAlpha
+        }
         
-        return try MetalView.shared.device.makeRenderPipelineState(descriptor: pipelineDescriptor)
+        try override?(descr)
+        
+        return try MetalView.shared.device.makeRenderPipelineState(descriptor: descr)
     }
         
     func buildVertexDescriptor() -> MTLVertexDescriptor {

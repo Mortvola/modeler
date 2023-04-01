@@ -9,7 +9,7 @@ import Foundation
 import Metal
 
 extension Renderer {
-    func renderTransparentPass(renderEncoder: MTLRenderCommandEncoder, commandBuffer: MTLCommandBuffer) throws {
+    func renderTransparentPass(renderEncoder: MTLRenderCommandEncoder) throws {
         /// Final pass rendering code here
         renderEncoder.label = "Transparent Render Encoder"
         

@@ -77,18 +77,18 @@ class MaterialManager: ObservableObject {
         return defaultMaterial
     }
     
-    func setMaterial(object: RenderObject, materialId: UUID?) {
+    func setMaterial(object: RenderObject, materialId: UUID?) throws {
         if let materialId = materialId {
             let materialWrapper = materials[materialId]
 
-            setMaterial(object: object, material: materialWrapper)
+            try setMaterial(object: object, material: materialWrapper)
         }
         else {
-            setMaterial(object: object, material: defaultMaterial)
+            try setMaterial(object: object, material: defaultMaterial)
         }
     }
 
-    func setMaterial(object: RenderObject, material: MaterialWrapper?) {
+    func setMaterial(object: RenderObject, material: MaterialWrapper?) throws {
         if material != object.material {
             if let oldMaterial = object.material {
                 oldMaterial.material.removeObject(object: object)
@@ -99,10 +99,10 @@ class MaterialManager: ObservableObject {
             
             if let material = material {
                 object.material = material
-                material.material.addObject(object: object)
+                try material.material.addObject(object: object)
             }
             else {
-                defaultMaterial.material.addObject(object: object)
+                try defaultMaterial.material.addObject(object: object)
                 object.material = defaultMaterial
             }
         }

@@ -65,11 +65,11 @@ class RenderObject: Object {
     
     // @MainActor
     func setMaterial(materialId: UUID?) {
-        Renderer.shared.materialManager.setMaterial(object: self, materialId: materialId)
+        try? Renderer.shared.materialManager.setMaterial(object: self, materialId: materialId)
     }
     
     func setMaterial(material: MaterialWrapper?) {
-        Renderer.shared.materialManager.setMaterial(object: self, material: material)
+        try? Renderer.shared.materialManager.setMaterial(object: self, material: material)
     }
 
     func getUniformsBuffer<T>(index: Int) -> UnsafeMutablePointer<T> {

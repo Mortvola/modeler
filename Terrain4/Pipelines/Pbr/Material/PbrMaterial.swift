@@ -33,6 +33,10 @@ class PbrMaterial: Material, Hashable {
         allocateUniforms()
     }
     
+    override func pipelineType() -> PipelineType {
+        .pbrPipeline
+    }
+    
     enum CodingKeys: CodingKey {
         case albedo
         case normals
@@ -104,11 +108,6 @@ class PbrMaterial: Material, Hashable {
         UnsafeMutableRawPointer(self.uniforms!.contents())
             .advanced(by: index * MemoryLayout<PbrMaterialUniforms>.stride)
             .bindMemory(to: PbrMaterialUniforms.self, capacity: 1)
-    }
-    
-    override func updatePipeline(object: RenderObject) {
-        Renderer.shared.pipelineManager.pbrPipeline.addMaterial(material: object.material!)
-        Renderer.shared.pipelineManager.pbrPipeline.prepareObject(object: object)
     }
 }
 

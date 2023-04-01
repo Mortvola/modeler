@@ -12,19 +12,15 @@ import Metal
 class BillboardPipeline: Pipeline {
     var pipeline: MTLRenderPipelineState? = nil
     
-    func initialize() throws {
-        self.pipeline = try buildPipeline(name: "BillboardPipeline", vertexShader: "billboardVertexShader", fragmentShader: "billboardFragmentShader") { descr in
-            descr.colorAttachments[0].isBlendingEnabled = true
-            descr.colorAttachments[0].rgbBlendOperation = .add
-            descr.colorAttachments[0].alphaBlendOperation = .add
-            descr.colorAttachments[0].sourceRGBBlendFactor = .sourceAlpha
-            descr.colorAttachments[0].sourceAlphaBlendFactor = .sourceAlpha
-            descr.colorAttachments[0].destinationRGBBlendFactor = .oneMinusSourceAlpha
-            descr.colorAttachments[0].destinationAlphaBlendFactor = .oneMinusSourceAlpha
-        }
+    init() {
+        super.init(type: .billboardPipeline)
+    }
+
+    override func initialize(transparent: Bool) throws {
+        self.pipeline = try buildPipeline(name: "BillboardPipeline", vertexShader: "billboardVertexShader", fragmentShader: "billboardFragmentShader", transparent: transparent)
     }
     
-    func prepareObject(object: RenderObject) {
+    override func prepareObject(object: RenderObject) {
         object.uniformsSize = alignedNodeUniformsSize
         object.uniforms = MetalView.shared.device.makeBuffer(length: 3 * alignedNodeUniformsSize, options: [MTLResourceOptions.storageModeShared])!
         object.uniforms!.label = "Node Uniforms"
@@ -48,7 +44,7 @@ class BillboardPipeline: Pipeline {
         try object.draw(renderEncoder: renderEncoder)
     }
     
-    func render(renderEncoder: MTLRenderCommandEncoder, frame: Int) throws {
+    override func render(renderEncoder: MTLRenderCommandEncoder, frame: Int) throws {
         renderEncoder.setRenderPipelineState(pipeline!)
         
         for (_, wrapper) in self.materials {

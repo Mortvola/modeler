@@ -383,7 +383,7 @@ class Renderer {
                     for object in model.objects {
                         switch object.content {
                         case .mesh (let mesh):
-                            mesh.material?.material.addObject(object: mesh)
+                            try? mesh.material?.material.addObject(object: mesh)
                         default:
                             break
                         }
@@ -407,7 +407,7 @@ class Renderer {
                         for object in model.model!.objects {
                             switch object.content {
                             case .mesh(let m):
-                                m.material?.material.addObject(object: m)
+                                try? m.material?.material.addObject(object: m)
                             default:
                                 break
                             }
@@ -428,7 +428,7 @@ class Renderer {
                     for object in model.objects {
                         switch object.content {
                         case .mesh (let mesh):
-                            mesh.material?.material.addObject(object: mesh)
+                            try? mesh.material?.material.addObject(object: mesh)
                         default:
                             break
                         }
@@ -508,9 +508,9 @@ class Renderer {
                         
                         if let renderEncoder = commandBuffer.makeRenderCommandEncoder(descriptor: renderPassDescriptor) {
                             
-                            try renderMainPass(renderEncoder: renderEncoder, commandBuffer: commandBuffer)
+                            try renderMainPass(renderEncoder: renderEncoder)
                             
-                            try renderTransparentPass(renderEncoder: renderEncoder, commandBuffer: commandBuffer)
+                            try renderTransparentPass(renderEncoder: renderEncoder)
                             
                             renderEncoder.endEncoding()
                         }
