@@ -10,6 +10,8 @@ import MetalKit
 
 class PipelineManager {
     public var depthShadowPipeline: DepthShadowPipeline
+    public var imageBlockPipeline: MTLRenderPipelineState?
+    public var blendFragmentsPipeline: MTLRenderPipelineState?
     
     let samplerState: MTLSamplerState
 
@@ -23,6 +25,9 @@ class PipelineManager {
     }
     
     func initialize() throws {
+        imageBlockPipeline = try buildImageBlockPipeline()
+        blendFragmentsPipeline = try buildBlendFragmentsPipeline()
+        
         try depthShadowPipeline.initialize()
     }
     
@@ -108,5 +113,49 @@ class PipelineManager {
         samplerDescriptor.magFilter = .linear
         samplerDescriptor.mipFilter = .linear
         return MetalView.shared.device.makeSamplerState(descriptor: samplerDescriptor)!
+    }
+    
+    private func buildImageBlockPipeline() throws -> MTLRenderPipelineState {
+        let library = MetalView.shared.device.makeDefaultLibrary()
+
+        let tileFunction = library?.makeFunction(name: "initTransparentFragmentStore")
+        
+        guard let tileFunction = tileFunction else {
+            throw Errors.makeFunctionError
+        }
+
+        let descr = MTLTileRenderPipelineDescriptor()
+        descr.label = "Image Block Pipeline"
+        descr.tileFunction = tileFunction
+        descr.colorAttachments[0].pixelFormat = MetalView.shared.view!.colorPixelFormat
+        descr.threadgroupSizeMatchesTileSize = true
+        
+        let (renderPipelineState, _) = try MetalView.shared.device.makeRenderPipelineState(tileDescriptor: descr, options: [])
+        
+        return renderPipelineState
+    }
+    
+    private func buildBlendFragmentsPipeline() throws -> MTLRenderPipelineState {
+        let library = MetalView.shared.device.makeDefaultLibrary()
+        
+        let vertexFunction = library?.makeFunction(name: "quadPassVertex")
+        let fragmentFunction = library?.makeFunction(name: "blendFragments")
+        
+        if vertexFunction == nil || fragmentFunction == nil {
+            throw Errors.makeFunctionError
+        }
+        
+        let descr = MTLRenderPipelineDescriptor()
+        descr.label = "Blend Fragments"
+        descr.rasterSampleCount = MetalView.shared.view!.sampleCount
+        descr.vertexFunction = vertexFunction
+        descr.fragmentFunction = fragmentFunction
+        descr.vertexDescriptor = nil
+        
+        descr.colorAttachments[0].pixelFormat = MetalView.shared.view!.colorPixelFormat
+        descr.depthAttachmentPixelFormat = MetalView.shared.view!.depthStencilPixelFormat
+        descr.stencilAttachmentPixelFormat = MTLPixelFormat.invalid
+
+        return try MetalView.shared.device.makeRenderPipelineState(descriptor: descr)
     }
 }

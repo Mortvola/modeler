@@ -7,10 +7,12 @@
 
 #include <metal_stdlib>
 #import "ShaderTypes.h"
+#import "CommonTypes.h"
+
 using namespace metal;
 
 struct VertexIn {
-    float3 position [[attribute(VertexAttributePosition)]];
+    float4 position [[attribute(VertexAttributePosition)]];
     float2 texCoord [[attribute(VertexAttributeTexcoord)]];
     float3 normal [[attribute(VertexAttributeNormal)]];
     float3 tangent [[attribute(VertexAttributeTangent)]];
@@ -40,7 +42,7 @@ vertex VertexOut pbrVertexShader
 ) {
     VertexOut vertexOut;
     
-    vertexOut.worldFragPos = float3(instanceData[instanceId].modelMatrix * float4(in.position, 1.0));
+    vertexOut.worldFragPos = float3(instanceData[instanceId].modelMatrix * in.position);
     
     vertexOut.position =  uniforms.projectionMatrix * uniforms.viewMatrix * float4(vertexOut.worldFragPos, 1.0);
 
@@ -123,7 +125,7 @@ float getShadowedFactor
     return 1 - shadowed;
 }
 
-fragment float4 pbrFragmentShader
+float4 pbrFragment
 (
     VertexOut in [[stage_in]],
     const device FrameUniforms& uniforms [[ buffer(BufferIndexUniforms) ]],
@@ -134,7 +136,11 @@ fragment float4 pbrFragmentShader
     sampler sampler [[sampler(SamplerIndexSampler)]],
     depth2d_array<float> shadowMap [[texture(TextureIndexDepth)]]
 ) {
-    float3 albedo = !is_null_texture(textures[0]) ? pow(textures[0].sample(sampler, in.texCoords).rgb, float3(2.2)) : pow(materialUniforms.albedo, float3(2.2));
+    float4 baseColor = !is_null_texture(textures[0]) ? textures[0].sample(sampler, in.texCoords) : float4(materialUniforms.albedo, 1.0);
+    
+    baseColor.a = ceil(baseColor.a);
+    float3 albedo = pow(baseColor.rgb, float3(2.2));
+    
     float3 normal = !is_null_texture(textures[1]) ? textures[1].sample(sampler, in.texCoords).rgb : materialUniforms.normals;
     float metallic = !is_null_texture(textures[2]) ? textures[2].sample(sampler, in.texCoords).r : materialUniforms.metallic;
     float roughness = !is_null_texture(textures[3]) ? textures[3].sample(sampler, in.texCoords).r : materialUniforms.roughness;
@@ -176,5 +182,44 @@ fragment float4 pbrFragmentShader
     // gamma correct
     color = pow(color, float3(1.0 / 2.2));
 
-    return float4(color, 1.0);
+    return float4(color, baseColor.a);
 }
+
+fragment float4 pbrFragmentShader
+(
+    VertexOut in [[stage_in]],
+    const device FrameUniforms& uniforms [[ buffer(BufferIndexUniforms) ]],
+    const device NodeUniforms& nodeUniforms [[ buffer(BufferIndexNodeUniforms) ]],
+    const device PbrMaterialUniforms& materialUniforms [[ buffer(BufferIndexMaterialUniforms) ]],
+    array<texture2d<float>, 4> textures [[texture(TextureIndexColor)]],
+    texture2d<float> aoMap [[texture(TextureIndexAo)]],
+    sampler sampler [[sampler(SamplerIndexSampler)]],
+    depth2d_array<float> shadowMap [[texture(TextureIndexDepth)]]
+) {
+    return pbrFragment(in, uniforms, nodeUniforms, materialUniforms, textures, aoMap, sampler, shadowMap);
+}
+
+TransparentFragmentStore processTransparent
+(
+    float4 color,
+    float4 position,
+    TransparentFragmentValues fragmentValues
+ );
+
+fragment TransparentFragmentStore pbrFragmentTransparencyShader
+(
+    VertexOut in [[stage_in]],
+    const device FrameUniforms& uniforms [[ buffer(BufferIndexUniforms) ]],
+    const device NodeUniforms& nodeUniforms [[ buffer(BufferIndexNodeUniforms) ]],
+    const device PbrMaterialUniforms& materialUniforms [[ buffer(BufferIndexMaterialUniforms) ]],
+    array<texture2d<float>, 4> textures [[texture(TextureIndexColor)]],
+    texture2d<float> aoMap [[texture(TextureIndexAo)]],
+    sampler sampler [[sampler(SamplerIndexSampler)]],
+    depth2d_array<float> shadowMap [[texture(TextureIndexDepth)]],
+    TransparentFragmentValues  fragmentValues [[imageblock_data]]
+) {
+    float4 color = pbrFragment(in, uniforms, nodeUniforms, materialUniforms, textures, aoMap, sampler, shadowMap);
+    
+    return processTransparent(color, in.position, fragmentValues);
+}
+

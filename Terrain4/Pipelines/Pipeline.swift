@@ -16,6 +16,7 @@ enum PipelineType {
 
 
 class Pipeline {
+    var pipeline: MTLRenderPipelineState? = nil
     var materials: [UUID?:MaterialWrapper] = [:]
     
     var type: PipelineType
@@ -74,17 +75,8 @@ class Pipeline {
         
         descr.colorAttachments[0].pixelFormat = MetalView.shared.view!.colorPixelFormat
         descr.depthAttachmentPixelFormat = MetalView.shared.view!.depthStencilPixelFormat
-        
-        if transparent {
-            descr.colorAttachments[0].isBlendingEnabled = true
-            descr.colorAttachments[0].rgbBlendOperation = .add
-            descr.colorAttachments[0].alphaBlendOperation = .add
-            descr.colorAttachments[0].sourceRGBBlendFactor = .sourceAlpha
-            descr.colorAttachments[0].sourceAlphaBlendFactor = .sourceAlpha
-            descr.colorAttachments[0].destinationRGBBlendFactor = .oneMinusSourceAlpha
-            descr.colorAttachments[0].destinationAlphaBlendFactor = .oneMinusSourceAlpha
-        }
-        
+        descr.stencilAttachmentPixelFormat = MTLPixelFormat.invalid
+                
         try override?(descr)
         
         return try MetalView.shared.device.makeRenderPipelineState(descriptor: descr)

@@ -10,14 +10,17 @@ import Metal
 import MetalKit
 
 class PbrPipeline: Pipeline {
-    var pipeline: MTLRenderPipelineState? = nil
-
     init() {
         super.init(type: .pbrPipeline)
     }
     
     override func initialize(transparent: Bool) throws {
-        pipeline = try buildPipeline(name: "PbrPipeline", vertexShader: "pbrVertexShader", fragmentShader: "pbrFragmentShader", transparent: transparent)
+        pipeline = try buildPipeline(
+            name: "PbrPipeline",
+            vertexShader: "pbrVertexShader",
+            fragmentShader: transparent ? "pbrFragmentTransparencyShader" : "pbrFragmentShader",
+            transparent: transparent
+        )
     }
         
     override func prepareObject(object: RenderObject) {

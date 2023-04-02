@@ -8,6 +8,8 @@
 
 #include <metal_stdlib>
 #import "ShaderTypes.h"
+#import "CommonTypes.h"
+
 using namespace metal;
 
 struct VertexIn {
@@ -17,11 +19,6 @@ struct VertexIn {
 
 struct VertexOut {
     float4 position [[position]];
-    float2 texcoord;
-};
-
-struct Vertex {
-    float3 position;
     float2 texcoord;
 };
 
@@ -55,4 +52,26 @@ fragment float4 billboardFragmentShader
     float alpha = is_null_texture(texture) ? 1.0 : max(texture.sample(sampler, in.texcoord).r - 0.2, 0.0);
 
     return float4(billboardUniforms.color.xyz, alpha);
+}
+
+TransparentFragmentStore processTransparent
+(
+    float4 color,
+    float4 position,
+    TransparentFragmentValues fragmentValues
+ );
+
+fragment TransparentFragmentStore billboardFragmentTransparencyShader
+(
+    VertexOut in [[stage_in]],
+    const device BillboardUniforms &billboardUniforms [[ buffer(BufferIndexMaterialUniforms)]],
+    texture2d<float> texture [[texture(TextureIndexColor)]],
+    sampler sampler [[sampler(SamplerIndexSampler)]],
+    TransparentFragmentValues  fragmentValues [[imageblock_data]]
+) {
+    float alpha = is_null_texture(texture) ? 1.0 : max(texture.sample(sampler, in.texcoord).r - 0.2, 0.0);
+
+    float4 color = float4(billboardUniforms.color.xyz, alpha);
+    
+    return processTransparent(color, in.position, fragmentValues);
 }

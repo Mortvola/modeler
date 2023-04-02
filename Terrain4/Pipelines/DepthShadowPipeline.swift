@@ -29,6 +29,7 @@ class DepthShadowPipeline {
         pipelineDescriptor.vertexFunction = library?.makeFunction(name: "shadowVertexShader")
         pipelineDescriptor.vertexDescriptor = DepthShadowPipeline.buildVertexDescriptor()
         pipelineDescriptor.depthAttachmentPixelFormat = .depth32Float
+        pipelineDescriptor.stencilAttachmentPixelFormat = MTLPixelFormat.invalid
         
         if pipelineDescriptor.vertexFunction == nil {
             throw Errors.makeFunctionError

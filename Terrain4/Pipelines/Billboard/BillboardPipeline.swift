@@ -10,14 +10,17 @@ import MetalKit
 import Metal
 
 class BillboardPipeline: Pipeline {
-    var pipeline: MTLRenderPipelineState? = nil
-    
     init() {
         super.init(type: .billboardPipeline)
     }
 
     override func initialize(transparent: Bool) throws {
-        self.pipeline = try buildPipeline(name: "BillboardPipeline", vertexShader: "billboardVertexShader", fragmentShader: "billboardFragmentShader", transparent: transparent)
+        self.pipeline = try buildPipeline(
+            name: "BillboardPipeline",
+            vertexShader: "billboardVertexShader",
+            fragmentShader: transparent ? "billboardFragmentTransparencyShader" : "billboardFragmentShader",
+            transparent: transparent
+        )
     }
     
     override func prepareObject(object: RenderObject) {

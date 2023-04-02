@@ -10,8 +10,6 @@ import MetalKit
 import Metal
 
 class GraphPipeline: Pipeline {
-    var pipeline: MTLRenderPipelineState? = nil
-    
     init() {
         super.init(type: .graphPipeline)
     }
@@ -81,46 +79,7 @@ class GraphPipeline: Pipeline {
 
         return vertexDescriptor
     }
-    
-//    private static func buildPipeline() throws -> MTLRenderPipelineState {
-//        /// Build a render state pipeline object
-//
-//        let vertexDescriptor = GraphPipeline.buildVertexDescriptor()
-//
-//        let library = MetalView.shared.device.makeDefaultLibrary()
-//
-//        let vertexFunction = library?.makeFunction(name: "graphVertexShader")
-//        let fragmentFunction = library?.makeFunction(name: "graphFragmentShader")
-//
-//        if vertexFunction == nil || fragmentFunction == nil {
-//             throw Errors.makeFunctionError
-//        }
-//
-//        let linkedFunctions = try buildStitchedFunction()!
-//
-//        let pipelineDescriptor = MTLRenderPipelineDescriptor()
-//        pipelineDescriptor.label = "GraphPipeline"
-//        pipelineDescriptor.rasterSampleCount = MetalView.shared.view!.sampleCount
-//        pipelineDescriptor.vertexFunction = vertexFunction
-//        pipelineDescriptor.fragmentFunction = fragmentFunction
-//        pipelineDescriptor.fragmentLinkedFunctions = linkedFunctions
-//        pipelineDescriptor.vertexDescriptor = vertexDescriptor
-//
-//        pipelineDescriptor.colorAttachments[0].pixelFormat = MetalView.shared.view!.colorPixelFormat
-//
-//        pipelineDescriptor.colorAttachments[0].isBlendingEnabled = true
-//        pipelineDescriptor.colorAttachments[0].rgbBlendOperation = .add
-//        pipelineDescriptor.colorAttachments[0].alphaBlendOperation = .add
-//        pipelineDescriptor.colorAttachments[0].sourceRGBBlendFactor = .sourceAlpha
-//        pipelineDescriptor.colorAttachments[0].sourceAlphaBlendFactor = .sourceAlpha
-//        pipelineDescriptor.colorAttachments[0].destinationRGBBlendFactor = .oneMinusSourceAlpha
-//        pipelineDescriptor.colorAttachments[0].destinationAlphaBlendFactor = .oneMinusSourceAlpha
-//
-//        pipelineDescriptor.depthAttachmentPixelFormat = MetalView.shared.view!.depthStencilPixelFormat
-//
-//        return try MetalView.shared.device.makeRenderPipelineState(descriptor: pipelineDescriptor)
-//    }
-    
+        
     private func buildStitchedFunction() throws -> MTLLinkedFunctions? {
         guard let library = MetalView.shared.device.makeDefaultLibrary() else {
             return nil

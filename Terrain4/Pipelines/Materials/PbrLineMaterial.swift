@@ -94,7 +94,7 @@ class PbrLineMaterial: Material {
         
         pipelineDescriptor.colorAttachments[0].pixelFormat = MetalView.shared.view!.colorPixelFormat
         pipelineDescriptor.depthAttachmentPixelFormat = MetalView.shared.view!.depthStencilPixelFormat
-        //        pipelineDescriptor.stencilAttachmentPixelFormat = metalKitView.depthStencilPixelFormat
+        pipelineDescriptor.stencilAttachmentPixelFormat = MTLPixelFormat.invalid
         
         return try MetalView.shared.device.makeRenderPipelineState(descriptor: pipelineDescriptor)
     }

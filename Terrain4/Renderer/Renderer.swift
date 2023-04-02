@@ -31,6 +31,7 @@ class Renderer {
     private var commandQueue: MTLCommandQueue?
     public var dynamicUniformBuffer: MTLBuffer?
     public var depthState: MTLDepthStencilState?
+    public var noDepthState: MTLDepthStencilState?
     public var shadowDepthState: MTLDepthStencilState?
     public var transparentDepthState: MTLDepthStencilState?
     
@@ -74,6 +75,8 @@ class Renderer {
     
     private var initialized = false
     
+    public var forwardRenderPassDescriptor: MTLRenderPassDescriptor? = nil
+    
     init() {
         self.camera = Camera(world: world)
         
@@ -95,6 +98,26 @@ class Renderer {
 
         try makeUniformsBuffer()
         
+        try makeDepthStates()
+        
+        self.lineMaterial = try LineMaterial()
+        
+        try self.pipelineManager.initialize()
+        
+        self.textureStore = try TextureStore()
+        
+        self.initialized = true
+        
+        forwardRenderPassDescriptor = MTLRenderPassDescriptor()
+        forwardRenderPassDescriptor!.colorAttachments[0].clearColor = MTLClearColorMake(0.0, 0.0, 0.0, 1.0)
+        forwardRenderPassDescriptor!.colorAttachments[0].loadAction = .clear;
+        forwardRenderPassDescriptor!.colorAttachments[0].storeAction = .store;
+        forwardRenderPassDescriptor!.depthAttachment.clearDepth = 1.0;
+        forwardRenderPassDescriptor!.depthAttachment.loadAction = .clear;
+        forwardRenderPassDescriptor!.depthAttachment.storeAction = .dontCare;
+    }
+    
+    func makeDepthStates() throws {
         let depthStateDescriptor = MTLDepthStencilDescriptor()
         depthStateDescriptor.depthCompareFunction = .less
         depthStateDescriptor.isDepthWriteEnabled = true
@@ -111,21 +134,25 @@ class Renderer {
         
         self.shadowDepthState = state
         
+        depthStateDescriptor.depthCompareFunction = .less
         depthStateDescriptor.isDepthWriteEnabled = false
 
         guard let state = MetalView.shared.device.makeDepthStencilState(descriptor:depthStateDescriptor) else {
             throw Errors.makeDepthStencilStateFailed
         }
-        
+
         self.transparentDepthState = state
         
-        self.lineMaterial = try LineMaterial()
+        depthStateDescriptor.depthCompareFunction = .always
+        depthStateDescriptor.isDepthWriteEnabled = false
+        depthStateDescriptor.backFaceStencil = nil
+        depthStateDescriptor.frontFaceStencil = nil
         
-        try self.pipelineManager.initialize()
+        guard let state = MetalView.shared.device.makeDepthStencilState(descriptor:depthStateDescriptor) else {
+            throw Errors.makeDepthStencilStateFailed
+        }
         
-        self.textureStore = try TextureStore()
-        
-        self.initialized = true
+        self.noDepthState = state
     }
     
     func makeUniformsBuffer() throws {
@@ -505,13 +532,35 @@ class Renderer {
                     /// Delay getting the currentRenderPassDescriptor until we absolutely need it to avoid
                     ///   holding onto the drawable and blocking the display pipeline any longer than necessary
                     if let renderPassDescriptor = view.currentRenderPassDescriptor {
+                        let optimalTileSize = MTLSizeMake(32, 16, 1) // TODO: determine what this should be
+
+                        if pipelineManager.transparentPipelines.count > 0 {
+                            renderPassDescriptor.tileWidth = optimalTileSize.width
+                            renderPassDescriptor.tileHeight = optimalTileSize.height
+                            renderPassDescriptor.imageblockSampleLength = pipelineManager.imageBlockPipeline!.imageblockSampleLength
+                        }
                         
                         if let renderEncoder = commandBuffer.makeRenderCommandEncoder(descriptor: renderPassDescriptor) {
+                            
+                            if pipelineManager.transparentPipelines.count > 0 {
+                                
+                                renderEncoder.setRenderPipelineState(pipelineManager.imageBlockPipeline!)
+                                renderEncoder.dispatchThreadsPerTile(optimalTileSize)
+                            }
                             
                             try renderMainPass(renderEncoder: renderEncoder)
                             
                             try renderTransparentPass(renderEncoder: renderEncoder)
                             
+                            if pipelineManager.transparentPipelines.count > 0 {
+                                renderEncoder.pushDebugGroup("Blend Fragments")
+                                renderEncoder.setRenderPipelineState(pipelineManager.blendFragmentsPipeline!)
+                                renderEncoder.setCullMode(.none)
+                                renderEncoder.setDepthStencilState(noDepthState)
+                                renderEncoder.drawPrimitives(type: .triangle, vertexStart: 0, vertexCount: 3)
+                                renderEncoder.popDebugGroup()
+                            }
+
                             renderEncoder.endEncoding()
                         }
 
@@ -560,7 +609,7 @@ class Renderer {
         Task {
             let width = 1280
             let height = 720
-            try? MovieManager.shared.startMovieCreation(width: width, height: height, duration: 10)
+            try? MovieManager.shared.startMovieCreation(width: width, height: height, duration: 15)
         }
     }
 }
