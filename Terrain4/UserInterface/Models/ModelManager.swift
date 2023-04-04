@@ -156,7 +156,7 @@ struct ModelManager: View {
                     if (!hidden) {
                         switch selectedItem?.content {
                         case .model(let m):
-                            ModelDetailsView(model: m)
+                            TransformsView(model: m)
                                 .onChange(of: selectedItem) { _ in
                                     hidden = true
                                     Task {

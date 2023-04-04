@@ -11,7 +11,7 @@ struct LightDetailsView: View {
     @ObservedObject var light: Light
     
     var body: some View {
-        VStack {
+        ScrollView {
             HStack {
                 UndoProvider($light.pointLight) { $value in
                     CheckBox(checked: $value, label: "Point Light")

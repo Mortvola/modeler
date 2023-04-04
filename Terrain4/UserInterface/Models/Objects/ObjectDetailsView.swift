@@ -26,33 +26,37 @@ struct ObjectDetailsView: View {
             .padding()
             
             if tabState == .transformations {
-                VStack {
-                    HStack {
-                        Text("Translation")
-                        Spacer()
+                ScrollView {
+                    VStack {
+                        HStack {
+                            Text("Translation")
+                            Spacer()
+                        }
+                        VectorFieldView(vector: $object.translation)
+                            .padding(.leading, 16)
                     }
-                    VectorFieldView(vector: $object.translation)
-                        .padding(.leading, 16)
-                }
-                VStack {
-                    HStack {
-                        Text("Rotation")
-                        Spacer()
+                    VStack {
+                        HStack {
+                            Text("Rotation")
+                            Spacer()
+                        }
+                        VectorFieldView(vector: $object.rotation)
+                            .padding(.leading, 16)
                     }
-                    VectorFieldView(vector: $object.rotation)
-                        .padding(.leading, 16)
-                }
-                VStack {
-                    HStack {
-                        Text("Scale")
-                        Spacer()
+                    VStack {
+                        HStack {
+                            Text("Scale")
+                            Spacer()
+                        }
+                        VectorFieldView(vector: $object.scale)
+                            .padding(.leading, 16)
                     }
-                    VectorFieldView(vector: $object.scale)
-                        .padding(.leading, 16)
                 }
             } else {
-                ObjectMaterialView(object: object)
-                Spacer()
+                ScrollView {
+                    ObjectMaterialView(object: object)
+                    Spacer()
+                }
             }
         }
     }

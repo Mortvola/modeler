@@ -150,7 +150,6 @@
 		79F6D2D129BAA8DB007CA69A /* SphereAllocator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F6D2D029BAA8DB007CA69A /* SphereAllocator.swift */; };
 		79F6D2D329BAC193007CA69A /* TestRectAllocator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F6D2D229BAC193007CA69A /* TestRectAllocator.swift */; };
 		79F6D2D529BB6236007CA69A /* ObjectsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F6D2D429BB6236007CA69A /* ObjectsView.swift */; };
-		79F6D2D929BB691E007CA69A /* ModelDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F6D2D829BB691E007CA69A /* ModelDetailsView.swift */; };
 		79F6D2E129BBA375007CA69A /* ObjectDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F6D2E029BBA375007CA69A /* ObjectDetailsView.swift */; };
 		79F6D2E529BC2C6A007CA69A /* LightDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F6D2E429BC2C6A007CA69A /* LightDetailsView.swift */; };
 		79F6D2EB29BCBD83007CA69A /* NumericField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F6D2E829BCBD83007CA69A /* NumericField.swift */; };
@@ -359,7 +358,6 @@
 		79F6D2D029BAA8DB007CA69A /* SphereAllocator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SphereAllocator.swift; sourceTree = "<group>"; };
 		79F6D2D229BAC193007CA69A /* TestRectAllocator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestRectAllocator.swift; sourceTree = "<group>"; };
 		79F6D2D429BB6236007CA69A /* ObjectsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObjectsView.swift; sourceTree = "<group>"; };
-		79F6D2D829BB691E007CA69A /* ModelDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelDetailsView.swift; sourceTree = "<group>"; };
 		79F6D2E029BBA375007CA69A /* ObjectDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObjectDetailsView.swift; sourceTree = "<group>"; };
 		79F6D2E429BC2C6A007CA69A /* LightDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightDetailsView.swift; sourceTree = "<group>"; };
 		79F6D2E829BCBD83007CA69A /* NumericField.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NumericField.swift; sourceTree = "<group>"; };
@@ -740,7 +738,6 @@
 			children = (
 				79F6D30729C1ED09007CA69A /* Objects */,
 				791C495529B94AEF00C00150 /* ModelManager.swift */,
-				79F6D2D829BB691E007CA69A /* ModelDetailsView.swift */,
 				791E78CA29B93A2B00FB45F3 /* ModelsView.swift */,
 				791E78CC29B93A2B00FB45F3 /* TransformsView.swift */,
 				791E78CB29B93A2B00FB45F3 /* TransformView.swift */,
@@ -1015,7 +1012,6 @@
 				791E790529B93BB600FB45F3 /* ObjectStore.swift in Sources */,
 				7921DFAC29CD23210013E317 /* GraphPipeline.swift in Sources */,
 				79F6D2FE29C16894007CA69A /* MaterialDetailView.swift in Sources */,
-				79F6D2D929BB691E007CA69A /* ModelDetailsView.swift in Sources */,
 				79F6D30629C1E25E007CA69A /* OpenFileButton.swift in Sources */,
 				7921DF8C29CC031E0013E317 /* CylinderOptionsView.swift in Sources */,
 				79F6D2EB29BCBD83007CA69A /* NumericField.swift in Sources */,

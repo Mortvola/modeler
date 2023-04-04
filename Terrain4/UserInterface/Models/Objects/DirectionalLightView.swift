@@ -11,7 +11,7 @@ struct DirectionalLightView: View {
     @ObservedObject var light: DirectionalLight
     
     var body: some View {
-        VStack {
+        ScrollView {
             HStack {
                 UndoProvider($light.shadowCaster) { $value in
                     CheckBox(checked: $value, label: "Shadow Caster")
