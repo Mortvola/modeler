@@ -83,7 +83,8 @@ float getShadowedFactor
 (
     float3 worldPos,
     const device DirectionalLight &directionalLight,
-    depth2d_array<float> shadowMap
+    depth2d_array<float> shadowMap,
+    thread int &index
 ) {
     float shadowed = 0;
     
@@ -95,9 +96,11 @@ float getShadowedFactor
         float3 ndc = pos.xyz / pos.w; // After this the z coord holds the depth value
         
         // Convert coordinates to texture coordinates ranging from 0 to 1 in both directions.
-        float2 coords = ndc.xy * 0.5 + 0.5;
-        coords.y = 1 - coords.y;
+        float2 coords = ndc.xy * float2(0.5, -0.5) + 0.5;
         
+        // If the NDC falls outside the bounds of the NDC space then move on to the next
+        // cascade.
+        // TODO: Could this be done with some math and/or lookup instead of iterating?
         if (all(ndc.xyz < 1.0) && all(ndc.xyz > float3(-1, -1, 0))) {
             
             //    constexpr sampler sam (min_filter::linear, mag_filter::linear, compare_func::less);
@@ -117,6 +120,8 @@ float getShadowedFactor
             }
             
             shadowed /= 9.0;
+            
+            index = cascadeIndex;
             
             break;
         }
@@ -166,7 +171,8 @@ float4 pbrFragment
     float3 radiance = uniforms.directionalLight.lightColor;
     float3 L = normalize(-in.tangentLightVector);
 
-    float shadowFactor = getShadowedFactor(in.worldFragPos, uniforms.directionalLight, shadowMap);
+    int cascadeIndex = -1;
+    float shadowFactor = getShadowedFactor(in.worldFragPos, uniforms.directionalLight, shadowMap, cascadeIndex);
     
     Lo += computeLo(albedo, metallic, roughness, N, V, L, radiance) * shadowFactor;
 
@@ -182,6 +188,18 @@ float4 pbrFragment
     // gamma correct
     color = pow(color, float3(1.0 / 2.2));
 
+    if (uniforms.cascadeDebug) {
+        if (cascadeIndex == 0) {
+            color.r = 1;
+        }
+        else if (cascadeIndex == 1) {
+            color.g = 1;
+        }
+        else if (cascadeIndex == 2) {
+            color.b = 1;
+        }
+    }
+    
     return float4(color, baseColor.a);
 }
 

@@ -25,6 +25,7 @@ struct SettingsView: View {
     @State private var bias: Float = 0
     @State private var slopeScale: Float = 0
     @State private var clamp: Float = 0
+    @State private var debugCascade = false
 
     var body: some View {
         VStack {
@@ -94,6 +95,16 @@ struct SettingsView: View {
                         }
                 }
                 .frame(maxWidth: 100)
+                Spacer()
+            }
+            HStack {
+                CheckBox(checked: $debugCascade, label: "Debug Cascade")
+                    .onAppear {
+                        debugCascade = Renderer.shared.cascadeDebug
+                    }
+                    .onChange(of: debugCascade) { newValue in
+                        Renderer.shared.cascadeDebug = debugCascade
+                    }
                 Spacer()
             }
             Spacer()

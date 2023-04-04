@@ -77,6 +77,8 @@ class Renderer {
     
     public var biasClamp = Float(0) // (0.02)
     
+    public var cascadeDebug = false
+    
     init() {
         self.camera = Camera(world: world)
         
@@ -525,6 +527,9 @@ class Renderer {
                         }
                     }
                 }
+                
+                uniforms[0].cascadeDebug = self.cascadeDebug
+                
                                 
                 try renderShadowPass(commandBuffer: commandBuffer)
                 

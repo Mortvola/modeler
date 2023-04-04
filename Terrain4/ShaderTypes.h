@@ -66,6 +66,7 @@ typedef struct {
     matrix_float4x4 viewMatrix;
     vector_float3 cameraPos;
     DirectionalLight directionalLight;
+    bool cascadeDebug;
 } FrameUniforms;
 
 typedef struct {
