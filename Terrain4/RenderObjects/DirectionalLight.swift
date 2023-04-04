@@ -21,85 +21,57 @@ class DirectionalLight: Node {
     @Published var intensity = Vec3(15, 15, 15)
     @Published var shadowCaster = true
     
-//    var viewMatrix = Matrix4x4()
-//    var projectionMatrix = Matrix4x4()
-//    var projectionViewMatrix = Matrix4x4()
+    let shadowMapSize = 1024
+
     var shadowTexture: MTLTexture?
     var renderPassDescriptor: MTLRenderPassDescriptor?
     
-//    var cameraFustrum: [Vec4] = []
-//    var lightFustrum: [Vec4] = []
-    
-    func calculateProjectionViewMatrix(cameraFustrum: [Vec4]) -> Matrix4x4 {
+    var prevExtents = Vec3()
+
+    func calculateProjectionViewMatrix(cameraFrustum corners: [Vec4]) -> Matrix4x4 {
         var center = Vec4(0, 0, 0, 0)
-        for corner in cameraFustrum {
+        for corner in corners {
             center += corner
         }
         
-        center = center.multiply(1.0 / Float(cameraFustrum.count))
+        center /= Float(corners.count)
         
-        let up = Vec3(0.0, 1.0, 0.0)
-        let position = center.vec3() - direction
-
-        let viewMatrix = Matrix4x4.lookAt(offset: position, target: center.vec3(), up: up)
-        
-        var minimum = Vec3(Float.greatestFiniteMagnitude, Float.greatestFiniteMagnitude, Float.greatestFiniteMagnitude)
-        var maximum = Vec3(-Float.greatestFiniteMagnitude, -Float.greatestFiniteMagnitude, -Float.greatestFiniteMagnitude)
-        
-        // Transform the world coordinates of the camera's fustrum into the
-        // viewspace of the light and get the minimum and maximum coordinates.
-        // The result will be a fustrum (in view space) that
-        // encompasses the camera's fustrum.
-        for corner in cameraFustrum {
-            let trf = viewMatrix * corner
-            
-            minimum.x = min(minimum.x, trf.x)
-            minimum.y = min(minimum.y, trf.y)
-            minimum.z = min(minimum.z, trf.z)
-
-            maximum.x = max(maximum.x, trf.x)
-            maximum.y = max(maximum.y, trf.y)
-            maximum.z = max(maximum.z, trf.z)
+        // Find bounding sphere around frustum
+        var sphereRadius = Float(0.0)
+        for corner in corners {
+            let length = length(corner - center)
+            sphereRadius = max(sphereRadius, length)
         }
         
-//        let zMult: Float = 10.0;
-//        if (minimum.z < 0)
-//        {
-//            minimum.z *= zMult;
-//        }
-//        else
-//        {
-//            minimum.z /= zMult;
-//        }
-//        if (maximum.z < 0)
-//        {
-//            maximum.z /= zMult;
-//        }
-//        else
-//        {
-//            maximum.z *= zMult;
-//        }
-
-//        var lf: [Vec4] = []
-//
-//        lf.append(Vec4(minimum.x, minimum.y, minimum.z, 1))
-//        lf.append(Vec4(maximum.x, minimum.y, minimum.z, 1))
-//        lf.append(Vec4(minimum.x, maximum.y, minimum.z, 1))
-//        lf.append(Vec4(maximum.x, maximum.y, minimum.z, 1))
-//
-//        lf.append(Vec4(minimum.x, minimum.y, maximum.z, 1))
-//        lf.append(Vec4(maximum.x, minimum.y, maximum.z, 1))
-//        lf.append(Vec4(minimum.x, maximum.y, maximum.z, 1))
-//        lf.append(Vec4(maximum.x, maximum.y, maximum.z, 1))
-
-//        lightFustrum = []
-//        let lightVMInverse = viewMatrix.inverse
-//        for corner in lf {
-//            lightFustrum.append(lightVMInverse * corner)
-//        }
+        // Truncate the radius to a multiple of 0.5. This will
+        // ensure the dimensions of the mapped area to be in integer
+        // units (the dimensions of the mapped area will have dimensions
+        // of sphereRadius * 2)
+        sphereRadius = ceil(sphereRadius * 2.0) / 2.0
         
-        let projectionMatrix = Matrix4x4
-            .orthographic(left: minimum.x, right: maximum.x, top: maximum.y, bottom: minimum.y, near: minimum.z, far: maximum.z)
+        // Create a transormation matrix to tansform the frustum center
+        // to the light space origin
+        let up = Vec3(0.0, 1.0, 0.0)
+        let target = center.vec3() + direction
+        let viewMatrix = Matrix4x4.lookAt(offset: center.vec3(), target: target, up: up)
+                
+        // Create a projection matrix using the bounds of the sphere.
+        var projectionMatrix = Matrix4x4
+            .orthographic(left: -sphereRadius, right: sphereRadius, top: sphereRadius, bottom: -sphereRadius, near: -sphereRadius, far: sphereRadius)
+
+        let viewProjectionMatrix = projectionMatrix * viewMatrix
+        
+        // Transform the world origin into the light's NDC space
+        // to determine how much of an offset needs to be applied to
+        // align on texture units.
+        var origin = viewProjectionMatrix * Vec4(0, 0, 0, 1)
+        origin *= Float(shadowMapSize) / 2.0 // Convert NDC into texture space
+        let roundedOrigin = round(origin)
+        var offset = roundedOrigin - origin
+        offset *= 2 / Float(shadowMapSize) // Convert texture space back into NDC
+
+        projectionMatrix[3][0] = offset.x
+        projectionMatrix[3][1] = offset.y
         
         return projectionMatrix * viewMatrix
     }
@@ -142,8 +114,6 @@ class DirectionalLight: Node {
     
     func createShadowTexture() {
         if shadowTexture == nil {
-            let shadowMapSize = 1024
-
             let shadowTextureDescriptor = MTLTextureDescriptor.texture2DDescriptor(pixelFormat: .depth32Float, width: shadowMapSize, height: shadowMapSize, mipmapped: false)
             shadowTextureDescriptor.storageMode = .private  
             shadowTextureDescriptor.usage = [.renderTarget, .shaderRead]

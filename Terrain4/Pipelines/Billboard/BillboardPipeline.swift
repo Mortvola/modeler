@@ -29,11 +29,7 @@ class BillboardPipeline: Pipeline {
         object.uniforms!.label = "Node Uniforms"
     }
     
-    //    func prepare(renderEncoder: MTLRenderCommandEncoder) {
-    //        renderEncoder.setRenderPipelineState(self.pipeline!)
-    //    }
-    
-    func draw(object: RenderObject, renderEncoder: MTLRenderCommandEncoder, frame: Int) throws {
+    override func draw(object: RenderObject, renderEncoder: MTLRenderCommandEncoder, frame: Int) throws {
         let u: UnsafeMutablePointer<BillboardUniforms> = object.getUniformsBuffer(index: frame)
         u[0].color = Vec4(1.0, 1.0, 1.0, 1.0)
         u[0].scale = Vec2(1.0, 1.0)
@@ -46,29 +42,7 @@ class BillboardPipeline: Pipeline {
         
         try object.draw(renderEncoder: renderEncoder)
     }
-    
-    override func render(renderEncoder: MTLRenderCommandEncoder, frame: Int) throws {
-        renderEncoder.setRenderPipelineState(pipeline!)
         
-        for (_, wrapper) in self.materials {
-            if wrapper.material.objects.count > 0 {
-                switch wrapper {
-                case .billboardMaterial(let material):
-                    material.prepare(renderEncoder: renderEncoder, frame: frame)
-                    
-                    for object in material.objects {
-                        if !object.disabled && !(object.model?.disabled ?? true) {
-                            try self.draw(object: object, renderEncoder: renderEncoder, frame: frame)
-                        }
-                    }
-                    
-                default:
-                    break
-                }
-            }
-        }
-    }
-    
     override func buildVertexDescriptor() -> MTLVertexDescriptor {
         let vertexDescriptor = MTLVertexDescriptor()
         

@@ -129,27 +129,32 @@ class Camera {
         return Matrix4x4.perspectiveLeftHand(fovyRadians: degreesToRadians(45), aspect: aspect, nearZ: zn, farZ: zf)
     }
     
-    func getFustrumCorners(nearZ: Float, farZ: Float) -> [Vec4] {
+    func getFrustumCorners(nearZ: Float, farZ: Float) -> [Vec4] {
         let cameraProjectionMatrix = createPerspectiveMatrix(nearZ: nearZ, farZ: farZ)
         let cameraViewMatrix = getViewMatrix()
-        let cameraProjectionView = cameraProjectionMatrix * cameraViewMatrix
+        let cameraViewProjection = cameraProjectionMatrix * cameraViewMatrix
         
-        let inverse = cameraProjectionView.inverse
-        var cameraFustrum: [Vec4] = []
-        
-        // Create a box (8 points) in the camera's NDC coordinates and
-        // transform the points into world space
-        for z in [0, 1] {
-            for y in [-1, 1] {
-                for x in [-1, 1] {
-                    let point = inverse * Vec4(Float(x), Float(y), Float(z), 1.0)
-                    
-                    cameraFustrum.append(point * (1 / point.w))
-                }
-            }
-        }
-        
-        return cameraFustrum
+        return transformNdcBoundsToWorldSpace(viewProjectionMatrix: cameraViewProjection)
     }
     
+}
+
+func transformNdcBoundsToWorldSpace(viewProjectionMatrix: Matrix4x4) -> [Vec4] {
+    var frustum: [Vec4] = []
+
+    let inverse = viewProjectionMatrix.inverse
+    
+    // Create a box (8 points) in the camera's NDC coordinates and
+    // transform the points into world space
+    for z in [0, 1] {
+        for y in [-1, 1] {
+            for x in [-1, 1] {
+                let point = inverse * Vec4(Float(x), Float(y), Float(z), 1.0)
+                
+                frustum.append(point / point.w)
+            }
+        }
+    }
+    
+    return frustum
 }

@@ -19,10 +19,6 @@ extension Renderer {
         renderEncoder.setCullMode(.none)
         renderEncoder.setDepthStencilState(self.transparentDepthState)
 
-        renderEncoder.setVertexBuffer(self.dynamicUniformBuffer, offset: self.uniformBufferOffset, index: BufferIndex.uniforms.rawValue)
-        
-        renderEncoder.setFragmentBuffer(self.dynamicUniformBuffer, offset: self.uniformBufferOffset, index: BufferIndex.uniforms.rawValue)
-        
         try pipelineManager.transparentRender(renderEncoder: renderEncoder, frame: self.uniformBufferIndex)
         
 //            renderEncoder.popDebugGroup()        

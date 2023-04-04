@@ -22,6 +22,8 @@ extension Renderer {
 
                         try mesh.draw(renderEncoder: renderEncoder)
                     }
+                case .wireBox:
+                    break
                 case .point:
                     break
                 case .light:
@@ -60,7 +62,7 @@ extension Renderer {
                 renderEncoder.setVertexBuffer(self.dynamicUniformBuffer, offset: self.uniformBufferOffset, index: BufferIndex.uniforms.rawValue)
                 
                 var cascadeIndex = Int32(cascade)
-                renderEncoder.setVertexBytes(&cascadeIndex, length: MemoryLayout<Int>.size, index: BufferIndex.cascadeIndex.rawValue)
+                renderEncoder.setVertexBytes(&cascadeIndex, length: MemoryLayout<Int32>.size, index: BufferIndex.cascadeIndex.rawValue)
                 
 //                renderEncoder.setTriangleFillMode(.lines)
                 

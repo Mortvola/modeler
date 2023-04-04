@@ -25,9 +25,9 @@ struct TestApp: App {
             }
             CommandGroup(after: .newItem) {
                 Button {
-                    Renderer.shared.freezeFustrum.toggle()
+                    Renderer.shared.showFrustum()
                 } label: {
-                    Text("Freeze Fustrum")
+                    Text("Freeze Frustum")
                 }
             }
         }

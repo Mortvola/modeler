@@ -107,5 +107,6 @@ typedef struct {
     matrix_float3x3 normalMatrix;
 } ModelMatrixUniforms;
 
+
 #endif /* ShaderTypes_h */
 

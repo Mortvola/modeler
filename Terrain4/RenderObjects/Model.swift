@@ -165,8 +165,10 @@ class Model: Node, Identifiable, Hashable {
                     let object = Mesh(mesh: newMesh, model: self)
                     object.name = submesh.name
 
-                    object.material = Renderer.shared.materialManager.getMaterial(materialId: objectMaterial)
+                    let material = Renderer.shared.materialManager.getMaterial(materialId: objectMaterial)
 
+                    object.setMaterial(material: material)
+                    
                     self.objects.append(TreeNode(mesh: object))
                 }
             }

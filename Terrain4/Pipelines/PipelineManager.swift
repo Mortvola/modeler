@@ -57,6 +57,9 @@ class PipelineManager {
 
         case .graphPipeline:
             pipeline = GraphPipeline()
+            
+        case .linePipeline:
+            pipeline = LinePipeline()
         }
 
         if let pipeline = pipeline {

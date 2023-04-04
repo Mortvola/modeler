@@ -98,6 +98,7 @@
 		792EA66729D9ABB100208A1E /* TransparentShaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = 792EA66629D9ABB100208A1E /* TransparentShaders.metal */; };
 		792EA66929D9E34700208A1E /* CommonTypes.h in Sources */ = {isa = PBXBuildFile; fileRef = 792EA66829D9E34700208A1E /* CommonTypes.h */; };
 		79345D3929C509E200E9F074 /* RectangleAllocator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79345D3629C509E200E9F074 /* RectangleAllocator.swift */; };
+		793E40CD29DB53A0006749F3 /* LinePipeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = 793E40CC29DB53A0006749F3 /* LinePipeline.swift */; };
 		798D3BE929C35EE600B96C5F /* AlbedoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 798D3BE829C35EE600B96C5F /* AlbedoView.swift */; };
 		798D3BEB29C3613700B96C5F /* NormalsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 798D3BEA29C3613700B96C5F /* NormalsView.swift */; };
 		798D3BED29C361D700B96C5F /* MetallicView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 798D3BEC29C361D700B96C5F /* MetallicView.swift */; };
@@ -306,6 +307,7 @@
 		792EA66629D9ABB100208A1E /* TransparentShaders.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = TransparentShaders.metal; sourceTree = "<group>"; };
 		792EA66829D9E34700208A1E /* CommonTypes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CommonTypes.h; sourceTree = "<group>"; };
 		79345D3629C509E200E9F074 /* RectangleAllocator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RectangleAllocator.swift; sourceTree = "<group>"; };
+		793E40CC29DB53A0006749F3 /* LinePipeline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinePipeline.swift; sourceTree = "<group>"; };
 		798D3BE829C35EE600B96C5F /* AlbedoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlbedoView.swift; sourceTree = "<group>"; };
 		798D3BEA29C3613700B96C5F /* NormalsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NormalsView.swift; sourceTree = "<group>"; };
 		798D3BEC29C361D700B96C5F /* MetallicView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetallicView.swift; sourceTree = "<group>"; };
@@ -583,7 +585,6 @@
 				7921DFB129CE167C0013E317 /* MaterialManager.swift */,
 				7902F01029CF244B004C3775 /* MaterialWrapper.swift */,
 				791E792729B93D7000FB45F3 /* TextureManager.swift */,
-				791E792829B93D7000FB45F3 /* LineMaterial.swift */,
 				791E792529B93D7000FB45F3 /* PbrLineMaterial.swift */,
 				791E792929B93D7000FB45F3 /* Material.swift */,
 				7921DFA129CCC0E20013E317 /* PointMaterial.swift */,
@@ -613,6 +614,7 @@
 				79AA09AF29D4844D001164B7 /* Graph */,
 				79AA09B029D48471001164B7 /* Billboard */,
 				7921DF9929CC813E0013E317 /* PointPipeline.swift */,
+				793E40C929DB5387006749F3 /* Line */,
 				799B4BC229C72D3100B6826A /* DepthShadowPipeline.swift */,
 				791E792429B93D7000FB45F3 /* Materials */,
 			);
@@ -630,6 +632,15 @@
 				7921DFB929CE52CF0013E317 /* GraphNodeTexture.swift */,
 			);
 			path = Material;
+			sourceTree = "<group>";
+		};
+		793E40C929DB5387006749F3 /* Line */ = {
+			isa = PBXGroup;
+			children = (
+				791E792829B93D7000FB45F3 /* LineMaterial.swift */,
+				793E40CC29DB53A0006749F3 /* LinePipeline.swift */,
+			);
+			path = Line;
 			sourceTree = "<group>";
 		};
 		798D3BFB29C3CBD100B96C5F /* File */ = {
@@ -1040,6 +1051,7 @@
 				79AEFED729D104C30054A6EB /* GraphNodeAdd.swift in Sources */,
 				791E795029B944D000FB45F3 /* LineShaders.metal in Sources */,
 				79F6D2E529BC2C6A007CA69A /* LightDetailsView.swift in Sources */,
+				793E40CD29DB53A0006749F3 /* LinePipeline.swift in Sources */,
 				7921DF7529C9398A0013E317 /* WireBox.swift in Sources */,
 				79AEFEF229D285ED0054A6EB /* AnimationView.swift in Sources */,
 				791E794E29B944D000FB45F3 /* Pbr.metal in Sources */,

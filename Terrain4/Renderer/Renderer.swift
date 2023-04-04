@@ -59,14 +59,6 @@ class Renderer {
         
     public var objectStore: ObjectStore?
     
-    private var lineMaterial: LineMaterial?
-    
-//    private var fustrums: [WireBox] = []
-//
-//    private var lightFustrums: [WireBox] = []
-    
-    public var freezeFustrum = false
-
     public let pipelineManager: PipelineManager
     
     public let materialManager: MaterialManager
@@ -77,6 +69,8 @@ class Renderer {
     
     public var forwardRenderPassDescriptor: MTLRenderPassDescriptor? = nil
     
+    private let frustumSegments: [Float] = [1, 70, 170, 400, 1600]
+
     init() {
         self.camera = Camera(world: world)
         
@@ -99,8 +93,6 @@ class Renderer {
         try makeUniformsBuffer()
         
         try makeDepthStates()
-        
-        self.lineMaterial = try LineMaterial()
         
         try self.pipelineManager.initialize()
         
@@ -158,7 +150,7 @@ class Renderer {
     func makeUniformsBuffer() throws {
         let uniformBufferSize = alignedUniformsSize * maxBuffersInFlight
         
-        guard let buffer = MetalView.shared.device.makeBuffer(length:uniformBufferSize, options:[MTLResourceOptions.storageModeShared]) else {
+        guard let buffer = MetalView.shared.device.makeBuffer(length: uniformBufferSize, options: [MTLResourceOptions.storageModeShared]) else {
             throw Errors.makeBufferFailed
         }
         
@@ -303,6 +295,10 @@ class Renderer {
                 let transformation = model.modelMatrix * o.transformation()
                 
                 o.instanceData.append(InstanceData(transformation: transformation))
+            case .wireBox(let o):
+                let transformation = model.modelMatrix * o.transformation()
+                
+                o.instanceData.append(InstanceData(transformation: transformation))
             case .point:
                 break
             case .light(let light):
@@ -326,25 +322,41 @@ class Renderer {
     }
 
     func clearInstanceData() {
-        for node in objectStore!.models {
-            switch node.content {
-            case .model(let model):
-                model.objects.forEach { object in
-                    switch object.content {
-                    case .model:
-                        break
-                    case .mesh(let o):
-                        o.instanceData = []
-                    case .point:
-                        break
-                    case .light:
-                        break
-                    case .directionalLight:
-                        break
-                    }
+        for sceneModel in objectStore!.currentScene!.models {
+            for object in sceneModel.model!.objects {
+                switch object.content {
+                case .model:
+                    break
+                case .mesh(let o):
+                    o.instanceData = []
+                case .point:
+                    break
+                case .light:
+                    break
+                case .directionalLight:
+                    break
+                case .wireBox(let o):
+                    o.instanceData = []
                 }
-            default:
-                break
+            }
+        }
+        
+        if let frustum  = objectStore!.currentScene!.frustum {
+            for object in frustum.objects {
+                switch object.content {
+                case .model:
+                    break
+                case .mesh(let o):
+                    o.instanceData = []
+                case .point:
+                    break
+                case .light:
+                    break
+                case .directionalLight:
+                    break
+                case .wireBox(let o):
+                    o.instanceData = []
+                }
             }
         }
     }
@@ -365,23 +377,22 @@ class Renderer {
             clearInstanceData()
             objectStore!.currentScene!.lights = []
             
-            // Update the model matrix for each model
-            switch currentViewMode {
-            case .scene:
-                if let scene = objectStore?.scene {
-                    for sceneModel in scene.models {
-                        let transform = computeAnimatorTransform(sceneModel: sceneModel)
-                        updateModel(model: sceneModel.model!, matrix: transform * sceneModel.transformation())
-                    }
-                }
-            case .model:
-                for node in objectStore!.models {
-                    switch node.content {
-                    case .model(let m):
-                        updateModel(model: m, matrix: Matrix4x4.identity())
-                    default:
+            if let scene = objectStore?.currentScene {
+                for sceneModel in scene.models {
+                    var transform = Matrix4x4.identity()
+                    
+                    switch currentViewMode {
+                    case .scene:
+                        transform = computeAnimatorTransform(sceneModel: sceneModel)
+                    case .model:
                         break
                     }
+
+                    updateModel(model: sceneModel.model!, matrix: transform * sceneModel.transformation())
+                }
+                
+                if let model = objectStore?.currentScene?.frustum {
+                    updateModel(model: model, matrix: Matrix4x4.identity())
                 }
             }
         }
@@ -499,29 +510,16 @@ class Renderer {
                 uniforms[0].directionalLight.lightColor = objectStore!.directionalLight.disabled ? Vec3(0, 0, 0) : objectStore!.directionalLight.intensity
                 
                 if let directionalLight = objectStore!.currentScene?.directionalLight {
-                    let fustrumSegments: [Float] = [1, 70, 170, 400, 1600]
                     withUnsafeMutableBytes(of: &uniforms[0].directionalLight.viewProjectionMatrix) { rawPtr in
                         let matrix = rawPtr.baseAddress!.assumingMemoryBound(to: Matrix4x4.self)
                         
                         for i in 0..<shadowMapCascades {
-                            let cameraFustrum = camera.getFustrumCorners(nearZ: fustrumSegments[i], farZ: fustrumSegments[i + 1])
-                            matrix[i] = directionalLight.calculateProjectionViewMatrix(cameraFustrum: cameraFustrum)
+                            let cameraFrustum = camera.getFrustumCorners(nearZ: frustumSegments[i], farZ: frustumSegments[i + 1])
+                            matrix[i] = directionalLight.calculateProjectionViewMatrix(cameraFrustum: cameraFrustum)
                         }
                     }
                 }
-                
-                //            if self.fustrums.count == 0 {
-                //                self.fustrums.append(WireBox(device: device!, points: objectStore!.directionalLight.cameraFustrum, color: Vec4(1, 0, 0, 1)))
-                //                self.fustrums.append(WireBox(device: device!, points: objectStore!.directionalLight.cameraFustrum, color: Vec4(1, 0, 0, 1)))
-                //                self.fustrums.append(WireBox(device: device!, points: objectStore!.directionalLight.cameraFustrum, color: Vec4(1, 0, 0, 1)))
-                //            }
-                //
-                //            if self.lightFustrums.count == 0 {
-                //                self.lightFustrums.append(WireBox(device: device!, points: objectStore!.directionalLight.cameraFustrum, color: Vec4(0, 1, 0, 1)))
-                //                self.lightFustrums.append(WireBox(device: device!, points: objectStore!.directionalLight.cameraFustrum, color: Vec4(0, 1, 0, 1)))
-                //                self.lightFustrums.append(WireBox(device: device!, points: objectStore!.directionalLight.cameraFustrum, color: Vec4(1, 1, 0, 1)))
-                //            }
-                
+                                
                 try renderShadowPass(commandBuffer: commandBuffer)
                 
                 commandBuffer.commit()
@@ -543,10 +541,13 @@ class Renderer {
                         if let renderEncoder = commandBuffer.makeRenderCommandEncoder(descriptor: renderPassDescriptor) {
                             
                             if pipelineManager.transparentPipelines.count > 0 {
-                                
                                 renderEncoder.setRenderPipelineState(pipelineManager.imageBlockPipeline!)
                                 renderEncoder.dispatchThreadsPerTile(optimalTileSize)
                             }
+                            
+                            renderEncoder.setVertexBuffer(self.dynamicUniformBuffer, offset: self.uniformBufferOffset, index: BufferIndex.uniforms.rawValue)
+                            
+                            renderEncoder.setFragmentBuffer(self.dynamicUniformBuffer, offset: self.uniformBufferOffset, index: BufferIndex.uniforms.rawValue)
                             
                             try renderMainPass(renderEncoder: renderEncoder)
                             
@@ -610,6 +611,34 @@ class Renderer {
             let width = 1280
             let height = 720
             try? MovieManager.shared.startMovieCreation(width: width, height: height, duration: 15)
+        }
+    }
+    
+    public func showFrustum() {
+        let model = Model()
+        objectStore?.currentScene?.frustum = model
+        
+        let colors: [Vec4] = [Vec4(1, 0, 0, 1), Vec4(0, 1, 0, 1), Vec4(0, 0, 1, 1), Vec4(0, 1, 1, 1)]
+        for i in 0..<shadowMapCascades {
+            let cameraFrustum = camera.getFrustumCorners(nearZ: frustumSegments[i], farZ: frustumSegments[i + 1])
+
+            let object = WireBox(points: cameraFrustum, color: Vec4(1, 1, 0, 1), model: model)
+            
+            object.setMaterial(materialType: .line)
+
+            model.objects.append(TreeNode(wireBox: object))
+            
+            if let directionalLight = objectStore!.currentScene?.directionalLight {
+                let matrix = directionalLight.calculateProjectionViewMatrix(cameraFrustum: cameraFrustum)
+                
+                let corners = transformNdcBoundsToWorldSpace(viewProjectionMatrix: matrix)
+
+                let object = WireBox(points: corners, color: colors[i], model: model)
+                
+                object.setMaterial(materialType: .line)
+
+                model.objects.append(TreeNode(wireBox: object))
+            }
         }
     }
 }

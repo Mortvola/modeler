@@ -13,4 +13,6 @@ class TheScene: ObservableObject {
     var lights: [Light] = []
 
     var directionalLight: DirectionalLight?
+    
+    var frustum: Model? = nil
 }

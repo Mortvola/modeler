@@ -11,9 +11,16 @@ import MetalKit
 class MaterialManager: ObservableObject {
     @Published var materials: [UUID:MaterialWrapper] = [:]
     var defaultMaterial: MaterialWrapper
+    var defaultLineMaterial: MaterialWrapper
     
+    enum DefaultMaterialType {
+        case mesh
+        case line
+    }
+
     init() {
         defaultMaterial = MaterialWrapper.pbrMaterial(PbrMaterial())
+        defaultLineMaterial = MaterialWrapper.lineMaterial(LineMaterial())
     }
     
     private func wrapMaterial(_ material: Material) throws -> MaterialWrapper {
@@ -77,6 +84,15 @@ class MaterialManager: ObservableObject {
         return defaultMaterial
     }
     
+    func setMaterial(object: RenderObject, materialType: DefaultMaterialType) throws {
+        switch materialType {
+        case .line:
+            try setMaterial(object: object, material: defaultLineMaterial)
+        case .mesh:
+            try setMaterial(object: object, material: defaultMaterial)
+        }
+    }
+    
     func setMaterial(object: RenderObject, materialId: UUID?) throws {
         if let materialId = materialId {
             let materialWrapper = materials[materialId]
@@ -89,7 +105,7 @@ class MaterialManager: ObservableObject {
     }
 
     func setMaterial(object: RenderObject, material: MaterialWrapper?) throws {
-        if material != object.material {
+        if material != object.material || (material == nil && object.material != defaultMaterial) {
             if let oldMaterial = object.material {
                 oldMaterial.material.removeObject(object: object)
             }
@@ -102,8 +118,8 @@ class MaterialManager: ObservableObject {
                 try material.material.addObject(object: object)
             }
             else {
-                try defaultMaterial.material.addObject(object: object)
                 object.material = defaultMaterial
+                try defaultMaterial.material.addObject(object: object)
             }
         }
     }

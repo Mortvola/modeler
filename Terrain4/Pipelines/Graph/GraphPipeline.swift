@@ -28,7 +28,7 @@ class GraphPipeline: Pipeline {
 //        renderEncoder.setRenderPipelineState(self.pipeline!)
 //    }
 
-    func draw(object: RenderObject, renderEncoder: MTLRenderCommandEncoder, frame: Int) throws {
+    override func draw(object: RenderObject, renderEncoder: MTLRenderCommandEncoder, frame: Int) throws {
         let u: UnsafeMutablePointer<BillboardUniforms> = object.getUniformsBuffer(index: frame)
         u[0].color = Vec4(1.0, 1.0, 1.0, 1.0)
         u[0].scale = Vec2(1.0, 1.0)

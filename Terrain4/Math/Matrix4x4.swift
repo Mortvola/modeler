@@ -123,10 +123,18 @@ extension Matrix4x4 {
     }
     
     static func orthographic(left: Float, right: Float, top: Float, bottom: Float, near: Float, far: Float) -> Matrix4x4 {
-        let xScale = 2 / (right - left)
-        let yScale = 2 / (top - bottom)
+        let width = right - left
+        let height = top - bottom
+        // We divide 2 (the width and height of the NDC cube: -1 to 1 in x and y) by
+        // the width or height to scale the x or y coordinate into the -1 to 1 range (after we apply the offset
+        // computed below).
+        let xScale = 2 / width
+        let yScale = 2 / height
         let zScale = 1 / (far - near)
 
+        // Adding right and left (or top and bottom) and dividing by 2 gives us the center
+        // between the sides of the frustum which is also how far off we are from the NDC origin.
+        // We need to also scale this offset so that we are moving it into NDC units.
         let xOffset = (right + left) * 0.5 * xScale
         let yOffset = (top + bottom) * 0.5 * yScale
         let zOffset = near * zScale

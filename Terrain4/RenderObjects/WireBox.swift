@@ -1,5 +1,5 @@
 //
-//  Fustrum.swift
+//  WireBox.swift
 //  Terrain4
 //
 //  Created by Richard Shields on 3/20/23.
@@ -15,14 +15,14 @@ class WireBox: RenderObject {
     
     let color: Vec4
     
-    init(points: [Vec4], color: Vec4) {
+    init(points: [Vec4], color: Vec4, model: Model) {
         self.vertices = MetalView.shared.device.makeBuffer(length: 24 * MemoryLayout<Vec4>.size, options: [MTLResourceOptions.storageModeShared])!
         self.vertices.label = "WireBox Vertices"
         self.numVertices = 24
         
         self.color = color
         
-        super.init(model: nil)
+        super.init(model: model)
         
         updateVertices(points: points)
     }
@@ -72,16 +72,42 @@ class WireBox: RenderObject {
         try super.init(from: decoder)
     }
 
-//    override func draw(renderEncoder: MTLRenderCommandEncoder, modelMatrix: Matrix4x4, pbrProperties: PbrProperties?, frame: Int) {
-//        renderEncoder.setVertexBuffer(self.vertices, offset: 0, index: BufferIndex.meshPositions.rawValue)
-//
+    override func getInstanceData(frame: Int) -> (MTLBuffer?, Int) {
+        let (u, offset) = self.getModelMatrixUniform(index: frame, instances: instanceData.count)
+        
+        withUnsafeMutableBytes(of: &u[0]) { rawPtr in
+            let instData = rawPtr.baseAddress!.assumingMemoryBound(to: ModelMatrixUniforms.self)
+            
+            for i in 0..<instanceData.count {
+                // Pass the normal matrix (derived from the model matrix) to the vertex shader
+                let modelMatrix = instanceData[i].transformation
+                
+                var normalMatrix = matrix_float3x3(columns: (
+                    vector_float3(modelMatrix[0][0], modelMatrix[0][1], modelMatrix[0][2]),
+                    vector_float3(modelMatrix[1][0], modelMatrix[1][1], modelMatrix[1][2]),
+                    vector_float3(modelMatrix[2][0], modelMatrix[2][1], modelMatrix[2][2])
+                ));
+                
+                normalMatrix = normalMatrix.inverse.transpose;
+                
+                instData[i].normalMatrix = normalMatrix
+                instData[i].modelMatrix = instanceData[i].transformation
+            }
+        }
+        
+        return (modelMatrixUniform, offset)
+    }
+
+    override func draw(renderEncoder: MTLRenderCommandEncoder) {
+        renderEncoder.setVertexBuffer(self.vertices, offset: 0, index: BufferIndex.meshPositions.rawValue)
+
 //        let u = getUniformsBuffer(index: frame)
 //        u[0].color = color
 //        u[0].modelMatrix = modelMatrix
 //        u[0].normalMatrix = Matrix3x3.identity()
-//        
+        
 //        renderEncoder.setVertexBuffer(self.uniforms, offset: 0, index: BufferIndex.nodeUniforms.rawValue)
-//        
-//        renderEncoder.drawPrimitives(type: .line, vertexStart: 0, vertexCount: self.numVertices)
-//    }
+        
+        renderEncoder.drawPrimitives(type: .line, vertexStart: 0, vertexCount: self.numVertices)
+    }
 }

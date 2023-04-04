@@ -43,7 +43,7 @@ class Mesh: RenderObject {
                 normalMatrix = normalMatrix.inverse.transpose;
                 
                 instData[i].normalMatrix = normalMatrix
-                instData[i].modelMatrix = instanceData[i].transformation
+                instData[i].modelMatrix = modelMatrix
             }
         }
         

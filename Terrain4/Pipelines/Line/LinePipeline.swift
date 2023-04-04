@@ -1,38 +1,47 @@
 //
-//  LineMaterial.swift
-//  Terrain
+//  LinePipeline.swift
+//  Terrain4
 //
-//  Created by Richard Shields on 2/27/23.
+//  Created by Richard Shields on 4/3/23.
 //
 
 import Foundation
-import MetalKit
 import Metal
 
-class LineMaterial: Material {
-    let pipeline: MTLRenderPipelineState
-    
-    init() throws {
-        self.pipeline = try LineMaterial.buildPipeline()
-        
-        super.init(name: "Line Material")
-    }
-    
-    required init(from decoder: Decoder) throws {
-        self.pipeline = try LineMaterial.buildPipeline()
-
-        try super.init(from: decoder)
-    }
-    
-    override func prepare(renderEncoder: MTLRenderCommandEncoder, frame: Int) {
-        renderEncoder.setRenderPipelineState(self.getPipeline())
+class LinePipeline: Pipeline {
+    init() {
+        super.init(type: .linePipeline)
     }
 
-    func getPipeline() -> MTLRenderPipelineState {
-        self.pipeline
+    override func initialize(transparent: Bool) throws {
+//        pipeline = try buildPipeline(
+//            name: "LinePipeline",
+//            vertexShader: "lineVertexShader",
+//            fragmentShader: "simpleFragmentShader",
+//            transparent: transparent
+//        )
+        pipeline = try buildPipeline()
     }
 
-    private static func buildVertexDescriptor() -> MTLVertexDescriptor {
+    override func prepareObject(object: RenderObject) {
+        object.uniformsSize = alignedNodeUniformsSize
+        object.uniforms = MetalView.shared.device.makeBuffer(length: 3 * alignedNodeUniformsSize, options: [MTLResourceOptions.storageModeShared])!
+        object.uniforms!.label = "Node Uniforms"
+    }
+    
+    override func draw(object: RenderObject, renderEncoder: MTLRenderCommandEncoder, frame: Int) throws {
+        let u: UnsafeMutablePointer<NodeUniforms> = object.getUniformsBuffer(index: frame)
+        u[0].color = (object as! WireBox).color
+
+        let (buffer, offset) = object.getInstanceData(frame: frame)
+        renderEncoder.setVertexBuffer(buffer, offset: offset, index: BufferIndex.modelMatrix.rawValue)
+
+        renderEncoder.setVertexBuffer(object.uniforms, offset: 0, index: BufferIndex.nodeUniforms.rawValue)
+
+        try object.draw(renderEncoder: renderEncoder)
+    }
+    
+    override func buildVertexDescriptor() -> MTLVertexDescriptor {
         let vertexDescriptor = MTLVertexDescriptor()
         
         vertexDescriptor.attributes[VertexAttribute.position.rawValue].format = .float3
@@ -44,9 +53,9 @@ class LineMaterial: Material {
         return vertexDescriptor
     }
     
-    private static func buildPipeline() throws -> MTLRenderPipelineState {
+    func buildPipeline() throws -> MTLRenderPipelineState {
         /// Build a render state pipeline object
-        let vertexDescriptor = LineMaterial.buildVertexDescriptor()
+        let vertexDescriptor = buildVertexDescriptor()
         
         let library = MetalView.shared.device.makeDefaultLibrary()
         
@@ -71,4 +80,3 @@ class LineMaterial: Material {
         return try MetalView.shared.device.makeRenderPipelineState(descriptor: pipelineDescriptor)
     }
 }
-

@@ -12,6 +12,7 @@ enum PipelineType {
     case pbrPipeline
     case graphPipeline
     case billboardPipeline
+    case linePipeline
 }
 
 
@@ -44,8 +45,23 @@ class Pipeline {
     func prepareObject(object: RenderObject) {
     }
     
+    func draw(object: RenderObject, renderEncoder: MTLRenderCommandEncoder, frame: Int) throws {
+    }
+
     func render(renderEncoder: MTLRenderCommandEncoder, frame: Int) throws {
-        throw Errors.notImplemented
+        renderEncoder.setRenderPipelineState(pipeline!)
+        
+        for (_, material) in self.materials {
+            if material.material.objects.count > 0 {
+                try material.material.prepare(renderEncoder: renderEncoder, frame: frame)
+                    
+                for renderObject in material.material.objects {
+                    if !renderObject.disabled && !(renderObject.model?.disabled ?? true) {
+                        try self.draw(object: renderObject, renderEncoder: renderEncoder, frame: frame)
+                    }
+                }
+            }
+        }
     }
 
     func buildPipeline(

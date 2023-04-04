@@ -16,6 +16,7 @@ enum MaterialWrapper: Equatable, Codable {
     case graphMaterial(GraphMaterial)
     case pointMaterial(PointMaterial)
     case billboardMaterial(BillboardMaterial)
+    case lineMaterial(LineMaterial)
     
     var id: UUID {
         material.id
@@ -30,6 +31,8 @@ enum MaterialWrapper: Equatable, Codable {
         case .pointMaterial(let m):
             return m
         case .billboardMaterial(let m):
+            return m
+        case .lineMaterial(let m):
             return m
         }
     }
@@ -82,6 +85,9 @@ enum MaterialWrapper: Equatable, Codable {
             throw Errors.invalidTexture
         case .billboardMaterial(let m):
             try container.encode("Billboard", forKey: .type)
+            try m.encode(to: encoder)
+        case .lineMaterial(let m):
+            try container.encode("Line", forKey: .type)
             try m.encode(to: encoder)
         }
     }

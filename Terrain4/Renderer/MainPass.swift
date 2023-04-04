@@ -19,10 +19,6 @@ extension Renderer {
         renderEncoder.setCullMode(.back)
         renderEncoder.setDepthStencilState(self.depthState)
         
-        renderEncoder.setVertexBuffer(self.dynamicUniformBuffer, offset: self.uniformBufferOffset, index: BufferIndex.uniforms.rawValue)
-        
-        renderEncoder.setFragmentBuffer(self.dynamicUniformBuffer, offset: self.uniformBufferOffset, index: BufferIndex.uniforms.rawValue)
-        
         if let shadowTexture = objectStore!.currentScene?.directionalLight?.shadowTexture {
             renderEncoder.setFragmentTexture(shadowTexture, index: TextureIndex.depth.rawValue)
         }

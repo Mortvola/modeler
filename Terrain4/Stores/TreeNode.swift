@@ -30,6 +30,10 @@ class TreeNode: ObservableObject, Equatable, Identifiable, Codable {
         content = ObjectWrapper.point(point)
     }
     
+    init(wireBox: WireBox) {
+        content = ObjectWrapper.wireBox(wireBox)
+    }
+    
     init(light: Light) {
         content = ObjectWrapper.light(light)
     }
@@ -62,6 +66,8 @@ class TreeNode: ObservableObject, Equatable, Identifiable, Codable {
             return l.model
         case .directionalLight:
             return nil
+        case .wireBox(let o):
+            return o.model
         }
     }
     
@@ -78,6 +84,8 @@ class TreeNode: ObservableObject, Equatable, Identifiable, Codable {
                 return l.disabled
             case .directionalLight(let d):
                 return d.disabled
+            case .wireBox(let o):
+                return o.disabled
             }
         }
         set(newValue) {
@@ -92,6 +100,8 @@ class TreeNode: ObservableObject, Equatable, Identifiable, Codable {
                 l.disabled = newValue
             case .directionalLight(let d):
                 d.disabled = newValue
+            case .wireBox(let o):
+                o.disabled = newValue
             }
         }
     }
@@ -109,6 +119,8 @@ class TreeNode: ObservableObject, Equatable, Identifiable, Codable {
                 return l.name
             case .directionalLight(let d):
                 return d.name
+            case .wireBox(let o):
+                return o.name
             }
         }
         set(newValue) {
@@ -123,6 +135,8 @@ class TreeNode: ObservableObject, Equatable, Identifiable, Codable {
                 l.name = newValue
             case .directionalLight(let d):
                 d.name = newValue
+            case .wireBox(let o):
+                o.name = newValue
             }
         }
     }
@@ -140,6 +154,8 @@ class TreeNode: ObservableObject, Equatable, Identifiable, Codable {
                 return l
             case .directionalLight(let d):
                 return d
+            case .wireBox(let o):
+                return o
             }
         }
     }

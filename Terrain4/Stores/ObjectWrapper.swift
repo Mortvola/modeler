@@ -45,6 +45,13 @@ enum ObjectWrapper: Equatable, Codable, Identifiable {
             default:
                 return false
             }
+        case .wireBox(let o1):
+            switch rhs {
+            case .wireBox(let o2):
+                return o1 == o2
+            default:
+                return false
+            }
         }
     }
     
@@ -60,6 +67,8 @@ enum ObjectWrapper: Equatable, Codable, Identifiable {
             return l.id
         case .directionalLight(let d):
             return d.id
+        case .wireBox(let o):
+            return o.id
         }
     }
     
@@ -75,6 +84,8 @@ enum ObjectWrapper: Equatable, Codable, Identifiable {
             return l
         case .directionalLight(let d):
             return d
+        case .wireBox(let o):
+            return o
         }
     }
     
@@ -83,6 +94,7 @@ enum ObjectWrapper: Equatable, Codable, Identifiable {
     case point(Point)
     case light(Light)
     case directionalLight(DirectionalLight)
+    case wireBox(WireBox)
     
     enum CodingKeys: CodingKey {
         case type
@@ -140,6 +152,9 @@ enum ObjectWrapper: Equatable, Codable, Identifiable {
         case .directionalLight(let d):
             try container.encode("DirectionalLight", forKey: .type)
             try d.encode(to: encoder)
+        case .wireBox(let o):
+            try container.encode("WireBox", forKey: .type)
+            try o.encode(to: encoder)
         }
     }
 }

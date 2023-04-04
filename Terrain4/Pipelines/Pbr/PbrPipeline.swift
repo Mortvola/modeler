@@ -22,14 +22,14 @@ class PbrPipeline: Pipeline {
             transparent: transparent
         )
     }
-        
+
     override func prepareObject(object: RenderObject) {
         object.uniformsSize = alignedNodeUniformsSize
         object.uniforms = MetalView.shared.device.makeBuffer(length: 3 * alignedNodeUniformsSize, options: [MTLResourceOptions.storageModeShared])!
         object.uniforms!.label = "Node Uniforms"
     }
     
-    func draw(object: RenderObject, renderEncoder: MTLRenderCommandEncoder, frame: Int) throws {
+    override func draw(object: RenderObject, renderEncoder: MTLRenderCommandEncoder, frame: Int) throws {
         if object.instanceData.count > 0 {
             let u: UnsafeMutablePointer<NodeUniforms> = object.getUniformsBuffer(index: frame)
             
@@ -52,28 +52,6 @@ class PbrPipeline: Pipeline {
             renderEncoder.setFragmentBuffer(object.uniforms, offset: frame * object.uniformsSize, index: BufferIndex.nodeUniforms.rawValue)
             
             try object.draw(renderEncoder: renderEncoder)
-        }
-    }
-    
-    override func render(renderEncoder: MTLRenderCommandEncoder, frame: Int) throws {
-        renderEncoder.setRenderPipelineState(pipeline!)
-        
-        for (_, material) in self.materials {
-            if material.material.objects.count > 0 {
-                switch material {
-                case .pbrMaterial(let material):
-                    material.prepare(renderEncoder: renderEncoder, frame: frame)
-                    
-                    for renderObject in material.objects {
-                        if !renderObject.disabled && !(renderObject.model?.disabled ?? true) {
-                            try self.draw(object: renderObject, renderEncoder: renderEncoder, frame: frame)
-                        }
-                    }
-
-                default:
-                    break
-                }
-            }
         }
     }    
 }

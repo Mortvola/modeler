@@ -71,6 +71,10 @@ class RenderObject: Object {
     func setMaterial(material: MaterialWrapper?) {
         try? Renderer.shared.materialManager.setMaterial(object: self, material: material)
     }
+    
+    func setMaterial(materialType: MaterialManager.DefaultMaterialType) {
+        try? Renderer.shared.materialManager.setMaterial(object: self, materialType: materialType)
+    }
 
     func getUniformsBuffer<T>(index: Int) -> UnsafeMutablePointer<T> {
         UnsafeMutableRawPointer(self.uniforms!.contents())
@@ -88,7 +92,7 @@ class RenderObject: Object {
     }
     
     func getModelMatrixUniform(index: Int, instances: Int) -> (UnsafeMutablePointer<ModelMatrixUniforms>, Int) {
-        let size = instances * MemoryLayout<ModelMatrixUniforms>.stride * 3
+        let size = instances * MemoryLayout<ModelMatrixUniforms>.stride * maxBuffersInFlight
         
         if modelMatrixUniformSize < size {
             allocateModelMatrixUniform(size: size)
