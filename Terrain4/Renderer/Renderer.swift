@@ -69,8 +69,14 @@ class Renderer {
     
     public var forwardRenderPassDescriptor: MTLRenderPassDescriptor? = nil
     
-    private let frustumSegments: [Float] = [1, 70, 170, 400, 1600]
+    public var frustumSegments: [Float] = [0, 1.5, 4, 10, 100]
 
+    public var depthBias = Float(0) // (0.015)
+    
+    public var slopeScale = Float(0) // (7)
+    
+    public var biasClamp = Float(0) // (0.02)
+    
     init() {
         self.camera = Camera(world: world)
         

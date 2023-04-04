@@ -99,6 +99,7 @@
 		792EA66929D9E34700208A1E /* CommonTypes.h in Sources */ = {isa = PBXBuildFile; fileRef = 792EA66829D9E34700208A1E /* CommonTypes.h */; };
 		79345D3929C509E200E9F074 /* RectangleAllocator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79345D3629C509E200E9F074 /* RectangleAllocator.swift */; };
 		793E40CD29DB53A0006749F3 /* LinePipeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = 793E40CC29DB53A0006749F3 /* LinePipeline.swift */; };
+		793E40D329DC801A006749F3 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 793E40D229DC801A006749F3 /* SettingsView.swift */; };
 		798D3BE929C35EE600B96C5F /* AlbedoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 798D3BE829C35EE600B96C5F /* AlbedoView.swift */; };
 		798D3BEB29C3613700B96C5F /* NormalsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 798D3BEA29C3613700B96C5F /* NormalsView.swift */; };
 		798D3BED29C361D700B96C5F /* MetallicView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 798D3BEC29C361D700B96C5F /* MetallicView.swift */; };
@@ -307,6 +308,7 @@
 		792EA66829D9E34700208A1E /* CommonTypes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CommonTypes.h; sourceTree = "<group>"; };
 		79345D3629C509E200E9F074 /* RectangleAllocator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RectangleAllocator.swift; sourceTree = "<group>"; };
 		793E40CC29DB53A0006749F3 /* LinePipeline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinePipeline.swift; sourceTree = "<group>"; };
+		793E40D229DC801A006749F3 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		798D3BE829C35EE600B96C5F /* AlbedoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlbedoView.swift; sourceTree = "<group>"; };
 		798D3BEA29C3613700B96C5F /* NormalsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NormalsView.swift; sourceTree = "<group>"; };
 		798D3BEC29C361D700B96C5F /* MetallicView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetallicView.swift; sourceTree = "<group>"; };
@@ -739,6 +741,7 @@
 				79F6D30729C1ED09007CA69A /* Objects */,
 				791C495529B94AEF00C00150 /* ModelManager.swift */,
 				791E78CA29B93A2B00FB45F3 /* ModelsView.swift */,
+				793E40D229DC801A006749F3 /* SettingsView.swift */,
 				791E78CC29B93A2B00FB45F3 /* TransformsView.swift */,
 				791E78CB29B93A2B00FB45F3 /* TransformView.swift */,
 				7921DF7029C888310013E317 /* ModelTreeListItem.swift */,
@@ -997,6 +1000,7 @@
 				799B4BC129C6853900B6826A /* ShadowShaders.metal in Sources */,
 				791E792C29B93D7000FB45F3 /* PbrMaterial.swift in Sources */,
 				79AA09B429D4FF7B001164B7 /* SceneModelList.swift in Sources */,
+				793E40D329DC801A006749F3 /* SettingsView.swift in Sources */,
 				791E793629B9430E00FB45F3 /* RenderViewController.swift in Sources */,
 				791E78C329B9390700FB45F3 /* Configuration.swift in Sources */,
 				791E78D629B93A2B00FB45F3 /* ContentView.swift in Sources */,

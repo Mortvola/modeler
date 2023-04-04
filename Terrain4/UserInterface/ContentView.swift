@@ -14,6 +14,7 @@ enum TabSelection {
     case materials
     case textures
     case scene
+    case settings
 }
 
 struct ContentView: View {
@@ -49,6 +50,12 @@ struct ContentView: View {
                         Label("Scene", systemImage: "video")
                     }
                     .tag(TabSelection.scene)
+                
+                SettingsView(objectStore: file.objectStore)
+                    .tabItem {
+                        Label("Settings", systemImage: "gear")
+                    }
+                    .tag(TabSelection.settings)
             }
             .padding()
             .toolbarRole(.automatic)

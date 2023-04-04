@@ -129,8 +129,11 @@ class Camera {
         return Matrix4x4.perspectiveLeftHand(fovyRadians: degreesToRadians(45), aspect: aspect, nearZ: zn, farZ: zf)
     }
     
-    func getFrustumCorners(nearZ: Float, farZ: Float) -> [Vec4] {
-        let cameraProjectionMatrix = createPerspectiveMatrix(nearZ: nearZ, farZ: farZ)
+    func getFrustumCorners(nearZ nearZPercent: Float, farZ farZPercent: Float) -> [Vec4] {
+        let near = max(nearZPercent / 100.0 * self.farZ, self.nearZ)
+        let far = min(farZPercent / 100.0 * self.farZ, self.farZ)
+        
+        let cameraProjectionMatrix = createPerspectiveMatrix(nearZ: near, farZ: far)
         let cameraViewMatrix = getViewMatrix()
         let cameraViewProjection = cameraProjectionMatrix * cameraViewMatrix
         
