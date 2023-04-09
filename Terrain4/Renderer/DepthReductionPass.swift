@@ -18,7 +18,7 @@ extension Renderer {
         buffer.label = "Depth Reductions"
         self.depthReductionBuffer = buffer
 
-        guard let buffer = MetalView.shared.device.makeBuffer(length: MemoryLayout<Vec2>.size, options: [MTLResourceOptions.storageModePrivate]) else {
+        guard let buffer = MetalView.shared.device.makeBuffer(length: MemoryLayout<Vec2>.size, options: [MTLResourceOptions.storageModeShared]) else {
             throw Errors.makeBufferFailed
         }
         
