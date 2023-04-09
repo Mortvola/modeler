@@ -9,16 +9,16 @@
 #import "ShaderTypes.h"
 using namespace metal;
 
-float DistributionGGX(float3 N, float3 H, float roughness)
+float DistributionGGX(float NdotH, float roughness)
 {
     float a = roughness*roughness;
     float a2 = a*a;
-    float NdotH = max(dot(N, H), 0.0);
     float NdotH2 = NdotH*NdotH;
 
     float nom   = a2;
-    float denom = (NdotH2 * (a2 - 1.0) + 1.0);
-    denom = 3.14159265359 * denom * denom;
+//    float denom = (NdotH2 * (a2 - 1.0) + 1.0);
+    float denom = max((NdotH2 * (a2 - 1.0) + 1.0), 1e-3);
+    denom = M_PI_F * denom * denom;
 
     return nom / denom;
 }
@@ -84,19 +84,20 @@ float3 computeLo(
 
     float3 H = normalize(V + L);
     
-    float NdotV = max(dot(N, V), 0.0);
-    float NdotL = max(dot(N, L), 0.0);
-    float HdotV = clamp(dot(H, V), 0.0, 1.0);
+    float NdotV = saturate(dot(N, V));
+    float NdotL = saturate(dot(N, L));
+//    float HdotV = clamp(dot(H, V), 0.0, 1.0);
+    float HdotL = saturate(dot(H, L));
+    float NdotH = saturate(dot(N, H));
     
     // Cook-Torrance BRDF
-    float NDF = DistributionGGX(N, H, roughness);
+    float NDF = DistributionGGX(NdotH, roughness);
     float G = GeometrySmith(NdotV, NdotL, roughness);
-    float3 F = fresnelSchlick(HdotV, F0);
+    float3 F = fresnelSchlick(HdotL, F0);
        
     float3 numerator = NDF * G * F;
-    float denominator = 4.0 * NdotV * NdotL + 0.0001; // + 0.0001 to prevent divide by zero
+    float denominator = 4.0; // * NdotV * NdotL + 0.0001; // + 0.0001 to prevent divide by zero
     float3 specular = numerator / denominator;
-    // specular = float3(0, 0, 0);
     
     // kS is equal to Fresnel
     float3 kS = F;
@@ -109,7 +110,7 @@ float3 computeLo(
     // have no diffuse light).
     kD *= 1.0 - metallic;
 
-    float3 Lo = (kD * albedo / 3.14159265359 + specular) * radiance * NdotL;
+    float3 Lo = (kD * albedo / M_PI_F + specular) * NdotL * radiance;
     
     return Lo;
 }

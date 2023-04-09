@@ -28,7 +28,7 @@ TransparentFragmentStore processTransparent
 (
     float4 color,
     float4 position,
-    TransparentFragmentValues  fragmentValues [[imageblock_data]]
+    TransparentFragmentValues fragmentValues [[imageblock_data]]
 )
 {
     TransparentFragmentStore out;
@@ -53,44 +53,11 @@ TransparentFragmentStore processTransparent
         finalColor = insert ? layerColor : finalColor;
         depth = insert ? layerDepth : depth;
     }
+    
     out.values = fragmentValues;
 
     return out;
 }
-
-/// Adds transparent fragments into an image block structure in depth order.
-//fragment TransparentFragmentStore processTransparentFragment
-//(
-//    ColorInOut                 in             [[stage_in]],
-//    device const ActorParams  &actorParams    [[buffer(AAPLBufferIndexActorParams)]],
-//    TransparentFragmentValues  fragmentValues [[imageblock_data]]
-//)
-//{
-//    TransparentFragmentStore out;
-//    half4 finalColor = half4(actorParams.color);
-//    finalColor.xyz *= finalColor.w;
-//
-//    // Get the fragment distance from the camera.
-//    half depth = in.position.z / in.position.w;
-//
-//    // Insert the transparent fragment values in order of depth, discarding
-//    // the farthest fragments after the `colors` and `depths` are full.
-//    for (short i = 0; i < kNumLayers; ++i)
-//    {
-//        half layerDepth = fragmentValues.depths[i];
-//        half4 layerColor = fragmentValues.colors[i];
-//
-//        bool insert = (depth <= layerDepth);
-//        fragmentValues.colors[i] = insert ? finalColor : layerColor;
-//        fragmentValues.depths[i] = insert ? depth : layerDepth;
-//
-//        finalColor = insert ? layerColor : finalColor;
-//        depth = insert ? layerDepth : depth;
-//    }
-//    out.values = fragmentValues;
-//
-//    return out;
-//}
 
 typedef struct
 {

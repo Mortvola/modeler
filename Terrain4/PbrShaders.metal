@@ -234,7 +234,7 @@ fragment TransparentFragmentStore pbrFragmentTransparencyShader
     texture2d<float> aoMap [[texture(TextureIndexAo)]],
     sampler sampler [[sampler(SamplerIndexSampler)]],
     depth2d_array<float> shadowMap [[texture(TextureIndexDepth)]],
-    TransparentFragmentValues  fragmentValues [[imageblock_data]]
+    TransparentFragmentValues fragmentValues [[imageblock_data]]
 ) {
     float4 color = pbrFragment(in, uniforms, nodeUniforms, materialUniforms, textures, aoMap, sampler, shadowMap);
     

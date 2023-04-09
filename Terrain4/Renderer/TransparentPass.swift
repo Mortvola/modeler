@@ -11,7 +11,7 @@ import Metal
 extension Renderer {
     func renderTransparentPass(renderEncoder: MTLRenderCommandEncoder) throws {
         /// Final pass rendering code here
-        renderEncoder.label = "Transparent Render Encoder"
+//        renderEncoder.label = "Transparent Render Encoder"
         
 //            renderEncoder.pushDebugGroup("Main Pass")
         

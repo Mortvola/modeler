@@ -28,7 +28,9 @@ typedef NS_ENUM(EnumBackingType, BufferIndex) {
     BufferIndexModelMatrix = 3,
     BufferIndexNodeUniforms = 4,
     BufferIndexMaterialUniforms = 5,
-    BufferIndexCascadeIndex = 7
+    BufferIndexCascadeIndex = 7,
+    BufferIndexReductionIndex = 8,
+    BufferIndexFinalReductionIndex = 9
 };
 
 typedef NS_ENUM(EnumBackingType, VertexAttribute) {
@@ -63,6 +65,7 @@ typedef struct {
 
 typedef struct {
     matrix_float4x4 projectionMatrix;
+    matrix_float4x4 invProjectionMatrix;
     matrix_float4x4 viewMatrix;
     vector_float3 cameraPos;
     DirectionalLight directionalLight;
@@ -108,6 +111,22 @@ typedef struct {
     matrix_float3x3 normalMatrix;
 } ModelMatrixUniforms;
 
+typedef struct {
+    vector_float3 min;
+    vector_float3 max;
+} MinMax;
+
+static
+#ifdef __METAL_VERSION__
+constexpr constant
+#endif
+int kTileWidth = 16;
+
+static
+#ifdef __METAL_VERSION__
+constexpr constant
+#endif
+int kTileHeight = 16;
 
 #endif /* ShaderTypes_h */
 

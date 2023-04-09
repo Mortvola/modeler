@@ -10,6 +10,12 @@ import MetalKit
 
 class PipelineManager {
     public var depthShadowPipeline: DepthShadowPipeline
+    
+    public var depthReductionInitPipeline: MTLRenderPipelineState?
+    public var depthReductionPipeline: DepthReductionPipeline
+    public var depthReductionMinMaxPipeline: MTLRenderPipelineState?
+    public var depthReductionFinalizePipeline: MTLRenderPipelineState?
+    
     public var imageBlockPipeline: MTLRenderPipelineState?
     public var blendFragmentsPipeline: MTLRenderPipelineState?
     
@@ -22,13 +28,19 @@ class PipelineManager {
         samplerState = PipelineManager.buildSamplerState()
 
         depthShadowPipeline = DepthShadowPipeline()
+        depthReductionPipeline = DepthReductionPipeline()
     }
     
     func initialize() throws {
+        depthReductionInitPipeline = try buildDepthReductionInitPipeline()
+        depthReductionMinMaxPipeline = try buildDepthReductionMinMaxPipeline()
+        depthReductionFinalizePipeline = try buildDepthReductionFinalizePipeline()
+        
         imageBlockPipeline = try buildImageBlockPipeline()
         blendFragmentsPipeline = try buildBlendFragmentsPipeline()
         
         try depthShadowPipeline.initialize()
+        try depthReductionPipeline.initialize()
     }
     
     func render(renderEncoder: MTLRenderCommandEncoder, frame: Int) throws {
@@ -118,6 +130,66 @@ class PipelineManager {
         return MetalView.shared.device.makeSamplerState(descriptor: samplerDescriptor)!
     }
     
+    private func buildDepthReductionInitPipeline() throws -> MTLRenderPipelineState {
+        let library = MetalView.shared.device.makeDefaultLibrary()
+
+        let tileFunction = library?.makeFunction(name: "initDepthFragmentStore")
+        
+        guard let tileFunction = tileFunction else {
+            throw Errors.makeFunctionError
+        }
+
+        let descr = MTLTileRenderPipelineDescriptor()
+        descr.label = "DepthReductionInitPipeline"
+        descr.tileFunction = tileFunction
+        descr.colorAttachments[0].pixelFormat = .r32Float // MetalView.shared.view!.colorPixelFormat
+        descr.threadgroupSizeMatchesTileSize = false
+
+        let (renderPipelineState, _) = try MetalView.shared.device.makeRenderPipelineState(tileDescriptor: descr, options: [])
+        
+        return renderPipelineState
+    }
+    
+    private func buildDepthReductionMinMaxPipeline() throws -> MTLRenderPipelineState {
+        let library = MetalView.shared.device.makeDefaultLibrary()
+
+        let tileFunction = library?.makeFunction(name: "reduceDepthFragments")
+        
+        guard let tileFunction = tileFunction else {
+            throw Errors.makeFunctionError
+        }
+
+        let descr = MTLTileRenderPipelineDescriptor()
+        descr.label = "DepthReductionMinMaxPipeline"
+        descr.tileFunction = tileFunction
+        descr.colorAttachments[0].pixelFormat = .r32Float // MetalView.shared.view!.colorPixelFormat
+        descr.threadgroupSizeMatchesTileSize = false
+        
+        let (renderPipelineState, _) = try MetalView.shared.device.makeRenderPipelineState(tileDescriptor: descr, options: [])
+        
+        return renderPipelineState
+    }
+
+    private func buildDepthReductionFinalizePipeline() throws -> MTLRenderPipelineState {
+        let library = MetalView.shared.device.makeDefaultLibrary()
+
+        let tileFunction = library?.makeFunction(name: "minMaxDepthBoundsFinalize")
+        
+        guard let tileFunction = tileFunction else {
+            throw Errors.makeFunctionError
+        }
+
+        let descr = MTLTileRenderPipelineDescriptor()
+        descr.label = "DepthReductionFinalizePipeline"
+        descr.tileFunction = tileFunction
+        descr.colorAttachments[0].pixelFormat = .r32Float // MetalView.shared.view!.colorPixelFormat
+        descr.threadgroupSizeMatchesTileSize = false
+        
+        let (renderPipelineState, _) = try MetalView.shared.device.makeRenderPipelineState(tileDescriptor: descr, options: [])
+        
+        return renderPipelineState
+    }
+
     private func buildImageBlockPipeline() throws -> MTLRenderPipelineState {
         let library = MetalView.shared.device.makeDefaultLibrary()
 
@@ -128,7 +200,7 @@ class PipelineManager {
         }
 
         let descr = MTLTileRenderPipelineDescriptor()
-        descr.label = "Image Block Pipeline"
+        descr.label = "Transparent Image Block Pipeline"
         descr.tileFunction = tileFunction
         descr.colorAttachments[0].pixelFormat = MetalView.shared.view!.colorPixelFormat
         descr.threadgroupSizeMatchesTileSize = true

@@ -67,8 +67,8 @@ class Renderer {
     
     private var initialized = false
     
-    public var forwardRenderPassDescriptor: MTLRenderPassDescriptor? = nil
-    
+//    public var forwardRenderPassDescriptor: MTLRenderPassDescriptor? = nil
+//
     public var frustumSegments: [Float] = [0, 1.5, 4, 10, 100]
 
     public var depthBias = Float(0) // (0.015)
@@ -79,6 +79,14 @@ class Renderer {
     
     public var cascadeDebug = false
     
+    public var depthReductionBuffer: MTLBuffer? = nil
+    public var depthReductionFinalBuffer: MTLBuffer? = nil
+    
+    public var depthReductionBufferLength = 0;
+    
+    public var depthTexture: MTLTexture? = nil
+    public var depthReductionTexture: MTLTexture? = nil
+
     init() {
         self.camera = Camera(world: world)
         
@@ -108,13 +116,13 @@ class Renderer {
         
         self.initialized = true
         
-        forwardRenderPassDescriptor = MTLRenderPassDescriptor()
-        forwardRenderPassDescriptor!.colorAttachments[0].clearColor = MTLClearColorMake(0.0, 0.0, 0.0, 1.0)
-        forwardRenderPassDescriptor!.colorAttachments[0].loadAction = .clear;
-        forwardRenderPassDescriptor!.colorAttachments[0].storeAction = .store;
-        forwardRenderPassDescriptor!.depthAttachment.clearDepth = 1.0;
-        forwardRenderPassDescriptor!.depthAttachment.loadAction = .clear;
-        forwardRenderPassDescriptor!.depthAttachment.storeAction = .dontCare;
+//        forwardRenderPassDescriptor = MTLRenderPassDescriptor()
+//        forwardRenderPassDescriptor!.colorAttachments[0].clearColor = MTLClearColorMake(0.0, 0.0, 0.0, 1.0)
+//        forwardRenderPassDescriptor!.colorAttachments[0].loadAction = .clear;
+//        forwardRenderPassDescriptor!.colorAttachments[0].storeAction = .store;
+//        forwardRenderPassDescriptor!.depthAttachment.clearDepth = 1.0;
+//        forwardRenderPassDescriptor!.depthAttachment.loadAction = .clear;
+//        forwardRenderPassDescriptor!.depthAttachment.storeAction = .dontCare;
     }
     
     func makeDepthStates() throws {
@@ -491,6 +499,28 @@ class Renderer {
         currentViewMode = viewMode
     }
     
+    func storeFrameConstants(_ uniforms: UnsafeMutablePointer<FrameUniforms>) {
+        uniforms[0].projectionMatrix = self.camera.projectionMatrix
+        uniforms[0].invProjectionMatrix = self.camera.projectionMatrix.inverse
+        uniforms[0].viewMatrix = self.camera.getViewMatrix()
+        uniforms[0].cameraPos = self.camera.cameraOffset
+        uniforms[0].directionalLight.lightVector = objectStore!.currentScene?.directionalLight?.direction ?? Vec3(0, 0, 0)
+        uniforms[0].directionalLight.lightColor = objectStore!.directionalLight.disabled ? Vec3(0, 0, 0) : objectStore!.directionalLight.intensity
+        
+        if let directionalLight = objectStore!.currentScene?.directionalLight {
+            withUnsafeMutableBytes(of: &uniforms[0].directionalLight.viewProjectionMatrix) { rawPtr in
+                let matrix = rawPtr.baseAddress!.assumingMemoryBound(to: Matrix4x4.self)
+                
+                for i in 0..<shadowMapCascades {
+                    let cameraFrustum = camera.getFrustumCorners(nearZ: frustumSegments[i], farZ: frustumSegments[i + 1])
+                    matrix[i] = directionalLight.calculateProjectionViewMatrix(cameraFrustum: cameraFrustum)
+                }
+            }
+        }
+        
+        uniforms[0].cascadeDebug = self.cascadeDebug
+    }
+    
     func render(in view: MTKView) throws {
         guard let uniforms = self.uniforms else {
             return
@@ -511,32 +541,16 @@ class Renderer {
                 
                 self.updateState()
                 
-                uniforms[0].projectionMatrix = self.camera.projectionMatrix
-                uniforms[0].viewMatrix = self.camera.getViewMatrix()
-                uniforms[0].cameraPos = self.camera.cameraOffset
-                uniforms[0].directionalLight.lightVector = objectStore!.currentScene?.directionalLight?.direction ?? Vec3(0, 0, 0)
-                uniforms[0].directionalLight.lightColor = objectStore!.directionalLight.disabled ? Vec3(0, 0, 0) : objectStore!.directionalLight.intensity
+                storeFrameConstants(uniforms)
+                            
+                try renderDepthReductionPass(view: view, commandBuffer: commandBuffer)
                 
-                if let directionalLight = objectStore!.currentScene?.directionalLight {
-                    withUnsafeMutableBytes(of: &uniforms[0].directionalLight.viewProjectionMatrix) { rawPtr in
-                        let matrix = rawPtr.baseAddress!.assumingMemoryBound(to: Matrix4x4.self)
-                        
-                        for i in 0..<shadowMapCascades {
-                            let cameraFrustum = camera.getFrustumCorners(nearZ: frustumSegments[i], farZ: frustumSegments[i + 1])
-                            matrix[i] = directionalLight.calculateProjectionViewMatrix(cameraFrustum: cameraFrustum)
-                        }
-                    }
-                }
-                
-                uniforms[0].cascadeDebug = self.cascadeDebug
-                
-                                
                 try renderShadowPass(commandBuffer: commandBuffer)
                 
-                commandBuffer.commit()
-                
-                if let commandBuffer = commandQueue.makeCommandBuffer() {
-                    commandBuffer.label = "\(self.uniformBufferIndex)"
+//                commandBuffer.commit()
+//
+//                if let commandBuffer = commandQueue.makeCommandBuffer() {
+//                    commandBuffer.label = "\(self.uniformBufferIndex)"
                     
                     /// Delay getting the currentRenderPassDescriptor until we absolutely need it to avoid
                     ///   holding onto the drawable and blocking the display pipeline any longer than necessary
@@ -552,10 +566,11 @@ class Renderer {
                         if let renderEncoder = commandBuffer.makeRenderCommandEncoder(descriptor: renderPassDescriptor) {
                             
                             if pipelineManager.transparentPipelines.count > 0 {
+                                // Clear out the transparent fragment stores.
                                 renderEncoder.setRenderPipelineState(pipelineManager.imageBlockPipeline!)
                                 renderEncoder.dispatchThreadsPerTile(optimalTileSize)
                             }
-                            
+
                             renderEncoder.setVertexBuffer(self.dynamicUniformBuffer, offset: self.uniformBufferOffset, index: BufferIndex.uniforms.rawValue)
                             
                             renderEncoder.setFragmentBuffer(self.dynamicUniformBuffer, offset: self.uniformBufferOffset, index: BufferIndex.uniforms.rawValue)
@@ -587,10 +602,11 @@ class Renderer {
                     }
                     
                     commandBuffer.commit()
-                }
-                else {
-                    inFlightSemaphore.signal()
-                }
+//                }
+//                else {
+//                    print("failed to get command buffer")
+//                    inFlightSemaphore.signal()
+//                }
                 
                 if MovieManager.shared.recording {
                     if let texture = view.currentDrawable?.texture, !texture.isFramebufferOnly {
@@ -612,6 +628,25 @@ class Renderer {
     }
     
     public func mtkView(_ view: MTKView, drawableSizeWillChange size: CGSize) {
+        if size.width != 0 && size.height != 0 {
+            let depthDescr = MTLTextureDescriptor.texture2DDescriptor(pixelFormat: .r32Float, width: Int(size.width), height: Int(size.height), mipmapped: false)
+            depthDescr.storageMode = .private
+            depthDescr.usage = [.renderTarget, .shaderRead]
+            depthDescr.textureType = .type2D
+            
+            depthReductionTexture = MetalView.shared.device.makeTexture(descriptor: depthDescr)
+            depthReductionTexture?.label = "Reduction Depth Map"
+
+            let depthDescr2 = MTLTextureDescriptor.texture2DDescriptor(pixelFormat: .depth32Float, width: Int(size.width), height: Int(size.height), mipmapped: false)
+            depthDescr2.storageMode = .private
+            depthDescr2.usage = [.renderTarget]
+            depthDescr2.textureType = .type2D
+
+            
+            depthTexture = MetalView.shared.device.makeTexture(descriptor: depthDescr2)
+            depthTexture?.label = "Depth Map"
+        }
+        
         self.camera.updateViewDimensions(width: Float(size.width), height: Float(size.height))
     }
 
