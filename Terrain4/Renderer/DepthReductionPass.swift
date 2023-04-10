@@ -88,7 +88,7 @@ extension Renderer {
         renderEncoder.setRenderPipelineState(pipelineManager.depthReductionMinMaxPipeline!)
         renderEncoder.dispatchThreadsPerTile(MTLSizeMake(8, 8, 1))
 
-        renderEncoder.setTileBuffer(self.shadowCascadeMatricesBuffer, offset: self.shadowCascadeMatricesOffset, index: BufferIndex.shadowCascadeMatrices.rawValue)
+        renderEncoder.setTileBuffer(self.shadowCascadeMatricesBuffer, offset: 0, index: BufferIndex.shadowCascadeMatrices.rawValue)
         renderEncoder.setTileBuffer(depthReductionBuffer, offset: 0, index: BufferIndex.reduction.rawValue)
         renderEncoder.setRenderPipelineState(pipelineManager.depthReductionFinalizePipeline!)
         renderEncoder.dispatchThreadsPerTile(MTLSizeMake(1, 1, 1))

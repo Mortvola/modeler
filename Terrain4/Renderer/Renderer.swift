@@ -41,8 +41,6 @@ class Renderer {
     private var uniforms: UnsafeMutablePointer<FrameConstants>?
 
     public var shadowCascadeMatricesBuffer: MTLBuffer?
-    public var shadowCascadeMatricesOffset = 0
-    private var shadowCascadeMatrices: UnsafeMutablePointer<ShadowCascadeMatrices>?
 
     public var uniformBufferIndex = 0
     
@@ -89,7 +87,6 @@ class Renderer {
     
     public var depthTexture: MTLTexture? = nil
     public var depthReductionTexture: MTLTexture? = nil
-//    public var depthBounds = Vec2(1, 1600)
 
     init() {
         self.camera = Camera(world: world)
@@ -170,21 +167,25 @@ class Renderer {
     }
     
     func makeFrameConstantsBuffer() throws {
-        self.dynamicUniformBuffer = try makeTripleBuffer(dataSize: alignedUniformsSize, label: "Frame Constants")
+        self.dynamicUniformBuffer = try makeTripleBuffer(dataSize: alignedUniformsSize, label: "Frame Constants", options: [MTLResourceOptions.storageModeShared])
         
         self.uniforms = UnsafeMutableRawPointer(self.dynamicUniformBuffer!.contents()).bindMemory(to: FrameConstants.self, capacity: 1)
     }
     
     func makeShadowCascadeMatricesBuffer() throws {
-        self.shadowCascadeMatricesBuffer = try makeTripleBuffer(dataSize: MemoryLayout<ShadowCascadeMatrices>.size, label: "Shadow Cascade Matrices")
-
-        self.shadowCascadeMatrices = UnsafeMutableRawPointer(self.dynamicUniformBuffer!.contents()).bindMemory(to: ShadowCascadeMatrices.self, capacity: 1)
+        guard let buffer = MetalView.shared.device.makeBuffer(length: MemoryLayout<ShadowCascadeMatrices>.size, options: [MTLResourceOptions.storageModePrivate]) else {
+            throw Errors.makeBufferFailed
+        }
+        
+        buffer.label = "Shadow Cascade Matrices"
+        
+        self.shadowCascadeMatricesBuffer = buffer
     }
     
-    func makeTripleBuffer(dataSize: Int, label: String) throws -> MTLBuffer {
+    func makeTripleBuffer(dataSize: Int, label: String, options: MTLResourceOptions = []) throws -> MTLBuffer {
         let bufferSize = dataSize * maxBuffersInFlight
         
-        guard let buffer = MetalView.shared.device.makeBuffer(length: bufferSize, options: [MTLResourceOptions.storageModeShared]) else {
+        guard let buffer = MetalView.shared.device.makeBuffer(length: bufferSize, options: options) else {
             throw Errors.makeBufferFailed
         }
         
@@ -249,18 +250,6 @@ class Renderer {
         self.uniformBufferOffset = alignedUniformsSize * uniformBufferIndex
         
         self.uniforms = UnsafeMutableRawPointer(dynamicUniformBuffer.contents() + self.uniformBufferOffset).bindMemory(to: FrameConstants.self, capacity: 1)
-    }
-
-    private func updateShadowCascadeMatricesBufferState() {
-        /// Update the state of our uniform buffers before rendering
-        
-        guard let buffer = self.shadowCascadeMatricesBuffer else {
-            return
-        }
-        
-        self.shadowCascadeMatricesOffset = MemoryLayout<ShadowCascadeMatrices>.size * uniformBufferIndex
-        
-        self.shadowCascadeMatrices = UnsafeMutableRawPointer(buffer.contents() + self.shadowCascadeMatricesOffset).bindMemory(to: ShadowCascadeMatrices.self, capacity: 1)
     }
 
     private func updateTimeOfDay(elapsedTime: Double) {
@@ -558,7 +547,6 @@ class Renderer {
             
                 uniformBufferIndex = (uniformBufferIndex + 1) % maxBuffersInFlight
                 self.updateDynamicBufferState()
-                self.updateShadowCascadeMatricesBufferState()
                 
                 self.updateState()
                 
@@ -591,9 +579,9 @@ class Renderer {
                         
                         renderEncoder.setFragmentBuffer(self.dynamicUniformBuffer, offset: self.uniformBufferOffset, index: BufferIndex.frameConstants.rawValue)
                         
-                        renderEncoder.setVertexBuffer(self.shadowCascadeMatricesBuffer, offset: self.shadowCascadeMatricesOffset, index: BufferIndex.shadowCascadeMatrices.rawValue)
+                        renderEncoder.setVertexBuffer(self.shadowCascadeMatricesBuffer, offset: 0, index: BufferIndex.shadowCascadeMatrices.rawValue)
                         
-                        renderEncoder.setFragmentBuffer(self.shadowCascadeMatricesBuffer, offset: self.shadowCascadeMatricesOffset, index: BufferIndex.shadowCascadeMatrices.rawValue)
+                        renderEncoder.setFragmentBuffer(self.shadowCascadeMatricesBuffer, offset: 0, index: BufferIndex.shadowCascadeMatrices.rawValue)
 
                         try renderMainPass(renderEncoder: renderEncoder)
                         
@@ -645,7 +633,7 @@ class Renderer {
     public func mtkView(_ view: MTKView, drawableSizeWillChange size: CGSize) {
         if size.width != 0 && size.height != 0 {
             let depthDescr = MTLTextureDescriptor.texture2DDescriptor(pixelFormat: .r32Float, width: Int(size.width), height: Int(size.height), mipmapped: false)
-            depthDescr.storageMode = .private
+            depthDescr.storageMode = .memoryless
             depthDescr.usage = [.renderTarget, .shaderRead]
             depthDescr.textureType = .type2D
             
@@ -653,7 +641,7 @@ class Renderer {
             depthReductionTexture?.label = "Reduction Depth Map"
 
             let depthDescr2 = MTLTextureDescriptor.texture2DDescriptor(pixelFormat: .depth32Float, width: Int(size.width), height: Int(size.height), mipmapped: false)
-            depthDescr2.storageMode = .private
+            depthDescr2.storageMode = .memoryless
             depthDescr2.usage = [.renderTarget]
             depthDescr2.textureType = .type2D
 

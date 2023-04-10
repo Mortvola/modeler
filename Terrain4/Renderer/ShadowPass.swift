@@ -61,7 +61,7 @@ extension Renderer {
                 
                 renderEncoder.setVertexBuffer(self.dynamicUniformBuffer, offset: self.uniformBufferOffset, index: BufferIndex.frameConstants.rawValue)
                 
-                renderEncoder.setVertexBuffer(self.shadowCascadeMatricesBuffer, offset: self.shadowCascadeMatricesOffset, index: BufferIndex.shadowCascadeMatrices.rawValue)
+                renderEncoder.setVertexBuffer(self.shadowCascadeMatricesBuffer, offset: 0, index: BufferIndex.shadowCascadeMatrices.rawValue)
 
                 var cascadeIndex = Int32(cascade)
                 renderEncoder.setVertexBytes(&cascadeIndex, length: MemoryLayout<Int32>.size, index: BufferIndex.cascadeIndex.rawValue)
