@@ -552,9 +552,12 @@ class Renderer {
                 
                 storeFrameConstants(uniforms)
                 
-                try renderDepthReductionPass(view: view, commandBuffer: commandBuffer)
-
-                try renderShadowPass(commandBuffer: commandBuffer)
+                // Only do the depth reduction and shadow map rendering when there is directional light.
+                if objectStore!.currentScene?.directionalLight != nil {
+                    try renderDepthReductionPass(view: view, commandBuffer: commandBuffer)
+                    
+                    try renderShadowPass(commandBuffer: commandBuffer)
+                }
                 
                 /// Delay getting the currentRenderPassDescriptor until we absolutely need it to avoid
                 ///   holding onto the drawable and blocking the display pipeline any longer than necessary
