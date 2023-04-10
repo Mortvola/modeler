@@ -49,18 +49,18 @@
 //    // float4 position = float4(in.position, 1.0);
 //
 //    vertexOut.N = normalize(float3(0.0, 1.0, -1.0));
-//    vertexOut.cameraPos = uniforms.cameraPos;
-//    vertexOut.V = normalize(uniforms.cameraPos - in.position);
+//    vertexOut.cameraPos = frameConstants.cameraPos;
+//    vertexOut.V = normalize(frameConstants.cameraPos - in.position);
 //
 //    float3 albedo = float3(0.0, 0.0, 1.0); // pow(albedoMap.sample(sampler, fragmentIn.texCoords).rgb, float3(2.2));
 //    float metallic = 1.0; // metallicMap.sample(sampler, fragmentIn.texCoords).r;
 //    float roughness = 1.0; // roughnessMap.sample(sampler, fragmentIn.texCoords).r;
 //    float ao = 1.0;
 //
-//    float distance = length(uniforms.lightPos - in.position);
+//    float distance = length(frameConstants.lightPos - in.position);
 //    float attenuation = 1.0 / (distance * distance);
-//    float3 radiance = uniforms.lightColor * attenuation;
-//    vertexOut.lightVector = normalize(uniforms.lightPos - in.position);
+//    float3 radiance = frameConstants.lightColor * attenuation;
+//    vertexOut.lightVector = normalize(frameConstants.lightPos - in.position);
 //
 //    float3 Lo = computeLo(albedo, metallic, roughness, vertexOut.N, vertexOut.V, vertexOut.lightVector, radiance);
 //
@@ -83,7 +83,7 @@
 //
 //    vertexOut.worldPos = position;
 //
-//    vertexOut.position = uniforms.projectionMatrix * uniforms.viewMatrix * modelMatrix * position;
+//    vertexOut.position = frameConstants.projectionMatrix * frameConstants.viewMatrix * modelMatrix * position;
 //
 //    vertexOut.color = float4(1.0, 0.0, 0.0, 1.0);
 //

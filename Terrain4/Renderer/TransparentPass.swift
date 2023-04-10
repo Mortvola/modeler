@@ -19,7 +19,7 @@ extension Renderer {
         renderEncoder.setCullMode(.none)
         renderEncoder.setDepthStencilState(self.transparentDepthState)
 
-        try pipelineManager.transparentRender(renderEncoder: renderEncoder, frame: self.uniformBufferIndex)
+        try pipelineManager.transparentRender(renderEncoder: renderEncoder, frame: self.tripleBufferIndex)
         
 //            renderEncoder.popDebugGroup()        
     }

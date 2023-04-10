@@ -35,13 +35,13 @@ class Renderer {
     
     private let inFlightSemaphore = DispatchSemaphore(value: maxBuffersInFlight)
     
-    public var dynamicUniformBuffer: MTLBuffer?
-    public var uniformBufferOffset = 0
-    private var uniforms: UnsafeMutablePointer<FrameConstants>?
+    public var frameConstantsBuffer: MTLBuffer?
+    public var frameConstantsBufferOffset = 0
+    private var frameConstants: UnsafeMutablePointer<FrameConstants>?
 
     public var shadowCascadeMatricesBuffer: MTLBuffer?
 
-    public var uniformBufferIndex = 0
+    public var tripleBufferIndex = 0
     
     public let world = World()
     
@@ -160,9 +160,9 @@ class Renderer {
     }
     
     func makeFrameConstantsBuffer() throws {
-        self.dynamicUniformBuffer = try makeTripleBuffer(dataSize: alignedUniformsSize, label: "Frame Constants", options: [MTLResourceOptions.storageModeShared])
+        self.frameConstantsBuffer = try makeTripleBuffer(dataSize: alignedUniformsSize, label: "Frame Constants", options: [MTLResourceOptions.storageModeShared])
         
-        self.uniforms = UnsafeMutableRawPointer(self.dynamicUniformBuffer!.contents()).bindMemory(to: FrameConstants.self, capacity: 1)
+        self.frameConstants = UnsafeMutableRawPointer(self.frameConstantsBuffer!.contents()).bindMemory(to: FrameConstants.self, capacity: 1)
     }
     
     func makeShadowCascadeMatricesBuffer() throws {
@@ -236,13 +236,13 @@ class Renderer {
     private func updateDynamicBufferState() {
         /// Update the state of our uniform buffers before rendering
         
-        guard let dynamicUniformBuffer = self.dynamicUniformBuffer else {
+        guard let frameConstantsBuffer = self.frameConstantsBuffer else {
             return
         }
         
-        self.uniformBufferOffset = alignedUniformsSize * uniformBufferIndex
+        self.frameConstantsBufferOffset = alignedUniformsSize * tripleBufferIndex
         
-        self.uniforms = UnsafeMutableRawPointer(dynamicUniformBuffer.contents() + self.uniformBufferOffset).bindMemory(to: FrameConstants.self, capacity: 1)
+        self.frameConstants = UnsafeMutableRawPointer(frameConstantsBuffer.contents() + self.frameConstantsBufferOffset).bindMemory(to: FrameConstants.self, capacity: 1)
     }
 
     private func updateTimeOfDay(elapsedTime: Double) {
@@ -523,7 +523,7 @@ class Renderer {
     }
 
     func render(in view: MTKView) throws {
-        guard let uniforms = self.uniforms else {
+        guard let frameConstants = self.frameConstants else {
             return
         }
         
@@ -536,14 +536,14 @@ class Renderer {
             _ = inFlightSemaphore.wait(timeout: DispatchTime.distantFuture)
         
             if let commandBuffer = commandQueue.makeCommandBuffer() {
-                commandBuffer.label = "\(self.uniformBufferIndex)"
+                commandBuffer.label = "\(self.tripleBufferIndex)"
             
-                uniformBufferIndex = (uniformBufferIndex + 1) % maxBuffersInFlight
+                tripleBufferIndex = (tripleBufferIndex + 1) % maxBuffersInFlight
                 self.updateDynamicBufferState()
                 
                 self.updateState()
                 
-                storeFrameConstants(uniforms)
+                storeFrameConstants(frameConstants)
                 
                 // Only do the depth reduction and shadow map rendering when there is directional light.
                 if objectStore!.currentScene?.directionalLight != nil {
@@ -571,9 +571,9 @@ class Renderer {
                             renderEncoder.dispatchThreadsPerTile(optimalTileSize)
                         }
                         
-                        renderEncoder.setVertexBuffer(self.dynamicUniformBuffer, offset: self.uniformBufferOffset, index: BufferIndex.frameConstants.rawValue)
+                        renderEncoder.setVertexBuffer(self.frameConstantsBuffer, offset: self.frameConstantsBufferOffset, index: BufferIndex.frameConstants.rawValue)
                         
-                        renderEncoder.setFragmentBuffer(self.dynamicUniformBuffer, offset: self.uniformBufferOffset, index: BufferIndex.frameConstants.rawValue)
+                        renderEncoder.setFragmentBuffer(self.frameConstantsBuffer, offset: self.frameConstantsBufferOffset, index: BufferIndex.frameConstants.rawValue)
                         
                         renderEncoder.setVertexBuffer(self.shadowCascadeMatricesBuffer, offset: 0, index: BufferIndex.shadowCascadeMatrices.rawValue)
                         

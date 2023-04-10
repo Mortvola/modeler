@@ -20,7 +20,7 @@ struct VertexOut {
 
 vertex VertexOut skyboxVertexShader(
     VertexIn in [[stage_in]],
-    const device FrameConstants& uniforms [[ buffer(BufferIndexFrameConstants) ]]
+    const device FrameConstants& frameConstants [[ buffer(BufferIndexFrameConstants) ]]
 ) {
     VertexOut vertexOut;
     
@@ -29,15 +29,15 @@ vertex VertexOut skyboxVertexShader(
     // Strip out the translation components from the view matrix (we want the skybox
     // to be around the camera even when the camera moves).
     float4x4 rotate = float4x4(
-        uniforms.viewMatrix[0][0], uniforms.viewMatrix[0][1], uniforms.viewMatrix[0][2], 0,
-        uniforms.viewMatrix[1][0], uniforms.viewMatrix[1][1], uniforms.viewMatrix[1][2], 0,
-        uniforms.viewMatrix[2][0], uniforms.viewMatrix[2][1], uniforms.viewMatrix[2][2], 0,
+        frameConstants.viewMatrix[0][0], frameConstants.viewMatrix[0][1], frameConstants.viewMatrix[0][2], 0,
+        frameConstants.viewMatrix[1][0], frameConstants.viewMatrix[1][1], frameConstants.viewMatrix[1][2], 0,
+        frameConstants.viewMatrix[2][0], frameConstants.viewMatrix[2][1], frameConstants.viewMatrix[2][2], 0,
         0, 0, 0, 1
     );
 
     // Replace the z value with the homgenous coordinate (w) so that z becomes 1
     // after the perspective divide (1 is the maximum depth).
-    vertexOut.position = (uniforms.projectionMatrix * rotate * position).xyww;
+    vertexOut.position = (frameConstants.projectionMatrix * rotate * position).xyww;
     vertexOut.texCoords = in.position;
     
     return vertexOut;

@@ -27,7 +27,7 @@ struct Vertex {
 vertex VertexOut graphVertexShader
 (
     VertexIn vertices [[stage_in]],
-    const device FrameConstants &uniforms [[ buffer(BufferIndexFrameConstants) ]],
+    const device FrameConstants &frameConstants [[ buffer(BufferIndexFrameConstants) ]],
     const device ModelMatrixUniforms *instanceData [[ buffer(BufferIndexModelMatrix) ]],
     uint instanceId [[ instance_id ]],
     uint vertexId [[ vertex_id ]]
@@ -36,9 +36,9 @@ vertex VertexOut graphVertexShader
     
     float2 meshVertex = vertices.position.xy;
     
-    float4 position = (uniforms.viewMatrix * instanceData[instanceId].modelMatrix)[3];
+    float4 position = (frameConstants.viewMatrix * instanceData[instanceId].modelMatrix)[3];
     
-    out.position = uniforms.projectionMatrix * (position + float4(meshVertex, 0, 0));
+    out.position = frameConstants.projectionMatrix * (position + float4(meshVertex, 0, 0));
     out.texcoord = vertices.texCoord;
     
     return out;

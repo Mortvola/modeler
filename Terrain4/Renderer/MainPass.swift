@@ -23,7 +23,7 @@ extension Renderer {
             renderEncoder.setFragmentTexture(shadowTexture, index: TextureIndex.depth.rawValue)
         }
         
-        try pipelineManager.render(renderEncoder: renderEncoder, frame: self.uniformBufferIndex)
+        try pipelineManager.render(renderEncoder: renderEncoder, frame: self.tripleBufferIndex)
         objectStore!.skybox?.draw(renderEncoder: renderEncoder)
         
 //            renderEncoder.popDebugGroup()        

@@ -69,8 +69,8 @@ extension Renderer {
         renderEncoder.setCullMode(.back)
         renderEncoder.setDepthStencilState(self.depthState)
 
-        renderEncoder.setVertexBuffer(self.dynamicUniformBuffer, offset: self.uniformBufferOffset, index: BufferIndex.frameConstants.rawValue)
-        renderEncoder.setTileBuffer(self.dynamicUniformBuffer, offset: self.uniformBufferOffset, index: BufferIndex.frameConstants.rawValue)
+        renderEncoder.setVertexBuffer(self.frameConstantsBuffer, offset: self.frameConstantsBufferOffset, index: BufferIndex.frameConstants.rawValue)
+        renderEncoder.setTileBuffer(self.frameConstantsBuffer, offset: self.frameConstantsBufferOffset, index: BufferIndex.frameConstants.rawValue)
 
         // Render objects in scene.
         if objectStore!.currentScene?.directionalLight?.shadowCaster ?? false {

@@ -17,7 +17,7 @@ extension Renderer {
                     break
                 case .mesh(let mesh):
                     if !mesh.disabled && mesh.instanceData.count > 0 {
-                        let (buffer, offset) = mesh.getInstanceData(frame: self.uniformBufferIndex)
+                        let (buffer, offset) = mesh.getInstanceData(frame: self.tripleBufferIndex)
                         renderEncoder.setVertexBuffer(buffer, offset: offset, index: BufferIndex.modelMatrix.rawValue)
 
                         try mesh.draw(renderEncoder: renderEncoder)
@@ -59,7 +59,7 @@ extension Renderer {
                 //            renderEncoder.setViewport(viewport)
                 //        renderEncoder.setDepthBias(0.015, slopeScale: 7, clamp: 0.02)
                 
-                renderEncoder.setVertexBuffer(self.dynamicUniformBuffer, offset: self.uniformBufferOffset, index: BufferIndex.frameConstants.rawValue)
+                renderEncoder.setVertexBuffer(self.frameConstantsBuffer, offset: self.frameConstantsBufferOffset, index: BufferIndex.frameConstants.rawValue)
                 
                 renderEncoder.setVertexBuffer(self.shadowCascadeMatricesBuffer, offset: 0, index: BufferIndex.shadowCascadeMatrices.rawValue)
 

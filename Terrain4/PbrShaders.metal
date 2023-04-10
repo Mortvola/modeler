@@ -34,7 +34,7 @@ struct VertexOut {
 vertex VertexOut pbrVertexShader
 (
     VertexIn in [[stage_in]],
-    const device FrameConstants& uniforms [[ buffer(BufferIndexFrameConstants) ]],
+    const device FrameConstants& frameConstants [[ buffer(BufferIndexFrameConstants) ]],
     const device ModelMatrixUniforms *instanceData [[ buffer(BufferIndexModelMatrix) ]],
     const device NodeUniforms& nodeUniforms [[ buffer(BufferIndexNodeUniforms) ]],
     uint instanceId [[ instance_id ]],
@@ -44,7 +44,7 @@ vertex VertexOut pbrVertexShader
     
     vertexOut.worldFragPos = float3(instanceData[instanceId].modelMatrix * in.position);
     
-    vertexOut.position =  uniforms.projectionMatrix * uniforms.viewMatrix * float4(vertexOut.worldFragPos, 1.0);
+    vertexOut.position =  frameConstants.projectionMatrix * frameConstants.viewMatrix * float4(vertexOut.worldFragPos, 1.0);
 
     float3 T = normalize(instanceData[instanceId].normalMatrix * in.tangent);
     float3 N = normalize(instanceData[instanceId].normalMatrix * in.normal);
@@ -53,7 +53,7 @@ vertex VertexOut pbrVertexShader
 
     float3x3 TBN = transpose(float3x3(T, B, N));
     
-    vertexOut.tangentViewPos = TBN * uniforms.cameraPos;
+    vertexOut.tangentViewPos = TBN * frameConstants.cameraPos;
     vertexOut.tangentFragPos = TBN * vertexOut.worldFragPos;
     
     // Convert positions to tangent space
@@ -62,7 +62,7 @@ vertex VertexOut pbrVertexShader
         lightPos[i] = TBN * nodeUniforms.lights[i].position;
     }
     
-    vertexOut.tangentLightVector = TBN * uniforms.lightVector;
+    vertexOut.tangentLightVector = TBN * frameConstants.lightVector;
     
     vertexOut.texCoords = in.texCoord;
 
@@ -133,7 +133,7 @@ float getShadowedFactor
 float4 pbrFragment
 (
     VertexOut in [[stage_in]],
-    const device FrameConstants& uniforms [[ buffer(BufferIndexFrameConstants) ]],
+    const device FrameConstants& frameConstants [[ buffer(BufferIndexFrameConstants) ]],
     const device ShadowCascadeMatrices& shadowCascadeMatrices [[ buffer(BufferIndexShadowCascadeMatrices) ]],
     const device NodeUniforms& nodeUniforms [[ buffer(BufferIndexNodeUniforms) ]],
     const device PbrMaterialUniforms& materialUniforms [[ buffer(BufferIndexMaterialUniforms) ]],
@@ -159,7 +159,7 @@ float4 pbrFragment
     
     thread float3 *tangentLightPos = &in.lightPos0;
     for (int i = 0; i < nodeUniforms.numberOfLights; i++) {
-        //    if (uniforms.pointLight) {
+        //    if (frameConstants.pointLight) {
         float distance = length(tangentLightPos[i] - in.tangentFragPos);
         float attenuation = 1.0 / (distance * distance);
         float3 radiance = nodeUniforms.lights[i].intensity * attenuation;
@@ -169,7 +169,7 @@ float4 pbrFragment
     }
 
     // Directional light
-    float3 radiance = uniforms.lightColor;
+    float3 radiance = frameConstants.lightColor;
     float3 L = normalize(-in.tangentLightVector);
 
     int cascadeIndex = -1;
@@ -189,7 +189,7 @@ float4 pbrFragment
     // gamma correct
     color = pow(color, float3(1.0 / 2.2));
 
-    if (uniforms.cascadeDebug) {
+    if (frameConstants.cascadeDebug) {
         if (cascadeIndex == 0) {
             color.r = 1;
         }

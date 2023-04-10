@@ -21,12 +21,12 @@ struct VertexOut {
 
 vertex VertexOut pointVertexShader(
     VertexIn in [[stage_in]],
-    const device FrameConstants& uniforms [[ buffer(BufferIndexFrameConstants) ]],
+    const device FrameConstants& frameConstants [[ buffer(BufferIndexFrameConstants) ]],
     const device PointUniforms& pointUniforms [[ buffer(BufferIndexNodeUniforms) ]]
 ) {
     VertexOut out;
     
-    out.position = uniforms.projectionMatrix * uniforms.viewMatrix * pointUniforms.modelMatrix * float4(in.position, 1.0);
+    out.position = frameConstants.projectionMatrix * frameConstants.viewMatrix * pointUniforms.modelMatrix * float4(in.position, 1.0);
     out.pointSize = pointUniforms.size;
     out.color = pointUniforms.color;
     

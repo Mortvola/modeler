@@ -21,14 +21,14 @@ struct VertexOut {
 vertex VertexOut lineVertexShader
 (
     LineVertexIn in [[stage_in]],
-    const device FrameConstants& uniforms [[ buffer(BufferIndexFrameConstants) ]],
+    const device FrameConstants& frameConstants [[ buffer(BufferIndexFrameConstants) ]],
     const device float4x4& modelMatrix [[ buffer(BufferIndexModelMatrix) ]],
     const device NodeUniforms& nodeUniforms [[ buffer(BufferIndexNodeUniforms) ]]
 ) {
     VertexOut vertexOut;
     
     float4 position = float4(in.position, 1.0);
-    vertexOut.position = uniforms.projectionMatrix * uniforms.viewMatrix * modelMatrix * position;
+    vertexOut.position = frameConstants.projectionMatrix * frameConstants.viewMatrix * modelMatrix * position;
 
     vertexOut.color = nodeUniforms.color;
     
