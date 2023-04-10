@@ -52,7 +52,7 @@ extension Renderer {
                 renderEncoder.setFrontFacing(.clockwise)
                 renderEncoder.setCullMode(.front)
                 renderEncoder.setDepthClipMode(.clamp) // Pancaking??
-                renderEncoder.setDepthStencilState(self.shadowDepthState)
+                renderEncoder.setDepthStencilState(self.depthState)
                 renderEncoder.setDepthBias(self.depthBias, slopeScale: self.slopeScale, clamp: self.slopeScale)
                 
                 //            let viewport = MTLViewport(originX: 0, originY: 0, width: Double(objectStore!.directionalLight.shadowTexture!.width), height: Double(objectStore!.directionalLight.shadowTexture!.height), znear: 0.0, zfar: 1.0)

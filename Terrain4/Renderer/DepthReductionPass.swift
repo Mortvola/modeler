@@ -67,9 +67,7 @@ extension Renderer {
         
         renderEncoder.setFrontFacing(.clockwise)
         renderEncoder.setCullMode(.back)
-        renderEncoder.setDepthClipMode(.clamp) // Pancaking??
-        renderEncoder.setDepthStencilState(self.shadowDepthState)
-        renderEncoder.setDepthBias(self.depthBias, slopeScale: self.slopeScale, clamp: self.slopeScale)
+        renderEncoder.setDepthStencilState(self.depthState)
 
         renderEncoder.setVertexBuffer(self.dynamicUniformBuffer, offset: self.uniformBufferOffset, index: BufferIndex.frameConstants.rawValue)
         renderEncoder.setTileBuffer(self.dynamicUniformBuffer, offset: self.uniformBufferOffset, index: BufferIndex.frameConstants.rawValue)

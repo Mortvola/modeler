@@ -31,7 +31,6 @@ class Renderer {
     private var commandQueue: MTLCommandQueue?
     public var depthState: MTLDepthStencilState?
     public var noDepthState: MTLDepthStencilState?
-    public var shadowDepthState: MTLDepthStencilState?
     public var transparentDepthState: MTLDepthStencilState?
     
     private let inFlightSemaphore = DispatchSemaphore(value: maxBuffersInFlight)
@@ -139,12 +138,6 @@ class Renderer {
         
         self.depthState = state
 
-        guard let state = MetalView.shared.device.makeDepthStencilState(descriptor:depthStateDescriptor) else {
-            throw Errors.makeDepthStencilStateFailed
-        }
-        
-        self.shadowDepthState = state
-        
         depthStateDescriptor.depthCompareFunction = .less
         depthStateDescriptor.isDepthWriteEnabled = false
 
