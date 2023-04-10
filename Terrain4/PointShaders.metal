@@ -21,7 +21,7 @@ struct VertexOut {
 
 vertex VertexOut pointVertexShader(
     VertexIn in [[stage_in]],
-    const device FrameUniforms& uniforms [[ buffer(BufferIndexUniforms) ]],
+    const device FrameConstants& uniforms [[ buffer(BufferIndexFrameConstants) ]],
     const device PointUniforms& pointUniforms [[ buffer(BufferIndexNodeUniforms) ]]
 ) {
     VertexOut out;

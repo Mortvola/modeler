@@ -21,7 +21,7 @@ struct VertexOut {
 vertex VertexOut lineVertexShader
 (
     LineVertexIn in [[stage_in]],
-    const device FrameUniforms& uniforms [[ buffer(BufferIndexUniforms) ]],
+    const device FrameConstants& uniforms [[ buffer(BufferIndexFrameConstants) ]],
     const device float4x4& modelMatrix [[ buffer(BufferIndexModelMatrix) ]],
     const device NodeUniforms& nodeUniforms [[ buffer(BufferIndexNodeUniforms) ]]
 ) {

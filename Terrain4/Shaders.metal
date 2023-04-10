@@ -31,7 +31,7 @@ struct VertexOut {
 vertex VertexOut texturedVertexShader
 (
     VertexIn in [[stage_in]],
-    const device FrameUniforms& uniforms [[ buffer(BufferIndexUniforms) ]],
+    const device FrameConstants& uniforms [[ buffer(BufferIndexFrameConstants) ]],
     const device ModelMatrixUniforms *instanceData [[ buffer(BufferIndexModelMatrix) ]],
     const device NodeUniforms& nodeUniforms [[ buffer(BufferIndexNodeUniforms) ]],
     uint instanceId [[ instance_id ]]
@@ -47,7 +47,7 @@ vertex VertexOut texturedVertexShader
     float3 B = cross(N, T);
     
     float3x3 TBN = transpose(float3x3(T, B, N));
-    vertexOut.tangentLightVector = TBN * normalize(uniforms.directionalLight.lightVector);
+    vertexOut.tangentLightVector = TBN * normalize(uniforms.lightVector);
 
     vertexOut.texCoords = in.texCoord;
     

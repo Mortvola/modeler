@@ -59,8 +59,10 @@ extension Renderer {
                 //            renderEncoder.setViewport(viewport)
                 //        renderEncoder.setDepthBias(0.015, slopeScale: 7, clamp: 0.02)
                 
-                renderEncoder.setVertexBuffer(self.dynamicUniformBuffer, offset: self.uniformBufferOffset, index: BufferIndex.uniforms.rawValue)
+                renderEncoder.setVertexBuffer(self.dynamicUniformBuffer, offset: self.uniformBufferOffset, index: BufferIndex.frameConstants.rawValue)
                 
+                renderEncoder.setVertexBuffer(self.shadowCascadeMatricesBuffer, offset: self.shadowCascadeMatricesOffset, index: BufferIndex.shadowCascadeMatrices.rawValue)
+
                 var cascadeIndex = Int32(cascade)
                 renderEncoder.setVertexBytes(&cascadeIndex, length: MemoryLayout<Int32>.size, index: BufferIndex.cascadeIndex.rawValue)
                 

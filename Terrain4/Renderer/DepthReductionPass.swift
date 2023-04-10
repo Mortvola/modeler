@@ -58,8 +58,8 @@ extension Renderer {
         renderEncoder.label = "Depth Reduction Pass"
             
         // Clear out the transparent fragment stores.
-        renderEncoder.setTileBuffer(self.depthReductionBuffer, offset: 0, index: BufferIndex.reductionIndex.rawValue)
-        renderEncoder.setTileBuffer(self.depthReductionFinalBuffer, offset: 0, index: BufferIndex.finalReductionIndex.rawValue)
+        renderEncoder.setTileBuffer(self.depthReductionBuffer, offset: 0, index: BufferIndex.reduction.rawValue)
+        renderEncoder.setTileBuffer(self.depthReductionFinalBuffer, offset: 0, index: BufferIndex.finalReduction.rawValue)
         renderEncoder.setRenderPipelineState(pipelineManager.depthReductionInitPipeline!)
         renderEncoder.dispatchThreadsPerTile(MTLSizeMake(1, 1, 1))
 
@@ -71,8 +71,8 @@ extension Renderer {
         renderEncoder.setDepthStencilState(self.shadowDepthState)
         renderEncoder.setDepthBias(self.depthBias, slopeScale: self.slopeScale, clamp: self.slopeScale)
 
-        renderEncoder.setVertexBuffer(self.dynamicUniformBuffer, offset: self.uniformBufferOffset, index: BufferIndex.uniforms.rawValue)
-        renderEncoder.setTileBuffer(self.dynamicUniformBuffer, offset: self.uniformBufferOffset, index: BufferIndex.uniforms.rawValue)
+        renderEncoder.setVertexBuffer(self.dynamicUniformBuffer, offset: self.uniformBufferOffset, index: BufferIndex.frameConstants.rawValue)
+        renderEncoder.setTileBuffer(self.dynamicUniformBuffer, offset: self.uniformBufferOffset, index: BufferIndex.frameConstants.rawValue)
 
         // Render objects in scene.
         if objectStore!.currentScene?.directionalLight?.shadowCaster ?? false {
@@ -88,7 +88,8 @@ extension Renderer {
         renderEncoder.setRenderPipelineState(pipelineManager.depthReductionMinMaxPipeline!)
         renderEncoder.dispatchThreadsPerTile(MTLSizeMake(8, 8, 1))
 
-        renderEncoder.setTileBuffer(depthReductionBuffer, offset: 0, index: BufferIndex.reductionIndex.rawValue)
+        renderEncoder.setTileBuffer(self.shadowCascadeMatricesBuffer, offset: self.shadowCascadeMatricesOffset, index: BufferIndex.shadowCascadeMatrices.rawValue)
+        renderEncoder.setTileBuffer(depthReductionBuffer, offset: 0, index: BufferIndex.reduction.rawValue)
         renderEncoder.setRenderPipelineState(pipelineManager.depthReductionFinalizePipeline!)
         renderEncoder.dispatchThreadsPerTile(MTLSizeMake(1, 1, 1))
 

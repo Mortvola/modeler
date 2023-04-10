@@ -25,7 +25,7 @@ struct VertexOut {
 vertex VertexOut billboardVertexShader
 (
     VertexIn vertices [[stage_in]],
-    const device FrameUniforms &uniforms [[ buffer(BufferIndexUniforms) ]],
+    const device FrameConstants &uniforms [[ buffer(BufferIndexFrameConstants) ]],
     const device ModelMatrixUniforms *modelMatrix [[ buffer(BufferIndexModelMatrix) ]],
     uint instanceId [[ instance_id ]],
     uint vertexId [[ vertex_id ]]

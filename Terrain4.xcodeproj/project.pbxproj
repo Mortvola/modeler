@@ -113,6 +113,8 @@
 		798D3BF929C3C27400B96C5F /* RoughnessLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 798D3BF829C3C27400B96C5F /* RoughnessLayer.swift */; };
 		798D3BFD29C3CBF400B96C5F /* File.swift in Sources */ = {isa = PBXBuildFile; fileRef = 798D3BFC29C3CBF400B96C5F /* File.swift */; };
 		798D3BFF29C3CC4300B96C5F /* FileCamera.swift in Sources */ = {isa = PBXBuildFile; fileRef = 798D3BFE29C3CC4300B96C5F /* FileCamera.swift */; };
+		7997E86329E33FBE00231514 /* Utilities.metal in Sources */ = {isa = PBXBuildFile; fileRef = 7997E86229E33FBE00231514 /* Utilities.metal */; };
+		7997E86729E3918900231514 /* Utilities.h in Sources */ = {isa = PBXBuildFile; fileRef = 7997E86629E3918900231514 /* Utilities.h */; };
 		799B4BBA29C6067800B6826A /* TexturesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799B4BB929C6067800B6826A /* TexturesView.swift */; };
 		799B4BBD29C651AE00B6826A /* DirectionalLightView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799B4BBC29C651AE00B6826A /* DirectionalLightView.swift */; };
 		799B4BBF29C652D200B6826A /* DirectionalLight.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799B4BBE29C652D200B6826A /* DirectionalLight.swift */; };
@@ -324,6 +326,8 @@
 		798D3BF829C3C27400B96C5F /* RoughnessLayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoughnessLayer.swift; sourceTree = "<group>"; };
 		798D3BFC29C3CBF400B96C5F /* File.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = File.swift; sourceTree = "<group>"; };
 		798D3BFE29C3CC4300B96C5F /* FileCamera.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileCamera.swift; sourceTree = "<group>"; };
+		7997E86229E33FBE00231514 /* Utilities.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = Utilities.metal; sourceTree = "<group>"; };
+		7997E86629E3918900231514 /* Utilities.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Utilities.h; sourceTree = "<group>"; };
 		799B4BB929C6067800B6826A /* TexturesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TexturesView.swift; sourceTree = "<group>"; };
 		799B4BBC29C651AE00B6826A /* DirectionalLightView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DirectionalLightView.swift; sourceTree = "<group>"; };
 		799B4BBE29C652D200B6826A /* DirectionalLight.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DirectionalLight.swift; sourceTree = "<group>"; };
@@ -432,6 +436,7 @@
 				791C495429B9488300C00150 /* Terrain4.entitlements */,
 				791E793129B9429000FB45F3 /* ShaderTypes.h */,
 				792EA66829D9E34700208A1E /* CommonTypes.h */,
+				7997E86629E3918900231514 /* Utilities.h */,
 				791E794A29B944D000FB45F3 /* LineShaders.metal */,
 				791E794829B944D000FB45F3 /* Pbr.metal */,
 				791E794C29B944D000FB45F3 /* PbrShaders.metal */,
@@ -439,6 +444,7 @@
 				791E794B29B944D000FB45F3 /* Shaders.metal */,
 				791E794D29B944D000FB45F3 /* SkyboxShaders.metal */,
 				799B4BC029C6853900B6826A /* ShadowShaders.metal */,
+				7997E86229E33FBE00231514 /* Utilities.metal */,
 				7921DF9729CC7D750013E317 /* PointShaders.metal */,
 				7921DFAF29CD26C10013E317 /* GraphShaders.metal */,
 				79AA09A829D4593E001164B7 /* BillboardShaders.metal */,
@@ -957,6 +963,7 @@
 				791E791729B93C2B00FB45F3 /* Model.swift in Sources */,
 				79AACDFE29D0A400000E8936 /* GraphMaterialView.swift in Sources */,
 				79F6D2D329BAC193007CA69A /* TestRectAllocator.swift in Sources */,
+				7997E86329E33FBE00231514 /* Utilities.metal in Sources */,
 				798D3BF129C3C17E00B96C5F /* MaterialLayer.swift in Sources */,
 				7921DF9E29CC84860013E317 /* PipelineManager.swift in Sources */,
 				7921DF8A29CBFF770013E317 /* BoxAllocator.swift in Sources */,
@@ -1023,6 +1030,7 @@
 				791E790529B93BB600FB45F3 /* ObjectStore.swift in Sources */,
 				7921DFAC29CD23210013E317 /* GraphPipeline.swift in Sources */,
 				79F6D2FE29C16894007CA69A /* MaterialDetailView.swift in Sources */,
+				7997E86729E3918900231514 /* Utilities.h in Sources */,
 				79F6D30629C1E25E007CA69A /* OpenFileButton.swift in Sources */,
 				7921DF8C29CC031E0013E317 /* CylinderOptionsView.swift in Sources */,
 				79F6D2EB29BCBD83007CA69A /* NumericField.swift in Sources */,

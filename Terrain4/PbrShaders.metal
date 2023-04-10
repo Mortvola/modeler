@@ -34,7 +34,7 @@ struct VertexOut {
 vertex VertexOut pbrVertexShader
 (
     VertexIn in [[stage_in]],
-    const device FrameUniforms& uniforms [[ buffer(BufferIndexUniforms) ]],
+    const device FrameConstants& uniforms [[ buffer(BufferIndexFrameConstants) ]],
     const device ModelMatrixUniforms *instanceData [[ buffer(BufferIndexModelMatrix) ]],
     const device NodeUniforms& nodeUniforms [[ buffer(BufferIndexNodeUniforms) ]],
     uint instanceId [[ instance_id ]],
@@ -62,7 +62,7 @@ vertex VertexOut pbrVertexShader
         lightPos[i] = TBN * nodeUniforms.lights[i].position;
     }
     
-    vertexOut.tangentLightVector = TBN * uniforms.directionalLight.lightVector;
+    vertexOut.tangentLightVector = TBN * uniforms.lightVector;
     
     vertexOut.texCoords = in.texCoord;
 
@@ -82,14 +82,14 @@ float3 computeLo(
 float getShadowedFactor
 (
     float3 worldPos,
-    const device DirectionalLight &directionalLight,
+    const device float4x4 viewProjectionMatrices[4],
     depth2d_array<float> shadowMap,
     thread int &index
 ) {
     float shadowed = 0;
     
     for (int cascadeIndex = 0; cascadeIndex < 4; ++cascadeIndex) {
-        float4 pos = directionalLight.viewProjectionMatrix[cascadeIndex] * float4(worldPos, 1.0);
+        float4 pos = viewProjectionMatrices[cascadeIndex] * float4(worldPos, 1.0);
         // NDC range from X -1 to 1, Y -1 to 1 and Z 0 to 1
         // The perspective divide isn't necessary for directional lights be we will
         // do it anyway to support point lights.
@@ -133,7 +133,8 @@ float getShadowedFactor
 float4 pbrFragment
 (
     VertexOut in [[stage_in]],
-    const device FrameUniforms& uniforms [[ buffer(BufferIndexUniforms) ]],
+    const device FrameConstants& uniforms [[ buffer(BufferIndexFrameConstants) ]],
+    const device ShadowCascadeMatrices& shadowCascadeMatrices [[ buffer(BufferIndexShadowCascadeMatrices) ]],
     const device NodeUniforms& nodeUniforms [[ buffer(BufferIndexNodeUniforms) ]],
     const device PbrMaterialUniforms& materialUniforms [[ buffer(BufferIndexMaterialUniforms) ]],
     array<texture2d<float>, 4> textures [[texture(TextureIndexColor)]],
@@ -168,11 +169,11 @@ float4 pbrFragment
     }
 
     // Directional light
-    float3 radiance = uniforms.directionalLight.lightColor;
+    float3 radiance = uniforms.lightColor;
     float3 L = normalize(-in.tangentLightVector);
 
     int cascadeIndex = -1;
-    float shadowFactor = getShadowedFactor(in.worldFragPos, uniforms.directionalLight, shadowMap, cascadeIndex);
+    float shadowFactor = getShadowedFactor(in.worldFragPos, shadowCascadeMatrices.viewProjectionMatrix, shadowMap, cascadeIndex);
     
     Lo += computeLo(albedo, metallic, roughness, N, V, L, radiance) * shadowFactor;
 
@@ -206,7 +207,8 @@ float4 pbrFragment
 fragment float4 pbrFragmentShader
 (
     VertexOut in [[stage_in]],
-    const device FrameUniforms& uniforms [[ buffer(BufferIndexUniforms) ]],
+    const device FrameConstants& frameConstants [[ buffer(BufferIndexFrameConstants) ]],
+    const device ShadowCascadeMatrices& shadowCascadeMatrices [[ buffer(BufferIndexShadowCascadeMatrices) ]],
     const device NodeUniforms& nodeUniforms [[ buffer(BufferIndexNodeUniforms) ]],
     const device PbrMaterialUniforms& materialUniforms [[ buffer(BufferIndexMaterialUniforms) ]],
     array<texture2d<float>, 4> textures [[texture(TextureIndexColor)]],
@@ -214,7 +216,7 @@ fragment float4 pbrFragmentShader
     sampler sampler [[sampler(SamplerIndexSampler)]],
     depth2d_array<float> shadowMap [[texture(TextureIndexDepth)]]
 ) {
-    return pbrFragment(in, uniforms, nodeUniforms, materialUniforms, textures, aoMap, sampler, shadowMap);
+    return pbrFragment(in, frameConstants, shadowCascadeMatrices, nodeUniforms, materialUniforms, textures, aoMap, sampler, shadowMap);
 }
 
 TransparentFragmentStore processTransparent
@@ -227,7 +229,8 @@ TransparentFragmentStore processTransparent
 fragment TransparentFragmentStore pbrFragmentTransparencyShader
 (
     VertexOut in [[stage_in]],
-    const device FrameUniforms& uniforms [[ buffer(BufferIndexUniforms) ]],
+    const device FrameConstants& frameConstants [[ buffer(BufferIndexFrameConstants) ]],
+    const device ShadowCascadeMatrices& shadowCascadeMatrices [[ buffer(BufferIndexShadowCascadeMatrices) ]],
     const device NodeUniforms& nodeUniforms [[ buffer(BufferIndexNodeUniforms) ]],
     const device PbrMaterialUniforms& materialUniforms [[ buffer(BufferIndexMaterialUniforms) ]],
     array<texture2d<float>, 4> textures [[texture(TextureIndexColor)]],
@@ -236,7 +239,7 @@ fragment TransparentFragmentStore pbrFragmentTransparencyShader
     depth2d_array<float> shadowMap [[texture(TextureIndexDepth)]],
     TransparentFragmentValues fragmentValues [[imageblock_data]]
 ) {
-    float4 color = pbrFragment(in, uniforms, nodeUniforms, materialUniforms, textures, aoMap, sampler, shadowMap);
+    float4 color = pbrFragment(in, frameConstants, shadowCascadeMatrices, nodeUniforms, materialUniforms, textures, aoMap, sampler, shadowMap);
     
     return processTransparent(color, in.position, fragmentValues);
 }

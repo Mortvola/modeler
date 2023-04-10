@@ -36,6 +36,10 @@ class Camera {
     
     var farZ: Float = 1600.0
     
+    var fovy = Float(degreesToRadians(45.0))
+    
+    var aspect = Float(1.0)
+    
     init(world: World) {
         self.world = world
         updateLookAt(yawChange: 0, pitchChange: 0)
@@ -119,24 +123,21 @@ class Camera {
         /// Respond to drawable size or orientation changes here
         self.width = width
         self.height = height
+        self.fovy = degreesToRadians(45.0)
+        self.aspect = Float(height) / Float(width)
         
-        let aspect = Float(height) / Float(width)
-        self.projectionMatrix = Matrix4x4.perspectiveLeftHand(fovyRadians: degreesToRadians(45), aspect: aspect, nearZ: nearZ, farZ: farZ)
-    }
-    
-    func createPerspectiveMatrix(nearZ zn: Float, farZ zf: Float) -> Matrix4x4 {
-        let aspect = Float(height!) / Float(width!)
-        return Matrix4x4.perspectiveLeftHand(fovyRadians: degreesToRadians(45), aspect: aspect, nearZ: zn, farZ: zf)
+        self.projectionMatrix = Matrix4x4.perspectiveLeftHand(fovyRadians: fovy, aspect: aspect, nearZ: nearZ, farZ: farZ)
     }
     
     func getFrustumCorners(nearZ near: Float, farZ far: Float) -> [Vec4] {
-        let cameraProjectionMatrix = createPerspectiveMatrix(nearZ: near, farZ: far)
+        let cameraProjectionMatrix = Matrix4x4.perspectiveLeftHand(fovyRadians: self.fovy, aspect: self.aspect, nearZ: near, farZ: far)
         let cameraViewMatrix = getViewMatrix()
         let cameraViewProjection = cameraProjectionMatrix * cameraViewMatrix
+
+//        print(cameraViewProjection.inverse)
         
         return transformNdcBoundsToWorldSpace(viewProjectionMatrix: cameraViewProjection)
     }
-    
 }
 
 func transformNdcBoundsToWorldSpace(viewProjectionMatrix: Matrix4x4) -> [Vec4] {

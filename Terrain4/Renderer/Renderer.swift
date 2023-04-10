@@ -12,7 +12,7 @@ import MetalKit
 import simd
 
 // The 256 byte aligned size of our uniform structure
-let alignedUniformsSize = (MemoryLayout<FrameUniforms>.size + 0xFF) & -0x100
+let alignedUniformsSize = (MemoryLayout<FrameConstants>.size + 0xFF) & -0x100
 
 let maxBuffersInFlight = 3
 
@@ -29,7 +29,6 @@ class Renderer {
     static var shared: Renderer = Renderer()
     
     private var commandQueue: MTLCommandQueue?
-    public var dynamicUniformBuffer: MTLBuffer?
     public var depthState: MTLDepthStencilState?
     public var noDepthState: MTLDepthStencilState?
     public var shadowDepthState: MTLDepthStencilState?
@@ -37,11 +36,15 @@ class Renderer {
     
     private let inFlightSemaphore = DispatchSemaphore(value: maxBuffersInFlight)
     
+    public var dynamicUniformBuffer: MTLBuffer?
     public var uniformBufferOffset = 0
-    
+    private var uniforms: UnsafeMutablePointer<FrameConstants>?
+
+    public var shadowCascadeMatricesBuffer: MTLBuffer?
+    public var shadowCascadeMatricesOffset = 0
+    private var shadowCascadeMatrices: UnsafeMutablePointer<ShadowCascadeMatrices>?
+
     public var uniformBufferIndex = 0
-    
-    private var uniforms: UnsafeMutablePointer<FrameUniforms>?
     
     public let world = World()
     
@@ -86,7 +89,7 @@ class Renderer {
     
     public var depthTexture: MTLTexture? = nil
     public var depthReductionTexture: MTLTexture? = nil
-    public var depthBounds = Vec2(1, 1600)
+//    public var depthBounds = Vec2(1, 1600)
 
     init() {
         self.camera = Camera(world: world)
@@ -107,7 +110,9 @@ class Renderer {
         
         self.commandQueue = queue
 
-        try makeUniformsBuffer()
+        try makeFrameConstantsBuffer()
+        
+        try makeShadowCascadeMatricesBuffer()
         
         try makeDepthStates()
         
@@ -164,17 +169,28 @@ class Renderer {
         self.noDepthState = state
     }
     
-    func makeUniformsBuffer() throws {
-        let uniformBufferSize = alignedUniformsSize * maxBuffersInFlight
+    func makeFrameConstantsBuffer() throws {
+        self.dynamicUniformBuffer = try makeTripleBuffer(dataSize: alignedUniformsSize, label: "Frame Constants")
         
-        guard let buffer = MetalView.shared.device.makeBuffer(length: uniformBufferSize, options: [MTLResourceOptions.storageModeShared]) else {
+        self.uniforms = UnsafeMutableRawPointer(self.dynamicUniformBuffer!.contents()).bindMemory(to: FrameConstants.self, capacity: 1)
+    }
+    
+    func makeShadowCascadeMatricesBuffer() throws {
+        self.shadowCascadeMatricesBuffer = try makeTripleBuffer(dataSize: MemoryLayout<ShadowCascadeMatrices>.size, label: "Shadow Cascade Matrices")
+
+        self.shadowCascadeMatrices = UnsafeMutableRawPointer(self.dynamicUniformBuffer!.contents()).bindMemory(to: ShadowCascadeMatrices.self, capacity: 1)
+    }
+    
+    func makeTripleBuffer(dataSize: Int, label: String) throws -> MTLBuffer {
+        let bufferSize = dataSize * maxBuffersInFlight
+        
+        guard let buffer = MetalView.shared.device.makeBuffer(length: bufferSize, options: [MTLResourceOptions.storageModeShared]) else {
             throw Errors.makeBufferFailed
         }
         
-        buffer.label = "Frame Uniforms"
-        self.dynamicUniformBuffer = buffer
+        buffer.label = label
         
-        self.uniforms = UnsafeMutableRawPointer(buffer.contents()).bindMemory(to: FrameUniforms.self, capacity: 1)
+        return buffer
     }
     
 //    public func load(lat: Double, lng: Double, dimension: Int) async throws {
@@ -230,13 +246,23 @@ class Renderer {
             return
         }
         
-        uniformBufferIndex = (uniformBufferIndex + 1) % maxBuffersInFlight
-        
         self.uniformBufferOffset = alignedUniformsSize * uniformBufferIndex
         
-        self.uniforms = UnsafeMutableRawPointer(dynamicUniformBuffer.contents() + self.uniformBufferOffset).bindMemory(to: FrameUniforms.self, capacity: 1)
+        self.uniforms = UnsafeMutableRawPointer(dynamicUniformBuffer.contents() + self.uniformBufferOffset).bindMemory(to: FrameConstants.self, capacity: 1)
     }
-    
+
+    private func updateShadowCascadeMatricesBufferState() {
+        /// Update the state of our uniform buffers before rendering
+        
+        guard let buffer = self.shadowCascadeMatricesBuffer else {
+            return
+        }
+        
+        self.shadowCascadeMatricesOffset = MemoryLayout<ShadowCascadeMatrices>.size * uniformBufferIndex
+        
+        self.shadowCascadeMatrices = UnsafeMutableRawPointer(buffer.contents() + self.shadowCascadeMatricesOffset).bindMemory(to: ShadowCascadeMatrices.self, capacity: 1)
+    }
+
     private func updateTimeOfDay(elapsedTime: Double) {
         self.hour += Float((1 / 10.0) * elapsedTime)
         self.hour.formTruncatingRemainder(dividingBy: 24.0)
@@ -500,48 +526,20 @@ class Renderer {
         currentViewMode = viewMode
     }
     
-    func storeFrameConstants(_ uniforms: UnsafeMutablePointer<FrameUniforms>) {
-        uniforms[0].projectionMatrix = self.camera.projectionMatrix
-        uniforms[0].invProjectionMatrix = self.camera.projectionMatrix.inverse
-        uniforms[0].viewMatrix = self.camera.getViewMatrix()
-        uniforms[0].cameraPos = self.camera.cameraOffset
-        uniforms[0].directionalLight.lightVector = objectStore!.currentScene?.directionalLight?.direction ?? Vec3(0, 0, 0)
-        uniforms[0].directionalLight.lightColor = objectStore!.directionalLight.disabled ? Vec3(0, 0, 0) : objectStore!.directionalLight.intensity
+    func storeFrameConstants(_ frameConstants: UnsafeMutablePointer<FrameConstants>) {
+        frameConstants[0].projectionMatrix = self.camera.projectionMatrix
+        frameConstants[0].invProjectionMatrix = self.camera.projectionMatrix.inverse
+        frameConstants[0].viewMatrix = self.camera.getViewMatrix()
+        frameConstants[0].inverseViewMatrix = self.camera.getViewMatrix().inverse
+        frameConstants[0].cameraPos = self.camera.cameraOffset
+        frameConstants[0].fovy = self.camera.fovy
+        frameConstants[0].aspect = self.camera.aspect
+        frameConstants[0].lightVector = objectStore!.currentScene?.directionalLight?.direction ?? Vec3(0, 0, 0)
+        frameConstants[0].lightColor = objectStore!.directionalLight.disabled ? Vec3(0, 0, 0) : objectStore!.directionalLight.intensity
         
-        uniforms[0].cascadeDebug = self.cascadeDebug
+        frameConstants[0].cascadeDebug = self.cascadeDebug
     }
 
-    func computeFrustumSplits() -> [Float] {
-        var splits: [Float] = []
-        
-        splits.append(depthBounds[0])
-        
-        for i in 0..<shadowMapCascades {
-            let logSplit = Float(pow(Double(depthBounds[0] * (depthBounds[1] / depthBounds[0])), (Double(i) + 1) / Double(shadowMapCascades)))
-            let uniformSplit = (depthBounds[1] - depthBounds[0]) * (Float(i) + 1.0) / Float(shadowMapCascades)
-            let split = (logSplit + uniformSplit) / 2.0
-                        
-            splits.append(split)
-        }
-        
-        return splits
-    }
-    
-    func computeLightSpaceFrustums(_ uniforms: UnsafeMutablePointer<FrameUniforms>) {
-        if let directionalLight = objectStore!.currentScene?.directionalLight {
-            withUnsafeMutableBytes(of: &uniforms[0].directionalLight.viewProjectionMatrix) { rawPtr in
-                let matrix = rawPtr.baseAddress!.assumingMemoryBound(to: Matrix4x4.self)
-                
-                let splits = computeFrustumSplits()
-                
-                for i in 0..<(splits.count - 1) {
-                    let cameraFrustum = camera.getFrustumCorners(nearZ: splits[i], farZ: splits[i + 1])
-                    matrix[i] = directionalLight.calculateViewProjectionMatrix(cameraFrustum: cameraFrustum)
-                }
-            }
-        }
-    }
-    
     func render(in view: MTKView) throws {
         guard let uniforms = self.uniforms else {
             return
@@ -558,7 +556,9 @@ class Renderer {
             if let commandBuffer = commandQueue.makeCommandBuffer() {
                 commandBuffer.label = "\(self.uniformBufferIndex)"
             
+                uniformBufferIndex = (uniformBufferIndex + 1) % maxBuffersInFlight
                 self.updateDynamicBufferState()
+                self.updateShadowCascadeMatricesBufferState()
                 
                 self.updateState()
                 
@@ -566,82 +566,62 @@ class Renderer {
                 
                 try renderDepthReductionPass(view: view, commandBuffer: commandBuffer)
 
-                commandBuffer.commit()
-
-                commandBuffer.waitUntilCompleted()
-
-                let bounds = UnsafeMutableRawPointer(depthReductionFinalBuffer!.contents()).bindMemory(to: Float.self, capacity: 2)
+                try renderShadowPass(commandBuffer: commandBuffer)
                 
-                self.depthBounds[0] = bounds[0]
-                self.depthBounds[1] = bounds[1]
-                
-                computeLightSpaceFrustums(uniforms)
-
-                if let commandBuffer = commandQueue.makeCommandBuffer() {
+                /// Delay getting the currentRenderPassDescriptor until we absolutely need it to avoid
+                ///   holding onto the drawable and blocking the display pipeline any longer than necessary
+                if let renderPassDescriptor = view.currentRenderPassDescriptor {
+                    let optimalTileSize = MTLSizeMake(32, 16, 1) // TODO: determine what this should be
                     
-                    try renderShadowPass(commandBuffer: commandBuffer)
+                    if pipelineManager.transparentPipelines.count > 0 {
+                        renderPassDescriptor.tileWidth = optimalTileSize.width
+                        renderPassDescriptor.tileHeight = optimalTileSize.height
+                        renderPassDescriptor.imageblockSampleLength = pipelineManager.imageBlockPipeline!.imageblockSampleLength
+                    }
                     
-                    //                commandBuffer.commit()
-                    //
-                    //                if let commandBuffer = commandQueue.makeCommandBuffer() {
-                    //                    commandBuffer.label = "\(self.uniformBufferIndex)"
-                    
-                    /// Delay getting the currentRenderPassDescriptor until we absolutely need it to avoid
-                    ///   holding onto the drawable and blocking the display pipeline any longer than necessary
-                    if let renderPassDescriptor = view.currentRenderPassDescriptor {
-                        let optimalTileSize = MTLSizeMake(32, 16, 1) // TODO: determine what this should be
+                    if let renderEncoder = commandBuffer.makeRenderCommandEncoder(descriptor: renderPassDescriptor) {
                         
                         if pipelineManager.transparentPipelines.count > 0 {
-                            renderPassDescriptor.tileWidth = optimalTileSize.width
-                            renderPassDescriptor.tileHeight = optimalTileSize.height
-                            renderPassDescriptor.imageblockSampleLength = pipelineManager.imageBlockPipeline!.imageblockSampleLength
+                            // Clear out the transparent fragment stores.
+                            renderEncoder.setRenderPipelineState(pipelineManager.imageBlockPipeline!)
+                            renderEncoder.dispatchThreadsPerTile(optimalTileSize)
                         }
                         
-                        if let renderEncoder = commandBuffer.makeRenderCommandEncoder(descriptor: renderPassDescriptor) {
-                            
-                            if pipelineManager.transparentPipelines.count > 0 {
-                                // Clear out the transparent fragment stores.
-                                renderEncoder.setRenderPipelineState(pipelineManager.imageBlockPipeline!)
-                                renderEncoder.dispatchThreadsPerTile(optimalTileSize)
-                            }
-                            
-                            renderEncoder.setVertexBuffer(self.dynamicUniformBuffer, offset: self.uniformBufferOffset, index: BufferIndex.uniforms.rawValue)
-                            
-                            renderEncoder.setFragmentBuffer(self.dynamicUniformBuffer, offset: self.uniformBufferOffset, index: BufferIndex.uniforms.rawValue)
-                            
-                            try renderMainPass(renderEncoder: renderEncoder)
-                            
-                            try renderTransparentPass(renderEncoder: renderEncoder)
-                            
-                            if pipelineManager.transparentPipelines.count > 0 {
-                                renderEncoder.pushDebugGroup("Blend Fragments")
-                                renderEncoder.setRenderPipelineState(pipelineManager.blendFragmentsPipeline!)
-                                renderEncoder.setCullMode(.none)
-                                renderEncoder.setDepthStencilState(noDepthState)
-                                renderEncoder.drawPrimitives(type: .triangle, vertexStart: 0, vertexCount: 3)
-                                renderEncoder.popDebugGroup()
-                            }
-                            
-                            renderEncoder.endEncoding()
+                        renderEncoder.setVertexBuffer(self.dynamicUniformBuffer, offset: self.uniformBufferOffset, index: BufferIndex.frameConstants.rawValue)
+                        
+                        renderEncoder.setFragmentBuffer(self.dynamicUniformBuffer, offset: self.uniformBufferOffset, index: BufferIndex.frameConstants.rawValue)
+                        
+                        renderEncoder.setVertexBuffer(self.shadowCascadeMatricesBuffer, offset: self.shadowCascadeMatricesOffset, index: BufferIndex.shadowCascadeMatrices.rawValue)
+                        
+                        renderEncoder.setFragmentBuffer(self.shadowCascadeMatricesBuffer, offset: self.shadowCascadeMatricesOffset, index: BufferIndex.shadowCascadeMatrices.rawValue)
+
+                        try renderMainPass(renderEncoder: renderEncoder)
+                        
+                        try renderTransparentPass(renderEncoder: renderEncoder)
+                        
+                        if pipelineManager.transparentPipelines.count > 0 {
+                            renderEncoder.pushDebugGroup("Blend Fragments")
+                            renderEncoder.setRenderPipelineState(pipelineManager.blendFragmentsPipeline!)
+                            renderEncoder.setCullMode(.none)
+                            renderEncoder.setDepthStencilState(noDepthState)
+                            renderEncoder.drawPrimitives(type: .triangle, vertexStart: 0, vertexCount: 3)
+                            renderEncoder.popDebugGroup()
                         }
                         
-                        if let drawable = view.currentDrawable {
-                            commandBuffer.present(drawable)
-                        }
+                        renderEncoder.endEncoding()
                     }
                     
-                    let semaphore = inFlightSemaphore
-                    commandBuffer.addCompletedHandler { (_ commandBuffer)-> Swift.Void in
-                        semaphore.signal()
+                    if let drawable = view.currentDrawable {
+                        commandBuffer.present(drawable)
                     }
-                    
-                    commandBuffer.commit()
-                    //                }
-                    //                else {
-                    //                    print("failed to get command buffer")
-                    //                    inFlightSemaphore.signal()
-                    //                }
                 }
+                
+                let semaphore = inFlightSemaphore
+                commandBuffer.addCompletedHandler { (_ commandBuffer)-> Swift.Void in
+                    semaphore.signal()
+                }
+                
+                commandBuffer.commit()
                 
                 if MovieManager.shared.recording {
                     if let texture = view.currentDrawable?.texture, !texture.isFramebufferOnly {
@@ -696,34 +676,34 @@ class Renderer {
     }
     
     public func showFrustum() {
-        let model = Model()
-        objectStore?.currentScene?.frustum = model
-        
-        let colors: [Vec4] = [Vec4(1, 0, 0, 1), Vec4(0, 1, 0, 1), Vec4(0, 0, 1, 1), Vec4(0, 1, 1, 1)]
-        
-        let splits = computeFrustumSplits()
-
-        for i in 0..<(splits.count - 1) {
-            let cameraFrustum = camera.getFrustumCorners(nearZ: splits[i], farZ: splits[i + 1])
-            
-            let object = WireBox(points: cameraFrustum, color: Vec4(1, 1, 0, 1), model: model)
-            
-            object.setMaterial(materialType: .line)
-
-            model.objects.append(TreeNode(wireBox: object))
-            
-            if let directionalLight = objectStore!.currentScene?.directionalLight {
-                let matrix = directionalLight.calculateViewProjectionMatrix(cameraFrustum: cameraFrustum)
-                
-                let corners = transformNdcBoundsToWorldSpace(viewProjectionMatrix: matrix)
-
-                let object = WireBox(points: corners, color: colors[i], model: model)
-                
-                object.setMaterial(materialType: .line)
-
-                model.objects.append(TreeNode(wireBox: object))
-            }
-        }
+//        let model = Model()
+//        objectStore?.currentScene?.frustum = model
+//
+//        let colors: [Vec4] = [Vec4(1, 0, 0, 1), Vec4(0, 1, 0, 1), Vec4(0, 0, 1, 1), Vec4(0, 1, 1, 1)]
+//
+//        let splits = computeFrustumSplits()
+//
+//        for i in 0..<(splits.count - 1) {
+//            let cameraFrustum = camera.getFrustumCorners(nearZ: splits[i], farZ: splits[i + 1])
+//
+//            let object = WireBox(points: cameraFrustum, color: Vec4(1, 1, 0, 1), model: model)
+//
+//            object.setMaterial(materialType: .line)
+//
+//            model.objects.append(TreeNode(wireBox: object))
+//
+//            if let directionalLight = objectStore!.currentScene?.directionalLight {
+//                let matrix = directionalLight.calculateViewProjectionMatrix(cameraFrustum: cameraFrustum)
+//
+//                let corners = transformNdcBoundsToWorldSpace(viewProjectionMatrix: matrix)
+//
+//                let object = WireBox(points: corners, color: colors[i], model: model)
+//
+//                object.setMaterial(materialType: .line)
+//
+//                model.objects.append(TreeNode(wireBox: object))
+//            }
+//        }
     }
 }
 

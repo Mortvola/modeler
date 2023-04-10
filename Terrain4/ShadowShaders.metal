@@ -7,6 +7,7 @@
 
 #include <metal_stdlib>
 #import "ShaderTypes.h"
+#import "Utilities.h"
 using namespace metal;
 
 struct VertexIn {
@@ -16,12 +17,12 @@ struct VertexIn {
 vertex float4 shadowVertexShader
 (
     VertexIn in [[stage_in]],
-    const device FrameUniforms& uniforms [[ buffer(BufferIndexUniforms) ]],
+    const device ShadowCascadeMatrices& matrices [[ buffer(BufferIndexShadowCascadeMatrices) ]],
     const device ModelMatrixUniforms *modelMatrix [[ buffer(BufferIndexModelMatrix) ]],
     const device int32_t &cascadeIndex [[ buffer(BufferIndexCascadeIndex) ]],
     uint instanceId [[ instance_id ]]
 ) {
-    return uniforms.directionalLight.viewProjectionMatrix[cascadeIndex]
+    return matrices.viewProjectionMatrix[cascadeIndex]
         * modelMatrix[instanceId].modelMatrix
         * float4(in.position, 1.0);
 }
@@ -69,8 +70,8 @@ struct DepthFragmentStore {
 
 kernel void initDepthFragmentStore
 (
-    device atomic_float *data [[buffer(BufferIndexReductionIndex)]],
-    device atomic_float *finalData [[buffer(BufferIndexFinalReductionIndex)]],
+    device atomic_float *data [[buffer(BufferIndexReduction)]],
+    device atomic_float *finalBounds [[buffer(BufferIndexFinalReduction)]],
     ushort threadIndex [[thread_index_in_threadgroup]],
     ushort2 tid [[thread_position_in_threadgroup]],
     uint2 tgpig [[threadgroup_position_in_grid]],
@@ -81,8 +82,8 @@ kernel void initDepthFragmentStore
         atomic_store_explicit(data + (tgpig[1] * tgpg[0] + tgpig[0]) * 2 + 0, 1.0, memory_order_relaxed);
         atomic_store_explicit(data + (tgpig[1] * tgpg[0] + tgpig[0]) * 2 + 1, 0.0, memory_order_relaxed);
         
-        atomic_store_explicit(finalData + 0, 0.0, memory_order_relaxed);
-        atomic_store_explicit(finalData + 1, FLT_MAX, memory_order_relaxed);
+        atomic_store_explicit(finalBounds + 0, 0.0, memory_order_relaxed);
+        atomic_store_explicit(finalBounds + 1, FLT_MAX, memory_order_relaxed);
     }
 }
 
@@ -95,17 +96,17 @@ struct VertexOut {
 vertex VertexOut depthReductionVertexShader
 (
     VertexIn in [[stage_in]],
-    const device FrameUniforms& uniforms [[ buffer(BufferIndexUniforms) ]],
+    const device FrameConstants& frameConstants [[ buffer(BufferIndexFrameConstants) ]],
     const device ModelMatrixUniforms *modelMatrix [[ buffer(BufferIndexModelMatrix) ]],
     uint instanceId [[ instance_id ]]
 ) {
     VertexOut out;
     
-    float4 view = uniforms.viewMatrix
+    float4 view = frameConstants.viewMatrix
         * modelMatrix[instanceId].modelMatrix
     * float4(in.position, 1.0);
 
-    out.position = uniforms.projectionMatrix * view;
+    out.position = frameConstants.projectionMatrix * view;
     out.worldZ = view.z;
     
     return out;
@@ -153,9 +154,9 @@ float2 minMaxDepthBounds(float2 bounds1, float2 bounds2) {
 
 kernel void reduceDepthFragments
 (
-    const device FrameUniforms& uniforms [[ buffer(BufferIndexUniforms) ]],
+    const device FrameConstants& frameConstants [[ buffer(BufferIndexFrameConstants) ]],
     imageblock<DepthFragmentStore> blockData,
-    device atomic_uint *data [[buffer(BufferIndexReductionIndex)]],
+    device atomic_uint *data [[buffer(BufferIndexReduction)]],
     ushort qid [[thread_index_in_quadgroup]],
     ushort2 tid [[thread_position_in_threadgroup]],
     uint2 tgpig [[threadgroup_position_in_grid]],
@@ -188,9 +189,10 @@ kernel void reduceDepthFragments
 
 kernel void minMaxDepthBoundsFinalize
 (
- const device FrameUniforms& uniforms [[ buffer(BufferIndexUniforms) ]],
- const device atomic_uint *data [[buffer(BufferIndexReductionIndex)]],
- device uint *finalData [[buffer(BufferIndexFinalReductionIndex)]],
+ const device FrameConstants& frameConstants [[ buffer(BufferIndexFrameConstants) ]],
+ const device atomic_uint *data [[ buffer(BufferIndexReduction) ]],
+ device ShadowCascadeMatrices& shadowCascadeMatrices [[ buffer(BufferIndexShadowCascadeMatrices) ]],
+ device uint *finalBounds [[ buffer(BufferIndexFinalReduction) ]],
  ushort2 tid [[thread_position_in_threadgroup]],
  ushort qid [[thread_index_in_quadgroup]],
  uint2 tgpig [[threadgroup_position_in_grid]],
@@ -209,12 +211,29 @@ kernel void minMaxDepthBoundsFinalize
             }
         }
 
-        bounds = float2(linearizeDepth(bounds.x, uniforms.invProjectionMatrix),
-                        linearizeDepth(bounds.y, uniforms.invProjectionMatrix));
+        bounds = float2(linearizeDepth(bounds.x, frameConstants.invProjectionMatrix),
+                        linearizeDepth(bounds.y, frameConstants.invProjectionMatrix));
 
         uint2 uintBounds = as_type<uint2>(bounds);
 
-        finalData[0] = uintBounds.x;
-        finalData[1] = uintBounds.y;
+        finalBounds[0] = uintBounds.x;
+        finalBounds[1] = uintBounds.y;
+        
+        int numberOfCascades = 4;
+        float splits[5];
+        
+        computeFrustumSplits(bounds, numberOfCascades, splits);
+        
+        for (int i = 0; i < numberOfCascades; ++i) {
+            float4x4 inverseProjection = inverseProjectionMatrix(frameConstants.fovy, frameConstants.aspect, splits[i], splits[i + 1]);
+            
+            float4x4 inverseViewProjection =  frameConstants.inverseViewMatrix * inverseProjection;
+
+            float4 frustumCorners[8];
+
+            transformNdcBoundsToWorldSpace(inverseViewProjection, frustumCorners);
+
+            calculateViewProjectionMatrix(frustumCorners, frameConstants.lightVector, true, shadowCascadeMatrices.viewProjectionMatrix[i]);
+        }
     }
 }
