@@ -64,3 +64,17 @@ func getDocumentsDirectory() -> URL {
     // just send back the first one, which ought to be the only one
     return paths[0]
 }
+
+func getTexturesDirectory() -> URL {
+    getDocumentsDirectory().appendingPathComponent("textures")
+}
+
+func getModelsDirectory() -> URL {
+    getDocumentsDirectory().appendingPathComponent("models")
+}
+
+func makeModelsDirectory() {
+    let url = getModelsDirectory()
+    
+    try? FileManager.default.createDirectory(at: url, withIntermediateDirectories: false)
+}

@@ -25,7 +25,7 @@ struct OpenFileButton: View {
                 
                 let fileName = srcUrl.lastPathComponent
                 
-                destUrl = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent(fileName)
+                destUrl = getDocumentsDirectory().appendingPathComponent(fileName)
                 
                 if let destUrl = destUrl {
                     try FileManager.default.copyItem(at: result.get(), to: destUrl)

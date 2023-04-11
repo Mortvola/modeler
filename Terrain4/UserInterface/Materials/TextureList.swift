@@ -32,7 +32,7 @@ struct TextureList: View {
     }
     
     func getTextures() -> [URL] {
-        let dir = getDocumentsDirectory().appending(path: "/textures")
+        let dir = getTexturesDirectory()
         let urls = try? FileManager.default.contentsOfDirectory(at: dir, includingPropertiesForKeys: [])
         
         return urls?.sorted { a, b in

@@ -35,7 +35,7 @@ class MovieManager {
             throw Errors.invalidURL
         }
         
-        outputMovieURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent("\(imageNameRoot).mov")
+        outputMovieURL = getDocumentsDirectory().appendingPathComponent("\(imageNameRoot).mov")
         
         guard let outputMovieURL = outputMovieURL else {
             throw Errors.invalidURL

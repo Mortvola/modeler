@@ -36,7 +36,7 @@ class TextureManager {
                 url = URL(string: path)
             }
             else {
-                url = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("textures/\(path)")
+                url = getTexturesDirectory().appendingPathComponent(path)
             }
             
             if let url = url {

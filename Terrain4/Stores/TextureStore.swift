@@ -14,7 +14,7 @@ class TextureStore {
     init() throws {
         let loader = MTKTextureLoader(device: MetalView.shared.device)
         
-        let url = getDocumentsDirectory().appendingPathComponent("/textures/fairy.png")
+        let url = getTexturesDirectory().appendingPathComponent("fairy.png")
         let data = try Data(contentsOf: url)
 
         Task {

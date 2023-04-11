@@ -26,7 +26,38 @@ struct File: Codable {
     func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
 
-        try container.encode(Renderer.shared.objectStore!.models, forKey: .models)
+        // Encode each model to its own file
+        makeModelsDirectory()
+        
+        for node in Renderer.shared.objectStore!.models {
+            switch node.content {
+            case .model(let model):
+                let encodedModel = try JSONEncoder().encode(model)
+                
+                let url = getModelsDirectory().appendingPathComponent(model.id.uuidString)
+                try encodedModel.write(to: url)
+                
+                print(url.absoluteString)
+                break
+            case .mesh:
+                break
+            case .point:
+                break
+            case .wireBox:
+                break
+            case .light:
+                break
+            case .directionalLight:
+                break
+            }
+        }
+        
+        let modelIds: [UUID] = Renderer.shared.objectStore!.models.map { node in
+            node.content.id
+        }
+        
+        try container.encode(modelIds, forKey: .models)
+        
         try container.encode(self.camera, forKey: .camera)
         
         let materials = Renderer.shared.materialManager.materials.compactMap { entry in
@@ -62,8 +93,17 @@ struct File: Codable {
             Renderer.shared.materialManager.materials[material.material.id] = material
         }
 
-        objectStore.models = try container.decode([TreeNode].self, forKey: .models)
+        let modelIds = try container.decode([UUID].self, forKey: .models)
         
+        for uuid in modelIds {
+            let url = getModelsDirectory().appendingPathComponent(uuid.uuidString)
+            
+            let data = try Data(contentsOf: url)
+            let model = try JSONDecoder().decode(Model.self, from: data)
+            
+            objectStore.models.append(TreeNode(model: model))
+        }
+
         objectStore.scene.models = try container.decodeIfPresent([SceneModel].self, forKey: .scene) ?? []
         
         objectStore.directionalLight = try container.decodeIfPresent(DirectionalLight.self, forKey: .directionalLight) ?? DirectionalLight()

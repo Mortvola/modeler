@@ -51,7 +51,7 @@ struct TexturesView: View {
     }
     
     func getTextures() -> [URL] {
-        let dir = getDocumentsDirectory().appending(path: "/textures")
+        let dir = getTexturesDirectory()
         let urls = try? FileManager.default.contentsOfDirectory(at: dir, includingPropertiesForKeys: [])
         
         return urls?.sorted { a, b in
@@ -62,7 +62,7 @@ struct TexturesView: View {
     func importFile(srcUrl: URL) throws {
         let fileName = srcUrl.lastPathComponent
         
-        let destUrl = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("textures/\(fileName)")
+        let destUrl = getTexturesDirectory().appendingPathComponent(fileName)
         
         print(destUrl)
         
